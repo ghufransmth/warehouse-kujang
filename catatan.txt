@@ -1,0 +1,161 @@
+AKSES
+1. Admin Gudang
+   -STOK
+        -INFORMASI STOK
+        -FULL AKSES OPNAME STOK
+   -PO
+       -PO LIST ONLY
+          -UBAH STATUS 
+          -UBAH EXPEDISI
+   -ORDER PRODUK
+       -READ ONLY DATA
+2. Admin Invoice
+   -Menu PRODUK
+        -Satuan
+        -Jenis Harga
+   -Menu Master
+        -Negara
+        -Provinsi
+        -Kota
+        -Sales
+        -Member
+        -Expedisi
+        -Expedisi Via
+    -STOK
+        -INFORMASI STOK
+        -Read Only data OPNAME STOK
+    -Menu Invoice
+    -Menu Proses Retur Revisi
+    -Menu PO FULL
+    -Menu RPO
+    -PO Batal
+    -Menu Report
+        -PO
+        -Barang Keluar
+        -Rekap Invoice
+        -Retur Revisi
+        -Back ORDER
+        -Qty Back Order
+3. Admin PO
+   -Menu PRODUK
+        -Satuan
+        -Jenis Harga
+   -Menu Master
+        -Negara
+        -Provinsi
+        -Kota
+        -Sales
+        -Member
+        -Expedisi
+        -Expedisi Via
+    -STOK
+        -INFORMASI STOK
+        -Read Only data OPNAME STOK
+    -Menu Invoice
+    -Menu Proses Retur Revisi
+    -Menu PO FULL
+    -Menu RPO
+    -PO Batal
+    -Back Order
+    -Order Produk Full
+    -Menu Report
+        -SO
+        -PO
+        -Tanda Terima
+        -Barang Masuk
+        -Barang Keluar
+        -Rekap Sisa Hutang
+        -Back ORDER
+        -Qty Back Order
+
+4. Admin Tagihan
+   -Menu PRODUK
+        -List Produk
+    -Menu Master
+        -Member
+    -Tanda Terima
+        -Proses Tanda Terima
+        -Invoice Tanda Terima
+        -Input Pembayaran
+    -Menu Invoice
+    -Menu Proses Retur Revisi
+    -Menu PO FULL
+    -Menu Report
+        -SO
+        -PO
+        -Retur Revisi
+        -Rekap Invoice
+        -Tanda Terima
+        -Barang Masuk
+        -Barang Keluar
+        -Sisa Hutang
+
+5. Admin Stok
+   -Menu PRODUK
+        -List Produk
+        -Tambah Produk
+        -Satuan
+        -Kategori
+    -Menu Master
+        -Negara
+        -Provinsi
+        -Kota
+        -Member
+        -Gudang
+    -Stok
+        -Informasi Stok
+        -Opname Stok FULL
+        -Adj Stok FULL
+        -History Adj Stok FULL
+        -Mutasi Stok
+        -History History Stok
+    -Menu Invoice
+    -Menu Proses Retur Revisi
+    -Menu PO
+        -PO List
+    -Order Produk
+    -Menu Report
+        -PO
+        -Retur Revisi
+        -Barang Masuk
+        -Barang Keluar
+        -Back Order
+        -Qty Back Order
+        -Penjualan
+        -Stok
+
+6. Admin Order
+   -Menu PRODUK
+        -List Produk
+        -Tambah Produk
+        -Satuan
+        -Kategori
+    -Menu Master
+        -Negara
+        -Provinsi
+        -Kota
+        -Member
+        -Gudang
+    -Stok
+        -Informasi Stok
+        -Opname Stok Read Only
+    -Menu Invoice
+    -Menu Proses Retur Revisi
+    -Menu PO
+        -PO List
+        -Tambah PO
+    -RPO
+    -BAck Order
+    -Order Produk
+    -Menu Report
+        -PO
+        -Retur Revisi
+        -Barang Masuk
+        -Barang Keluar
+        -Back Order
+        -Qty Back Order
+        -Penjualan
+        -Stok
+
+   
+   
