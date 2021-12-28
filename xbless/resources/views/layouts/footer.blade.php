@@ -1,8 +1,8 @@
 <div class="footer">
     <div class="pull-right">
-        BENSCO
+        CV KUJANG MARINAS UTAMA
     </div>
     <div>
-        <strong>Copyright</strong> Rapier Technology &copy; 2021
+        <strong>Copyright</strong> Buruh Ketik &copy; 2021
     </div>
 </div>

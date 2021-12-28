@@ -27,15 +27,15 @@
                 <a href="#"><i class="fa fa-cog"></i> <span class="nav-label">Master</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse">
                     <li class=""><a href="{{route('staff.index')}}">Master User</a></li>
-                    <li class=""><a href="{{ route('sales.index') }}">Master Sales</a></li>
+                    <li class=""><a href="#">Master Sales (coming soon)</a></li>
                     <li class=""><a href="{{route('expedisi.index')}}">Master Expedisi</a></li>
-                    <li class=""><a href="{{route('expedisivia.index')}}">Master Tipe Channel</a></li>
+                    <li class=""><a href="{{route('type_channel.index')}}">Master Tipe Channel</a></li>
                     <li class=""><a href="{{ route('gudang.index') }}">Master Gudang</a></li>
-                    <li class=""><a href="#">Master Diskon</a></li>
-                    <li  class=""><a href="{{ route('negara.index') }}">Master Distrik</a></li>
-                    <li class=""><a href="#">Master Jenis Bayar</a></li>
-                    <li class=""><a href="{{ route('perusahaan.index') }}">Master Jenis Toko</a></li>
-                    <li class=""><a href="#">Master Kategori Toko Toko</a></li>
+                    <li class=""><a href="#">Master Diskon (coming soon)</a></li>
+                    <li  class=""><a href="{{ route('distrik.index') }}">Master Distrik</a></li>
+                    <li class=""><a href="{{ route('payment.index') }}">Master Jenis Bayar</a></li>
+                    <li class=""><a href="{{ route('perusahaan.index') }}">Master Jenis Toko (coming soon)</a></li>
+                    <li class=""><a href="#">Master Kategori Toko (coming soon)</a></li>
                 </ul>
             </li>
             @endcan

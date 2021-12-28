@@ -14,7 +14,8 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\BerandaController;
-use App\Http\Controllers\CountryController;
+use App\Http\Controllers\DistrikController;
+use App\Http\Controllers\JenisBayarController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\StokAdjController;
 use App\Http\Controllers\ExpedisiController;
@@ -36,7 +37,7 @@ use App\Http\Controllers\ReportStokController;
 use App\Http\Controllers\StokMutasiController;
 use App\Http\Controllers\StokMutasiHistoryController;
 use App\Http\Controllers\StokOpnameController;
-use App\Http\Controllers\ExpedisiViaController;
+use App\Http\Controllers\TypeChannelController;
 use App\Http\Controllers\ReportBoQtyController;
 use App\Http\Controllers\ReturRevisiController;
 use App\Http\Controllers\TandaTerimaController;
@@ -120,15 +121,6 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('manage/expedisi/ubah/{id}', [ExpedisiController::class, 'ubah'])->name('expedisi.ubah');
     Route::delete('manage/expedisi/hapus/{id?}', [ExpedisiController::class, 'hapus'])->name('expedisi.hapus');
     Route::post('manage/expedisi/simpan', [ExpedisiController::class, 'simpan'])->name('expedisi.simpan');
-
-    // EXPEDISI VIA
-    Route::get('manage/expedisivia', [ExpedisiViaController::class, 'index'])->name('expedisivia.index');
-    Route::post('manage/expedisivia/getdata', [ExpedisiViaController::class, 'getData'])->name('expedisivia.getdata');
-    Route::get('manage/expedisivia/tambah', [ExpedisiViaController::class, 'tambah'])->name('expedisivia.tambah');
-    Route::get('manage/expedisivia/detail/{id}', [ExpedisiViaController::class, 'detail'])->name('expedisivia.detail');
-    Route::get('manage/expedisivia/ubah/{id}', [ExpedisiViaController::class, 'ubah'])->name('expedisivia.ubah');
-    Route::delete('manage/expedisivia/hapus/{id?}', [ExpedisiViaController::class, 'hapus'])->name('expedisivia.hapus');
-    Route::post('manage/expedisivia/simpan', [ExpedisiViaController::class, 'simpan'])->name('expedisivia.simpan');
 
     // SALES
     Route::get('manage/sales', [SalesController::class, 'index'])->name('sales.index');
@@ -369,15 +361,34 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     });
 
     Route::group(['prefix' => '/manage'], function () {
+        // EXPEDISI VIA
+        Route::group(['prefix' => 'type_channel', 'as' => 'type_channel.'], function(){
+            Route::get('manage/type_channel', [TypeChannelController::class, 'index'])->name('index');
+            Route::post('manage/type_channel/getdata', [TypeChannelController::class, 'getData'])->name('getdata');
+            Route::get('manage/type_channel/tambah', [TypeChannelController::class, 'tambah'])->name('tambah');
+            Route::get('manage/type_channel/ubah/{id}', [TypeChannelController::class, 'ubah'])->name('ubah');
+            Route::delete('manage/type_channel/hapus/{id?}', [TypeChannelController::class, 'hapus'])->name('delete');
+            Route::post('manage/type_channel/simpan', [TypeChannelController::class, 'simpan'])->name('simpan');
+        });
+
+        //PAYMENT
+        Route::group(['prefix' => 'payment', 'as' => 'payment.'], function () {
+            Route::get('/', [JenisBayarController::class, 'index'])->name('index');
+            Route::get('/tambah', [JenisBayarController::class, 'tambah'])->name('tambah');
+            Route::get('/ubah/{id}', [JenisBayarController::class, 'ubah'])->name('ubah');
+            Route::post('/getData', [JenisBayarController::class, 'getData'])->name('getdata');
+            Route::post('/simpan', [JenisBayarController::class, 'simpan'])->name('simpan');
+            Route::delete('/hapus/{id?}', [JenisBayarController::class, 'delete'])->name('delete');
+        });
 
         //NEGARA
-        Route::group(['prefix' => 'negara', 'as' => 'negara.'], function () {
-            Route::get('/', [CountryController::class, 'index'])->name('index');
-            Route::get('/tambah', [CountryController::class, 'tambah'])->name('tambah');
-            Route::get('/ubah/{id}', [CountryController::class, 'ubah'])->name('ubah');
-            Route::post('/getData', [CountryController::class, 'getData'])->name('getdata');
-            Route::post('/simpan', [CountryController::class, 'simpan'])->name('simpan');
-            Route::delete('/hapus/{id?}', [CountryController::class, 'delete'])->name('delete');
+        Route::group(['prefix' => 'distrik', 'as' => 'distrik.'], function () {
+            Route::get('/', [DistrikController::class, 'index'])->name('index');
+            Route::get('/tambah', [DistrikController::class, 'tambah'])->name('tambah');
+            Route::get('/ubah/{id}', [DistrikController::class, 'ubah'])->name('ubah');
+            Route::post('/getData', [DistrikController::class, 'getData'])->name('getdata');
+            Route::post('/simpan', [DistrikController::class, 'simpan'])->name('simpan');
+            Route::delete('/hapus/{id?}', [DistrikController::class, 'delete'])->name('delete');
         });
 
         // GUDANG

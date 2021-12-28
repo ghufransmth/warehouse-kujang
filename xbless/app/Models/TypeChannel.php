@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ExpedisiVia extends Model
+class TypeChannel extends Model
 {
     use HasFactory;
-    protected $table    = 'expedisi_via';
+    protected $table    = 'type_channel';
+    public $timestamps = false;
 }

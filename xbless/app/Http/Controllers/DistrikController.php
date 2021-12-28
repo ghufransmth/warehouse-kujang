@@ -5,19 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Country;
-use App\Models\Provinsi;
+use App\Models\Distrik;
 use DB;
 use Auth;
 
-class CountryController extends Controller
+class DistrikController extends Controller
 {
     protected $original_column = array(
         1 => "name",
     );
 
     public function index(){
-        return view('backend/master/negara/index');
+        return view('backend/master/distrik/index');
     }
 
     function safe_encode($string) {
@@ -31,7 +30,7 @@ class CountryController extends Controller
     }
 
     private function cekExist($column,$var,$id){
-      $cek = Country::where('id','!=',$id)->where($column,'=',$var)->first();
+      $cek = Distrik::where('id','!=',$id)->where($column,'=',$var)->first();
       return (!empty($cek) ? false : true);
     }
 
@@ -41,7 +40,7 @@ class CountryController extends Controller
       $page  = $start +1;
       $search = $request->search['value'];
       
-      $country = Country::select('*');
+      $country = Distrik::select('*');
       if(array_key_exists($request->order[0]['column'], $this->original_column)){
          $country->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
       }
@@ -67,14 +66,8 @@ class CountryController extends Controller
        
         $action.="";
         $action.="<div class='btn-group'>";
-        
-        if($request->user()->can('negara.ubah')){
-          $action.='<a href="'.route('negara.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
-        }
-       
-        if($request->user()->can('negara.delete')){
-          $action.='<a href="#" onclick="deleteNegara(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
-        }
+        $action.='<a href="'.route('distrik.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
+        $action.='<a href="#" onclick="deleteNegara(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
         $action.="</div>";
 
         $negara->no             = $key+$page;
@@ -82,27 +75,34 @@ class CountryController extends Controller
         $negara->name           = $negara->name;
         $negara->action         = $action;
       }
-      if($request->user()->can('negara.index')) {
-        $json_data = array(
-          "draw"            => intval($request->input('draw')),  
-          "recordsTotal"    => intval($totalData),
-          "recordsFiltered" => intval($totalFiltered),
-          "data"            => $data
-        );
-      }else{
-        $json_data = array(
-          "draw"            => intval($request->input('draw')),  
-          "recordsTotal"    => 0,
-          "recordsFiltered" => 0,
-          "data"            => []
-        );
+
+      $json_data = array(
+        "draw"            => intval($request->input('draw')),  
+        "recordsTotal"    => intval($totalData),
+        "recordsFiltered" => intval($totalFiltered),
+        "data"            => $data
+      );
+      // if($request->user()->can('negara.index')) {
+      //   $json_data = array(
+      //     "draw"            => intval($request->input('draw')),  
+      //     "recordsTotal"    => intval($totalData),
+      //     "recordsFiltered" => intval($totalFiltered),
+      //     "data"            => $data
+      //   );
+      // }else{
+      //   $json_data = array(
+      //     "draw"            => intval($request->input('draw')),  
+      //     "recordsTotal"    => 0,
+      //     "recordsFiltered" => 0,
+      //     "data"            => []
+      //   );
          
-      }    
+      // }    
       return json_encode($json_data); 
     }
 
     public function tambah(){
-      return view('backend/master/negara/form');
+      return view('backend/master/distrik/form');
     }
 
     public function simpan(Request $req){
@@ -121,7 +121,7 @@ class CountryController extends Controller
             );
         }else {
           if($enc_id){
-            $negara = Country::find($dec_id);
+            $negara = Distrik::find($dec_id);
             $negara->name      = $req->name;
             $negara->save();
             if ($negara) {
@@ -136,7 +136,7 @@ class CountryController extends Controller
                  );
             }
           }else{
-            $negara              = new Country;
+            $negara              = new Distrik;
             $negara->name        = $req->name;
             $negara->save();
             if($negara) {
@@ -159,8 +159,8 @@ class CountryController extends Controller
     public function ubah($enc_id){
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         if ($dec_id) {
-          $negara = Country::find($dec_id);
-          return view('backend/master/negara/form',compact('enc_id', 'negara'));
+          $distrik = Distrik::find($dec_id);
+          return view('backend/master/distrik/form',compact('enc_id', 'distrik'));
         } else {
             return view('errors/noaccess');
         }
@@ -168,17 +168,12 @@ class CountryController extends Controller
 
     public function delete(Request $request, $enc_id){
         $dec_id   = $this->safe_decode(Crypt::decryptString($enc_id));
-        $negara   = Country::find($dec_id);
-        $cekexist = Provinsi::where('country_id',$dec_id)->first();
+        $negara   = Distrik::find($dec_id);
         if($negara) {
-            if($cekexist) {
-                return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Negara sudah direlasikan dengan Provinsi, Silahkan hapus dahulu provinsi yang terkait dengan negara ini.']);
-            }else{
-                $negara->delete();
-                return response()->json(['status'=>"success",'message'=>'Data Berhasil dihapus.']);
-            }
+          $negara->delete();
+          return response()->json(['status'=>"success",'message'=>'Data Berhasil dihapus.']);
         }else {
-            return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Silahkan ulangi kembali.']);
+          return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Silahkan ulangi kembali.']);
         }
     }
 }
