@@ -1,0 +1,178 @@
+html {
+	-webkit-transition: background-color 1s;
+	transition: background-color 1s;
+	
+}
+
+
+html, body, h1, h2, h3, h4, h5, h6 {
+	font-family: "Times New Roman", Georgia, Serif!important;
+}
+@page{
+  size: auto A4;
+  margin: 2mm 2mm;
+  font-size: 11px;
+}
+	
+/* Layout */
+.wrapper {
+  min-height: 100%;
+  position: static;
+  overflow: hidden;
+}
+.wrapper:before,
+.wrapper:after {
+  content: " ";
+  display: table;
+}
+.wrapper:after {
+  clear: both;
+}
+
+.invoice {
+    position: relative;
+    background: #fff;
+    border: 1px solid #f4f4f4;
+    padding: 20px;
+    margin: 10px 25px;
+}
+.invoice_ijazah {
+    position: relative;
+    background: #fff;
+    border: 1px solid #f4f4f4;
+    padding: 2px;
+}
+.bg-header {
+	background-color : #ddd!important;
+	padding : 5px;
+	text-align : center;
+}
+
+.with-line {
+	border : 1px solid #222!important;
+}
+
+.line-bottom {
+	border-bottom : 1px solid #222;
+}
+
+.line-top-double {
+	border-top : 2px double #222!important;
+}
+
+.line-bottom-double {
+	border-bottom : 2px double #222!important;
+}
+
+.indent {
+	margin-left : 0!important;
+	margin-right : 0!important;
+}
+
+.page-header {
+    margin: 10px 0 20px 0;
+    font-size: 18px;
+    padding-bottom: 9px;
+    margin: 40px 0 0;
+    border-bottom: 1px solid #eee;
+}
+
+.page-header > small {
+    color: #666;
+    display: block;
+}
+
+.simple-table, .simple-table th, .simple-table td {
+    border: 1px solid #222 !important;
+	border-collapse : collapse;
+}
+
+
+.table-pres-dosen tbody {
+	border-collapse : collapse;
+	border: 1px solid #222 !important;
+}
+
+
+.table-print {
+    width: 100%!important;
+    max-width: 100%;
+    font-size: 10px;
+    margin-bottom: 10px;
+}
+
+.table-print th {
+    border: 1px solid #222 !important;
+}
+
+.table-print th, .table-print td {
+    padding: 1px 1px;
+    border-collapse : collapse;
+    border-left: 1px solid #222 !important;
+    border-right: 1px solid #222 !important;
+}
+
+.table-print tbody {
+	border-collapse : collapse;
+	border: 0.5px solid #222 !important;
+}
+.very-small {
+	font-size : 70%;
+}
+.strips-dash, .strips-dash th, .strips-dash td {
+	border-bottom: 1px dashed #000!important
+}
+.strips-dot, .strips-dot th, .strips-dot td {
+	border-bottom: 1px dotted #000!important
+}
+
+.two-strips-bottom, .two-strips-bottom th, .two-strips-bottom td {
+	border-bottom: 2px double #222!important
+}
+
+.two-strips-top, .two-strips-top th, .two-strips-top td {
+	border-top: 2px double #222!important
+}
+
+.print-only{
+        display: none;
+ }
+.isian {
+    height: 16pt; 
+    content: " ..................................................................................";
+    display: inline-block;
+}
+
+dl { width: 100mm }
+dt { float: left; width: 85mm; overflow: hidden; white-space: nowrap;font-weight: normal!important; }
+dd { float: left; width: 15mm; overflow: hidden }
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here 
+  height: 60px;
+  line-height: 60px; */
+}
+
+@media print {
+  
+	.section_print {
+		width: 100%;
+        border: 0;
+        margin: 0;
+        padding: 0;
+	}
+  
+  .page-break	{ display: block; page-break-before: always; }
+ 
+  .print-only{
+          display: block;
+    }
+
+	
+	#footer {
+         position: fixed;
+         bottom: 0;
+    }
+}
