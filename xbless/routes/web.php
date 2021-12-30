@@ -26,6 +26,7 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReportBoController;
 use App\Http\Controllers\ReportPoController;
 use App\Http\Controllers\ReportSoController;
+use App\Http\Controllers\JenisTokoController;
 use App\Http\Controllers\BackorderController;
 use App\Http\Controllers\StokAdminController;
 use App\Http\Controllers\StokSalesController;
@@ -35,6 +36,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\ReportStokController;
 use App\Http\Controllers\StokMutasiController;
+use App\Http\Controllers\KategoriTokoController;
 use App\Http\Controllers\StokMutasiHistoryController;
 use App\Http\Controllers\StokOpnameController;
 use App\Http\Controllers\TypeChannelController;
@@ -361,7 +363,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     });
 
     Route::group(['prefix' => '/manage'], function () {
-        // EXPEDISI VIA
+        // TYPE CHANNEL
         Route::group(['prefix' => 'type_channel', 'as' => 'type_channel.'], function(){
             Route::get('manage/type_channel', [TypeChannelController::class, 'index'])->name('index');
             Route::post('manage/type_channel/getdata', [TypeChannelController::class, 'getData'])->name('getdata');
@@ -399,6 +401,35 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/getData', [GudangController::class, 'getData'])->name('getdata');
             Route::post('/simpan', [GudangController::class, 'simpan'])->name('simpan');
             Route::delete('/hapus/{id?}', [GudangController::class, 'delete'])->name('delete');
+        });
+
+        Route::group(['prefix' => 'diskon', 'as' => 'diskon.'], function () {
+            Route::get('/', [GudangController::class, 'index'])->name('index');
+            Route::get('/tambah', [GudangController::class, 'tambah'])->name('tambah');
+            Route::get('/ubah/{id}', [GudangController::class, 'ubah'])->name('ubah');
+            Route::post('/getData', [GudangController::class, 'getData'])->name('getdata');
+            Route::post('/simpan', [GudangController::class, 'simpan'])->name('simpan');
+            Route::delete('/hapus/{id?}', [GudangController::class, 'delete'])->name('delete');
+        });
+
+        Route::group(['prefix' => 'toko', 'as' => 'toko.'], function () {
+            Route::group(['prefix' => 'jenis', 'as' => 'jenis.'], function () {
+                Route::get('/', [JenisTokoController::class, 'index'])->name('index');
+                Route::get('/tambah', [JenisTokoController::class, 'tambah'])->name('tambah');
+                Route::get('/ubah/{id}', [JenisTokoController::class, 'ubah'])->name('ubah');
+                Route::post('/getData', [JenisTokoController::class, 'getData'])->name('getdata');
+                Route::post('/simpan', [JenisTokoController::class, 'simpan'])->name('simpan');
+                Route::delete('/hapus/{id?}', [JenisTokoController::class, 'delete'])->name('delete');
+            });
+
+            Route::group(['prefix' => 'kategori', 'as' => 'kategori.'], function () {
+                Route::get('/', [KategoriTokoController::class, 'index'])->name('index');
+                Route::get('/tambah', [KategoriTokoController::class, 'tambah'])->name('tambah');
+                Route::get('/ubah/{id}', [KategoriTokoController::class, 'ubah'])->name('ubah');
+                Route::post('/getData', [KategoriTokoController::class, 'getData'])->name('getdata');
+                Route::post('/simpan', [KategoriTokoController::class, 'simpan'])->name('simpan');
+                Route::delete('/hapus/{id?}', [KategoriTokoController::class, 'delete'])->name('delete');
+            });
         });
 
         //PERUSAHAAN
