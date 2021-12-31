@@ -42,15 +42,15 @@
 </head>
 
 <body class="white-bg">
-    <div class="container animated fadeInDown text-center m-auto">
-        <div class="row">
-            <div class="col-md-6 text-center">
+    <div class="container animated fadeInDownm-auto">
+        <div class="row text-center">
+            <div class="col-md-6">
                 <img src="{{ asset('assets/background/bg6.jpg')}}" alt="" style="width: 100%">
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 ">
                 <div class="thebox">
-                    <h2 class="m-3">Kujang Marinas</h2>
-                    <h3>ADMIN PANEL</h3>
+                    <h2 class="m-3 ">Kujang Marinas</h2>
+                    <h3 class="">ADMIN PANEL</h3>
                     @if(session('message'))
                     <div class="alert alert-{{session('message')['status']}}">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
@@ -71,7 +71,11 @@
 
                         <!-- <a href="#"><small>Forgot password?</small></a> -->
                     </form>
-                    <small class="text-right" style="color: #1ab394">RTI &copy; 2021</small>
+                    <div class="text-right">
+                        <small>
+                            <strong style="color: #1ab394">Copyright</strong> Buruh Ketik &copy; 2021
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
