@@ -2,7 +2,7 @@
 @section('title', 'Produk')
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-lg-10">
+    <div class="col-lg-9">
         <h2>Produk</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -13,11 +13,17 @@
             </li>
         </ol>
     </div>
-    <div class="col-lg-2">
-        <br/>
-        <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Refresh Data"><span class="fa fa-refresh"></span></button>
+    <div class="col-lg-3">
+        <br />
+        <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+            title="Refresh Data"><span class="fa fa-refresh"></span></button>
         @can('produk.tambah')
-          <a href="{{ route('produk.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
+        <a href="{{ route('produk.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top"
+            title="Tambah Data">Tambah &nbsp;<span class="fa fa-plus"></span></a>
+        @endcan
+        @can('produk.tambah')
+        <a href="{{ route('produk.tambah')}}" class="btn btn-warning" data-toggle="tooltip" data-placement="top"
+            title="Import Data">Import &nbsp; <span class="fa fa-file-excel-o"></span></a>
         @endcan
 
     </div>
@@ -29,27 +35,27 @@
                 <div class="ibox-content">
 
                     <div class="table-responsive">
-                        <table id="table1" class="table display table-bordered">
-                        <thead>
-                        <tr>
-                            <th width="10px;">No</th>
-                            <th>Kode</th>
-                            <th>Nama</th>
-                            <th>Kategori</th>
-                            <th>Satuan</th>
-                            <th>Harga (Rp.)</th>
-                            <th>Produk Liner</th>
-                            <th>Cover</th>
-                            <th class="text-center">Aksi</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                        <table id="table1" class="table p-0 table-hover table-striped">
+                            <thead class="text-white text-center bg-primary">
+                                <tr>
+                                    <th width="5%;">No</th>
+                                    <th>Kode</th>
+                                    <th>Nama</th>
+                                    <th>Kategori</th>
+                                    <th>Satuan</th>
+                                    <th>Harga (Rp.)</th>
+                                    <th>Produk Liner</th>
+                                    <th>Cover</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                        </tbody>
-                        <tfoot>
+                            </tbody>
+                            <tfoot class="text-white text-center bg-primary">
 
-                        </tfoot>
-                    </table>
+                            </tfoot>
+                        </table>
                     </div>
 
                 </div>
@@ -58,7 +64,8 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="modal_image_produk" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modal_image_produk" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -94,7 +101,7 @@
            "select" : true,
            "responsive": true,
            "stateSave"  : true,
-           "dom": '<"html5">lftip',
+           "dom": '<"html5buttons"B>lTfgitp',
            "ajax":{
                     "url": "{{ route("produk.getdata") }}",
                     "dataType": "json",
@@ -136,6 +143,26 @@
                  "className" : "text-center",
                },
            ],
+           buttons: [
+                    {
+                        extend: 'copy',
+                        exportOptions: {
+                            orthogonal: 'export'
+                        },
+                        header: true,
+                        footer: true,
+                        className: 'btn btn-outline btn-default btn-lg',
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            orthogonal: 'export'
+                        },
+                        header: true,
+                        footer: true,
+                        className: 'btn btn-block bg-primary text-white',
+                    }
+                ],
            responsive: true,
            language: {
                search: "_INPUT_",
@@ -233,7 +260,7 @@
 
            }
        });
- </script>
+</script>
 
 <script>
     $(document).on('click', '#image_produk_detail', function(){
