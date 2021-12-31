@@ -21,6 +21,7 @@
         }
 
         .thebox {
+            padding-top: 15% !important;
             /*background-color: #72B5E9;*/
             background-color: #ffffff;
             padding: 15px;
@@ -31,27 +32,25 @@
             width: 500px;
         }
 
-        body {
+        /* body {
             background-image: url("{{ asset('assets/background/body_bg.jpg')}}") !important;
             background-repeat: no-repeat;
             background-size: 50%;
-        }
+        } */
     </style>
 
 </head>
 
 <body class="white-bg">
-    <div class="middle-box text-center loginscreen animated fadeInDown">
+    <div class="container animated fadeInDown text-center m-auto">
         <div class="row">
-            <div class="col-lg-8"></div>
-            <div class="col-lg-4">
-                <div class="thebox ">
-                    <div>
-                        <h1 class="logo-name"></h1>
-                    </div>
+            <div class="col-md-6 text-center">
+                <img src="{{ asset('assets/background/bg6.jpg')}}" alt="" style="width: 100%">
+            </div>
+            <div class="col-md-6">
+                <div class="thebox">
                     <h2 class="m-3">Kujang Marinas</h2>
                     <h3>ADMIN PANEL</h3>
-
                     @if(session('message'))
                     <div class="alert alert-{{session('message')['status']}}">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
@@ -71,9 +70,8 @@
                         <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
 
                         <!-- <a href="#"><small>Forgot password?</small></a> -->
-
                     </form>
-                    <p class="m-t"> <small>RTI &copy; 2021</small> </p>
+                    <small class="text-right" style="color: #1ab394">RTI &copy; 2021</small>
                 </div>
             </div>
         </div>
