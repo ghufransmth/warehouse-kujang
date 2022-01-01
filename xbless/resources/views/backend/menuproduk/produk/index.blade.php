@@ -33,19 +33,17 @@
         <div class="col-lg-12">
             <div class="ibox">
                 <div class="ibox-content">
-
                     <div class="table-responsive">
                         <table id="table1" class="table p-0 table-hover table-striped">
                             <thead class="text-white text-center bg-primary">
                                 <tr>
                                     <th width="5%;">No</th>
-                                    <th>Kode</th>
-                                    <th>Nama</th>
+                                    <th>No SKU</th>
+                                    <th>Nama Produk</th>
+                                    <th>Harga Beli</th>
+                                    <th>Harga Jual</th>
                                     <th>Kategori</th>
-                                    <th>Satuan</th>
-                                    <th>Harga (Rp.)</th>
-                                    <th>Produk Liner</th>
-                                    <th>Cover</th>
+                                    <th>Isi Karton</th>
                                     <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>
