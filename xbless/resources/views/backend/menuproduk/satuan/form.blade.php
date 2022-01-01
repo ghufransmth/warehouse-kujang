@@ -11,7 +11,7 @@
             </li>
             <li class="breadcrumb-item">
                 <a href="{{route('produk.index')}}">Produk</a>
-              </li>
+            </li>
             <li class="breadcrumb-item">
                 <a href="{{route('satuan.index')}}">Satuan</a>
             </li>
@@ -21,57 +21,61 @@
         </ol>
     </div>
     <div class="col-lg-2">
-        <br/>
-        <a class="btn btn-white btn-sm" href="{{route('satuan.index')}}">Kembali</a>
+        <br />
+        <a class="btn btn-success btn-sm" href="{{route('satuan.index')}}"><span class="fa fa-angle-left"></span> &nbsp;
+            Kembali</a>
     </div>
 </div>
-    <div class="wrapper wrapper-content animated fadeInRight">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="ibox ">
-                    <div class="ibox-title">
-                        @if(session('message'))
-                            <div class="alert alert-{{session('message')['status']}}">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            {{ session('message')['desc'] }}
-                            </div>
-                        @endif
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    @if(session('message'))
+                    <div class="alert alert-{{session('message')['status']}}">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        {{ session('message')['desc'] }}
                     </div>
-                    <div class="ibox-content">
-                        <form id="submitData">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <input type="hidden" name="enc_id" id="enc_id" value="{{isset($satuan)? $enc_id : ''}}">
-                            <div class="form-group row"><label class="col-sm-2 col-form-label">Nama Satuan *</label>
-                                <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($satuan)? $satuan->name : ''}}"> 
-                                </div>
+                    @endif
+                </div>
+                <div class="ibox-content">
+                    <form id="submitData">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="enc_id" id="enc_id" value="{{isset($satuan)? $enc_id : ''}}">
+                        <div class="form-group row"><label class="col-sm-2 col-form-label">Nama Satuan *</label>
+                            <div class="col-sm-10 error-text">
+                                <input type="text" class="form-control" id="name" name="name"
+                                    value="{{isset($satuan)? $satuan->name : ''}}">
                             </div>
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group row"><label class="col-sm-2 col-form-label">Jenis Satuan *</label>
-                                <div class="col-sm-10 error-text">
-                                    <select name="jenis_satuan" class="form-control" id="jenis_satuan">
-                                        <option value="">Jenis Satuan</option>
-                                        @foreach($jenis as $key => $row)
-                                        <option value="{{$key}}"{{ $selectedjenis == $key ? 'selected=""' : '' }}>{{ucfirst($row)}}</option>
-                                        @endforeach
-                                        
-                                    </select>
-                                </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group row"><label class="col-sm-2 col-form-label">Jenis Satuan *</label>
+                            <div class="col-sm-10 error-text">
+                                <select name="jenis_satuan" class="form-control" id="jenis_satuan">
+                                    <option value="">Jenis Satuan</option>
+                                    @foreach($jenis as $key => $row)
+                                    <option value="{{$key}}" {{ $selectedjenis == $key ? 'selected=""' : '' }}>
+                                        {{ucfirst($row)}}</option>
+                                    @endforeach
+
+                                </select>
                             </div>
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group row">
-                                <div class="col-sm-4 col-sm-offset-2">
-                                    <a class="btn btn-white btn-sm" href="{{route('satuan.index')}}">Batal</a>
-                                    <button class="btn btn-primary btn-sm" type="submit" id="simpan">Simpan</button>
-                                </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group row">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white btn-sm" href="{{route('satuan.index')}}">Batal</a>
+                                <button class="btn btn-primary btn-sm" type="submit" id="simpan">Simpan</button>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-            
+</div>
+
 @endsection
 @push('scripts')
 <script>
@@ -96,9 +100,9 @@
             errorElement: 'span',
             errorPlacement: function (error, element) {
             error.addClass('invalid-feedback');
-           
+
             element.closest('.error-text').append(error);
-            
+
             },
             highlight: function (element, errorClass, validClass) {
             $(element).addClass('is-invalid');
@@ -111,7 +115,7 @@
                 SimpanData();
             }
         });
-        function SimpanData(){    
+        function SimpanData(){
             $('#simpan').addClass("disabled");
                 var form = $('#submitData').serializeArray()
                 var dataFile = new FormData()
@@ -134,11 +138,11 @@
                         Swal.fire('Yes',data.message,'info');
                         window.location.replace('{{route("satuan.index")}}');
                     } else {
-                        Swal.fire('Ups',data.message,'info'); 
+                        Swal.fire('Ups',data.message,'info');
                     }
                     Swal.hideLoading();
                 },
-                complete: function () { 
+                complete: function () {
                     Swal.hideLoading();
                     $('#simpan').removeClass("disabled");
                 },

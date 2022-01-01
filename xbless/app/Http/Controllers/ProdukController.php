@@ -21,52 +21,61 @@ use QrCode;
 class ProdukController extends Controller
 {
     protected $original_column = array(
-      1 => "product_code",
-      2 => "product_name",
-      3 => "product_cover",
-      4 => "category_id",
-      5 => "normal_price",
+        1 => "product_code",
+        2 => "product_name",
+        3 => "product_cover",
+        4 => "category_id",
+        5 => "normal_price",
 
     );
-    public function statusFilter(){
-       $value = array('99'=>'Semua','1'=>'Aktif' ,'0'=>'Tidak Aktif','2'=>'Blokir');
-      return $value;
-    }
-
-    public function isLiner(){
-        $value = array('N' => "TIDAK",'Y' => 'YA');
+    public function statusFilter()
+    {
+        $value = array('99' => 'Semua', '1' => 'Aktif', '0' => 'Tidak Aktif', '2' => 'Blokir');
         return $value;
     }
 
-    public function status(){
-        $value = array('0'=>'Tidak Aktif','1'=>'Aktif');
+    public function isLiner()
+    {
+        $value = array('N' => "TIDAK", 'Y' => 'YA');
         return $value;
     }
 
-    public function index(){
+    public function status()
+    {
+        $value = array('0' => 'Tidak Aktif', '1' => 'Aktif');
+        return $value;
+    }
+
+    public function index()
+    {
         return view('backend/menuproduk/produk/index');
     }
 
-    function safe_encode($string) {
-      $data = str_replace(array('/'),array('_'),$string);
-      return $data;
+    function safe_encode($string)
+    {
+        $data = str_replace(array('/'), array('_'), $string);
+        return $data;
     }
 
-    function safe_decode($string,$mode=null) {
-      $data = str_replace(array('_'),array('/'),$string);
-      return $data;
+    function safe_decode($string, $mode = null)
+    {
+        $data = str_replace(array('_'), array('/'), $string);
+        return $data;
     }
 
-    private function cekExist($column,$var,$id){
-      $cek = Product::where('id','!=',$id)->where($column,'=',$var)->first();
-      return (!empty($cek) ? false : true);
-    }
-    private function cekExistBarcode($column,$var,$id){
-
-        $cek = ProductBarcode::where('product_id','!=',$id)->where($column,'=',$var)->first();
+    private function cekExist($column, $var, $id)
+    {
+        $cek = Product::where('id', '!=', $id)->where($column, '=', $var)->first();
         return (!empty($cek) ? false : true);
     }
-    public function tambah(){
+    private function cekExistBarcode($column, $var, $id)
+    {
+
+        $cek = ProductBarcode::where('product_id', '!=', $id)->where($column, '=', $var)->first();
+        return (!empty($cek) ? false : true);
+    }
+    public function tambah()
+    {
         $satuan = Satuan::all();
         $selectedsatuan = "";
         $brand = Brand::all();
@@ -74,34 +83,46 @@ class ProdukController extends Controller
         $kategori = Kategori::all();
         $selectedkategori = "";
         $engine = Engine::all();
-        $selectedengine="";
+        $selectedengine = "";
         $liner = $this->isLiner();
-        $selectedliner="";
+        $selectedliner = "";
 
         $status = $this->status();
-        $selectedstatus="1";
-        return view('backend/menuproduk/produk/form',compact('satuan', 'selectedsatuan', 'brand', 'selectedbrand', 'kategori',
-        'selectedkategori','engine','selectedengine','liner','selectedliner','status','selectedstatus'));
+        $selectedstatus = "1";
+        return view('backend/menuproduk/produk/form', compact(
+            'satuan',
+            'selectedsatuan',
+            'brand',
+            'selectedbrand',
+            'kategori',
+            'selectedkategori',
+            'engine',
+            'selectedengine',
+            'liner',
+            'selectedliner',
+            'status',
+            'selectedstatus'
+        ));
     }
 
-    public function getdata(Request $request){
+    public function getdata(Request $request)
+    {
         $limit = $request->length;
         $start = $request->start;
-        $page  = $start +1;
+        $page  = $start + 1;
         $search = $request->search['value'];
 
         $product = Product::select('*');
-        if(array_key_exists($request->order[0]['column'], $this->original_column)){
-           $product->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
+        if (array_key_exists($request->order[0]['column'], $this->original_column)) {
+            $product->orderByRaw($this->original_column[$request->order[0]['column']] . ' ' . $request->order[0]['dir']);
+        } else {
+            $product->orderBy('id', 'DESC');
         }
-         else{
-          $product->orderBy('id','DESC');
-        }
-         if($search) {
-          $product->where(function ($query) use ($search) {
-                  $query->orWhere('product_code','LIKE',"%{$search}%");
-                  $query->orWhere('product_name','LIKE',"%{$search}%");
-          });
+        if ($search) {
+            $product->where(function ($query) use ($search) {
+                $query->orWhere('product_code', 'LIKE', "%{$search}%");
+                $query->orWhere('product_name', 'LIKE', "%{$search}%");
+            });
         }
         $totalData = $product->get()->count();
 
@@ -111,56 +132,55 @@ class ProdukController extends Controller
         $product->offset($start);
         $data = $product->get();
 
-        foreach ($data as $key=> $products)
-        {
+        foreach ($data as $key => $products) {
             $enc_id = $this->safe_encode(Crypt::encryptString($products->id));
             $action = "";
 
-            $action.="";
-            $action.="<div class='btn-group'>";
-            if($request->user()->can('produk.detail')){
-                $action.='<a href="'.route('produk.detail',$enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Detail"><i class="fa fa-eye"></i></a>&nbsp;';
+            $action .= "";
+            $action .= "<div class='btn-group'>";
+            if ($request->user()->can('produk.detail')) {
+                $action .= '<a href="' . route('produk.detail', $enc_id) . '" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Detail"><i class="fa fa-eye"></i></a>&nbsp;';
             }
-            $action.='<a href="#modal_image_produk"  id="image_produk_detail" role="button" data-id="'.$enc_id.'" data-toggle="modal" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip"><i class="fa fa-image"></i></a>&nbsp';
-            if($request->user()->can('produk.ubah')){
-                $action.='<a href="'.route('produk.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
+            $action .= '<a href="#modal_image_produk"  id="image_produk_detail" role="button" data-id="' . $enc_id . '" data-toggle="modal" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip"><i class="fa fa-image"></i></a>&nbsp';
+            if ($request->user()->can('produk.ubah')) {
+                $action .= '<a href="' . route('produk.ubah', $enc_id) . '" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
             }
-            if($request->user()->can('produk.delete')){
-                $action.='<a href="#" onclick="deleteProduct(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i></a>&nbsp;';
+            if ($request->user()->can('produk.delete')) {
+                $action .= '<a href="#" onclick="deleteProduct(this,\'' . $enc_id . '\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i></a>&nbsp;';
             }
-            $action.="</div>";
+            $action .= "</div>";
             $qrcode = ProductBarcode::where('product_id', $products->id)->get();
-            if(count($qrcode) > 0){
-                $qr1 ='<p>'.QrCode::size(50)->generate($qrcode[0]->barcode).'</p>';
-            }else{
-                $qr1 ='-';
+            if (count($qrcode) > 0) {
+                $qr1 = '<p>' . QrCode::size(50)->generate($qrcode[0]->barcode) . '</p>';
+            } else {
+                $qr1 = '-';
             }
-            if(count($qrcode) == 2){
-                $qr2 ='<p>'.QrCode::size(50)->generate($qrcode[1]->barcode).'</p>';
-            }else{
-                $qr2 ='-';
+            if (count($qrcode) == 2) {
+                $qr2 = '<p>' . QrCode::size(50)->generate($qrcode[1]->barcode) . '</p>';
+            } else {
+                $qr2 = '-';
             }
-            $products->no             = $key+$page;
+            $products->no             = $key + $page;
             $products->id             = $products->id;
             $products->code           = $products->product_code;
-            $products->name           = $products->product_name." (".$products->satuan_value." Pcs)";
-            $products->satuan         = $products->getsatuan?$products->getsatuan->name:'-';
-            $products->kategori       = $products->getkategori?$products->getkategori->cat_name:'-';
-            $products->harga          = number_format($products->normal_price,0,',','.');
+            $products->name           = $products->product_name . " (" . $products->satuan_value . " Pcs)";
+            $products->satuan         = $products->getsatuan ? $products->getsatuan->name : '-';
+            $products->kategori       = $products->getkategori ? $products->getkategori->cat_name : '-';
+            $products->harga          = number_format($products->normal_price, 0, ',', '.');
             $products->cover          = url($products->product_cover);
             $products->qr1            = $qr1;
             $products->qr2            = $qr2;
             $products->action         = $action;
         }
 
-        if($request->user()->can('produk.index')) {
+        if ($request->user()->can('produk.index')) {
             $json_data = array(
                 "draw"            => intval($request->input('draw')),
                 "recordsTotal"    => intval($totalData),
                 "recordsFiltered" => intval($totalFiltered),
                 "data"            => $data
             );
-        }else{
+        } else {
             $json_data = array(
                 "draw"            => intval($request->input('draw')),
                 "recordsTotal"    => 0,
@@ -171,41 +191,37 @@ class ProdukController extends Controller
         return json_encode($json_data);
     }
 
-    public function simpan(Request $req){
+    public function simpan(Request $req)
+    {
         $enc_id     = $req->enc_id;
         if ($enc_id != null) {
             $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
-        }else{
+        } else {
             $dec_id = null;
         }
-        $cek_produk = $this->cekExist('product_code',$req->kode_produk,$dec_id);
+        $cek_produk = $this->cekExist('product_code', $req->kode_produk, $dec_id);
 
-        if($req->qr1 != null){
+        if ($req->qr1 != null) {
 
-            $cek_barcode = $this->cekExistBarcode('barcode',$req->qr1,$dec_id);
-            if(!$cek_barcode)
-            {
+            $cek_barcode = $this->cekExistBarcode('barcode', $req->qr1, $dec_id);
+            if (!$cek_barcode) {
                 $json_data = array(
-                "success"         => FALSE,
-                "message"         => 'Mohon maaf. Kode QrCode 1 yang Anda masukan sudah terdaftar pada sistem.'
+                    "success"         => FALSE,
+                    "message"         => 'Mohon maaf. Kode QrCode 1 yang Anda masukan sudah terdaftar pada sistem.'
                 );
                 return json_encode($json_data);
             }
-
-
         }
-        if($req->qr2 != null){
-            $cek_barcode = $this->cekExistBarcode('barcode',$req->qr2,$dec_id);
+        if ($req->qr2 != null) {
+            $cek_barcode = $this->cekExistBarcode('barcode', $req->qr2, $dec_id);
 
-            if(!$cek_barcode)
-            {
+            if (!$cek_barcode) {
                 $json_data = array(
-                "success"         => FALSE,
-                "message"         => 'Mohon maaf. Kode QrCode 2 yang Anda masukan sudah terdaftar pada sistem.'
+                    "success"         => FALSE,
+                    "message"         => 'Mohon maaf. Kode QrCode 2 yang Anda masukan sudah terdaftar pada sistem.'
                 );
                 return json_encode($json_data);
             }
-
         }
         $path = 'web/images/product/';
 
@@ -213,29 +229,28 @@ class ProdukController extends Controller
             mkdir($path, 0777, true);
             chmod($path, 0777);
         }
-        if($req->file('cover') != null){
+        if ($req->file('cover') != null) {
             $fileName = $req->file('cover')->getClientOriginalName();
-            $pathName = $path.$fileName;
+            $pathName = $path . $fileName;
         }
 
-        if(!$cek_produk)
-        {
+        if (!$cek_produk) {
             $json_data = array(
-            "success"         => FALSE,
-            "message"         => 'Mohon maaf. Kode Produk yang Anda masukan sudah terdaftar pada sistem.'
+                "success"         => FALSE,
+                "message"         => 'Mohon maaf. Kode Produk yang Anda masukan sudah terdaftar pada sistem.'
             );
         } else {
-            if($enc_id){
+            if ($enc_id) {
                 $namasama = 1;
                 $product  = Product::find($dec_id);
-                if($req->file('cover') != null){
-                    if($product->product_cover != 'web/images/no_img.png'){
-                        if(file_exists($product->product_cover)){
+                if ($req->file('cover') != null) {
+                    if ($product->product_cover != 'web/images/no_img.png') {
+                        if (file_exists($product->product_cover)) {
                             unlink($product->product_cover);
                         }
                     }
                 }
-                if($product->product_name != $req->name){
+                if ($product->product_name != $req->name) {
                     $namasama = 0;
                 }
                 $product->product_code         = $req->kode_produk;
@@ -253,23 +268,23 @@ class ProdukController extends Controller
                 $product->is_liner             = $req->liner_id;
                 $product->product_status       = $req->status;
 
-                if($req->liner_id =='Y'){
+                if ($req->liner_id == 'Y') {
                     $product->product_code_shadow  = $req->kode_produk_shadow;
-                }else{
+                } else {
                     $product->product_code_shadow  = null;
                 }
-                if($req->file('cover') != null){
+                if ($req->file('cover') != null) {
                     $req->file('cover')->move($path, $fileName);
-                    chmod($path.$fileName, 0775);
+                    chmod($path . $fileName, 0775);
                     $product->product_cover        = $pathName;
                 }
                 $product->save();
 
-                if($product){
+                if ($product) {
                     // Update Data Product
                     $data = ProductBarcode::where('product_id', $dec_id)->get();
-                    if(count($data) > 0){
-                        foreach($data as $i=>$value){
+                    if (count($data) > 0) {
+                        foreach ($data as $i => $value) {
                             // $no = $i+1;
                             // if($req->input('qr'.$no) != null && $req->input('isi'.$no) !=null){
                             //     $productbrc = ProductBarcode::where('id', $value->id)->first();
@@ -277,34 +292,34 @@ class ProdukController extends Controller
                             //     $productbrc->isi        = $req->input('isi'.$no);
                             //     $productbrc->save();
                             // }else{
-                                $productbrc = ProductBarcode::where('id', $value->id)->first();
-                                $productbrc->delete();
+                            $productbrc = ProductBarcode::where('id', $value->id)->first();
+                            $productbrc->delete();
                             // }
                         }
-                        if($req->qr1 != null && $req->isi1 !=null){
+                        if ($req->qr1 != null && $req->isi1 != null) {
                             $productbrc = new ProductBarcode;
                             $productbrc->product_id = $product->id;
                             $productbrc->barcode    = $req->qr1;
                             $productbrc->isi        = $req->isi1;
                             $productbrc->save();
                         }
-                        if($req->qr2 != null && $req->isi2 !=null){
+                        if ($req->qr2 != null && $req->isi2 != null) {
                             $productbrc = new ProductBarcode;
                             $productbrc->product_id = $product->id;
                             $productbrc->barcode    = $req->qr2;
                             $productbrc->isi        = $req->isi2;
                             $productbrc->save();
                         }
-                    }else{
+                    } else {
                         //Input data barcode
-                        if($req->qr1 != null && $req->isi1 !=null){
+                        if ($req->qr1 != null && $req->isi1 != null) {
                             $productbrc = new ProductBarcode;
                             $productbrc->product_id = $product->id;
                             $productbrc->barcode    = $req->qr1;
                             $productbrc->isi        = $req->isi1;
                             $productbrc->save();
                         }
-                        if($req->qr2 != null && $req->isi2 !=null){
+                        if ($req->qr2 != null && $req->isi2 != null) {
                             $productbrc = new ProductBarcode;
                             $productbrc->product_id = $product->id;
                             $productbrc->barcode    = $req->qr2;
@@ -315,60 +330,58 @@ class ProdukController extends Controller
                     // Update Data Image Sekalian
                     $dataimg = $req->dlt_img;
 
-                    if($dataimg != null){
-                        foreach(explode(',',$dataimg) as $key => $value) {
-                            $cek=ProductImg::find($value);
-                            if(file_exists($cek->product_img)){
+                    if ($dataimg != null) {
+                        foreach (explode(',', $dataimg) as $key => $value) {
+                            $cek = ProductImg::find($value);
+                            if (file_exists($cek->product_img)) {
                                 unlink($cek->product_img);
                             }
                             ProductImg::where('id_product', $dec_id)->where('id', $value)->delete();
                         }
                     }
-                    if($req->total_images != 0){
+                    if ($req->total_images != 0) {
 
                         $dataimgdetail = ProductBarcode::where('product_id', $dec_id);
-                        if($dataimgdetail->get()){
-                            for ($i=0; $i < $req->total_images; $i++) {
-                                if($req->hasFile('product_img'.$i)){
-                                    $file = $req->file('product_img'.$i);
+                        if ($dataimgdetail->get()) {
+                            for ($i = 0; $i < $req->total_images; $i++) {
+                                if ($req->hasFile('product_img' . $i)) {
+                                    $file = $req->file('product_img' . $i);
                                     $fileproductname  = $file->getClientOriginalName();
-                                    $fileProductImage = $path.$fileproductname;
+                                    $fileProductImage = $path . $fileproductname;
                                     $file->move($path, $fileproductname);
-                                    chmod($path.$fileproductname, 0775);
+                                    chmod($path . $fileproductname, 0775);
                                 }
 
                                 $productimg             = new ProductImg;
                                 $productimg->id_product = $dec_id;
-                                $productimg->product_img= $fileProductImage;
+                                $productimg->product_img = $fileProductImage;
                                 $productimg->save();
                             }
 
                             foreach ($dataimgdetail->get() as $key => $value) {
-                                if(file_exists($value->product_img)){
+                                if (file_exists($value->product_img)) {
                                     unlink($value->product_img);
                                 }
                             }
-
-
                         }
-                    }else{
+                    } else {
                         $result = 'img tidak dirubah';
                     }
                     // update nama produk di invoice detail
-                    if($namasama==0){
-                         InvoiceDetail::where('product_code', $product->product_code)->update(['product_name' => $product->product_name]);
+                    if ($namasama == 0) {
+                        InvoiceDetail::where('product_code', $product->product_code)->update(['product_name' => $product->product_name]);
                     }
                     $json_data = array(
                         "success"         => TRUE,
                         "message"         => 'Data berhasil diperbarui.'
-                        );
-                }else{
+                    );
+                } else {
                     $json_data = array(
                         "success"         => FALSE,
                         "message"         => 'Data gagal diperbarui.'
-                        );
+                    );
                 }
-            }else{
+            } else {
 
                 $product = new Product;
                 $product->product_code         = $req->kode_produk;
@@ -385,28 +398,28 @@ class ProdukController extends Controller
                 $product->engine_model         = $req->engine_id;
                 $product->product_code_shadow  = $req->kode_produk_shadow;
                 $product->product_status       = $req->status;
-                if($req->kode_produk_shadow != null){
+                if ($req->kode_produk_shadow != null) {
                     $product->is_liner             = 'Y';
-                }else{
+                } else {
                     $product->is_liner             = 'N';
                 }
-                if($req->file('cover') != null){
+                if ($req->file('cover') != null) {
                     $req->file('cover')->move($path, $fileName);
-                    chmod($path.$fileName, 0775);
+                    chmod($path . $fileName, 0775);
                     $product->product_cover        = $pathName;
                 }
                 $product->save();
 
-                if($product) {
+                if ($product) {
                     //Input data barcode
-                    if($req->qr1 != null && $req->isi1 !=null){
+                    if ($req->qr1 != null && $req->isi1 != null) {
                         $productbrc = new ProductBarcode;
                         $productbrc->product_id = $product->id;
                         $productbrc->barcode    = $req->qr1;
                         $productbrc->isi        = $req->isi1;
                         $productbrc->save();
                     }
-                    if($req->qr2 != null && $req->isi2 !=null){
+                    if ($req->qr2 != null && $req->isi2 != null) {
                         $productbrc = new ProductBarcode;
                         $productbrc->product_id = $product->id;
                         $productbrc->barcode    = $req->qr2;
@@ -414,21 +427,20 @@ class ProdukController extends Controller
                         $productbrc->save();
                     }
                     // Input Data Image Sekalian
-                    if($req->total_images != 0){
-                        for ($i=0; $i < $req->total_images; $i++) {
-                            if($req->hasFile('product_img'.$i)){
-                                $file = $req->file('product_img'.$i);
+                    if ($req->total_images != 0) {
+                        for ($i = 0; $i < $req->total_images; $i++) {
+                            if ($req->hasFile('product_img' . $i)) {
+                                $file = $req->file('product_img' . $i);
                                 $fileproductname  = $file->getClientOriginalName();
-                                $fileProductImage = $path.$fileproductname;
+                                $fileProductImage = $path . $fileproductname;
                                 $file->move($path, $fileproductname);
-                                chmod($path.$fileproductname, 0775);
+                                chmod($path . $fileproductname, 0775);
                             }
 
                             $productimg             = new ProductImg;
                             $productimg->id_product = $product->id;
-                            $productimg->product_img= $fileProductImage;
+                            $productimg->product_img = $fileProductImage;
                             $productimg->save();
-
                         }
                     }
 
@@ -436,21 +448,21 @@ class ProdukController extends Controller
                         "success"         => TRUE,
                         "message"         => 'Data berhasil ditambahkan.'
                     );
-                }else{
+                } else {
                     $json_data = array(
                         "success"         => FALSE,
                         "message"         => 'Data gagal ditambahkan.'
                     );
                 }
-
             }
         }
         return json_encode($json_data);
     }
 
-    public function ubah($enc_id){
+    public function ubah($enc_id)
+    {
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
-        if($dec_id) {
+        if ($dec_id) {
             $brand = Brand::all();
             $kategori = Kategori::all();
             $engine = Engine::all();
@@ -461,46 +473,64 @@ class ProdukController extends Controller
             $selectedkategori = $produk->category_id;
             $selectedengine = $produk->engine_id;
             $selectedliner = $produk->is_liner;
-            $img_qrcode = ProductBarcode::where('product_id',$dec_id)->get();
+            $img_qrcode = ProductBarcode::where('product_id', $dec_id)->get();
             $img_produk = ProductImg::where('id_product', $dec_id)->get();
             $liner = $this->isLiner();
             $status = $this->status();
-            $selectedstatus=$produk->product_status;
-            return view('backend/menuproduk/produk/form',compact('enc_id','produk','img_qrcode', 'img_produk', 'kategori', 'satuan','engine','brand'
-            ,'selectedkategori','selectedbrand','selectedsatuan','selectedsatuan','selectedengine','selectedliner','liner','status','selectedstatus'));
+            $selectedstatus = $produk->product_status;
+            return view('backend/menuproduk/produk/form', compact(
+                'enc_id',
+                'produk',
+                'img_qrcode',
+                'img_produk',
+                'kategori',
+                'satuan',
+                'engine',
+                'brand',
+                'selectedkategori',
+                'selectedbrand',
+                'selectedsatuan',
+                'selectedsatuan',
+                'selectedengine',
+                'selectedliner',
+                'liner',
+                'status',
+                'selectedstatus'
+            ));
         } else {
             return view('errors/noaccess');
         }
     }
 
-    public function detail($enc_id){
+    public function detail($enc_id)
+    {
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
-        if($dec_id) {
+        if ($dec_id) {
             $produk = Product::find($dec_id);
-            return view('backend/menuproduk/produk/detail',compact('enc_id','produk'));
+            return view('backend/menuproduk/produk/detail', compact('enc_id', 'produk'));
         } else {
             return view('errors/noaccess');
         }
-
     }
 
-    public function ProdukImage(Request $request){
+    public function ProdukImage(Request $request)
+    {
         $dec_id = $this->safe_decode(Crypt::decryptString($request->enc_id));
         $product = Product::where('id', $dec_id)->first();
         $image = ProductImg::where('id_product', $dec_id)->get();
 
-        if($image){
+        if ($image) {
             foreach ($image as $key => $img) {
-                $image_data='';
-                $image_data.='<div class="col-3" id="detail-image">';
-                $image_data.='<img class="img-fluid" src="'.url($img->product_img).'" style="width: 150px;">';
-                $image_data.='</div>';
+                $image_data = '';
+                $image_data .= '<div class="col-3" id="detail-image">';
+                $image_data .= '<img class="img-fluid" src="' . url($img->product_img) . '" style="width: 150px;">';
+                $image_data .= '</div>';
 
                 $img->aksi = $image_data;
             }
-        }else{
+        } else {
             $image_data = '';
-            $image_data.='<h2>Produk Tidak Mempunyai Image</h2>';
+            $image_data .= '<h2>Produk Tidak Mempunyai Image</h2>';
             $img->aksi = $image_data;
         }
 
@@ -508,56 +538,56 @@ class ProdukController extends Controller
     }
 
 
-    public function delete_qrcode(Request $request){
+    public function delete_qrcode(Request $request)
+    {
         $dec_id = $this->safe_decode(Crypt::decryptString($request->enc_id));
         $product = ProductBarcode::where('product_id', $dec_id)->where('id', $request->qrcode)->delete();
-        if($product){
+        if ($product) {
             return response()->json([
-                'success'=>TRUE,
-                'message'=>'QR Code Berhasil Dihapus.'
+                'success' => TRUE,
+                'message' => 'QR Code Berhasil Dihapus.'
             ]);
-        }else{
+        } else {
             return response()->json([
-                'success'=>FALSE,
-                'message'=>'QR Code Gagal Dihapus.'
+                'success' => FALSE,
+                'message' => 'QR Code Gagal Dihapus.'
             ]);
         }
     }
 
-    public function delete(Request $request, $enc_id){
+    public function delete(Request $request, $enc_id)
+    {
         $dec_id   = $this->safe_decode(Crypt::decryptString($enc_id));
         $produk    = Product::find($dec_id);
         $produk_img = ProductImg::where('id_product', $dec_id)->get();
         $produk_qrcode = ProductBarcode::where('product_id', $dec_id)->get();
-        $cekexist    = PurchaseOrderDetail::where('product_id',$dec_id)->first();
-        if($produk){
-            if($cekexist) {
-                return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Produk sudah digunakan untuk Transaksi, Silahkan hapus dahulu Transaksi yang terkait dengan Produk ini.']);
-            }else{
-                if($produk->product_cover != 'web/images/no_img.png'){
-                    if(file_exists($produk->product_cover)){
+        $cekexist    = PurchaseOrderDetail::where('product_id', $dec_id)->first();
+        if ($produk) {
+            if ($cekexist) {
+                return response()->json(['status' => "failed", 'message' => 'Gagal menghapus data. Produk sudah digunakan untuk Transaksi, Silahkan hapus dahulu Transaksi yang terkait dengan Produk ini.']);
+            } else {
+                if ($produk->product_cover != 'web/images/no_img.png') {
+                    if (file_exists($produk->product_cover)) {
                         unlink($produk->product_cover);
                     }
                 }
                 foreach ($produk_img as $key => $img) {
-                    if(file_exists($img->product_img)){
-                      unlink($img->product_img);
+                    if (file_exists($img->product_img)) {
+                        unlink($img->product_img);
                     }
                 }
                 foreach ($produk_qrcode as $key => $qrcode) {
-                    if(file_exists($qrcode->barcode)){
-                      unlink($qrcode->barcode);
+                    if (file_exists($qrcode->barcode)) {
+                        unlink($qrcode->barcode);
                     }
                 }
                 $detele_img = ProductImg::where('id_product', $dec_id)->delete();
                 $detele_qrcode = ProductBarcode::where('product_id', $dec_id)->delete();
                 $produk->delete();
-                return response()->json(['status'=>"success",'message'=>'Data Berhasil dihapus.']);
+                return response()->json(['status' => "success", 'message' => 'Data Berhasil dihapus.']);
             }
-
-        }else{
-            return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Silahkan ulangi kembali.']);
+        } else {
+            return response()->json(['status' => "failed", 'message' => 'Gagal menghapus data. Silahkan ulangi kembali.']);
         }
     }
-
 }
