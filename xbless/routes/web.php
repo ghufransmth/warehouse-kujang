@@ -50,6 +50,7 @@ use App\Http\Controllers\ReportBarangMasukController;
 use App\Http\Controllers\ReportReturRevisiController;
 use App\Http\Controllers\ReportTandaTerimaController;
 use App\Http\Controllers\DraftPurchaseController;
+use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\ReportBarangKeluarController;
 use App\Http\Controllers\ReportRekapInvoiceController;
 use App\Http\Controllers\TokoController;
@@ -573,5 +574,11 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
        Route::get('/',[TokoController::class, 'index'])->name('index');
        Route::post('/getdata',[TokoController::class, 'getData'])->name('getdata');
        Route::get('/tambah', [TokoController::class, 'tambah'])->name('tambah');
+    });
+
+    Route::group(['prefix' => 'pembelian', 'as' => 'pembelian.'], function(){
+
+        Route::get('/',[PembelianController::class, 'index'])->name('index');
+        Route::get('/tambah',[PembelianController::class, 'tambah'])->name('tambah');
     });
 });

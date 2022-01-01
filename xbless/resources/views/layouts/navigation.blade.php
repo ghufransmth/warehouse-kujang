@@ -150,10 +150,10 @@
                 <a href="#"><i class="fa fa-cart-plus"></i> <span class="nav-label">Pembelian Produk</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse">
                     @can('order.index')
-                    <li class=""><a href="{{ route('order.index') }}">List Pembelian Produk</a></li>
+                    <li class=""><a href="{{ route('pembelian.index') }}">List Pembelian Produk</a></li>
                     @endcan
                     @can('purchaseorder.tambah')
-                        <li class=""><a href="{{ route('purchaseorder.tambah') }}">Tambah Pembelian Produk</a></li>
+                        <li class=""><a href="{{ route('pembelian.tambah') }}">Tambah Pembelian Produk</a></li>
                     @endcan
                 </ul>
             </li>
