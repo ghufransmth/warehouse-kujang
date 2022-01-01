@@ -52,10 +52,7 @@ use App\Http\Controllers\ReportTandaTerimaController;
 use App\Http\Controllers\DraftPurchaseController;
 use App\Http\Controllers\ReportBarangKeluarController;
 use App\Http\Controllers\ReportRekapInvoiceController;
-
-
-
-
+use App\Http\Controllers\TokoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -569,5 +566,12 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/getdata', [TandaTerimaController::class, 'getData'])->name('getdata');
             Route::post('/proses_tanda_terima', [TandaTerimaController::class, 'process_tanda_terima'])->name('proses_tanda_terima');
         });
+    });
+
+      // Toko
+    Route::group(['prefix' => 'toko', 'as' => 'toko.'], function(){
+       Route::get('/',[TokoController::class, 'index'])->name('index');
+       Route::post('/getdata',[TokoController::class, 'getData'])->name('getdata');
+       Route::get('/tambah', [TokoController::class, 'tambah'])->name('tambah');
     });
 });

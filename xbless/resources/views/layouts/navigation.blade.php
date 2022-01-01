@@ -90,8 +90,8 @@
             <li>
                 <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">Master Toko</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse">
-                    <li class=""><a href="{{ route('member.index') }}">List Toko</a></li>
-                    <li class=""><a href="{{ route('member.tambah') }}">Tambah Toko</a></li>
+                    <li class=""><a href="{{ route('toko.index') }}">List Toko</a></li>
+                    <li class=""><a href="{{ route('toko.tambah') }}">Tambah Toko</a></li>
                 </ul>
             </li>
             {{-- ACL JANGAN LUPA @done 0311 --}}
