@@ -78,30 +78,13 @@ class ProdukController extends Controller
     {
         $satuan = Satuan::all();
         $selectedsatuan = "";
-        $brand = Brand::all();
-        $selectedbrand = "";
         $kategori = Kategori::all();
         $selectedkategori = "";
-        $engine = Engine::all();
-        $selectedengine = "";
-        $liner = $this->isLiner();
-        $selectedliner = "";
-
-        $status = $this->status();
-        $selectedstatus = "1";
         return view('backend/menuproduk/produk/form', compact(
             'satuan',
             'selectedsatuan',
-            'brand',
-            'selectedbrand',
             'kategori',
             'selectedkategori',
-            'engine',
-            'selectedengine',
-            'liner',
-            'selectedliner',
-            'status',
-            'selectedstatus'
         ));
     }
 

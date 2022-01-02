@@ -29,7 +29,7 @@ class LoginController extends Controller
                   session(['profile' => $this->defaultProfilePhotoUrl($akun->fullname)]);
                   session(['namaakses' => $akun->namaAkses?$akun->namaAkses->name:'']);
                   Auth::login($akun);
-                  return redirect()->route('purchaseorder.index');
+                  return redirect()->route('beranda.index');
               } else {
                   $desc = 'Login gagal. Cek kembali email dan password Anda.';
                   return redirect()->route('manage.login')->with('message', ['status'=>'danger','desc'=>$desc]);

@@ -9,9 +9,10 @@ class Kategori extends Model
 {
     use HasFactory;
 
-    protected $table = 'category_product';
+    protected $table = 'tbl_kategori';
     
     public function product(){
         return $this->belongsToMany(Product::class);
     }
 }
+    
