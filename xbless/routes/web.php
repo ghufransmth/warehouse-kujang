@@ -604,7 +604,9 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::group(['prefix' => 'toko', 'as' => 'toko.'], function(){
        Route::get('/',[TokoController::class, 'index'])->name('index');
        Route::post('/getdata',[TokoController::class, 'getData'])->name('getdata');
+       Route::post('/simpan',[TokoController::class, 'simpan'])->name('simpan');
        Route::get('/tambah', [TokoController::class, 'tambah'])->name('tambah');
+       Route::get('/edit/{id}', [TokoController::class, 'ubah'])->name('edit');
     });
 
     Route::group(['prefix' => 'pembelian', 'as' => 'pembelian.'], function(){

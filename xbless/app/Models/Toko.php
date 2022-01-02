@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Toko extends Model
 {
     use HasFactory;
-    protected $table = 'tbl_toko';
+    protected $table = 'toko';
 }

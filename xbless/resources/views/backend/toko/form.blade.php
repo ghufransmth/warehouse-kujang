@@ -39,9 +39,10 @@
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             <input type="hidden" name="enc_id" id="enc_id" value="{{isset($toko)? $enc_id : ''}}">
 
-                            <div class="form-group row"><label class="col-sm-2 col-form-label">Kode Toko *</label>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Kode Toko *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($toko)? $toko->name : ''}}">
+                                    <input type="text" class="form-control" id="kode" name="kode" value="{{isset($toko)? $toko->name : ''}}">
                                 </div>
                             </div>
 
@@ -53,53 +54,75 @@
 
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Nik *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($toko)? $toko->name : ''}}">
+                                    <input type="text" class="form-control" id="nik" name="nik" value="{{isset($toko)? $toko->name : ''}}">
                                 </div>
                             </div>
 
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Alamat *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($toko)? $toko->name : ''}}">
+                                    <input type="text" class="form-control" id="alamat" name="alamat" value="{{isset($toko)? $toko->name : ''}}">
                                 </div>
                             </div>
 
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Telp *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($toko)? $toko->name : ''}}">
+                                    <input type="text" class="form-control" id="telp" name="telp" value="{{isset($toko)? $toko->name : ''}}">
                                 </div>
                             </div>
 
-                            option bukan input
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Distrik *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($toko)? $toko->name : ''}}">
+                                    <select name="distrik" id="distrik" class="form-control select2">
+                                        <option value="">Pilih Distrik</option>
+                                        @foreach($distrik as $key => $value)
+                                            <option value="{{ $value->id }}"{{ $selecteddistrik == $value->id ? 'selected=""' : '' }}>{{ ucfirst($value->name) }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
 
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Tipe Channel *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($toko)? $toko->name : ''}}">
+                                    <select name="tipe_chanel" id="tipe_chanel" class="form-control select2">
+                                        <option value="">Pilih Tipe Channel</option>
+                                        @foreach($tipe_chanel as $key => $value)
+                                            <option value="{{ $value->id }}"{{ $selectedtipechanel == $value->id ? 'selected=""' : '' }}>{{ ucfirst($value->name) }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
 
-                            option bukan input
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Jenis Toko *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($toko)? $toko->name : ''}}">
+                                    <select name="jenis_toko" id="jenis_toko" class="form-control select2">
+                                        <option value="">Pilih Jenis Toko</option>
+                                        @foreach($jenis_toko as $key => $value)
+                                            <option value="{{ $value->id }}"{{ $selectedjenistoko == $value->id ? 'selected=""' : '' }}>{{ ucfirst($value->name) }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
 
-                            option bukan input
+
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Jenis Bayar *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($toko)? $toko->name : ''}}">
+                                    <select name="payment" id="payment" class="form-control select2">
+                                        <option value="">Pilih Jenis Pembayaran</option>
+                                        @foreach($payments as $key => $value)
+                                            <option value="{{ $value->id }}"{{ $selectedpayment == $value->id ? 'selected=""' : '' }}>{{ ucfirst($value->name) }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
 
-                            antara option dan input
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Kategori *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($toko)? $toko->name : ''}}">
+                                    <select name="kategori" id="kategori" class="form-control select2">
+                                        <option value="">Pilih Kategori Toko</option>
+                                        @foreach($kategori_toko as $key => $value)
+                                            <option value="{{ $value->id }}"{{ $selectedkategoritoko == $value->id ? 'selected=""' : '' }}>{{ ucfirst($value->name) }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
 
@@ -160,7 +183,7 @@
                 })
             $.ajax({
                 type: 'POST',
-                url : "{{route('brand.simpan')}}",
+                url : "{{route('toko.simpan')}}",
                 headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                 data:dataFile,
                 processData: false,
@@ -172,7 +195,7 @@
                 success: function(data){
                     if (data.success) {
                         Swal.fire('Yes',data.message,'info');
-                        window.location.replace('{{route("brand.index")}}');
+                        window.location.replace('{{route("toko.index")}}');
                     } else {
                         Swal.fire('Ups',data.message,'info');
                     }

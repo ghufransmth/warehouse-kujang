@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Toko;
+use App\Models\KategoriToko;
+use App\Models\Payment;
+use App\Models\Distrik;
+use App\Models\TypeChannel;
+use App\Models\JenisToko;
 use DB;
 use Auth;
 
@@ -68,7 +73,7 @@ class TokoController extends Controller
           $action.="";
           $action.="<div class='btn-group'>";
         //   if($request->user()->can('brand.ubah')){
-            $action.='<a href="#" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
+            $action.='<a href="'.route('toko.edit',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
         //   }
         //   if($request->user()->can('toko.hapus')){
             $action.='<a href="#" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
@@ -105,85 +110,125 @@ class TokoController extends Controller
     }
 
     public function tambah(){
-        return view('backend/toko/form');
+
+        $distrik = Distrik::all();
+        $selecteddistrik = "";
+        $tipe_chanel = TypeChannel::all();
+        $selectedtipechanel = "";
+        $payments = Payment::all();
+        $selectedpayment = "";
+        $jenis_toko = JenisToko::all();
+        $selectedjenistoko = "";
+        $kategori_toko = KategoriToko::all();
+        $selectedkategoritoko = "";
+        return view('backend/toko/form',compact('distrik','selecteddistrik','tipe_chanel','selectedtipechanel','payments','selectedpayment','jenis_toko','selectedjenistoko','kategori_toko','selectedkategoritoko'));
     }
 
-    // public function simpan(Request $req){
-    //     $enc_id     = $req->enc_id;
+    public function simpan(Request $req){
+        // return $req->all();
+        $enc_id     = $req->enc_id;
 
-    //     if ($enc_id != null) {
-    //       $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
-    //     }else{
-    //       $dec_id = null;
-    //     }
+        if ($enc_id != null) {
+          $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        }else{
+          $dec_id = null;
+        }
 
-    //     $cek_nama = $this->cekExist('name',$req->name,$dec_id);
-    //     if(!$cek_nama){
-    //         $json_data = array(
-    //           "success"         => FALSE,
-    //           "message"         => 'Mohon maaf. Nama Brand sudah terdaftar pada sistem.'
-    //         );
-    //     }else {
-    //       if($enc_id){
-    //         $brand = Toko::find($dec_id);
-    //         $brand->name        = $req->name;
-    //         $brand->save();
-    //         if($brand) {
-    //           $json_data = array(
-    //                 "success"         => TRUE,
-    //                 "message"         => 'Data berhasil diperbarui.'
-    //              );
-    //         }else{
-    //            $json_data = array(
-    //                 "success"         => FALSE,
-    //                 "message"         => 'Data gagal diperbarui.'
-    //              );
-    //         }
-    //       }else{
-    //         $brand              = new Toko;
-    //         $brand->name        = $req->name;
-    //         $brand->save();
-    //         if($brand) {
-    //           $json_data = array(
-    //                 "success"         => TRUE,
-    //                 "message"         => 'Data berhasil ditambahkan.'
-    //           );
-    //         }else{
-    //           $json_data = array(
-    //                 "success"         => FALSE,
-    //                 "message"         => 'Data gagal ditambahkan.'
-    //           );
-    //         }
+        $cek_nama = $this->cekExist('name',$req->name,$dec_id);
+        if(!$cek_nama){
+            $json_data = array(
+              "success"         => FALSE,
+              "message"         => 'Mohon maaf. Nama Brand sudah terdaftar pada sistem.'
+            );
+        }else {
+          if($enc_id){
+            $toko = Toko::find($dec_id);
+            $toko->code        = $req->kode;
+            $toko->name        = $req->name;
+            $toko->nik        = $req->nik;
+            $toko->alamat        = $req->alamat;
+            $toko->telp        = $req->telp;
+            $toko->distrik_id        = $req->distrik;
+            $toko->tipe_chanel_id        = $req->tipe_chanel;
+            $toko->jenis_toko_id        = $req->jenis_toko;
+            $toko->payment_id        = $req->payment;
+            $toko->kategori_toko_id        = $req->kategori;
+            $toko->save();
+            if($toko) {
+              $json_data = array(
+                    "success"         => TRUE,
+                    "message"         => 'Data berhasil diperbarui.'
+                 );
+            }else{
+               $json_data = array(
+                    "success"         => FALSE,
+                    "message"         => 'Data gagal diperbarui.'
+                 );
+            }
+          }else{
+            $toko              = new Toko;
+            $toko->code        = $req->kode;
+            $toko->name        = $req->name;
+            $toko->nik        = $req->nik;
+            $toko->alamat        = $req->alamat;
+            $toko->telp        = $req->telp;
+            $toko->distrik_id        = $req->distrik;
+            $toko->tipe_chanel_id        = $req->tipe_chanel;
+            $toko->jenis_toko_id        = $req->jenis_toko;
+            $toko->payment_id        = $req->payment;
+            $toko->kategori_toko_id        = $req->kategori;
+            $toko->save();
+            if($toko) {
+              $json_data = array(
+                    "success"         => TRUE,
+                    "message"         => 'Data berhasil ditambahkan.'
+              );
+            }else{
+              $json_data = array(
+                    "success"         => FALSE,
+                    "message"         => 'Data gagal ditambahkan.'
+              );
+            }
 
-    //       }
-    //     }
-    //     return json_encode($json_data);
-    // }
+          }
+        }
+        return json_encode($json_data);
+    }
 
-    // public function ubah($enc_id){
-    //     $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
-    //     if ($dec_id) {
-    //       $brand = Toko::find($dec_id);
-    //       return view('backend/toko/form',compact('enc_id','toko'));
-    //     } else {
-    //         return view('errors/noaccess');
-    //     }
-    // }
+    public function ubah($enc_id){
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        if ($dec_id) {
+          $toko = Toko::find($dec_id);
+          $distrik = Distrik::all();
+          $tipe_chanel = TypeChannel::all();
+          $payments = Payment::all();
+          $jenis_toko = JenisToko::all();
+          $kategori_toko = KategoriToko::all();
+          $selecteddistrik = $distrik->distrik_id;
+          $selectedtipechanel = $tipe_chanel->tipe_chanel_id;
+          $selectedpayment = $payments->payment->payment_id;
+          $selectedjenistoko = $jenis_toko->jenis_toko_id;
+          $selectedkategoritoko = $kategori_toko->kategori_toko_id;
+          return view('backend/toko/form',compact('enc_id','toko','distrik','selecteddistrik','tipe_chanel','selectedtipechanel','payments','selectedpayment','jenis_toko','selectedjenistoko','kategori_toko','selectedkategoritoko'));
+        } else {
+            return view('errors/noaccess');
+        }
+    }
 
-    // public function hapus(Request $request, $enc_id){
-    //     $dec_id   = $this->safe_decode(Crypt::decryptString($enc_id));
-    //     $toko    = Toko::find($dec_id);
-    //     $cekexist = Product::where('toko_id',$dec_id)->first();
-    //     if($toko) {
-    //       if($cekexist) {
-    //         return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Brand sudah direlasikan dengan Produk, Silahkan hapus dahulu Produk yang terkait dengan Brand ini.']);
-    //       }else{
-    //         $toko->delete();
-    //         return response()->json(['status'=>"success",'message'=>'Data Berhasil dihapus.']);
-    //       }
-    //     }else {
-    //         return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Silahkan ulangi kembali.']);
-    //     }
-    // }
+    public function hapus(Request $request, $enc_id){
+        $dec_id   = $this->safe_decode(Crypt::decryptString($enc_id));
+        $toko    = Toko::find($dec_id);
+        $cekexist = Product::where('toko_id',$dec_id)->first();
+        if($toko) {
+          if($cekexist) {
+            return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Brand sudah direlasikan dengan Produk, Silahkan hapus dahulu Produk yang terkait dengan Brand ini.']);
+          }else{
+            $toko->delete();
+            return response()->json(['status'=>"success",'message'=>'Data Berhasil dihapus.']);
+          }
+        }else {
+            return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Silahkan ulangi kembali.']);
+        }
+    }
 
 }
