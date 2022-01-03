@@ -135,10 +135,11 @@
             @endcan
             {{-- ACL JANGAN LUPA --}} -->
         <li>
-            <a href="#"><i class="fa fa-dollar"></i> <span class="nav-label"> Pembayaran</span><span
+            <a href="#"><i class="fa fa-dollar"></i> <span class="nav-label"> Keuangan</span><span
                     class="fa arrow"></span></a>
             <ul class="nav nav-second-level collapse">
-                <li><a href="{{ route('keuangan.index') }}">Keuangan</a></li>
+                <li><a href="{{ route('pembayaran.index') }}">Transaksi Pembayaran</a></li>
+                <li><a href="{{ route('keuangan.index') }}">Transaksi Keuangan</a></li>
             </ul>
         </li>
         @can('menupurchaserder.index')

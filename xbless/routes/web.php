@@ -569,6 +569,11 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/getdata', [TandaTerimaController::class, 'getData'])->name('getdata');
             Route::post('/proses_tanda_terima', [TandaTerimaController::class, 'process_tanda_terima'])->name('proses_tanda_terima');
         });
+        Route::group(['prefix' => 'pembayaran', 'as' => 'pembayaran.'], function () {
+            Route::get('/', function () {
+                return view('backend/pembayaran/pembayaran/index');
+            })->name('index');
+        });
         Route::group(['prefix' => 'keuangan', 'as' => 'keuangan.'], function () {
             Route::get('/', function () {
                 return view('backend/pembayaran/keuangan/index');
