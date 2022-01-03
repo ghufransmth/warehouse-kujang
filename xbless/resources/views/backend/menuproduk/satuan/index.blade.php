@@ -2,27 +2,33 @@
 @section('title', 'Satuan')
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-lg-10">
+    <div class="col-lg-9">
         <h2>Satuan</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-              <a href="{{route('produk.index')}}">Produk</a>
+                <a href="{{route('produk.index')}}">Produk</a>
             </li>
             <li class="breadcrumb-item active">
                 <a>Satuan</a>
             </li>
         </ol>
     </div>
-    <div class="col-lg-2">
-        <br/>
-        <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Refresh Data"><span class="fa fa-refresh"></span></button>
+    <div class="col-lg-3">
+        <br />
+        <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+            title="Refresh Data"><span class="fa fa-refresh"></span></button>
         @can('satuan.tambah')
-        <a href="{{ route('satuan.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
+        <a href="{{ route('satuan.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top"
+            title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
         @endcan
-      </div>
+        @can('produk.tambah')
+        <a href="{{ route('produk.tambah')}}" class="btn btn-warning" data-toggle="tooltip" data-placement="top"
+            title="Import Data">Import &nbsp; <span class="fa fa-file-excel-o"></span></a>
+        @endcan
+    </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
     <div class="row">
@@ -31,8 +37,8 @@
                 <div class="ibox-content">
 
                     <div class="table-responsive">
-                        <table id="table1" class="table display table-bordered">
-                        <thead>
+                    <table id="table1" class="table p-0 table-hover table-striped">
+                        <thead class="text-white text-center bg-primary">
                         <tr>
                             <th  width="10px;">No</th>
                             <th>Nama Satuan</th>
@@ -72,7 +78,7 @@
            "select" : true,
            "responsive": true,
            "stateSave"  : true,
-           "dom": '<"html5">lftip',
+           "dom": '<"html5buttons"B>lTfgitp',
            "ajax":{
                     "url": "{{ route("satuan.getdata") }}",
                     "dataType": "json",
@@ -100,6 +106,26 @@
                  "className" : "text-center",
                },
            ],
+           buttons: [
+                    {
+                        extend: 'copy',
+                        exportOptions: {
+                            orthogonal: 'export'
+                        },
+                        header: true,
+                        footer: true,
+                        className: 'btn btn-outline btn-default btn-lg',
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            orthogonal: 'export'
+                        },
+                        header: true,
+                        footer: true,
+                        className: 'btn btn-block bg-primary text-white',
+                    }
+                ],
            responsive: true,
            language: {
                search: "_INPUT_",
@@ -197,5 +223,5 @@
 
            }
        });
- </script>
+</script>
 @endpush

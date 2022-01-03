@@ -11,7 +11,7 @@
             </li>
             <li class="breadcrumb-item">
                 <a href="{{route('produk.index')}}">Produk</a>
-              </li>
+            </li>
             <li class="breadcrumb-item">
                 <a href="{{route('satuan.index')}}">Satuan</a>
             </li>
@@ -21,21 +21,21 @@
         </ol>
     </div>
     <div class="col-lg-2">
-        <br/>
-        <a class="btn btn-white btn-sm" href="{{route('satuan.index')}}">Kembali</a>
+        <br />
+        <a class="btn btn-success btn-sm" href="{{route('satuan.index')}}"><span class="fa fa-angle-left"></span> &nbsp;
+            Kembali</a>
     </div>
 </div>
-    <div class="wrapper wrapper-content animated fadeInRight">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="ibox ">
-                    <div class="ibox-title">
-                        @if(session('message'))
-                            <div class="alert alert-{{session('message')['status']}}">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            {{ session('message')['desc'] }}
-                            </div>
-                        @endif
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    @if(session('message'))
+                    <div class="alert alert-{{session('message')['status']}}">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        {{ session('message')['desc'] }}
                     </div>
                     <div class="ibox-content">
                         <form id="submitData">
@@ -52,15 +52,15 @@
                                     <input type="number" class="form-control" id="qty" name="qty" value="{{isset($satuan)? $satuan->qty : ''}}">
                                 </div>
                             </div>
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group row">
-                                <div class="col-sm-4 col-sm-offset-2">
-                                    <a class="btn btn-white btn-sm" href="{{route('satuan.index')}}">Batal</a>
-                                    <button class="btn btn-primary btn-sm" type="submit" id="simpan">Simpan</button>
-                                </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group row">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white btn-sm" href="{{route('satuan.index')}}">Batal</a>
+                                <button class="btn btn-primary btn-sm" type="submit" id="simpan">Simpan</button>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
