@@ -346,7 +346,6 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::get('/data_pembayaran/{menu?}/{id?}', [PembayaranController::class, 'data_pembayaran'])->name('data_pembayaran');
         Route::post('/input_pengiriman', [PembayaranController::class, 'input_pengiriman'])->name('input_pengiriman');
         Route::post('/simpan_pengiriman', [PembayaranController::class, 'simpan_pengiriman'])->name('simpan_pengiriman');
-
     });
 
     //retur revisi
@@ -363,7 +362,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
 
     Route::group(['prefix' => '/manage'], function () {
         // EXPEDISI VIA
-        Route::group(['prefix' => 'type_channel', 'as' => 'type_channel.'], function(){
+        Route::group(['prefix' => 'type_channel', 'as' => 'type_channel.'], function () {
             Route::get('manage/type_channel', [TypeChannelController::class, 'index'])->name('index');
             Route::post('manage/type_channel/getdata', [TypeChannelController::class, 'getData'])->name('getdata');
             Route::get('manage/type_channel/tambah', [TypeChannelController::class, 'tambah'])->name('tambah');
@@ -569,6 +568,11 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/list_menu', [TandaTerimaController::class, 'menu_data_list'])->name('menu_data_list');
             Route::post('/getdata', [TandaTerimaController::class, 'getData'])->name('getdata');
             Route::post('/proses_tanda_terima', [TandaTerimaController::class, 'process_tanda_terima'])->name('proses_tanda_terima');
+        });
+        Route::group(['prefix' => 'keuangan', 'as' => 'keuangan.'], function () {
+            Route::get('/', function () {
+                return view('backend/pembayaran/keuangan/index');
+            })->name('index');
         });
     });
 });
