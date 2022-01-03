@@ -18,23 +18,23 @@
         </ol>
     </div>
     <div class="col-lg-2">
-        <br />
-        <a class="btn btn-success btn-sm" href="{{route('produk.index')}}"><span class="fa fa-angle-left"></span> &nbsp;
-            Kembali</a>
+        <br/>
+        <a class="btn btn-white btn-sm" href="{{route('produk.index')}}">Kembali</a>
     </div>
 </div>
-<div class="wrapper wrapper-content animated fadeInRight">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="ibox ">
-                <div class="ibox-title">
-                    @if(session('message'))
-                    <div class="alert alert-{{session('message')['status']}}">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        {{ session('message')['desc'] }}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox ">
+                    <div class="ibox-title">
+                        @if(session('message'))
+                            <div class="alert alert-{{session('message')['status']}}">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            {{ session('message')['desc'] }}
+                            </div>
+                        @endif
+
                     </div>
-<<<<<<< HEAD
                     <div class="ibox-content">
                         <form id="submitData">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -44,12 +44,12 @@
 
                                 <label class="col-sm-2 col-form-label">Kode Produk *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="kode_produk" name="kode_produk" value="{{isset($produk)? $produk->kode_product : ''}}">
+                                    <input type="text" class="form-control" id="kode_produk" name="kode_produk" value="{{isset($produk)? $produk->product_code : ''}}">
                                 </div>
                             </div>
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Nama Produk *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($produk)? $produk->nama : ''}}">
+                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($produk)? $produk->product_name : ''}}">
                                 </div>
                             </div>
 
@@ -80,119 +80,8 @@
                                     <input type="text" class="form-control" id="satuan_value" name="satuan_value" min="1"  value="{{isset($produk)? $produk->satuan_value : ''}}">
                                 </div> --}}
                             </div>
-=======
-                    @endif
 
-                </div>
-                <div class="ibox-content">
-                    <form id="submitData">
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="enc_id" id="enc_id" value="{{isset($produk)? $enc_id : ''}}">
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">SKU *</label>
-                            <div class="col-sm-10 error-text">
-                                <input type="text" class="form-control" id="sku" name="sku" value="">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Produk *</label>
-                            <div class="col-sm-10 error-text">
-                                <input type="text" class="form-control" id="produk" name="produk" value="">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Harga Beli *</label>
-                            <div class="col-sm-10 error-text">
-                                <input type="text" class="form-control" id="harga_beli" name="harga_beli" value="">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Harga Jual *</label>
-                            <div class="col-sm-10 error-text">
-                                <input type="text" class="form-control" id="harga_jual" name="harga_jual" value="">
-                            </div>
-                        </div>
-                        <div class="form-group row"><label class="col-sm-2 col-form-label">Kategori*</label>
-                            <div class="col-sm-10 error-text">
 
-                                <select name="liner_id" class="form-control select2" id="liner_id">
-                                    <option></option>
-                                    <option value="kategori1">Kategori 1</option>
-                                    <option value="kategori2">Kategori 2</option>
-                                    <option value="kategori3">Kategori 3</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Isi Perkarton *</label>
-                            <div class="col-sm-10 error-text">
-                                <input type="text" class="form-control" id="isi_perkarton" name="isi_perkarton"
-                                    value="">
-                            </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        {{-- <div class="form-group row"><label class="col-sm-2 col-form-label">Apakah Produk ini ada kode
-                                bayangan ? *</label>
-                            <div class="col-sm-10 error-text">
-                                <select name="liner_id" class="form-control select2" id="liner_id">
-                                    @foreach($liner as $key => $row)
-                                    <option value="{{$key}}" {{ $selectedliner == $key ? 'selected=""' : '' }}>
-                        {{ucfirst($row)}}</option>
-                        @endforeach
-                        </select>
-                </div>
-            </div>
-            <div class="form-group row" id="cekprodukshadow"
-                style="{{isset($produk)? ($produk->is_liner=='Y' ? 'display:show':'display:none'): 'display: none'}} ">
-                <label class="col-sm-2 col-form-label">Kode Produk Shadow *</label>
-                <div class="col-sm-10 error-text">
-                    <input type="text" class="form-control" id="kode_produk_shadow" name="kode_produk_shadow"
-                        value="{{isset($produk)? $produk->product_code_shadow : ''}}">
-                </div>
-
-            </div>
-            <div class="hr-line-dashed"></div>
-            <div class="form-group row">
-
-                <label class="col-sm-2 col-form-label">Kode Produk *</label>
-                <div class="col-sm-10 error-text">
-                    <input type="text" class="form-control" id="kode_produk" name="kode_produk"
-                        value="{{isset($produk)? $produk->product_code : ''}}">
-                </div>
-            </div>
-            <div class="form-group row"><label class="col-sm-2 col-form-label">Nama Produk *</label>
-                <div class="col-sm-10 error-text">
-                    <input type="text" class="form-control" id="name" name="name"
-                        value="{{isset($produk)? $produk->product_name : ''}}">
-                </div>
-            </div>
->>>>>>> 8cd37eabf8df7ced6ce6f70c121996619abf0071
-
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Kategori *</label>
-                <div class="col-sm-10 error-text">
-                    <select name="kategori_id" class="form-control select2" id="kategori_id">
-                        <option value="">Pilih Kategori</option>
-                        @foreach($kategori as $key => $row)
-                        <option value="{{$row->id}}" {{ $selectedkategori == $row->id ? 'selected=""' : '' }}>
-                            {{ucfirst($row->cat_name)}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="form-group row"><label class="col-sm-2 col-form-label">Brand Produk *</label>
-                <div class="col-sm-10 error-text">
-                    <select name="brand_id" class="form-control select2" id="brand_id">
-                        <option value="">Pilih Brand</option>
-                        @foreach($brand as $key => $row)
-                        <option value="{{$row->id}}" {{ $selectedbrand == $row->id ? 'selected=""' : '' }}>
-                            {{ucfirst($row->name)}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-<<<<<<< HEAD
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Harga Beli *</label>
                                 <div class="col-sm-10 error-text">
                                     <input type="text" class="form-control" id="harga_beli" name="harga_beli" value="{{isset($produk)? number_format($produk->harga_beli,0,',','.') : ''}}">
@@ -205,7 +94,7 @@
                             </div>
 
 
-                            {{-- <div class="form-group row"><label class="col-sm-2 col-form-label">Status *</label>
+                            <div class="form-group row"><label class="col-sm-2 col-form-label">Status *</label>
                                 <div class="col-sm-10 error-text">
                                     <select name="status" class="form-control" id="status">
                                         @foreach($status as $key => $row)
@@ -213,7 +102,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div> --}}
+                            </div>
                             <div class="hr-line-dashed"></div>
                             <div class="form-group row">
                                 <div class="col-sm-4 col-sm-offset-2">
@@ -222,178 +111,12 @@
                                 </div>
                             </div>
                         </form>
-=======
-            <div class="form-group row"><label class="col-sm-2 col-form-label">Engine Produk *</label>
-                <div class="col-sm-10 error-text">
-                    <select name="engine_id" class="form-control select2" id="engine_id">
-                        <option value="">Pilih Engine</option>
-                        @foreach($engine as $key => $row)
-                        <option value="{{$row->id}}" {{ $selectedengine == $row->id ? 'selected=""' : '' }}>
-                            {{ucfirst($row->name)}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
 
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Min Stock *</label>
-                <div class="col-sm-3 error-text">
-                    <input type="text" class="form-control" id="stock_min" name="stock_min" min="0"
-                        value="{{isset($produk)? $produk->stock_min : '0'}}">
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Satuan Produk *</label>
-                <div class="col-sm-3 error-text">
-                    <select name="satuan_id" class="form-control select2" id="satuan_id">
-                        <option value="">Pilih Satuan</option>
-                        @foreach($satuan as $key => $row)
-                        <option value="{{$row->id}}" {{ $selectedsatuan == $row->id ? 'selected=""' : '' }}>
-                            {{ucfirst($row->name)}}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <label class="col-sm-2 col-form-label">Isi Produk (Pcs) *</label>
-                <div class="col-sm-3 error-text">
-                    <input type="text" class="form-control" id="satuan_value" name="satuan_value" min="1"
-                        value="{{isset($produk)? $produk->satuan_value : ''}}">
-                </div>
-            </div>
-
-
-            <div class="form-group row"><label class="col-sm-2 col-form-label">Harga Produk *</label>
-                <div class="col-sm-10 error-text">
-                    <input type="text" class="form-control" id="harga_produk" name="harga_produk"
-                        value="{{isset($produk)? number_format($produk->normal_price,0,',','.') : ''}}">
-                </div>
-            </div>
-            <div class="form-group row"><label class="col-sm-2 col-form-label">Harga Export *</label>
-                <div class="col-sm-10 error-text">
-                    <input type="text" class="form-control" id="harga_export" name="harga_export"
-                        value="{{isset($produk)? number_format($produk->export_price,0,',','.') : ''}}">
-                </div>
-            </div>
->>>>>>> 8cd37eabf8df7ced6ce6f70c121996619abf0071
-
-            <div class="form-group row"><label class="col-sm-2 col-form-label">Deskripsi *</label>
-                <div class="col-sm-10 error-text">
-                    <textarea class="form-control" id="deskripsi"
-                        name="deskripsi">{{isset($produk)? $produk->product_desc : ''}}</textarea>
-                </div>
-            </div>
-            <div class="form-group row"><label class="col-sm-2 col-form-label">QR 1 </label>
-                <div class="col-sm-3 error-text">
-                    <input type="text-area" class="form-control" id="qr1" name="qr1"
-                        value="{{isset($produk)? (count($img_qrcode) > 0 ?$img_qrcode[0]->barcode : ''):''}}">
-                </div>
-                <label class="col-sm-1 col-form-label">Isi 1 </label>
-                <div class="col-sm-3 error-text">
-                    <input type="number" class="form-control" id="isi1" name="isi1" min="0"
-                        value="{{isset($produk)? (count($img_qrcode) > 0 ?$img_qrcode[0]->isi : ''):''}}">
-                </div>
-                @if($produk ?? '')
-                <div class="col-sm-1">
-                    <button class="btn btn-danger btn-sm"
-                        name="{{isset($produk)? (count($img_qrcode) > 0 ?$img_qrcode[0]->id : ''):''}}"
-                        id="delete_qrcode_1" onclick="delete_qrcode(1,this.name)">delete</button>
-                </div>
-                @endif
-            </div>
-            <div class="form-group row"><label class="col-sm-2 col-form-label">QR 2 </label>
-                <div class="col-sm-3 error-text">
-                    <input type="text-area" class="form-control" id="qr2" name="qr2"
-                        value="{{isset($produk)? (count($img_qrcode) == 2 ?$img_qrcode[1]->barcode : ''):''}}">
-                </div>
-                <label class="col-sm-1 col-form-label">Isi 2 </label>
-                <div class="col-sm-3 error-text">
-                    <input type="number" class="form-control" id="isi2" name="isi2" min="0"
-                        value="{{isset($produk)? (count($img_qrcode) == 2 ?$img_qrcode[1]->isi : ''):''}}">
-                </div>
-                @if($produk ?? '')
-                <div class="col-sm-1">
-                    <button class="btn btn-danger btn-sm"
-                        name="{{isset($produk)? (count($img_qrcode) == 2 ?$img_qrcode[1]->id : ''):''}}"
-                        id="delete_qrcode_2" onclick="delete_qrcode(2,this.name)">delete</button>
-                </div>
-                @endif
-            </div>
-
-            <div class="form-group row"><label class="col-sm-2 col-form-label">Gambar Cover </label>
-                <div class="col-sm-3 error-text">
-                    <input type="file" class="form-control" id="cover" name="cover"
-                        value="{{isset($produk)? $produk->product_cover : ''}}" accept="image/*">
-                </div>
-            </div>
-            <div class="form-group row"><label class="col-sm-2 col-form-label"></label>
-                <div class="col-sm-10 error-text">
-                    @if($produk->product_cover ?? '')
-                    <img src="{{ isset($produk)? url($produk->product_cover) :'' }}" alt="" id="photo_preview"
-                        alt="photo_preview" style="max-height: 150px;">
-                    @else
-                    <img src="" alt="" id="photo_preview" alt="photo_preview" style="max-height: 150px;">
-                    @endif
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Detail Photo </label>
-                <div class="col-sm-10 error-text">
-                    <input type="file" class="form-control" id="product_img" value="{{ old('produt_img') }}"
-                        name="product_img[]" multiple accept="image/*" />
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label"></label>
-                <div class="col-sm-10 error-text" id="img-produk-dlt">
-                    @if($produk->product_cover ?? '')
-                    <div class="row">
-                        @foreach($img_produk as $key => $product_img)
-                        <div class="col-3">
-
-                            <input type="checkbox" id="{{ isset($produk)? url($product_img->id) :'' }}" name="imgproduk"
-                                value="{{ $product_img->id }}">
-                            <img src="{{ isset($produk)? url($product_img->product_img) :'' }}" alt=""
-                                id="photo_preview" alt="photo_preview" style="max-height: 150px;">
-                        </div>
-                        @endforeach
                     </div>
-                    @else
-                    <img src="" alt="" id="photo_preview" alt="photo_preview" style="max-height: 150px;">
-                    @endif
-                    <br />
-                    {!! isset($produk)?'<span style="color:red;font-size:12px;"><i>Centang Checkbox untuk
-                            menghapus
-                            gambar</i></span>':'' !!}
-
                 </div>
             </div>
-
-            <div class="form-group row"><label class="col-sm-2 col-form-label">Status *</label>
-                <div class="col-sm-10 error-text">
-                    <select name="status" class="form-control" id="status">
-                        @foreach($status as $key => $row)
-                        <option value="{{$key}}" {{ $selectedstatus == $key ? 'selected=""' : '' }}>
-                            {{ucfirst($row)}}
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div> --}}
-            <div class="hr-line-dashed"></div>
-            <div class="form-group row">
-                <div class="col-sm-4 col-sm-offset-2">
-                    <a class="btn btn-white btn-sm" href="{{route('produk.index')}}">Batal</a>
-                    <button class="btn btn-primary btn-sm" type="submit" id="simpan">Simpan</button>
-                </div>
-            </div>
-            </form>
-
         </div>
     </div>
-</div>
-</div>
-</div>
 
 @endsection
 @push('scripts')
@@ -457,9 +180,7 @@
                 }
             }
         });
-        $(".select2").select2({
-            placeholder: "Pilih Kategori",
-            allowClear: true});
+        $(".select2").select2({allowClear: true});
 
         $('#submitData').validate({
             rules: {
