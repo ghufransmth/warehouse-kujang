@@ -192,8 +192,9 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     //Adj Stock
     Route::get('manage/adjstok', [StokAdjController::class, 'index'])->name('adjstok.index');
     Route::post('manage/adjstok/getdata', [StokAdjController::class, 'getData'])->name('adjstok.getdata');
-    Route::post('manage/adjstok/getdataproduct', [StokAdjController::class, 'getDataProduct'])->name('adjstok.getdataproduct');
+    Route::get('manage/adjstok/getdataproduct/{id?}', [StokAdjController::class, 'getDataProduct'])->name('adjstok.getdataproduct');
     Route::post('manage/adjstok/simpan', [StokAdjController::class, 'simpan'])->name('adjstok.simpan');
+    Route::get('manage/adjstok/tambah', [StokAdjController::class, 'tambah'])->name('adjstok.tambah');
 
     //History Adj Stock
     Route::get('manage/historyadjstok', [StokAdjHistoryController::class, 'index'])->name('historyadjstok.index');
@@ -347,7 +348,6 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::get('/data_pembayaran/{menu?}/{id?}', [PembayaranController::class, 'data_pembayaran'])->name('data_pembayaran');
         Route::post('/input_pengiriman', [PembayaranController::class, 'input_pengiriman'])->name('input_pengiriman');
         Route::post('/simpan_pengiriman', [PembayaranController::class, 'simpan_pengiriman'])->name('simpan_pengiriman');
-
     });
 
     //retur revisi
@@ -599,6 +599,16 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/list_menu', [TandaTerimaController::class, 'menu_data_list'])->name('menu_data_list');
             Route::post('/getdata', [TandaTerimaController::class, 'getData'])->name('getdata');
             Route::post('/proses_tanda_terima', [TandaTerimaController::class, 'process_tanda_terima'])->name('proses_tanda_terima');
+        });
+        Route::group(['prefix' => 'pembayaran', 'as' => 'pembayaran.'], function () {
+            Route::get('/', function () {
+                return view('backend/pembayaran/pembayaran/index');
+            })->name('index');
+        });
+        Route::group(['prefix' => 'keuangan', 'as' => 'keuangan.'], function () {
+            Route::get('/', function () {
+                return view('backend/pembayaran/keuangan/index');
+            })->name('index');
         });
     });
 });

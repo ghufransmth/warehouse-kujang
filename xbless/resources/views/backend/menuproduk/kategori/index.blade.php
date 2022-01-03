@@ -38,23 +38,22 @@
                 <div class="ibox-content">
 
                     <div class="table-responsive">
-                        <table id="table1" class="table p-0 table-hover table-striped">
-                            <thead class="text-white text-center bg-primary">
-                                <tr>
-                                    <th width="10px;">No</th>
-                                    <th>Kode</th>
-                                    <th>Nama</th>
-                                    <th>Gambar</th>
-                                    <th class="text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <table id="table1" class="table p-0 table-hover table-striped">
+                        <thead class="text-white text-center bg-primary">
+                        <tr>
+                            <th width="10px;">No</th>
+                            <th>Kode</th>
+                            <th>Nama</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                        </thead>
+                        <tbody>
 
-                            </tbody>
-                            <tfoot class="text-white text-center bg-primary">
+                        </tbody>
+                        <tfoot>
 
-                            </tfoot>
-                        </table>
+                        </tfoot>
+                    </table>
                     </div>
 
                 </div>
@@ -99,11 +98,6 @@
 
                { "data": "cat_code"},
                { "data": "cat_name"},
-               { "data": "cat_image",
-                 "render": function(data, type, row){
-                     return '<img src="'+data+'" width="100" class = "img-thumbnail"/>'
-                 }
-                },
                { "data" : "action",
                  "orderable" : false,
                  "className" : "text-center",

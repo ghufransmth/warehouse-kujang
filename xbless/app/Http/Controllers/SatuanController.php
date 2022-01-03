@@ -56,7 +56,8 @@ class SatuanController extends Controller
         }
          if($search) {
           $satuan->where(function ($query) use ($search) {
-                  $query->orWhere('name','LIKE',"%{$search}%");
+                  $query->orWhere('nama','LIKE',"%{$search}%");
+                  $query->orWhere('qty','LIKE',"%{$search}%");
           });
         }
         $totalData = $satuan->get()->count();
@@ -90,7 +91,8 @@ class SatuanController extends Controller
 
           $satuan->no             = $key+$page;
           $satuan->id             = $satuan->id;
-          $satuan->name           = $satuan->name;
+          $satuan->name           = $satuan->nama;
+          $satuan->qty            = $satuan->qty;
           $satuan->action         = $action;
         }
 
@@ -127,7 +129,7 @@ class SatuanController extends Controller
           $dec_id = null;
         }
 
-        $cek_satuan = $this->cekExist('name',$req->name,$dec_id);
+        $cek_satuan = $this->cekExist('nama',$req->name,$dec_id);
         if(!$cek_satuan){
             $json_data = array(
               "success"         => FALSE,
@@ -136,10 +138,10 @@ class SatuanController extends Controller
         }else {
           if($enc_id){
             $satuan = Satuan::find($dec_id);
-            $satuan->name        = $req->name;
-            $satuan->flag_jenis  = $req->jenis_satuan;
-            $satuan->save();
-            if ($satuan) {
+            $satuan->nama        = $req->name;
+            $satuan->qty        = $req->qty;
+
+            if ($satuan->save()) {
               $json_data = array(
                     "success"         => TRUE,
                     "message"         => 'Data berhasil diperbarui.'
@@ -152,10 +154,10 @@ class SatuanController extends Controller
             }
           }else{
             $satuan              = new Satuan;
-            $satuan->name        = $req->name;
-            $satuan->flag_jenis  = $req->jenis_satuan;
-            $satuan->save();
-            if($satuan) {
+            $satuan->nama        = $req->name;
+            $satuan->qty  = $req->qty;
+
+            if($satuan->save()) {
               $json_data = array(
                     "success"         => TRUE,
                     "message"         => 'Data berhasil ditambahkan.'

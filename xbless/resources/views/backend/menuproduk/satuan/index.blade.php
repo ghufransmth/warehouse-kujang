@@ -37,21 +37,22 @@
                 <div class="ibox-content">
 
                     <div class="table-responsive">
-                        <table id="table1" class="table p-0 table-hover table-striped">
-                            <thead class="text-white text-center bg-primary">
-                                <tr>
-                                    <th width="10px;">No</th>
-                                    <th>Nama Satuan</th>
-                                    <th class="text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <table id="table1" class="table p-0 table-hover table-striped">
+                        <thead class="text-white text-center bg-primary">
+                        <tr>
+                            <th  width="10px;">No</th>
+                            <th>Nama Satuan</th>
+                            <th>QTY</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                        </thead>
+                        <tbody>
 
-                            </tbody>
-                            <tfoot class="text-white text-center bg-primary">
+                        </tbody>
+                        <tfoot>
 
-                            </tfoot>
-                        </table>
+                        </tfoot>
+                    </table>
                     </div>
 
                 </div>
@@ -95,6 +96,9 @@
                },
 
                { "data": "name",
+                 "className" : "text-left",
+               },
+               { "data": "qty",
                  "className" : "text-left",
                },
                { "data" : "action",
