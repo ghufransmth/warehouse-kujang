@@ -51,7 +51,7 @@ class MemberController extends Controller
            if($search) {
             $querydb->where(function ($query) use ($search) {
                     $query->orWhere('uniq_code','LIKE',"%{$search}%");
-                    $query->orWhere('name','LIKE',"%{$search}%");
+                    $query->orWhere('name','LIKE',"%{$search}%"); 
                     $query->orWhere('npwp','LIKE',"%{$search}%");
                     $query->orWhere('phone','LIKE',"%{$search}%");
                     $query->orWhere('username','LIKE',"%{$search}%");
@@ -75,18 +75,18 @@ class MemberController extends Controller
             if($request->user()->can('member.detail')){
               $action.='<a href="'.route('member.detail',$enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Detail" data-original-title="Show"><i class="fa fa-eye"></i> View</a>&nbsp';
             }
-            if($request->user()->can('member.simpan_member_sales')){
-              $action.='<a href="#modal_sales"  id="addsales" role="button" data-id="'.$member->id.'" data-toggle="modal" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip salesdata"><i class="fa fa-users"></i> Sales</a>&nbsp';
-            }
+            // if($request->user()->can('member.simpan_member_sales')){
+            //   $action.='<a href="#modal_sales"  id="addsales" role="button" data-id="'.$member->id.'" data-toggle="modal" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip salesdata"><i class="fa fa-users"></i> Sales</a>&nbsp';
+            // }
             if($request->user()->can('member.ubah')){
               $action.='<a href="'.route('member.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
             }
             if($request->user()->can('member.hapus')){
               $action.='<a href="#" onclick="deleteData(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
             }
-            if($request->user()->can('member.resetapp')){
-                $action.='<a href="#" onclick="resetApp(this,\''.$key.'\')" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Reset APP"><i class="fa fa-mobile"></i> Reset APP</a>&nbsp;';
-            }
+            // if($request->user()->can('member.resetapp')){
+            //     $action.='<a href="#" onclick="resetApp(this,\''.$key.'\')" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Reset APP"><i class="fa fa-mobile"></i> Reset APP</a>&nbsp;';
+            // }
             $action.="</div>";
 
             $member->no             = $key+$page;
