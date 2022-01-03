@@ -35,19 +35,20 @@
                 <div class="ibox-content">
                     <div class="table-responsive">
                         <table id="table1" class="table p-0 table-hover table-striped">
-                            <thead class="text-white text-center bg-primary">
-                                <tr>
-                                    <th width="5%;">No</th>
-                                    <th>No SKU</th>
-                                    <th>Nama Produk</th>
-                                    <th>Harga Beli</th>
-                                    <th>Harga Jual</th>
-                                    <th>Kategori</th>
-                                    <th>Isi Karton</th>
-                                    <th class="text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                        <thead class="text-white text-center bg-primary">
+                        <tr>
+                            <th width="10px;">No</th>
+                            <th>Kode</th>
+                            <th>Nama</th>
+                            <th>Kategori</th>
+                            <th>Satuan</th>
+                            <th>Harga Beli</th>
+                            <th>Harga Jual</th>
+                            {{-- <th>Cover</th> --}}
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                        </thead>
+                        <tbody>
 
                             </tbody>
                             <tfoot class="text-white text-center bg-primary">
@@ -125,16 +126,11 @@
                { "data": "satuan",
                  "className" : "text-left",
                },
-               { "data": "harga",
+               { "data": "harga_beli",
                  "className" : "text-right",
                },
-               { "data": "is_liner",
-                 "className" : "text-left",
-               },
-               { "data": "cover",
-                 "render": function(data, type, row){
-                     return '<img src="'+data+'" width="100" class = "img-thumbnail"/>'
-                 }
+               { "data": "harga_jual",
+                 "className" : "text-right",
                },
                { "data" : "action",
                  "orderable" : false,

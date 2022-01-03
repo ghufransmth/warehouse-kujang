@@ -59,8 +59,8 @@ class KategoriController extends Controller
         }
         if($search) {
             $kategori->where(function ($query) use ($search) {
-                    $query->orWhere('cat_code','LIKE',"%{$search}%");
-                    $query->orWhere('cat_name','LIKE',"%{$search}%");
+                    $query->orWhere('kode_kategori','LIKE',"%{$search}%");
+                    $query->orWhere('nama','LIKE',"%{$search}%");
             });
         }
         $totalData = $kategori->get()->count();
@@ -86,16 +86,17 @@ class KategoriController extends Controller
 
             $action.="</div>";
 
-            if ($category->cat_status=='1') {
+            if ($category->status=='1') {
                 $status = '<span class="label label-primary">Aktif</span>';
-            }else if($category->cat_status=='0'){
+            }else if($category->status=='0'){
                 $status = '<span class="label label-warning">Tidak Aktif</span>';
             }
                 $category->no             = $key+$page;
+                $category->cat_code       = $category->kode_kategori;
                 $category->id             = $category->id;
-                $category->cat_name       = $category->cat_name;
-                $category->cat_sub_name   = $category->cat_sub_name;
-                $category->cat_image      = url($category->cat_image);
+                $category->cat_name       = $category->nama;
+                // $category->cat_sub_name   = $category->cat_sub_name;
+                // $category->cat_image      = url($category->cat_image);
                 $category->status         = $status;
                 $category->action         = $action;
             }
@@ -124,25 +125,25 @@ class KategoriController extends Controller
 
     public function simpan(Request $req){
         $enc_id     = $req->enc_id;
-        $dir = 'web/images/category/';
+        // $dir = 'web/images/category/';
         if ($enc_id != null) {
           $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         }else{
           $dec_id = null;
         }
 
-        if (!file_exists($dir)) {
-            mkdir($dir, 0777, true);
-            chmod($dir, 0777);
-        }
+        // if (!file_exists($dir)) {
+        //     mkdir($dir, 0777, true);
+        //     chmod($dir, 0777);
+        // }
 
-        if($req->file('photo') != null){
-          $fileName = date('Ymd').'_'.$req->file('photo')->getClientOriginalName();
-          $pathName = $dir.$fileName;
-        }
+        // if($req->file('photo') != null){
+        //   $fileName = date('Ymd').'_'.$req->file('photo')->getClientOriginalName();
+        //   $pathName = $dir.$fileName;
+        // }
 
-        $cek_cat_code = $this->cekExist('cat_code',$req->cat_code,$dec_id);
-        $cek_kategori = $this->cekExist('cat_name',$req->cat_name,$dec_id);
+        $cek_cat_code = $this->cekExist('kode_kategori',$req->cat_code,$dec_id);
+        $cek_kategori = $this->cekExist('nama',$req->cat_name,$dec_id);
         if(!$cek_cat_code){
             $json_data = array(
               "success"         => FALSE,
@@ -156,67 +157,27 @@ class KategoriController extends Controller
         }else {
           if($enc_id){
             $kategori = Kategori::find($dec_id);
-
-            if($req->file('photo') != null){
-              if(file_exists($kategori->cat_image)){
-                  unlink($kategori->cat_image);
-              }
-
-              $req->file('photo')->move($dir, $fileName);
-              chmod($pathName, 0775);
-              $kategori->parent_id       = 0;
-              $kategori->cat_code        = $req->cat_code;
-              $kategori->cat_name        = $req->cat_name;
-              $kategori->cat_sub_name    = $req->cat_sub_name;
-              $kategori->cat_image       = $pathName;
-              $kategori->cat_status      = 1;
-              $kategori->save();
-              if ($kategori) {
-                $json_data = array(
-                      "success"         => TRUE,
-                      "message"         => 'Data berhasil diperbarui.'
-                   );
-              }else{
-                 $json_data = array(
-                      "success"         => FALSE,
-                      "message"         => 'Data gagal diperbarui.'
-                   );
-              }
+            $kategori->kode_kategori        = $req->cat_code;
+            $kategori->nama        = $req->cat_name;
+            $kategori->status      = 1;
+            if ($kategori->save()) {
+            $json_data = array(
+                    "success"         => TRUE,
+                    "message"         => 'Data berhasil diperbarui.'
+                );
             }else{
-              $kategori->parent_id       = 0;
-              $kategori->cat_code        = $req->cat_code;
-              $kategori->cat_name        = $req->cat_name;
-              $kategori->cat_sub_name    = $req->cat_sub_name;
-              $kategori->cat_status      = 1;
-              $kategori->save();
-              if ($kategori) {
                 $json_data = array(
-                      "success"         => TRUE,
-                      "message"         => 'Data berhasil diperbarui.'
-                   );
-              }else{
-                 $json_data = array(
-                      "success"         => FALSE,
-                      "message"         => 'Data gagal diperbarui.'
-                   );
-              }
+                    "success"         => FALSE,
+                    "message"         => 'Data gagal diperbarui.'
+                );
             }
           }else{
+            $kategori                   = new Kategori;
+            $kategori->kode_kategori    = $req->cat_code;
+            $kategori->nama             = $req->cat_name;
+            $kategori->status      = 1;
 
-            $kategori                  = new Kategori;
-            $kategori->parent_id       = 0;
-            $kategori->cat_code        = $req->cat_code;
-            $kategori->cat_name        = $req->cat_name;
-            $kategori->cat_sub_name    = $req->cat_sub_name;
-            if($req->file('photo') != null){
-              $req->file('photo')->move($dir, $fileName);
-              chmod($pathName, 0775);
-              $kategori->cat_image       = $pathName;
-            }
-
-            $kategori->cat_status      = 1;
-            $kategori->save();
-            if($kategori) {
+            if($kategori->save()) {
               $json_data = array(
                     "success"         => TRUE,
                     "message"         => 'Data berhasil ditambahkan.'
@@ -249,7 +210,7 @@ class KategoriController extends Controller
     public function delete(Request $request, $enc_id){
         $dec_id      = $this->safe_decode(Crypt::decryptString($enc_id));
         $kategori    = Kategori::find($dec_id);
-        $cekexist    = Product::where('category_id',$dec_id)->first();
+        $cekexist    = Product::where('id_kategori',$dec_id)->first();
         if($kategori) {
           if($cekexist) {
             return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Kategori sudah direlasikan dengan Produk, Silahkan hapus dahulu Produk yang terkait dengan Kategori ini.']);

@@ -25,11 +25,11 @@ class LoginController extends Controller
               if(Hash::check($password,$akun->password))  {
                   $akun->last_login_at = now();
                   $akun->last_login_ip = $request->ip();
-                  $akun->save();             
+                  $akun->save();
                   session(['profile' => $this->defaultProfilePhotoUrl($akun->fullname)]);
                   session(['namaakses' => $akun->namaAkses?$akun->namaAkses->name:'']);
                   Auth::login($akun);
-                  return redirect()->route('purchaseorder.index');
+                  return redirect()->route('manage.beranda');
               } else {
                   $desc = 'Login gagal. Cek kembali email dan password Anda.';
                   return redirect()->route('manage.login')->with('message', ['status'=>'danger','desc'=>$desc]);
@@ -44,7 +44,7 @@ class LoginController extends Controller
         }else{
             $desc = 'Login gagal. Akun tidak ditemukan di sistem kami.';
             return redirect()->route('manage.login')->with('message', ['status'=>'danger','desc'=>$desc]);
-        }      
+        }
     }
     // logout::fungsi logout
     public function logout(Request $request){

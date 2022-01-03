@@ -37,29 +37,20 @@
                                 aria-hidden="true">&times;</span></button>
                         {{ session('message')['desc'] }}
                     </div>
-                    @endif
-                </div>
-                <div class="ibox-content">
-                    <form id="submitData">
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="enc_id" id="enc_id" value="{{isset($satuan)? $enc_id : ''}}">
-                        <div class="form-group row"><label class="col-sm-2 col-form-label">Nama Satuan *</label>
-                            <div class="col-sm-10 error-text">
-                                <input type="text" class="form-control" id="name" name="name"
-                                    value="{{isset($satuan)? $satuan->name : ''}}">
+                    <div class="ibox-content">
+                        <form id="submitData">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="enc_id" id="enc_id" value="{{isset($satuan)? $enc_id : ''}}">
+                            <div class="form-group row"><label class="col-sm-2 col-form-label">Nama Satuan *</label>
+                                <div class="col-sm-10 error-text">
+                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($satuan)? $satuan->nama: ''}}">
+                                </div>
                             </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group row"><label class="col-sm-2 col-form-label">Jenis Satuan *</label>
-                            <div class="col-sm-10 error-text">
-                                <select name="jenis_satuan" class="form-control" id="jenis_satuan">
-                                    <option value="">Jenis Satuan</option>
-                                    @foreach($jenis as $key => $row)
-                                    <option value="{{$key}}" {{ $selectedjenis == $key ? 'selected=""' : '' }}>
-                                        {{ucfirst($row)}}</option>
-                                    @endforeach
-
-                                </select>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group row"><label class="col-sm-2 col-form-label">Isi per PCS *</label>
+                                <div class="col-sm-10 error-text">
+                                    <input type="number" class="form-control" id="qty" name="qty" value="{{isset($satuan)? $satuan->qty : ''}}">
+                                </div>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
@@ -74,7 +65,6 @@
             </div>
         </div>
     </div>
-</div>
 
 @endsection
 @push('scripts')
@@ -85,7 +75,7 @@
                 name:{
                     required: true
                 },
-                jenis_satuan:{
+                qty:{
                     required: true
                 }
             },
@@ -93,8 +83,8 @@
                 name: {
                     required: "Nama Satuan tidak boleh kosong"
                 },
-                jenis_satuan: {
-                    required: "Jenis Satuan wajib dipilih salah satu"
+                qty: {
+                    required: "Isi per PCS tidak boleh kosong"
                 },
             },
             errorElement: 'span',

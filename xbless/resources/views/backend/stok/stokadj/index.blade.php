@@ -19,6 +19,11 @@
         </ol>
     </div>
     <div class="col-lg-2">
+        <br/>
+        <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Refresh Data"><span class="fa fa-refresh"></span></button>
+        @can('produk.tambah')
+          <a href="{{ route('produk.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
+        @endcan
     </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
@@ -31,8 +36,10 @@
                         <thead>
                         <tr>
                             <th width="5%">No</th>
-                            <th>Perusahaan</th>
-                            <th>Gudang</th>
+                            <th>Product</th>
+                            <th>Stock Penjualan (PCS)</th>
+                            <th>Stock BS (PCS)</th>
+                            <th>Aksi</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -48,8 +55,62 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modal_product" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-header">
+                <b><span id="title_modal">Tes</span></b>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <table class="table-resonsive">
+                <tr>
+                    <td>No</td>
+                    <td>Product</td>
+                    <td>Kategori</td>
+                    <td>Satuan.PCS</td>
+                </tr>
+                <tr>
+                    <td>No</td>
+                    <td>Product</td>
+                    <td>Kategori</td>
+                    <td>Satuan.PCS</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <table class="table display table-bordered">
+                    <thead>
+                        <th>No</th>
+                        <th>Product</th>
+                        <th>Kategori</th>
+                        <th id='stock_product1' class="text-center">Stock Penjualan <br> Satuan.PCS</th>
+                        <th id='stock_product2' class="text-center">Stock BS <br> Satuan.PCS</th>
+                    </thead>
+                    <tbody id="body_product">
 
-    <div class="modal fade" id="modal_stok"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2050 !important;">
+                    </tbody>
+
+                </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    {{-- <div class="modal fade" id="modal_stok"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2050 !important;">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -97,7 +158,7 @@
 
             </div>
         </div>
-    </div>
+    </div> --}}
 
 </div>
 
@@ -143,8 +204,10 @@
                  "data": "no",
                  "orderable" : false,
                },
-               { "data": "name"},
-               { "data": "gudang"}
+               { "data": "product"},
+               { "data": "stock_penjualan"},
+               { "data": "stock_bs"},
+               { "data": "action"},
            ],
            responsive: true,
            language: {
@@ -221,103 +284,175 @@
            }
        });
 
+       function showproduct(id){
+        //    console.log(id);
 
-        function loadProduct(){
-            var keyword             = $('#key_value').val();
-            var perusahaanid        = $('#perusahaan_id').val();
-            var perusahaangudangid  = $('#perusahaangudang_id').val();
-            var gudangid            = $('#gudang_id').val();
-
-            if(keyword==''){
-                Swal.fire('Ups','Silahkan masukan kode / nama produk terlebih dahulu','info');
-                return false;
-            }else if(perusahaanid==''){
-                Swal.fire('Ups','Silahkan Pilih Perusahaan terlebih dahulu','info');
-                return false;
-            }
-            else if(gudangid==''){
-                Swal.fire('Ups','Silahkan Pilih Gudang terlebih dahulu','info');
-                return false;
-            }else{
-                tableproduct= $('#tableproduct').DataTable({
-                        "processing": true,
-                        "serverSide": true,
-                        "pageLength": 50,
-                        "select" : true,
-                        "dom": 'rt',
-                        "destroy": true,
-                        "ajax":{
-                            "url": "{{ route("adjstok.getdataproduct") }}",
-                            "dataType": "json",
-                            "type": "POST",
-                            data: function ( d ) {
-                                d._token= "{{csrf_token()}}";
-                                d.perusahaanid = perusahaanid;
-                                d.perusahaangudangid= perusahaangudangid;
-                                d.gudangid= gudangid;
-                                d.keyword = keyword;
-                            },
-                        },
-                        "columns": [
-                            {
-                                "data": "no",
-                                "orderable" : false,
-                            },
-                            { "data": "code", "orderable" : false,},
-                            { "data": "name", "orderable" : false,},
-                            { "data": "stok", "orderable" : false, "className" : "text-center",},
-                            { "data": "jumlahadj",  "orderable" : false, "className" : "text-center",},
-                            { "data": "catatan",  "orderable" : false,}
-                        ],
-                        drawCallback: function(settings) {
-                            $(".qty").TouchSpin({
-                                min:-1000000,
-                                max: 1000000,
-                                buttondown_class: 'btn btn-white',
-                                buttonup_class: 'btn btn-white'
-                            });
-                             $(".qty").on('change', function(){
-                                var parent = $(this).closest('tr');
-                                var stok   = parseFloat($('.price',parent).text());
-                                var qty    = parseFloat($('.qty',parent).val());
-
-                                if(isNaN(stok) || stok == 0 ){
-                                    if(qty > 0){
-                                      var jumlah_output = qty;
-                                    }
-                                    else{
-                                      var jumlah_output = 0;
-                                    }
-                                }else if (qty < "-" + stok) {
-
-                                    var jumlah_output = "-" + stok;
-                                } else {
-                                    var jumlah_output = qty;
-                                }
-
-                                $('.qty',parent).val(jumlah_output);
-                            });
-                        },
-                        responsive: true,
-                        language: {
-                            search: "_INPUT_",
-                            searchPlaceholder: "Cari data",
-                            emptyTable: "Tidak ada data",
-                            info: "Menampilkan data _START_ sampai _END_ dari _MAX_ data.",
-                            infoEmpty: "Menampilkan 0 sampai 0 dari 0 data.",
-                            lengthMenu: "Tampilkan _MENU_ data per halaman",
-                            loadingRecords: "Loading...",
-                            processing: "Mencari...",
-                            paginate: {
-                                "first": "Pertama",
-                                "last": "Terakhir",
-                                "next": "Sesudah",
-                                "previous": "Sebelum"
-                            },
+           $.ajax({
+                type: 'GET',
+                url : "{{route('adjstok.getdataproduct', [null])}}/"+id,
+                headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+                processData: false,
+                contentType: false,
+                dataType: "json",
+                beforeSend: function () {
+                    Swal.showLoading();
+                },
+                success: function(data){
+                    if (data.success) {
+                        Swal.close();
+                        // Swal.fire('Yes',data.message,'success');
+                        // $('#modal_stok').modal('hide');
+                        // $('#key_value').val("");
+                        console.log(data.data)
+                        if(data.data.getproduct.getsatuan.id == 1){
+                            $('stock_product1').html('Stock Penjualan<br> PCS');
+                            $('stock_product2').html('Stock BS <br> PCS');
+                            $('#body_product').html('<tr>'
+                                        +'<td>1</td>'
+                                        +'<td>'+data.data.getproduct.nama+'</td>'
+                                        +'<td>'+data.data.getproduct.getkategori.nama+'</td>'
+                                        +'<td>'+data.data.stock_penjualan+'</td>'
+                                        +'<td>'+data.data.stock_bs+'</td>'
+                                    +'</tr>')
+                        }else{
+                            var satuan_stock_penjualan = (data.data.stock_penjualan / data.data.getproduct.getsatuan.qty);
+                            if(satuan_stock_penjualan >= 1){
+                                var pcs_stock_penjualan = (data.data.stock_penjualan % data.data.getproduct.getsatuan.qty)
+                            }else{
+                                var satuan_stock_penjualan = 0;
+                                var pcs_stock_penjualan = data.data.stock_penjualan;
+                            }
+                            var satuan_stock_bs = (data.data.stock_bs / data.data.getproduct.getsatuan.qty);
+                            if(satuan_stock_bs >= 1){
+                                var pcs_stock_bs = (data.data.stock_bs % data.data.getproduct.getsatuan.qty)
+                            }else{
+                                var satuan_stock_bs = 0;
+                                var pcs_stock_bs = data.data.stock_bs;
+                            }
+                            $('#body_product').html('<tr>'
+                                        +'<td>1</td>'
+                                        +'<td>'+data.data.getproduct.nama+'</td>'
+                                        +'<td>'+data.data.getproduct.getkategori.nama+'</td>'
+                                        +'<td>'+data.data.getproduct.getsatuan.nama+' = '+satuan_stock_penjualan+'<br> PCS = '+pcs_stock_penjualan+'</td>'
+                                        +'<td>'+data.data.getproduct.getsatuan.nama+' = '+satuan_stock_bs+'<br> PCS = '+pcs_stock_bs+'</td>'
+                                    +'</tr>')
                         }
-                });
-            }
-        }
+                        $('#exampleModal').modal('show');
+                    } else {
+                        Swal.fire('Ups',data.message,'error');
+                        return false;
+                    }
+
+                },
+                complete: function () {
+                        Swal.hideLoading();
+                        $('#simpanAdj').removeClass("disabled");
+
+                },
+                error: function(data){
+                        $('#simpanAdj').removeClass("disabled");
+                        Swal.hideLoading();
+                        console.log(data);
+                }
+        });
+        //
+       }
+        // function loadProduct(){
+        //     var keyword             = $('#key_value').val();
+        //     var perusahaanid        = $('#perusahaan_id').val();
+        //     var perusahaangudangid  = $('#perusahaangudang_id').val();
+        //     var gudangid            = $('#gudang_id').val();
+
+        //     if(keyword==''){
+        //         Swal.fire('Ups','Silahkan masukan kode / nama produk terlebih dahulu','info');
+        //         return false;
+        //     }else if(perusahaanid==''){
+        //         Swal.fire('Ups','Silahkan Pilih Perusahaan terlebih dahulu','info');
+        //         return false;
+        //     }
+        //     else if(gudangid==''){
+        //         Swal.fire('Ups','Silahkan Pilih Gudang terlebih dahulu','info');
+        //         return false;
+        //     }else{
+        //         tableproduct= $('#tableproduct').DataTable({
+        //                 "processing": true,
+        //                 "serverSide": true,
+        //                 "pageLength": 50,
+        //                 "select" : true,
+        //                 "dom": 'rt',
+        //                 "destroy": true,
+        //                 "ajax":{
+        //                     "url": "{{ route("adjstok.getdataproduct") }}",
+        //                     "dataType": "json",
+        //                     "type": "POST",
+        //                     data: function ( d ) {
+        //                         d._token= "{{csrf_token()}}";
+        //                         d.perusahaanid = perusahaanid;
+        //                         d.perusahaangudangid= perusahaangudangid;
+        //                         d.gudangid= gudangid;
+        //                         d.keyword = keyword;
+        //                     },
+        //                 },
+        //                 "columns": [
+        //                     {
+        //                         "data": "no",
+        //                         "orderable" : false,
+        //                     },
+        //                     { "data": "code", "orderable" : false,},
+        //                     { "data": "name", "orderable" : false,},
+        //                     { "data": "stok", "orderable" : false, "className" : "text-center",},
+        //                     { "data": "jumlahadj",  "orderable" : false, "className" : "text-center",},
+        //                     { "data": "catatan",  "orderable" : false,}
+        //                 ],
+        //                 drawCallback: function(settings) {
+        //                     $(".qty").TouchSpin({
+        //                         min:-1000000,
+        //                         max: 1000000,
+        //                         buttondown_class: 'btn btn-white',
+        //                         buttonup_class: 'btn btn-white'
+        //                     });
+        //                      $(".qty").on('change', function(){
+        //                         var parent = $(this).closest('tr');
+        //                         var stok   = parseFloat($('.price',parent).text());
+        //                         var qty    = parseFloat($('.qty',parent).val());
+
+        //                         if(isNaN(stok) || stok == 0 ){
+        //                             if(qty > 0){
+        //                               var jumlah_output = qty;
+        //                             }
+        //                             else{
+        //                               var jumlah_output = 0;
+        //                             }
+        //                         }else if (qty < "-" + stok) {
+
+        //                             var jumlah_output = "-" + stok;
+        //                         } else {
+        //                             var jumlah_output = qty;
+        //                         }
+
+        //                         $('.qty',parent).val(jumlah_output);
+        //                     });
+        //                 },
+        //                 responsive: true,
+        //                 language: {
+        //                     search: "_INPUT_",
+        //                     searchPlaceholder: "Cari data",
+        //                     emptyTable: "Tidak ada data",
+        //                     info: "Menampilkan data _START_ sampai _END_ dari _MAX_ data.",
+        //                     infoEmpty: "Menampilkan 0 sampai 0 dari 0 data.",
+        //                     lengthMenu: "Tampilkan _MENU_ data per halaman",
+        //                     loadingRecords: "Loading...",
+        //                     processing: "Mencari...",
+        //                     paginate: {
+        //                         "first": "Pertama",
+        //                         "last": "Terakhir",
+        //                         "next": "Sesudah",
+        //                         "previous": "Sebelum"
+        //                     },
+        //                 }
+        //         });
+        //     }
+        // }
        function manageStock(e,key,perusahaangudang_id,gudang_id,gudang_name){
            var data = table.row(key).data();
            $('#modal_stok').modal('show');
