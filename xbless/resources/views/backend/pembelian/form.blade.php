@@ -77,20 +77,24 @@
                         </div>
 
                         <div class="hr-line-dashed"></div>
-                        <div class="form-group row">
+                        {{-- <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Pilih Produk *</label>
-                            <div class="col-sm-6 error-text">
+                            <div class="col-sm-6 error-text"> --}}
                                 {{-- <select name="product_id" class="form-control select2" id="product_id">
                                     <option value="">Pilih Produk</option>
                                     @foreach($product as $key => $row)
                                     <option value="{{$row->id}}"{{ $selectedsatuan == $row->id ? 'selected=""' : '' }}>{{strtoupper($row->product_code)}} | {{strtoupper($row->product_name)}}</option>
                                     @endforeach
                                 </select> --}}
-                            </div>
+                            {{-- </div> --}}
 
                             {{-- <div class="col-sm-4">
                                 <a class="btn btn-white btn-sm" href="#">Cari Dengan Nama Produk</a>
                             </div> --}}
+                        {{-- </div> --}}
+                        <div class="col-lg-2">
+                            <input type="hidden" class="mb-1 form-control" name="total_detail" id="total_detail">
+                            <a id="tambah_detail_product" class="text-white btn btn-success"><span class="fa fa-pencil-square-o"></span>Tambah</a>
                         </div>
                         <div class="hr-line-dashed"></div>
 
@@ -100,7 +104,8 @@
                                     <th>Produk</th>
                                     <th>Qty Order</th>
                                     <th>Satuan</th>
-                                    <th>Aksi</th>
+                                    <th>Tanggal Jatuh Tempo</th>
+                                    <th>#</th>
                                 </tr>
                             </thead>
                             <tbody id="show_data">
@@ -112,7 +117,7 @@
                             <div class="col-sm-4 col-sm-offset-2 float-right">
                                 <!-- <a class="btn btn-white btn-sm" href="{{route('pembelian.index')}}">Batal</a> -->
                                 <button class="btn btn-primary btn-sm" type="submit" id="simpan">Simpan</button>
-                                <button class="btn btn-success btn-sm" type="submit" id="simpanselesai">Selesai & Simpan</button>
+                                {{-- <button class="btn btn-success btn-sm" type="submit" id="simpanselesai">Selesai & Simpan</button> --}}
                             </div>
                         </div>
 
@@ -123,3 +128,21 @@
     </div>
 </div>
 @endsection
+@push('scripts')
+<script>
+    $(document).on('click', '#tambah_detail_product', function(){
+        var total_detail = $('#total_detail').val();
+        var total = 1 + parseInt(total_detail);
+        $('#total_detail').val(total);
+        $.ajax({
+            type: 'POST',
+            data: 'total='+total,
+            url: '{{ route("pembelian.tambah_detail") }}',
+            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+            success: function(msg){
+                $('#show_data').append(msg);
+            }
+        });
+   })
+</script>
+@endpush

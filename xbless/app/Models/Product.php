@@ -9,6 +9,7 @@ class Product extends Model
 {
     use HasFactory;
     protected $table = 'product';
+    // protected $table = 'tbl_product';
 
     public function perusahaan()
     {

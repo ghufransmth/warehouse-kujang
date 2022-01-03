@@ -612,6 +612,10 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::group(['prefix' => 'pembelian', 'as' => 'pembelian.'], function(){
 
         Route::get('/',[PembelianController::class, 'index'])->name('index');
+        Route::post('/getdata',[PembelianController::class, 'getData'])->name('getdata');
         Route::get('/tambah',[PembelianController::class, 'tambah'])->name('tambah');
+        Route::post('/tambah_product',[PembelianController::class, 'tambah_product'])->name('tambah_detail');
+        Route::get('/search_product', [PembelianController::class, 'search_product'])->name('search_product');
+
     });
 });
