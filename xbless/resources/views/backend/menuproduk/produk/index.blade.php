@@ -37,9 +37,9 @@
                             <th>Nama</th>
                             <th>Kategori</th>
                             <th>Satuan</th>
-                            <th>Harga (Rp.)</th>
-                            <th>Produk Liner</th>
-                            <th>Cover</th>
+                            <th>Harga Beli</th>
+                            <th>Harga Jual</th>
+                            {{-- <th>Cover</th> --}}
                             <th class="text-center">Aksi</th>
                         </tr>
                         </thead>
@@ -120,16 +120,11 @@
                { "data": "satuan",
                  "className" : "text-left",
                },
-               { "data": "harga",
+               { "data": "harga_beli",
                  "className" : "text-right",
                },
-               { "data": "is_liner",
-                 "className" : "text-left",
-               },
-               { "data": "cover",
-                 "render": function(data, type, row){
-                     return '<img src="'+data+'" width="100" class = "img-thumbnail"/>'
-                 }
+               { "data": "harga_jual",
+                 "className" : "text-right",
                },
                { "data" : "action",
                  "orderable" : false,

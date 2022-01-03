@@ -69,19 +69,15 @@ class ProdukController extends Controller
     public function tambah(){
         $satuan = Satuan::all();
         $selectedsatuan = "";
-        $brand = Brand::all();
-        $selectedbrand = "";
         $kategori = Kategori::all();
         $selectedkategori = "";
-        $engine = Engine::all();
-        $selectedengine="";
         $liner = $this->isLiner();
         $selectedliner="";
 
         $status = $this->status();
         $selectedstatus="1";
-        return view('backend/menuproduk/produk/form',compact('satuan', 'selectedsatuan', 'brand', 'selectedbrand', 'kategori',
-        'selectedkategori','engine','selectedengine','liner','selectedliner','status','selectedstatus'));
+        return view('backend/menuproduk/produk/form',compact('satuan', 'selectedsatuan', 'kategori',
+        'selectedkategori','liner','selectedliner','status','selectedstatus'));
     }
 
     public function getdata(Request $request){
@@ -99,8 +95,8 @@ class ProdukController extends Controller
         }
          if($search) {
           $product->where(function ($query) use ($search) {
-                  $query->orWhere('product_code','LIKE',"%{$search}%");
-                  $query->orWhere('product_name','LIKE',"%{$search}%");
+                  $query->orWhere('kode_product','LIKE',"%{$search}%");
+                  $query->orWhere('nama','LIKE',"%{$search}%");
           });
         }
         $totalData = $product->get()->count();
@@ -129,27 +125,25 @@ class ProdukController extends Controller
                 $action.='<a href="#" onclick="deleteProduct(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i></a>&nbsp;';
             }
             $action.="</div>";
-            $qrcode = ProductBarcode::where('product_id', $products->id)->get();
-            if(count($qrcode) > 0){
-                $qr1 ='<p>'.QrCode::size(50)->generate($qrcode[0]->barcode).'</p>';
-            }else{
-                $qr1 ='-';
-            }
-            if(count($qrcode) == 2){
-                $qr2 ='<p>'.QrCode::size(50)->generate($qrcode[1]->barcode).'</p>';
-            }else{
-                $qr2 ='-';
-            }
+            // $qrcode = ProductBarcode::where('product_id', $products->id)->get();
+            // if(count($qrcode) > 0){
+            //     $qr1 ='<p>'.QrCode::size(50)->generate($qrcode[0]->barcode).'</p>';
+            // }else{
+            //     $qr1 ='-';
+            // }
+            // if(count($qrcode) == 2){
+            //     $qr2 ='<p>'.QrCode::size(50)->generate($qrcode[1]->barcode).'</p>';
+            // }else{
+            //     $qr2 ='-';
+            // }
             $products->no             = $key+$page;
             $products->id             = $products->id;
-            $products->code           = $products->product_code;
-            $products->name           = $products->product_name." (".$products->satuan_value." Pcs)";
-            $products->satuan         = $products->getsatuan?$products->getsatuan->name:'-';
-            $products->kategori       = $products->getkategori?$products->getkategori->cat_name:'-';
-            $products->harga          = number_format($products->normal_price,0,',','.');
-            $products->cover          = url($products->product_cover);
-            $products->qr1            = $qr1;
-            $products->qr2            = $qr2;
+            $products->code           = $products->kode_product;
+            $products->name           = $products->nama;
+            $products->satuan         = $products->getsatuan?$products->getsatuan->nama:'-';
+            $products->kategori       = $products->getkategori?$products->getkategori->nama:'-';
+            $products->harga_beli          = number_format($products->harga_beli,0,',','.');
+            $products->harga_jual          = number_format($products->harga_jual,0,',','.');
             $products->action         = $action;
         }
 
@@ -171,6 +165,7 @@ class ProdukController extends Controller
         return json_encode($json_data);
     }
 
+
     public function simpan(Request $req){
         $enc_id     = $req->enc_id;
         if ($enc_id != null) {
@@ -178,46 +173,96 @@ class ProdukController extends Controller
         }else{
             $dec_id = null;
         }
-        $cek_produk = $this->cekExist('product_code',$req->kode_produk,$dec_id);
-
-        if($req->qr1 != null){
-
-            $cek_barcode = $this->cekExistBarcode('barcode',$req->qr1,$dec_id);
-            if(!$cek_barcode)
-            {
-                $json_data = array(
+        $cek_produk = $this->cekExist('kode_product',$req->kode_produk,$dec_id);
+        if(!$cek_produk)
+        {
+            return response()->json([
                 "success"         => FALSE,
-                "message"         => 'Mohon maaf. Kode QrCode 1 yang Anda masukan sudah terdaftar pada sistem.'
-                );
-                return json_encode($json_data);
+                "message"         => 'Mohon maaf. Kode Produk yang Anda masukan sudah terdaftar pada sistem.'
+            ]);
+        } else{
+            if($enc_id){
+                $product = Product::find($dec_id);
+                $product->kode_product  = $req->kode_produk;
+                $product->nama          = $req->name;
+                $product->id_kategori   = $req->kategori_id;
+                $product->id_satuan     = $req->satuan_id;
+                $product->harga_beli    = str_replace(".", "", $req->harga_beli);
+                $product->harga_jual    = str_replace(".", "", $req->harga_jual);
+                //VALIDASI
+                $cek_kode = Product::where('kode_product', $req->kode_product)->where('id', '!=', $dec_id)->first();
+                $cek_nama = Product::where('nama', $req->name)->where('id', '!=', $dec_id)->first();
+                if(isset($cek_kode)){
+                    return response()->json([
+                        "success"         => FALSE,
+                        "message"         => 'Mohon maaf. Kode Produk yang Anda masukan sudah terdaftar pada sistem.'
+                    ]);
+                }
+                if(isset($cek_nama)){
+                    return response()->json([
+                        "success"         => FALSE,
+                        "message"         => 'Mohon maaf. Nama Produk yang Anda masukan sudah terdaftar pada sistem.'
+                    ]);
+                }
+                //END VALIDASI
+                if($product->save()){
+                    return response()->json([
+                        "success"         => TRUE,
+                        "message"         => 'Data berhasil diperbarui.'
+                    ]);
+                }else{
+                    return response()->json([
+                        "success"         => FALSE,
+                        "message"         => 'Data gagal diperbarui.'
+                    ]);
+                }
+            }else{
+                $product = new Product;
+                $product->kode_product  = $req->kode_produk;
+                $product->nama          = $req->name;
+                $product->id_kategori   = $req->kategori_id;
+                $product->id_satuan     = $req->satuan_id;
+                $product->harga_beli    = str_replace(".", "", $req->harga_beli);
+                $product->harga_jual    = str_replace(".", "", $req->harga_jual);
+                //VALIDASI
+                $cek_kode = Product::where('kode_product', $req->kode_product)->first();
+                $cek_nama = Product::where('nama', $req->name)->first();
+                if(isset($cek_kode)){
+                    return response()->json([
+                        "success"         => FALSE,
+                        "message"         => 'Mohon maaf. Kode Produk yang Anda masukan sudah terdaftar pada sistem.'
+                    ]);
+                }
+                if(isset($cek_nama)){
+                    return response()->json([
+                        "success"         => FALSE,
+                        "message"         => 'Mohon maaf. Nama Produk yang Anda masukan sudah terdaftar pada sistem.'
+                    ]);
+                }
+                //END VALIDASI
+                if($product->save()){
+                    return response()->json([
+                        "success"         => TRUE,
+                        "message"         => 'Data berhasil ditambahkan.'
+                    ]);
+                }else{
+                    return response()->json([
+                        "success"         => FALSE,
+                        "message"         => 'Data gagal ditambahkan.'
+                    ]);
+                }
             }
-
-
         }
-        if($req->qr2 != null){
-            $cek_barcode = $this->cekExistBarcode('barcode',$req->qr2,$dec_id);
-
-            if(!$cek_barcode)
-            {
-                $json_data = array(
-                "success"         => FALSE,
-                "message"         => 'Mohon maaf. Kode QrCode 2 yang Anda masukan sudah terdaftar pada sistem.'
-                );
-                return json_encode($json_data);
-            }
-
+    }
+    public function simpan_(Request $req){
+        // return $req->all();
+        $enc_id     = $req->enc_id;
+        if ($enc_id != null) {
+            $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        }else{
+            $dec_id = null;
         }
-        $path = 'web/images/product/';
-
-        if (!file_exists($path)) {
-            mkdir($path, 0777, true);
-            chmod($path, 0777);
-        }
-        if($req->file('cover') != null){
-            $fileName = $req->file('cover')->getClientOriginalName();
-            $pathName = $path.$fileName;
-        }
-
+        $cek_produk = $this->cekExist('kode_product',$req->kode_produk,$dec_id);
         if(!$cek_produk)
         {
             $json_data = array(
@@ -228,13 +273,6 @@ class ProdukController extends Controller
             if($enc_id){
                 $namasama = 1;
                 $product  = Product::find($dec_id);
-                if($req->file('cover') != null){
-                    if($product->product_cover != 'web/images/no_img.png'){
-                        if(file_exists($product->product_cover)){
-                            unlink($product->product_cover);
-                        }
-                    }
-                }
                 if($product->product_name != $req->name){
                     $namasama = 0;
                 }
@@ -451,23 +489,23 @@ class ProdukController extends Controller
     public function ubah($enc_id){
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         if($dec_id) {
-            $brand = Brand::all();
+            // $brand = Brand::all();
             $kategori = Kategori::all();
-            $engine = Engine::all();
+
             $satuan = Satuan::all();
             $produk = Product::find($dec_id);
-            $selectedbrand = $produk->brand_id;
-            $selectedsatuan = $produk->satuan_id;
-            $selectedkategori = $produk->category_id;
-            $selectedengine = $produk->engine_id;
-            $selectedliner = $produk->is_liner;
-            $img_qrcode = ProductBarcode::where('product_id',$dec_id)->get();
-            $img_produk = ProductImg::where('id_product', $dec_id)->get();
-            $liner = $this->isLiner();
+            // $selectedbrand = $produk->brand_id;
+            $selectedsatuan = $produk->id_satuan;
+            $selectedkategori = $produk->id_kategori;
+
+            // $selectedliner = $produk->is_liner;
+            // $img_qrcode = ProductBarcode::where('product_id',$dec_id)->get();
+            // $img_produk = ProductImg::where('id_product', $dec_id)->get();
+            // $liner = $this->isLiner();
             $status = $this->status();
-            $selectedstatus=$produk->product_status;
-            return view('backend/menuproduk/produk/form',compact('enc_id','produk','img_qrcode', 'img_produk', 'kategori', 'satuan','engine','brand'
-            ,'selectedkategori','selectedbrand','selectedsatuan','selectedsatuan','selectedengine','selectedliner','liner','status','selectedstatus'));
+            $selectedstatus=$produk->status;
+            return view('backend/menuproduk/produk/form',compact('enc_id','produk','kategori', 'satuan'
+            ,'selectedkategori','selectedsatuan','selectedsatuan','status','selectedstatus'));
         } else {
             return view('errors/noaccess');
         }

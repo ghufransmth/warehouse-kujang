@@ -43,19 +43,13 @@
                             <input type="hidden" name="enc_id" id="enc_id" value="{{isset($satuan)? $enc_id : ''}}">
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Nama Satuan *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($satuan)? $satuan->name : ''}}"> 
+                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($satuan)? $satuan->nama: ''}}">
                                 </div>
                             </div>
                             <div class="hr-line-dashed"></div>
-                            <div class="form-group row"><label class="col-sm-2 col-form-label">Jenis Satuan *</label>
+                            <div class="form-group row"><label class="col-sm-2 col-form-label">Isi per PCS *</label>
                                 <div class="col-sm-10 error-text">
-                                    <select name="jenis_satuan" class="form-control" id="jenis_satuan">
-                                        <option value="">Jenis Satuan</option>
-                                        @foreach($jenis as $key => $row)
-                                        <option value="{{$key}}"{{ $selectedjenis == $key ? 'selected=""' : '' }}>{{ucfirst($row)}}</option>
-                                        @endforeach
-                                        
-                                    </select>
+                                    <input type="number" class="form-control" id="qty" name="qty" value="{{isset($satuan)? $satuan->qty : ''}}">
                                 </div>
                             </div>
                             <div class="hr-line-dashed"></div>
@@ -71,7 +65,7 @@
             </div>
         </div>
     </div>
-            
+
 @endsection
 @push('scripts')
 <script>
@@ -81,7 +75,7 @@
                 name:{
                     required: true
                 },
-                jenis_satuan:{
+                qty:{
                     required: true
                 }
             },
@@ -89,16 +83,16 @@
                 name: {
                     required: "Nama Satuan tidak boleh kosong"
                 },
-                jenis_satuan: {
-                    required: "Jenis Satuan wajib dipilih salah satu"
+                qty: {
+                    required: "Isi per PCS tidak boleh kosong"
                 },
             },
             errorElement: 'span',
             errorPlacement: function (error, element) {
             error.addClass('invalid-feedback');
-           
+
             element.closest('.error-text').append(error);
-            
+
             },
             highlight: function (element, errorClass, validClass) {
             $(element).addClass('is-invalid');
@@ -111,7 +105,7 @@
                 SimpanData();
             }
         });
-        function SimpanData(){    
+        function SimpanData(){
             $('#simpan').addClass("disabled");
                 var form = $('#submitData').serializeArray()
                 var dataFile = new FormData()
@@ -134,11 +128,11 @@
                         Swal.fire('Yes',data.message,'info');
                         window.location.replace('{{route("satuan.index")}}');
                     } else {
-                        Swal.fire('Ups',data.message,'info'); 
+                        Swal.fire('Ups',data.message,'info');
                     }
                     Swal.hideLoading();
                 },
-                complete: function () { 
+                complete: function () {
                     Swal.hideLoading();
                     $('#simpan').removeClass("disabled");
                 },

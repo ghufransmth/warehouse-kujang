@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 
 use App\Models\PurchaseOrderDetail;
 use App\Models\PurchaseOrder;
+use App\Models\Satuan;
 use DB;
 
 use Auth;
@@ -33,8 +34,64 @@ class StokAdjController extends Controller
     {
         return view('backend/stok/stokadj/index');
     }
+    public function tambah(){
+        $product = Product::all();
+        $satuan = Satuan::all();
+        return view('backend/stok/stokadj/form');
+    }
+    public function getData(Request $request){
+        $limit = $request->length;
+        $start = $request->start;
+        $page  = $start + 1;
+        $search = $request->search['value'];
 
-    public function getData(Request $request)
+        $querydb = StockAdj::select('*');
+
+        if (array_key_exists($request->order[0]['column'], $this->original_column)) {
+        $querydb->orderByRaw($this->original_column[$request->order[0]['column']] . ' ' . $request->order[0]['dir']);
+        } else {
+        $querydb->orderBy('id', 'DESC');
+        }
+        if ($search) {
+        $querydb->where(function ($query) use ($search) {
+            $query->orWhere('nama', 'LIKE', "%{$search}%");
+        });
+        }
+        $totalData = $querydb->get()->count();
+
+        $totalFiltered = $querydb->get()->count();
+
+        $querydb->limit($limit);
+        $querydb->offset($start);
+        $data = $querydb->get();
+        foreach ($data as $key => $value) {
+            $enc_id = $this->safe_encode(Crypt::encryptString($value->id));
+            $action = "";
+            $value->no                  = $key + $page;
+            // $value->id             = $value->id;
+            $value->product             = $value->getproduct->nama;
+            $value->stock_penjualan     = $value->stock_penjualan;
+            $value->stock_bs            = $value->stock_bs;
+            $value->action = '<a href="#" onclick="showproduct(\''. $enc_id. '\')" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip"><i class="fa fa-file"></i> Detail</a> ';
+        }
+        if ($request->user()->can('adjstok.index')) {
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data
+        );
+        } else {
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => 0,
+            "recordsFiltered" => 0,
+            "data"            => []
+        );
+        }
+        return json_encode($json_data);
+    }
+    public function getData_(Request $request)
     {
         $limit = $request->length;
         $start = $request->start;
@@ -409,99 +466,26 @@ class StokAdjController extends Controller
         return $data;
     }
 
-    public function getDataProduct(Request $request)
+    public function getDataProduct($enc_id)
     {
-
-        $keyword            = $request->keyword;
-        $perusahaanid       = $request->perusahaanid;
-        $perusahaangudangid = $request->perusahaangudangid;
-        $gudangid           = $request->gudangid;
-
-        $limit = $request->length;
-        $start = $request->start;
-        $page  = $start + 1;
-        $search = $request->search['value'];
-
-        $querydb = Product::select('*');
-
-        if (array_key_exists($request->order[0]['column'], $this->original_column)) {
-        $querydb->orderByRaw($this->original_column[$request->order[0]['column']] . ' ' . $request->order[0]['dir']);
-        } else {
-        $querydb->orderBy('id', 'DESC');
-        }
-        if ($keyword) {
-        $querydb->where(function ($query) use ($keyword) {
-            $query->orWhere('product_code', 'LIKE', "%{$keyword}%");
-            $query->orWhere('product_name', 'LIKE', "%{$keyword}%");
-        });
-        }
-        $totalData = $querydb->get()->count();
-
-        $totalFiltered = $querydb->get()->count();
-
-        $querydb->limit($limit);
-        $querydb->offset($start);
-        $data = $querydb->get();
-        foreach ($data as $key => $value) {
-        $code = "";
-        if ($value->product_code_shadow == null) {
-            $productid = $value->id;
-            $product_code = $value->product_code;
-            $product_name = $value->product_name;
-        } else {
-            if ($value->product_code_shadow == $value->product_code) {
-            $productid = $value->id;
-            $product_code = $value->product_code;
-            $product_name = $value->product_name;
-            } else {
-            $cekinduk = Product::where('product_code', $value->product_code_shadow)->first();
-            $productid = $cekinduk->id;
-            $product_code = $cekinduk ? $value->product_code : '-';
-            $product_name = $cekinduk ? $value->product_name : '-';
-            }
+        // return $enc_id;
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        // $this->safe_encode(Crypt::encryptString($value->id));
+        // return $dec_id;
+        $stock = StockAdj::where('id',$dec_id)->with(['getproduct', 'getproduct.getkategori', 'getproduct.getsatuan'])->first();
+        if(isset($stock)){
+            return response()->json([
+                'success' => true,
+                'data' => $stock,
+            ]);
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => 'Data Product tidak ditemukan',
+            ]);
         }
 
-        $enc_id = $this->safe_encode(Crypt::encryptString($productid));
-        //   $cek = ProductPerusahaanGudang::select('stok')->where('perusahaan_gudang_id', $perusahaangudangid)->where('product_id', $productid)->first();
-        //   if ($cek) {
-        //     $stok = $cek->stok;
-        //   } else {
-        //     $stok = '-';
-        //   }
-        $stok = $this->cekStokAkhir($productid,$perusahaanid,$gudangid);
 
-        $code .= '<span class="product">' . $product_code . '</span>';
-        $code .= '<input type="hidden" class="product_value" name="product[]" value="' . $productid . '">';
-
-        $stokqty = "";
-        $stokqty .= '<span class="price">' . $stok . '</span>';
-        $stokqty .= '<input type="hidden" class="stok_value" min=0 name="stok[]" value="' . $stok . '">';
-
-        $jumlahadj = "";
-        $jumlahadj .= '<input type="text" class="form-control qty" name="qty_adj[]" value="0">';
-
-
-        $catatan = "";
-        $catatan .= '<input type="text" class="form-control catatan" name="catatan[]">';
-
-
-        $value->no             = $key + $page;
-        $value->id             = $productid;
-        $value->code           = $code;
-        $value->name           = $product_name;
-        $value->stok           = $stokqty;
-        $value->jumlahadj      = $jumlahadj;
-        $value->catatan        = $catatan;
-        }
-
-        $json_data = array(
-        "draw"            => intval($request->input('draw')),
-        "recordsTotal"    => intval($totalData),
-        "recordsFiltered" => intval($totalFiltered),
-        "data"            => $data
-        );
-
-        return json_encode($json_data);
     }
 
 }

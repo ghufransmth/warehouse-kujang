@@ -36,6 +36,7 @@
                         <tr>
                             <th  width="10px;">No</th>
                             <th>Nama Satuan</th>
+                            <th>QTY</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                         </thead>
@@ -89,6 +90,9 @@
                },
 
                { "data": "name",
+                 "className" : "text-left",
+               },
+               { "data": "qty",
                  "className" : "text-left",
                },
                { "data" : "action",

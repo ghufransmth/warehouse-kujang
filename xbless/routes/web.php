@@ -190,8 +190,9 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     //Adj Stock
     Route::get('manage/adjstok', [StokAdjController::class, 'index'])->name('adjstok.index');
     Route::post('manage/adjstok/getdata', [StokAdjController::class, 'getData'])->name('adjstok.getdata');
-    Route::post('manage/adjstok/getdataproduct', [StokAdjController::class, 'getDataProduct'])->name('adjstok.getdataproduct');
+    Route::get('manage/adjstok/getdataproduct/{id?}', [StokAdjController::class, 'getDataProduct'])->name('adjstok.getdataproduct');
     Route::post('manage/adjstok/simpan', [StokAdjController::class, 'simpan'])->name('adjstok.simpan');
+    Route::get('manage/adjstok/tambah', [StokAdjController::class, 'tambah'])->name('adjstok.tambah');
 
     //History Adj Stock
     Route::get('manage/historyadjstok', [StokAdjHistoryController::class, 'index'])->name('historyadjstok.index');

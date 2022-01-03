@@ -38,7 +38,6 @@
                             <th width="10px;">No</th>
                             <th>Kode</th>
                             <th>Nama</th>
-                            <th>Gambar</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                         </thead>
@@ -93,11 +92,6 @@
 
                { "data": "cat_code"},
                { "data": "cat_name"},
-               { "data": "cat_image",
-                 "render": function(data, type, row){
-                     return '<img src="'+data+'" width="100" class = "img-thumbnail"/>'
-                 }
-                },
                { "data" : "action",
                  "orderable" : false,
                  "className" : "text-center",

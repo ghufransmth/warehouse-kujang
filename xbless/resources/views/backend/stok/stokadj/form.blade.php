@@ -40,7 +40,7 @@
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             <input type="hidden" name="enc_id" id="enc_id" value="{{isset($produk)? $enc_id : ''}}">
 
-                            <div class="form-group row">
+                            {{-- <div class="form-group row">
 
                                 <label class="col-sm-2 col-form-label">Kode Produk *</label>
                                 <div class="col-sm-10 error-text">
@@ -51,15 +51,15 @@
                                 <div class="col-sm-10 error-text">
                                     <input type="text" class="form-control" id="name" name="name" value="{{isset($produk)? $produk->nama : ''}}">
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Kategori *</label>
+                                <label class="col-sm-2 col-form-label">Product *</label>
                                 <div class="col-sm-10 error-text">
-                                    <select name="kategori_id" class="form-control select2" id="kategori_id">
-                                    <option value="">Pilih Kategori</option>
-                                        @foreach($kategori as $key => $row)
-                                        <option value="{{$row->id}}"{{ $selectedkategori == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->kode_kategori)}} | {{ $row->nama }}</option>
+                                    <select name="id_product" class="form-control select2" id="id_product">
+                                    <option value="">Pilih Product</option>
+                                        @foreach($product as $key => $row)
+                                        <option value="{{$row->id}}"{{ $selectedkategori == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->kode_product)}} | {{ $row->nama }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -75,14 +75,14 @@
                                     </select>
                                 </div>
 
-                                {{-- <label class="col-sm-2 col-form-label">Isi Produk (Pcs) *</label>
+                                <label class="col-sm-2 col-form-label">Isi Produk (Pcs) *</label>
                                 <div class="col-sm-3 error-text">
                                     <input type="text" class="form-control" id="satuan_value" name="satuan_value" min="1"  value="{{isset($produk)? $produk->satuan_value : ''}}">
-                                </div> --}}
+                                </div>
                             </div>
 
 
-                            <div class="form-group row"><label class="col-sm-2 col-form-label">Harga Beli *</label>
+                            {{-- <div class="form-group row"><label class="col-sm-2 col-form-label">Stock Penjualan *</label>
                                 <div class="col-sm-10 error-text">
                                     <input type="text" class="form-control" id="harga_beli" name="harga_beli" value="{{isset($produk)? number_format($produk->harga_beli,0,',','.') : ''}}">
                                 </div>
@@ -91,7 +91,7 @@
                                 <div class="col-sm-10 error-text">
                                     <input type="text" class="form-control" id="harga_jual" name="harga_jual" value="{{isset($produk)? number_format($produk->harga_jual,0,',','.') : ''}}">
                                 </div>
-                            </div>
+                            </div> --}}
 
 
                             {{-- <div class="form-group row"><label class="col-sm-2 col-form-label">Status *</label>

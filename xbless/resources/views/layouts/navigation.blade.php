@@ -70,11 +70,11 @@
             <li>
                 <a href="#"><i class="fa fa-database"></i> <span class="nav-label">Master Stok</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse">
-                    @can('stokadmin.index')
+                    {{-- @can('stokadmin.index')
                     <li><a href="{{route('stokadmin.index')}}">Informasi Stok</a></li>
-                    @endcan
+                    @endcan --}}
                     @can('adjstok.index')
-                    <li><a href="{{route('adjstok.index')}}">Update Stok</a></li>
+                    <li><a href="{{route('adjstok.index')}}">Informasi Stok</a></li>
                     @endcan
                     @can('stokmutasi.tambah')
                     <li><a href="{{route('stokmutasi.tambah')}}">Mutasi Stok</a></li>
