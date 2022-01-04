@@ -120,6 +120,14 @@ class PembelianController extends Controller
         return view('backend/pembelian/form');
     }
 
+    // public function tambah(){
+
+    //     $product = Product::offset(0)->limit(10)->get();
+    //     $selectedproduct = "";
+
+    //     return view('backend/pembelian/form',compact('product','selectedproduct'));
+    // }
+
     public function tambah_product(Request $req)
     {
         $total = $req->total;
@@ -312,4 +320,14 @@ class PembelianController extends Controller
         return json_encode($product);
     }
 
+    public function ubah($enc_id){
+       $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+       if($dec_id){
+            $product = Product::find($dec_id);
+
+            return view('backend/pembelian/form', compact('enc_id','product'));
+       } else{
+            return view('errors/noaccess');
+        }
+    }
 }

@@ -77,25 +77,27 @@
                         </div>
 
                         <div class="hr-line-dashed"></div>
-                        {{-- <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Pilih Produk *</label>
-                            <div class="col-sm-6 error-text"> --}}
-                                {{-- <select name="product_id" class="form-control select2" id="product_id">
-                                    <option value="">Pilih Produk</option>
-                                    @foreach($product as $key => $row)
-                                    <option value="{{$row->id}}"{{ $selectedsatuan == $row->id ? 'selected=""' : '' }}>{{strtoupper($row->product_code)}} | {{strtoupper($row->product_name)}}</option>
-                                    @endforeach
-                                </select> --}}
-                            {{-- </div> --}}
-
-                            {{-- <div class="col-sm-4">
-                                <a class="btn btn-white btn-sm" href="#">Cari Dengan Nama Produk</a>
-                            </div> --}}
-                        {{-- </div> --}}
                         <div class="col-lg-2">
                             <input type="hidden" class="mb-1 form-control" name="total_detail" id="total_detail">
                             <a id="tambah_detail_product" class="text-white btn btn-success"><span class="fa fa-pencil-square-o"></span>Tambah</a>
                         </div>
+
+                        {{-- <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Cari Produk *</label>
+                            <div class="col-sm-6 error-text">
+                                <select name="product_id" class="form-control select2" id="product_id">
+                                    <option value="">Pilih Produk</option>
+                                    @foreach($product as $key => $row)
+                                    <option value="{{$row->id}}"> {{strtoupper($row->nama)}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <a class="btn btn-white btn-sm" href="#">Cari Dengan Nama Produk</a>
+                            </div>
+                        </div> --}}
+
                         <div class="hr-line-dashed"></div>
 
                         <table class="table table-bordered table-striped">
@@ -145,4 +147,52 @@
         });
    })
 </script>
+{{-- <script>
+    var numbs=0;
+    var basket= [];
+
+    $(document).ready(function(){
+        $(".select2").select2({allowClear: true});
+
+        $('#product_id').on('select2:select',function(e){
+            var data = e.params.data;
+            console.log(data);
+            is_exist = 0;
+            if(data.id != ""){
+                basket.forEach(function(e){
+                    if(data.id == e.id){
+                        $("#"+e.tombol).val(parseInt($("#"+e.tombol).val()) + 1);
+                        is_exist = 1;
+                    }
+                });
+                if(is_exist == 0){
+                    numbs++;
+                    qui = '<input type="hidden" value="'+data.id+'" id="pid_'+numbs+'" name="pid_'+numbs+'"><input class="touchspin1 form-control" type="text" value="1" id="qty_'+numbs+'" name="qty_'+numbs+'">';
+                    aks = '<a href="#" onclick="javascript:hapus_order_detailss(3)" class="btn btn-danger btn-icon"><i class="fa fa-trash"></i></a>';
+                    var html ="";
+                    name = data.text.split("|")[1];
+                    html +="<tr>";
+                    html +="<td>"+name+"</td>";
+                    html +="<td>"+qui+"</td>";
+                    html +="<td>Satuan</td>";
+                    html +="<td>"+aks+"</td>";
+                    html +="</tr>";
+                    $("#show_data").append(html);
+
+                    $(".touchspin1").TouchSpin({
+                        min: 1,
+                        max: 100,
+                        buttondown_class: 'btn btn-white',
+                        buttonup_class: 'btn btn-white'
+                    });
+
+                    var sendData = {id:data.id, tombol:'qty_'+numbs};
+                    basket.push(sendData);
+                    console.log(basket);
+                }
+            }
+        });
+
+    })
+</script> --}}
 @endpush
