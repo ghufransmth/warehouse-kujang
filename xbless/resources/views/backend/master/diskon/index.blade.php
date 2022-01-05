@@ -16,7 +16,7 @@
     <div class="col-lg-2">
         <br/>
         <!-- <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Refresh Data"><span class="fa fa-refresh"></span></button> -->
-        <a href="{{ route('toko.kategori.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
+        <a href="{{ route('diskon.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
     </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
@@ -32,6 +32,7 @@
                             <th width="10px;">No</th>
                             <th>Diskon</th>
                             <th>Kategori</th>
+                            <th>Keterangan</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                         </thead>
@@ -53,7 +54,7 @@
 </div>
 
 @endsection
-<!-- @push('scripts')
+@push('scripts')
 <script type="text/javascript">
     var table,tabledata,table_index;
        $(document).ready(function(){
@@ -69,7 +70,7 @@
            "dom": '<"html5">lftip',
            "stateSave"  : true,
            "ajax":{
-                    "url": "{{ route("toko.kategori.getdata") }}",
+                    "url": "{{ route("diskon.getdata") }}",
                     "dataType": "json",
                     "type": "POST",
                     data: function ( d ) {
@@ -87,6 +88,8 @@
                { "data": "name",
                  "className" : "text-left",
                },
+               {"data": "category"},
+               {"data": "keterangan"},
                { "data" : "action",
                  "orderable" : false,
                  "className" : "text-center",
@@ -153,7 +156,7 @@
                 });
                 $.ajax({
                     type: 'delete',
-                    url: '{{route("type_channel.delete",[null])}}/' + enc_id,
+                    url: '{{route("diskon.delete",[null])}}/' + enc_id,
                     headers: {'X-CSRF-TOKEN': token},
                     success: function(data){
                     console.log(data)
@@ -190,4 +193,4 @@
            }
        });
  </script>
-@endpush -->
+@endpush
