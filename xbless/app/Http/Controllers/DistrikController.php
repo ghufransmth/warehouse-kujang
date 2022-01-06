@@ -43,8 +43,7 @@ class DistrikController extends Controller
       $country = Distrik::select('*');
       if(array_key_exists($request->order[0]['column'], $this->original_column)){
          $country->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
-      }
-       else{
+      } else{
         $country->orderBy('id','DESC');
       }
        if($search) {

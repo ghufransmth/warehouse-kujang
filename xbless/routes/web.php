@@ -10,6 +10,7 @@ use App\Http\Controllers\SalesController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\EngineController;
 use App\Http\Controllers\GudangController;
+use App\Http\Controllers\DiskonController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SatuanController;
@@ -361,8 +362,8 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     });
 
     Route::group(['prefix' => '/manage'], function () {
-        // EXPEDISI VIA
-        Route::group(['prefix' => 'type_channel', 'as' => 'type_channel.'], function () {
+        // TYPE CHANNEL
+        Route::group(['prefix' => 'type_channel', 'as' => 'type_channel.'], function(){
             Route::get('manage/type_channel', [TypeChannelController::class, 'index'])->name('index');
             Route::post('manage/type_channel/getdata', [TypeChannelController::class, 'getData'])->name('getdata');
             Route::get('manage/type_channel/tambah', [TypeChannelController::class, 'tambah'])->name('tambah');
@@ -376,6 +377,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::get('/', [JenisBayarController::class, 'index'])->name('index');
             Route::get('/tambah', [JenisBayarController::class, 'tambah'])->name('tambah');
             Route::get('/ubah/{id}', [JenisBayarController::class, 'ubah'])->name('ubah');
+            Route::get('/parent', [JenisBayarController::class, 'parent'])->name('parent');
             Route::post('/getData', [JenisBayarController::class, 'getData'])->name('getdata');
             Route::post('/simpan', [JenisBayarController::class, 'simpan'])->name('simpan');
             Route::delete('/hapus/{id?}', [JenisBayarController::class, 'delete'])->name('delete');
@@ -402,12 +404,13 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         });
 
         Route::group(['prefix' => 'diskon', 'as' => 'diskon.'], function () {
-            Route::get('/', [GudangController::class, 'index'])->name('index');
-            Route::get('/tambah', [GudangController::class, 'tambah'])->name('tambah');
-            Route::get('/ubah/{id}', [GudangController::class, 'ubah'])->name('ubah');
-            Route::post('/getData', [GudangController::class, 'getData'])->name('getdata');
-            Route::post('/simpan', [GudangController::class, 'simpan'])->name('simpan');
-            Route::delete('/hapus/{id?}', [GudangController::class, 'delete'])->name('delete');
+            Route::get('/', [DiskonController::class, 'index'])->name('index');
+            Route::get('/tambah', [DiskonController::class, 'tambah'])->name('tambah');
+            Route::get('/product', [DiskonController::class, 'get_product'])->name('product');
+            Route::get('/ubah/{id}', [DiskonController::class, 'ubah'])->name('ubah');
+            Route::post('/getData', [DiskonController::class, 'getData'])->name('getdata');
+            Route::post('/simpan', [DiskonController::class, 'simpan'])->name('simpan');
+            Route::delete('/hapus/{id?}', [DiskonController::class, 'delete'])->name('delete');
         });
 
         Route::group(['prefix' => 'toko', 'as' => 'toko.'], function () {
@@ -486,68 +489,6 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/produk_image', [ProdukController::class, 'ProdukImage'])->name('image');
             Route::post('/delete_qrcode', [ProdukController::class, 'delete_qrcode'])->name('delete_qrcode');
             Route::delete('/hapus/{id?}', [ProdukController::class, 'delete'])->name('delete');
-        });
-
-        // PURCHASE ORDER
-        Route::get('/tambahpo', [PurchaseController::class, 'tambah'])->name('purchaseorder.tambah');
-        Route::group(['prefix' => 'purchaseorder', 'as' => 'purchaseorder.'], function () {
-            Route::get('/', [PurchaseController::class, 'index'])->name('index');
-            // Route::get('/tambah', [PurchaseController::class, 'tambah'])->name('tambah');
-            Route::get('/print/{id?}', [PurchaseController::class, 'print'])->name('print');
-            Route::get('/showpo/{id?}', [PurchaseController::class, 'showpo'])->name('showpo');
-            Route::get('/check_gudang/{id?}', [PurchaseController::class, 'check_gudang'])->name('check_gudang');
-            Route::get('/search_produk', [PurchaseController::class, 'search_produk'])->name('search');
-            Route::post('/expedisi', [PurchaseController::class, 'expedisi'])->name('expedisi');
-            Route::post('/simpanexpedisi', [PurchaseController::class, 'simpan_expedisi'])->name('simpanexpedisi');
-            Route::post('/simpan', [PurchaseController::class, 'simpan'])->name('simpan');
-            Route::post('/addproduk', [PurchaseController::class, 'addproduk'])->name('addproduk');
-            Route::post('/updatepo', [PurchaseController::class, 'updatepo'])->name('updatepo');
-            Route::post('/updatepokrnditolak', [PurchaseController::class, 'updatepokrnditolak'])->name('updatepokrnditolak');
-
-            Route::post('/note', [PurchaseController::class, 'note'])->name('note');
-            Route::post('/proses_hitung', [PurchaseController::class, 'total_price'])->name('proses_hitung');
-            Route::post('/status_po', [PurchaseController::class, 'status_po'])->name('status_po');
-
-            Route::post('/scan_qty_kirim', [PurchaseController::class, 'scan_qty_kirim'])->name('scan_qty_kirim');
-            Route::post('/status_gudang', [PurchaseController::class, 'status_gudang'])->name('status_gudang');
-            Route::post('/status_invoice', [PurchaseController::class, 'status_invoice'])->name('status_invoice');
-            Route::post('/status_invoice_awal', [PurchaseController::class, 'status_invoice_awal'])->name('status_invoice_awal');
-
-            Route::post('/detail', [PurchaseController::class, 'detail'])->name('detail');
-            Route::post('/getData', [PurchaseController::class, 'getdata'])->name('getdata');
-            Route::post('/process_nota', [PurchaseController::class, 'process_nota'])->name('process_nota');
-            Route::post('/cekstatusinvoice', [PurchaseController::class, 'cekInvoiceBelumLunas'])->name('cekstatusinvoice');
-
-            Route::delete('/hapus/{id?}', [PurchaseController::class, 'delete'])->name('delete');
-        });
-
-        // REQUEST PURCHASE ORDER
-        Route::group(['prefix' => 'requestpurchaseorder', 'as' => 'requestpurchaseorder.'], function () {
-            Route::get('/', [RequestPurchaseController::class, 'index'])->name('index');
-            Route::get('/detail/{id}', [RequestPurchaseController::class, 'detail'])->name('detail');
-            Route::get('/pdf/{id?}', [RequestPurchaseController::class, 'pdf'])->name('pdf');
-            Route::get('/excel/{id?}', [RequestPurchaseController::class, 'excel'])->name('excel');
-            Route::get('/print/{id?}', [RequestPurchaseController::class, 'print'])->name('print');
-            Route::post('/getdata', [RequestPurchaseController::class, 'getData'])->name('getdata');
-            Route::post('/process', [RequestPurchaseController::class, 'process'])->name('process');
-            Route::post('/perusahaan', [RequestPurchaseController::class, 'perusahaan'])->name('perusahaan');
-            Route::post('/cancel', [RequestPurchaseController::class, 'cancel'])->name('cancel');
-        });
-
-        // PURCHASE ORDER BATAL
-        Route::group(['prefix' => 'purchasebatal', 'as' => 'purchasebatal.'], function () {
-            Route::get('/', [PurchaseBatalController::class, 'index'])->name('index');
-            Route::post('/getdata', [PurchaseBatalController::class, 'getData'])->name('getdata');
-            Route::post('/delete', [PurchaseBatalController::class, 'delete'])->name('delete');
-        });
-
-        // BACK ORDER
-        Route::group(['prefix' => 'backorder', 'as' => 'backorder.'], function () {
-            Route::get('/', [BackorderController::class, 'index'])->name('index');
-            Route::get('/detail/{id}', [BackorderController::class, 'detail'])->name('detail');
-            Route::post('/getdata', [BackorderController::class, 'getData'])->name('getdata');
-            Route::post('/process', [BackorderController::class, 'process'])->name('process');
-            Route::post('/perusahaan', [BackorderController::class, 'perusahaan'])->name('perusahaan');
         });
 
         // ORDER

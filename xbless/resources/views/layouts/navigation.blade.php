@@ -33,7 +33,7 @@
                     <li class=""><a href="{{route('expedisi.index')}}">Master Expedisi</a></li>
                     <li class=""><a href="{{route('type_channel.index')}}">Master Tipe Channel</a></li>
                     <li class=""><a href="{{ route('gudang.index') }}">Master Gudang</a></li>
-                    <li class=""><a href="#">Master Diskon (coming soon)</a></li>
+                    <li class=""><a href="{{ route('diskon.index') }}">Master Diskon (coming soon)</a></li>
                     <li class=""><a href="{{ route('distrik.index') }}">Master Distrik</a></li>
                     <li class=""><a href="{{ route('payment.index') }}">Master Jenis Bayar</a></li>
                     <li class=""><a href="{{ route('toko.jenis.index') }}">Master Jenis Toko</a></li>
@@ -58,15 +58,6 @@
                     @can('satuan.index')
                     <li class=""><a href="{{ route('satuan.index') }}">List Satuan</a></li>
                     @endcan
-                    <!-- @can('jenisharga.index')
-                    <li class=""><a href="{{ route('jenisharga.index') }}">List Jenis Harga</a></li>
-                    @endcan
-                    @can('brand.index')
-                    <li class=""><a href="{{ route('brand.index') }}">List Brand</a></li>
-                    @endcan
-                    @can('engine.index')
-                    <li class=""><a href="{{ route('engine.index') }}">List Engine Model</a></li>
-                    @endcan -->
                 </ul>
             </li>
             @endcan
@@ -100,40 +91,6 @@
                 <li class=""><a href="{{ route('member.tambah') }}">Tambah Toko</a></li>
             </ul>
         </li>
-        {{-- ACL JANGAN LUPA @done 0311 --}}
-        <!-- @can('menutandaterima.index')
-            <li class="{{ Route::currentRouteName() === 'pembayaran.index' ? 'active' : '' }}">
-                <a href="#"><i class="fa fa-check"></i> <span class="nav-label">Tanda Terima</span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level collapse {{ Route::currentRouteName() === 'pembayaran.index' ? 'in' : '' }}">
-                    @can('tandaterima.proses')
-                    <li><a href="{{ route('tandaterima.proses') }}">Proses Tanda Terima</a></li>
-                    @endcan
-                    @can('tandaterima.invoice')
-                    <li><a href="{{ route('tandaterima.index') }}">Invoice Tanda Terima</a></li>
-                    @endcan
-                    @can('pembayaran.index')
-                    <li><a href="{{ route('pembayaran.index') }}" class="{{ Route::currentRouteName() === 'pembayaran.index' ? 'text-white' : '' }}">Input Pembayaran</a></li>
-                    @endcan
-                </ul>
-            </li>
-            @endcan
-            {{-- ACL JANGAN LUPA  @done 0311--}}
-            @can('menuinvoice.index')
-                @can('invoice.index')
-                <li class="">
-                    <a href="{{route('invoice.index')}}"><i class="fa fa-calculator"></i> <span class="nav-label">Invoices</span></a>
-                </li>
-                @endcan
-            @endcan
-            {{-- ACL JANGAN LUPA --}}
-            @can('menureturrevisi.index')
-                @can('returrevisi.index')
-                    <li class="{{ Route::currentRouteName() === 'returrevisi.index' ? 'active' : '' }}">
-                        <a href="{{ route('returrevisi.index') }}"><i class="fa fa-retweet"></i> <span class="nav-label">Proses Retur Revisi</span></a>
-                    </li>
-                @endcan
-            @endcan
-            {{-- ACL JANGAN LUPA --}} -->
         <li>
             <a href="#"><i class="fa fa-dollar"></i> <span class="nav-label"> Keuangan</span><span
                     class="fa arrow"></span></a>
@@ -142,7 +99,6 @@
                 <li><a href="{{ route('keuangan.index') }}">Transaksi Keuangan</a></li>
             </ul>
         </li>
-        @can('menupurchaserder.index')
         <li>
             <a href="#"><i class="fa fa-list-alt"></i> <span class="nav-label">Penjualan Produk</span><span
                     class="fa arrow"></span></a>
@@ -258,36 +214,3 @@
     </div>
 </nav>
 <script src="{{ asset('assets/js/jquery-3.1.1.min.js')}}"></script>
-<script language="javascript" type="text/javascript">
-    $(document).ready(function () {
-        setInterval(function(){
-            getData();
-        }, 150000);
-        getData();
-    });
-    function getData(){
-        $.ajax({
-            type: 'POST',
-            url: '{{route("getdata.show_count")}}',
-            data:{
-                _token :"{{csrf_token()}}"
-            },
-            dataType: "json",
-            success: function(data){
-                if (data.success) {
-                    $('#req_po_count').html(data.rpo);
-                    $('#po_batal_count').html(data.pobatal);
-                    $('#back_order_count').html(data.backorder);
-                }else{
-                    $('#req_po_count').html('0');
-                    $('#po_batal_count').html('0');
-                    $('#back_order_count').html('0');
-                }
-            },
-            error: function(data){
-                console.log(data);
-            }
-        });
-    }
-
-</script>
