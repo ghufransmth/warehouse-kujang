@@ -8,9 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
-    protected $table = 'product';
-    // protected $table = 'tbl_product';
-    // protected $table = 'tbl_product';
+    // protected $table = 'product';
+    protected $table = 'tbl_product';
 
     public function getsatuan(){
         return $this->hasOne(Satuan::class, 'id', 'id_satuan');

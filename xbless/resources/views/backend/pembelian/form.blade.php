@@ -64,7 +64,7 @@
                             <div class="col-sm-3 error-text">
                                 <div class="input-group date">
                                      <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="date" class="form-control" id="jatuh_tempo" name="jatuh_tempo">
+                                    <input type="text" class="form-control jatuh_tempo" id="jatuh_tempo" name="jatuh_tempo" placeholder="dd-mm-yyyy" autocomplete="off">
                                 </div>
                             </div>
                         </div>
@@ -78,46 +78,53 @@
 
                         <div class="hr-line-dashed"></div>
                         <div class="col-lg-2">
-                            <input type="hidden" class="mb-1 form-control" name="total_detail" id="total_detail">
+                            <input type="hidden" class="mb-1 form-control" name="total_detail" id="total_detail" value="0">
                             <a id="tambah_detail_product" class="text-white btn btn-success"><span class="fa fa-pencil-square-o"></span>Tambah</a>
                         </div>
 
-                        {{-- <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Cari Produk *</label>
-                            <div class="col-sm-6 error-text">
-                                <select name="product_id" class="form-control select2" id="product_id">
-                                    <option value="">Pilih Produk</option>
-                                    @foreach($product as $key => $row)
-                                    <option value="{{$row->id}}"> {{strtoupper($row->nama)}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-sm-4">
-                                <a class="btn btn-white btn-sm" href="#">Cari Dengan Nama Produk</a>
-                            </div>
-                        </div> --}}
-
                         <div class="hr-line-dashed"></div>
 
-                        <table class="table table-bordered table-striped">
+                        <table class="table table-bordered table-striped" id="example">
                             <thead>
                                 <tr class="bg-blue">
                                     <th>Produk</th>
                                     <th>Qty Order</th>
                                     <th>Satuan</th>
-                                    <th>Tanggal Jatuh Tempo</th>
+                                    {{-- <th>Tanggal Jatuh Tempo</th> --}}
                                     <th>#</th>
                                 </tr>
                             </thead>
-                            <tbody id="show_data">
-
+                            <tbody id="detail_form">
+                                @if(isset($product_beli_detail))
+                                    @foreach($product_beli_detail as $key => $result)
+                                    @php $no = $key+1; @endphp
+                                    <tr id="detail_product_{{ $no }}">
+                                        <input type="hidden" id="detail_product" name="detail_product[]" value="{{ isset($result)? $result->id : 'null' }}">
+                                        <td>
+                                            <select name="product[]" id="product_{{ $no }}" class="select2_product form-control">
+                                                <option value="{{ $result->product_id }}">{{ $result->kode_produk }} - {{ $result->product->nama }}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control qty_touchspin" id="qty" name="qty[]" value="{{isset($result)? $result->qty : 0}}">
+                                        </td>
+                                        <td>
+                                            <select id='satuan_{{$no}}' name='satuan[]' class='select2 satuan form-control'>
+                                                <option value='{{$result->satuan_id}}' selected>{{$result->satuan}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <a class="text-white btn btn-danger btn-hemisperich btn-xs" onclick='javascript:deleteDetail({{$no}},{{$result->id}})' data-original-title='Hapus Data' id='deleteModal'><i class='fa fa-trash'></i></a>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                @endif
                             </tbody>
                         </table>
 
                         <div class="form-group row">
                             <div class="col-sm-4 col-sm-offset-2 float-right">
-                                <!-- <a class="btn btn-white btn-sm" href="{{route('pembelian.index')}}">Batal</a> -->
+                                <a class="btn btn-white btn-sm" href="{{route('pembelian.index')}}">Batal</a>
                                 <button class="btn btn-primary btn-sm" type="submit" id="simpan">Simpan</button>
                                 {{-- <button class="btn btn-success btn-sm" type="submit" id="simpanselesai">Selesai & Simpan</button> --}}
                             </div>
@@ -134,6 +141,7 @@
 <script>
     $(document).on('click', '#tambah_detail_product', function(){
         var total_detail = $('#total_detail').val();
+        console.log(total_detail)
         var total = 1 + parseInt(total_detail);
         $('#total_detail').val(total);
         $.ajax({
@@ -142,57 +150,89 @@
             url: '{{ route("pembelian.tambah_detail") }}',
             headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
             success: function(msg){
-                $('#show_data').append(msg);
+                $('#detail_form').append(msg);
             }
         });
-   })
-</script>
-{{-- <script>
-    var numbs=0;
-    var basket= [];
+   });
 
-    $(document).ready(function(){
-        $(".select2").select2({allowClear: true});
-
-        $('#product_id').on('select2:select',function(e){
-            var data = e.params.data;
-            console.log(data);
-            is_exist = 0;
-            if(data.id != ""){
-                basket.forEach(function(e){
-                    if(data.id == e.id){
-                        $("#"+e.tombol).val(parseInt($("#"+e.tombol).val()) + 1);
-                        is_exist = 1;
-                    }
-                });
-                if(is_exist == 0){
-                    numbs++;
-                    qui = '<input type="hidden" value="'+data.id+'" id="pid_'+numbs+'" name="pid_'+numbs+'"><input class="touchspin1 form-control" type="text" value="1" id="qty_'+numbs+'" name="qty_'+numbs+'">';
-                    aks = '<a href="#" onclick="javascript:hapus_order_detailss(3)" class="btn btn-danger btn-icon"><i class="fa fa-trash"></i></a>';
-                    var html ="";
-                    name = data.text.split("|")[1];
-                    html +="<tr>";
-                    html +="<td>"+name+"</td>";
-                    html +="<td>"+qui+"</td>";
-                    html +="<td>Satuan</td>";
-                    html +="<td>"+aks+"</td>";
-                    html +="</tr>";
-                    $("#show_data").append(html);
-
-                    $(".touchspin1").TouchSpin({
-                        min: 1,
-                        max: 100,
-                        buttondown_class: 'btn btn-white',
-                        buttonup_class: 'btn btn-white'
-                    });
-
-                    var sendData = {id:data.id, tombol:'qty_'+numbs};
-                    basket.push(sendData);
-                    console.log(basket);
+   $(document).on('click', '#simpan', function(e){
+        e.preventDefault()
+        var form = $('#submitData').serializeArray()
+        var dataFile = new FormData()
+        $.each(form, function(idx, val) {
+            dataFile.append(val.name, val.value)
+        })
+        console.log(dataFile)
+        $.ajax({
+            type: 'POST',
+            url : "{{route('pembelian.simpan')}}",
+            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+            data:dataFile,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            beforeSend: function () {
+                Swal.showLoading();
+            },
+            success: function(data){
+                console.log(data)
+                if (data.success) {
+                    Swal.fire('Yes',data.message,'info');
+                    window.location.replace('{{route("pembelian.index")}}');
+                } else {
+                    Swal.fire('Ups',data.message,'info');
                 }
-            }
+            },
+            complete: function () {
+                Swal.hideLoading();
+                $('#simpan').removeClass("disabled");
+            },
         });
-
     })
-</script> --}}
+
+   $('#example').DataTable({
+        'searching': false,
+        'paging': false,
+        'ordering': false,
+        'info': false,
+        language : {
+            "zeroRecords": " "
+        }
+    })
+
+    $('.select2_product').select2({
+        placeholder: 'Pilih Product',
+        ajax: {
+            url: '{{ route("pembelian.search_product") }}',
+            dataType: 'JSON',
+            data: function(params) {
+                return {
+                search: params.term
+                }
+            },
+            processResults: function (data) {
+                var results = [];
+                $.each(data, function(index, item){
+                results.push({
+                    id: item.id,
+                    text : item.code+' | '+item.name,
+                    satuan: item.satuan_product
+                });
+                });
+                return{
+                    results: results
+                };
+            }
+        }
+    });
+
+    $('.jatuh_tempo').datepicker({
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        calendarWeeks: true,
+        autoclose: true,
+        format: "dd-mm-yyyy"
+    });
+</script>
 @endpush

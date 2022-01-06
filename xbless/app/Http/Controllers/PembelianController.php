@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Product;
+use App\Models\Satuan;
 use App\Models\Pembelian;
 use App\Models\PembelianDetail;
 use DB;
@@ -45,7 +46,7 @@ class PembelianController extends Controller
         $page  = $start +1;
         $search = $request->search['value'];
 
-        $dataquery = Pembelian::select('id', 'no_nota', 'flag_proses', 'tgl_pembelian', 'note', 'created_user');
+        $dataquery = Pembelian::select('id', 'no_faktur','tgl_faktur', 'keterangan', 'created_user');
         if(array_key_exists($request->order[0]['column'], $this->original_column)){
            $dataquery->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
         }
@@ -54,7 +55,7 @@ class PembelianController extends Controller
         }
          if($search) {
           $dataquery->where(function ($query) use ($search) {
-                  $query->orWhere('no_nota','LIKE',"%{$search}%");
+                  $query->orWhere('no_faktur','LIKE',"%{$search}%");
           });
         }
         $totalData = $dataquery->get()->count();
@@ -73,19 +74,19 @@ class PembelianController extends Controller
 
             if($result->flag_proses == 0){
                 $action.='<div>';
-                $action.='<a href="'.route('product.product_beli.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
+                $action.='<a href="'.route('pembelian.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
                 $action.='<a href="#" onclick="deleteData(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-trash"></i> Hapus</a>&nbsp;';
                 $action.="</div>";
             }else if($result->flag_proses == 1){
-                $action.= '<span class="label label-danger">Data tidak bisa diedit kembali</span>&nbsp;';
-                $action.='<a href="'.route('product.product_beli.detail', $enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-eye"></i> Detail</a>&nbsp;';
+                // $action.= '<span class="label label-danger">Data tidak bisa diedit kembali</span>&nbsp;';
+                // $action.='<a href="'.route('product.product_beli.detail', $enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-eye"></i> Detail</a>&nbsp;';
             }
 
             $result->no             = $key+$page;
             $result->id             = $result->id;
-            $result->no_nota        = $result->no_nota;
-            $result->tgl_transaksi  = date('d M Y', strtotime($result->tgl_pembelian));
-            $result->note           = $result->note;
+            $result->no_faktur        = $result->no_faktur;
+            $result->tgl_faktur  = date('d M Y', strtotime($result->tgl_faktur));
+            $result->keterangan           = $result->keterangan;
             $result->created_user   = $result->created_user;
             $result->action         = $action;
         }
@@ -128,9 +129,11 @@ class PembelianController extends Controller
     //     return view('backend/pembelian/form',compact('product','selectedproduct'));
     // }
 
+
     public function tambah_product(Request $req)
     {
         $total = $req->total;
+        // return $total;
         // $satuan = Satuan::all();
 
         echo "
@@ -147,7 +150,7 @@ class PembelianController extends Controller
                     <option value='0' selected disabled>Pilih Satuan</option>
                 </select>
             </td>
-            <td><input type='text' class='form-control formatTgl' id='expired_date' name='expired_date[]' value='dd-mm-yyyy'></td>
+            <!--<td><input type='text' class='form-control formatTgl' id='expired_date' name='expired_date[]' value='dd-mm-yyyy'></td>-->
             <!-- <td>
                 <input type='text' class='form-control' id='harga_beli_".$total."' name='harga_beli[]'>
              </td> -->
@@ -172,7 +175,7 @@ class PembelianController extends Controller
                           $.each(data, function(index, item){
                             results.push({
                                 id: item.id,
-                                text : item.code+' | '+item.name,
+                                text : item.nama,
                             });
                           });
                           return{
@@ -188,8 +191,32 @@ class PembelianController extends Controller
                      buttonup_class: 'btn btn-white'
                 })
 
+                $('#satuan_".$total."').select2({
+                    width: '200px',
+                    placeholder: 'Pilih Obat',
+                    ajax: {
+                        url: '".route('pembelian.get_satuan')."',
+                        dataType: 'JSON',
+                        data: function(params) {
+                          return {
+                            search: params.term
+                          }
+                        },
+                        processResults: function (data) {
+                          var results = [];
+                          $.each(data, function(index, item){
+                            results.push({
+                                id: item.id,
+                                text : item.nama,
+                            });
+                          });
+                          return{
+                            results: results
+                          };
+                      }
+                    }
+                  })
             })
-
         </script>
         <script>
             function deleteObat(id){
@@ -203,6 +230,7 @@ class PembelianController extends Controller
     }
 
     public function simpan(Request $request){
+        // return $request->all();
         $enc_id     = $request->enc_id;
 
         if ($enc_id != null) {
@@ -210,16 +238,18 @@ class PembelianController extends Controller
         }else{
           $dec_id = null;
         }
-        $order_product = Pembelian::find($dec_id);
+        // $order_product = Pembelian::find($dec_id);
 
-        DB::beginTransaction();
+        // DB::beginTransaction();
         if($enc_id){
             $result = Pembelian::find($dec_id);
-            $result->no_nota        = $request->nota;
-            $result->supplier_id    = $request->supplier_product;
-            $result->tgl_pembelian  = date('Y-m-d', strtotime($request->tgl_pembelian));
-            $result->note           = $request->note;
-            $result->flag_proses    = 0;
+            $result->no_faktur        = $request->nofaktur;
+            $result->tgl_faktur    = $request->faktur_date;
+            // $result->tgl_pembelian  = date('Y-m-d', strtotime($request->tgl_pembelian));
+            $result->nominal           = $request->nominal;
+            $result->tgl_jatuh_tempo  = date('Y-m-d', strtotime($request->jatuh_tempo));
+            $result->keterangan           = $request->ket;
+            // $result->flag_proses    = 0;
             $result->created_user   = auth()->user()->username;
             $result->save();
 
@@ -228,35 +258,35 @@ class PembelianController extends Controller
                     $satuan = Satuan::find($request->satuan[$i]);
 
                     if(!empty($request->detail_product[$i]) || $request->detail_priduct[$i] != NULL || $request->detail_product[$i] != "" || $request->detail_product[$i] != "null"){
-                        $result_detail  = PembelianDetail::where('product_beli_id', $result->id)->where('id', $request->detail_product[$i])->first();
+                        $result_detail  = PembelianDetail::where('pembelian_id', $result->id)->where('id', $request->detail_product[$i])->first();
                         $result_detail->product_id      = $request->product[$i];
-                        $result_detail->qrcode          = $request->qrcode[$i];
+                        // $result_detail->qrcode          = $request->qrcode[$i];
                         $result_detail->qty             = $request->qty[$i];
-                        $result_detail->satuan          = $satuan->name;
-                        $result_detail->harga_beli      = $request->harga_beli[$i];
-                        $result_detail->tgl_expired     = date('Y-m-d', strtotime($request->expired_date[$i]));
+                        // $result_detail->satuan          = $satuan->name;
+                        // $result_detail->harga_beli      = $request->harga_beli[$i];
+                        // $result_detail->tgl_expired     = date('Y-m-d', strtotime($request->expired_date[$i]));
                         $result_detail->created_user    = auth()->user()->username;
                         $result_detail->save();
                     }else{
                         $result_detail  = new PembelianDetail();
-                        $result_detail->product_beli_id = $result->id;
+                        $result_detail->pembelian_id = $result->id;
                         $result_detail->product_id      = $request->product[$i];
-                        $result_detail->qrcode          = $request->qrcode[$i];
+                        // $result_detail->qrcode          = $request->qrcode[$i];
                         $result_detail->qty             = $request->qty[$i];
-                        $result_detail->satuan          = $satuan->name;
-                        $result_detail->harga_beli      = $request->harga_beli[$i];
-                        $result_detail->tgl_expired     = date('Y-m-d', strtotime($request->expired_date[$i]));
+                        // $result_detail->satuan          = $satuan->name;
+                        // $result_detail->harga_beli      = $request->harga_beli[$i];
+                        // $result_detail->tgl_expired     = date('Y-m-d', strtotime($request->expired_date[$i]));
                         $result_detail->created_user    = auth()->user()->username;
                         $result_detail->save();
                     }
                 }
-                DB::commit();
+                // DB::commit();
                 $json_data  = array(
                     'success'   => TRUE,
                     'message'   => 'Data berhasil diupdate'
                 );
             }else{
-                DB::rollback();
+                // DB::rollback();
                 $json_data  = array(
                     'success'   => FALSE,
                     'message'   => 'Data belanja gagal diupdate'
@@ -264,11 +294,12 @@ class PembelianController extends Controller
             }
         }else{
             $result = new Pembelian();
-            $result->no_nota        = $request->nota;
-            $result->supplier_id    = $request->supplier_product;
-            $result->tgl_pembelian  = date('Y-m-d', strtotime($request->tgl_pembelian));
-            $result->note           = $request->note;
-            $result->flag_proses    = 0;
+            $result->no_faktur        = $request->nofaktur;
+            // $result->supplier_id    = $request->supplier_product;
+            $result->tgl_faktur  = date('Y-m-d', strtotime($request->tgl_faktur));
+            $result->nominal  = $request->nominal;
+            $result->keterangan           = $request->ket;
+            // $result->flag_proses    = 0;
             $result->created_user   = auth()->user()->username;
             $result->save();
 
@@ -277,23 +308,23 @@ class PembelianController extends Controller
                     $satuan = Satuan::find($request->satuan[$i]);
 
                     $result_detail  = new PembelianDetail();
-                    $result_detail->product_beli_id = $result->id;
+                    $result_detail->pembelian_id = $result->id;
                     $result_detail->product_id      = $request->product[$i];
-                    $result_detail->qrcode          = $request->qrcode[$i];
+                    // $result_detail->qrcode          = $request->qrcode[$i];
                     $result_detail->qty             = $request->qty[$i];
-                    $result_detail->satuan          = $satuan->name;
-                    $result_detail->harga_beli      = $request->harga_beli[$i];
-                    $result_detail->tgl_expired     = date('Y-m-d', strtotime($request->expired_date[$i]));
+                    // $result_detail->satuan          = $satuan->name;
+                    // $result_detail->harga_beli      = $request->harga_beli[$i];
+                    // $result_detail->tgl_expired     = date('Y-m-d', strtotime($request->expired_date[$i]));
                     $result_detail->created_user    = auth()->user()->username;
                     $result_detail->save();
                 }
-                DB::commit();
+                // DB::commit();
                 $json_data  = array(
                     'success'   => TRUE,
                     'message'   => 'Data berhasil ditambahkan'
                 );
             }else{
-                DB::rollback();
+                // DB::rollback();
                 $json_data  = array(
                     'success'   => FALSE,
                     'message'   => 'Data belanja gagal ditambahkan'
@@ -306,28 +337,48 @@ class PembelianController extends Controller
     }
 
     public function search_product(Request $request){
-        // $product = Product::select('product.id','product.nama','product.code','product.satuan_id', 'satuan.name as satuan_product')
-        //             ->leftJoin('satuan','satuan.id', 'product.satuan_id')
-        //             ->orWhere('product.name', 'LIKE', "%{$request->search}%")
-        //             ->orWhere('product.code', 'LIKE', "%{$request->search}%")
-        //             ->limit(10)
-        //             ->get();
-        $product = Product::select('product.*')
-                    ->orWhere('product.nama','LIKE',"%{$request->search}%")
+        $product = Product::select('tbl_product.id','tbl_product.nama','tbl_product.kode_product','tbl_product.id_satuan', 'tbl_satuan.nama as satuan_product')
+                    ->leftJoin('tbl_satuan','tbl_satuan.id', 'tbl_product.id_satuan')
+                    ->orWhere('tbl_product.nama', 'LIKE', "%{$request->search}%")
+                    ->orWhere('tbl_product.kode_product', 'LIKE', "%{$request->search}%")
                     ->limit(10)
                     ->get();
-
+        // $product = Product::select('*')
+        //             ->orWhere('tbl_product.nama','LIKE',"%{$request->search}%")
+        //             ->limit(10)
+        //             ->get();
+        // return $product;
         return json_encode($product);
     }
 
-    public function ubah($enc_id){
-       $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
-       if($dec_id){
-            $product = Product::find($dec_id);
+    public function get_satuan(Request $request){
+        $satuan = Satuan::orWhere('nama', 'LIKE', "%{$request->search}%")
+                      ->limit(10)
+                      ->get();
 
-            return view('backend/pembelian/form', compact('enc_id','product'));
-       } else{
-            return view('errors/noaccess');
+        return json_encode($satuan);
+      }
+
+      public function ubah($enc_id){
+        $dec_id   = $this->safe_decode(Crypt::decryptString($enc_id));
+        $product_beli = Pembelian::select('pembelian.*')->where('pembelian.id', $dec_id)->first();
+        // $product_beli->transaction = date('d-m-Y', strtotime($product_beli->tgl_pembelian));
+
+        $query = PembelianDetail::select('pembelian_detail.id','pembelian_detail.qty','pembelian_detail.product_id','tbl_product.kode_product as product_code','tbl_product.nama as product_name');
+        $query->leftJoin('tbl_product','tbl_product.id','pembelian_detail.product_id');
+        $query->where('pembelian_detail.pembelian_id', $dec_id);
+        $total_beli_detail = $query->count();
+        $product_beli_detail = $query->get();
+        foreach ($product_beli_detail as $key => $value) {
+            $get_satuan_id  = Satuan::where('nama','LIKE',"%{$value->satuan}%")->first();
+
+            // $value->expired = date('d-m-Y', strtotime($value->tgl_expired));
+            $value->satuan_id = $get_satuan_id->id;
         }
+
+        return view('backend/pembelian/form', compact('enc_id','product_beli','product_beli_detail', 'total_beli_detail'));
     }
+
+    public function hapus($enc_id){}
+
 }
