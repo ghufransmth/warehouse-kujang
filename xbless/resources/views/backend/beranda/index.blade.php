@@ -412,7 +412,7 @@
 @endsection
 @push('scripts')
 <script>
-    var table_unilever, table_penjualan, table_retur, table_piutang, table_tagihan;
+    var table_unilever, table_penjualan;
     $(document).ready(function () {
         getdata()
         $('#data_5 .input-daterange').datepicker({
@@ -621,9 +621,7 @@
     function refresh(){
         table_unilever.ajax.reload(null, true)
         table_penjualan.ajax.reload(null, true)
-        table_retur.ajax.reload(null, true)
-        table_piutang.ajax.eload(null, true)
-        table_tagihan.ajax.reload(null, true)
+
     }
     function number_to_price(data){
         if(data==0){return '0,00';}
@@ -645,7 +643,6 @@
             },
             url: '{{ route("beranda.getdata") }}',
             success: function(response){
-                // console.log(response)
                 if(response.code == 200){
                     $('#omset').html(`Rp. ${number_to_price(response.detail.omset)}`)
                     $('#pajak').html(`Rp. ${number_to_price(response.detail.pajak)}`)

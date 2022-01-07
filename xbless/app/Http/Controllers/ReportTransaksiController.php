@@ -65,10 +65,12 @@ class ReportTransaksiController extends Controller
             });
         }
 
+        if($request->sales != ''){
+            $query->where('id_sales', $request->sales);
+        }
+
         $query->whereDate('tgl_faktur', '>=', date('Y-m-d', strtotime($periode_start)));
         $query->whereDate('tgl_faktur', '<=', date('Y-m-d', strtotime($periode_end)));
-
-
 
         $totalData = $query->get()->count();
   

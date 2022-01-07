@@ -21,9 +21,9 @@
                         <label class="font-normal">Range select</label>
                         <div class="input-daterange input-group" id="datepicker">
                             <span class="input-group-addon px-3 bg-white border"><i class="fa fa-calendar"></i></span>
-                            <input type="text" class="form-control-sm form-control" name="start" value="{{ $periode_start }}">
+                            <input type="text" class="form-control-sm form-control" name="start" id="start" value="{{ $periode_start }}">
                             <span class="input-group-addon px-3 bg-primary">to</span>
-                            <input type="text" class="form-control-sm form-control" name="end" value="{{ $periode_end }}">
+                            <input type="text" class="form-control-sm form-control" name="end" id="end" value="{{ $periode_end }}">
                             <span class="input-group-addon px-3 bg-white  border"><i class="fa fa-calendar"></i></span>
                         </div>
                     </div>
@@ -32,7 +32,8 @@
                     <div class="form-group">
                         <label class="font-normal">Salesman</label>
                         <div>
-                            <select class="select2_salesman form-control">
+                            <select class="select2_salesman form-control" id="sales">
+                                <option value="">Select Sales</option>
                                 @if(isset($sales))
                                     @foreach($sales as $key => $value)
                                         <option value="{{ $value->id }}">{{ $value->nama }}</option>
@@ -124,9 +125,10 @@ var table;
                         "dataType": "json",
                         "type": "POST",
                         data: function ( d ) {
-                        d._token= "{{csrf_token()}}";
-                        d.periode_start = $('#start').val()
-                        d.periode_end = $('#end').val()
+                            d._token= "{{csrf_token()}}";
+                            d.periode_start = $('#start').val()
+                            d.periode_end = $('#end').val()
+                            d.sales = $('#sales option:selected').val()
                         }
                     },
                 "columns": [
@@ -166,6 +168,23 @@ var table;
                 ]
             });
         });
+
+        $(document).on('change', '#start', function(){
+            var end = $('#end').val()
+            if(end != ''){
+                table.ajax.reload(null, true)
+            }
+        })
+
+        $(document).on('change', '#end', function(){
+            var start = $('#start').val()
+            if(end != ''){
+                table.ajax.reload(null, true)
+            }
+        })
+        $(document).on('change', '#sales', function(){
+            table.ajax.reload(null, true)
+        })
 </script>
 <script>
     $('#data_5 .input-daterange').datepicker({
