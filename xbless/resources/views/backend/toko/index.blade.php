@@ -15,9 +15,9 @@
     </div>
     <div class="col-lg-2">
         <br/>
-        @can('brand.tambah')
-          <a href="" class="btn btn-success"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
-        @endcan
+        {{-- @can('brand.tambah') --}}
+          <a href="{{ route('toko.tambah') }}" class="btn btn-success"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
+        {{-- @endcan --}}
     </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
@@ -129,27 +129,91 @@
                 },
             }
         });
-        // tabledata = $('#orderData').DataTable({
-        //     dom     : 'lrtp',
-        //     paging    : false,
-        //     columnDefs: [ {
-        //             "targets": 'no-sort',
-        //             "orderable": false,
-        //     } ]
-        //     });
-        //     $('#filter').click(function(){
-        //         table.ajax.reload(null, false);
 
-        //     });
-        //     $('#refresh').click(function(){
-        //         table.ajax.reload(null, false);
-        //     });
+        tabledata = $('#orderData').DataTable({
+            dom     : 'lrtp',
+            paging    : false,
+            columnDefs: [ {
+                    "targets": 'no-sort',
+                    "orderable": false,
+            } ]
+            });
+            $('#filter').click(function(){
+                table.ajax.reload(null, false);
 
-        //     table.on('select', function ( e, dt, type, indexes ){
-        //     table_index = indexes;
-        //     var rowData = table.rows( indexes ).data().toArray();
+            });
+            $('#refresh').click(function(){
+                table.ajax.reload(null, false);
+            });
 
-        //     });
+            table.on('select', function ( e, dt, type, indexes ){
+            table_index = indexes;
+            var rowData = table.rows( indexes ).data().toArray();
+
+            });
     });
+
+
+    function deleteData(e,enc_id){
+            var token = '{{ csrf_token() }}';
+            Swal.fire({
+                title: "Apakah Anda yakin?",
+                text: "Data akan terhapus!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Ya",
+                cancelButtonText:"Batal",
+                confirmButtonColor: "#ec6c62",
+                closeOnConfirm: false
+            }).then(function(result) {
+                console.log(result)
+                if (result.value) {
+                    $.ajaxSetup({
+                        headers: { "X-CSRF-Token" : $("meta[name=csrf-token]").attr("content") }
+                    });
+                    $.ajax({
+                        type: 'delete',
+                        url: '{{route("toko.delete",[null])}}/' + enc_id,
+                        headers: {'X-CSRF-TOKEN': token},
+                        beforeSend: function(){
+                            Swal.showLoading();
+                        },
+                        success: function(data){
+                            location.reload();
+                            console.log(data)
+                        if (data.success) {
+                            Swal.fire('Yes',data.message,'success');
+                            table.ajax.reload(null, true);
+                        }else{
+                        Swal.fire('Success',data.message,'info');
+                        }
+                        Swal.hideLoading();
+                    },
+                    error: function(data){
+                        console.log(data);
+                        Swal.fire("Ups!", "Terjadi kesalahan pada sistem.", "error");
+                    }});
+                }
+            });
+        }
+
+        $(document.body).on("keydown", function(e){
+         ele = document.activeElement;
+           if(e.keyCode==38){
+             table.row(table_index).deselect();
+             table.row(table_index-1).select();
+           }
+           else if(e.keyCode==40){
+
+             table.row(table_index).deselect();
+             table.rows(parseInt(table_index)+1).select();
+             console.log(parseInt(table_index)+1);
+
+           }
+           else if(e.keyCode==13){
+
+           }
+       });
 </script>
 @endpush

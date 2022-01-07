@@ -36,6 +36,7 @@
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
                                 aria-hidden="true">&times;</span></button>
                         {{ session('message')['desc'] }}
+                        <h5>Tambah Toko</h5>
                     </div>
                     <div class="ibox-content">
                         <form id="submitData">

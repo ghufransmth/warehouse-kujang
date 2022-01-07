@@ -76,7 +76,7 @@ class TokoController extends Controller
             $action.='<a href="'.route('toko.edit',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
         //   }
         //   if($request->user()->can('toko.hapus')){
-            $action.='<a href="#" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
+            $action.='<a href="#" onclick="deleteData(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
         //   }
 
           $action.="</div>";
@@ -204,11 +204,11 @@ class TokoController extends Controller
           $payments = Payment::all();
           $jenis_toko = JenisToko::all();
           $kategori_toko = KategoriToko::all();
-          $selecteddistrik = $distrik->distrik_id;
-          $selectedtipechanel = $tipe_chanel->tipe_chanel_id;
-          $selectedpayment = $payments->payment->payment_id;
-          $selectedjenistoko = $jenis_toko->jenis_toko_id;
-          $selectedkategoritoko = $kategori_toko->kategori_toko_id;
+          $selecteddistrik = $toko->distrik_id;
+          $selectedtipechanel = $toko->tipe_chanel_id;
+          $selectedpayment = $toko->payment_id;
+          $selectedjenistoko = $toko->jenis_toko_id;
+          $selectedkategoritoko = $toko->kategori_toko_id;
           return view('backend/toko/form',compact('enc_id','toko','distrik','selecteddistrik','tipe_chanel','selectedtipechanel','payments','selectedpayment','jenis_toko','selectedjenistoko','kategori_toko','selectedkategoritoko'));
         } else {
             return view('errors/noaccess');
@@ -216,19 +216,28 @@ class TokoController extends Controller
     }
 
     public function hapus(Request $request, $enc_id){
-        $dec_id   = $this->safe_decode(Crypt::decryptString($enc_id));
-        $toko    = Toko::find($dec_id);
-        $cekexist = Product::where('toko_id',$dec_id)->first();
-        if($toko) {
-          if($cekexist) {
-            return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Brand sudah direlasikan dengan Produk, Silahkan hapus dahulu Produk yang terkait dengan Brand ini.']);
-          }else{
+        try{
+            $dec_id   = $this->safe_decode(Crypt::decryptString($enc_id));
+            $toko    = Toko::find($dec_id);
             $toko->delete();
-            return response()->json(['status'=>"success",'message'=>'Data Berhasil dihapus.']);
-          }
-        }else {
-            return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Silahkan ulangi kembali.']);
-        }
-    }
 
+            if($toko){
+                $json_data = array(
+                    "status"    =>  'success',
+                    "message"   =>  'Data Berhasil Dihapus.'
+                );
+            }else{
+                $json_data = array(
+                    "status"    =>  'Gagal.',
+                    "message"   =>  'Data Gagal Dihapus.'
+                );
+            }
+        }catch(\Throwable $th){
+            $json_data = array(
+                "success"         => 'gagal',
+                "message"         => $th->getMessage()
+            );
+        }
+        return json_encode($json_data);
+    }
 }

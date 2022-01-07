@@ -558,6 +558,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
        Route::post('/simpan',[TokoController::class, 'simpan'])->name('simpan');
        Route::get('/tambah', [TokoController::class, 'tambah'])->name('tambah');
        Route::get('/edit/{id}', [TokoController::class, 'ubah'])->name('edit');
+       Route::delete('/delete/{id?}',[TokoController::class,'hapus'])->name('delete');
     });
 
     Route::group(['prefix' => 'pembelian', 'as' => 'pembelian.'], function(){

@@ -42,7 +42,7 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Kode Toko *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="kode" name="kode" value="{{isset($toko)? $toko->name : ''}}">
+                                    <input type="text" class="form-control" id="kode" name="kode" value="{{isset($toko)? $toko->code : ''}}">
                                 </div>
                             </div>
 
@@ -54,19 +54,19 @@
 
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Nik *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="nik" name="nik" value="{{isset($toko)? $toko->name : ''}}">
+                                    <input type="text" class="form-control" id="nik" name="nik" value="{{isset($toko)? $toko->nik : ''}}">
                                 </div>
                             </div>
 
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Alamat *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="alamat" name="alamat" value="{{isset($toko)? $toko->name : ''}}">
+                                    <input type="text" class="form-control" id="alamat" name="alamat" value="{{isset($toko)? $toko->alamat : ''}}">
                                 </div>
                             </div>
 
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Telp *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="telp" name="telp" value="{{isset($toko)? $toko->name : ''}}">
+                                    <input type="text" class="form-control" id="telp" name="telp" value="{{isset($toko)? $toko->telp : ''}}">
                                 </div>
                             </div>
 

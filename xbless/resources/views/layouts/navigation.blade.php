@@ -87,8 +87,8 @@
             <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">Master Toko</span><span
                     class="fa arrow"></span></a>
             <ul class="nav nav-second-level collapse">
-                <li class=""><a href="{{ route('member.index') }}">List Toko</a></li>
-                <li class=""><a href="{{ route('member.tambah') }}">Tambah Toko</a></li>
+                <li class=""><a href="{{ route('toko.index') }}">List Toko</a></li>
+                <li class=""><a href="{{ route('toko.tambah') }}">Tambah Toko</a></li>
             </ul>
         </li>
         <li>
@@ -103,18 +103,16 @@
             <a href="#"><i class="fa fa-list-alt"></i> <span class="nav-label">Penjualan Produk</span><span
                     class="fa arrow"></span></a>
             <ul class="nav nav-second-level collapse">
-                @can('purchaseorder.index')
-                <li><a href="{{ route('purchaseorder.index') }}">List Penjualan Produk</a></li>
-                @endcan
-                @can('purchaseorder.tambah')
-                <li class=""><a href="{{ route('purchaseorder.tambah') }}">Tambah Penjualan Produk</a></li>
-                @endcan
-                <!-- @can('draftpurchaseorder.index')
-                        <li><a href="{{ route('draftpurchaseorder.index') }}">Draft PO</a></li>
-                    @endcan -->
+                {{-- @can('purchaseorder.index') --}}
+                {{-- <li><a href="{{ route('purchaseorder.index') }}">List Penjualan Produk</a></li> --}}
+                {{-- @endcan --}}
+                {{-- @can('purchaseorder.tambah') --}}
+                {{-- <li class=""><a href="{{ route('purchaseorder.tambah') }}">Tambah Penjualan Produk</a></li> --}}
+                {{-- @endcan --}}
+
                 </ul>
             </li>
-            @endcan
+            {{-- @endcan --}}
             @can('menuorder.index')
             <li>
                 <a href="#"><i class="fa fa-cart-plus"></i> <span class="nav-label">Pembelian Produk</span><span class="fa arrow"></span></a>
@@ -128,28 +126,6 @@
                 </ul>
             </li>
             @endcan
-            <!-- @can('menurequestpurchaseorder.index')
-                @can('requestpurchaseorder.index')
-                    <li>
-                        <a href="{{ route('requestpurchaseorder.index') }}"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Request PO </span><span id="req_po_count" class="label label-info float-right">0</span></a>
-                    </li>
-                @endcan
-            @endcan
-
-            @can('menupurchasebatal.index')
-                @can('purchasebatal.index')
-                    <li>
-                        <a href="{{ route('purchasebatal.index') }}"><i class="fa fa-ban"></i> <span class="nav-label">PO Batal </span><span id="po_batal_count" class="label label-info float-right">0</span></a>
-                    </li>
-                @endcan
-            @endcan
-            @can('menubackorder.index')
-                @can('backorder.index')
-                    <li>
-                        <a href="{{ route('backorder.index') }}"><i class="fa fa-suitcase"></i> <span class="nav-label">Back Order </span><span id="back_order_count" class="label label-info float-right">0</span></a>
-                    </li>
-                @endcan
-            @endcan -->
         @can('menureport.index')
         <li>
             <a href="#"><i class="fa fa-paste"></i> <span class="nav-label">Report</span><span
