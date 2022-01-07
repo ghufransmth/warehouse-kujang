@@ -18,7 +18,7 @@
             </li>
         </ol>
     </div>
-    
+
 </div>
     <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
@@ -31,13 +31,13 @@
                             {{ session('message')['desc'] }}
                             </div>
                         @endif
-                        
+
                     </div>
                     <div class="ibox-content">
                         <form id="submitData" name="submitData">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             <input type="hidden" name="enc_id" id="enc_id" value="{{isset($stokmutasi)? $enc_id : ''}}">
-                            
+
                             <div class="hr-line-dashed"></div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">No Transaksi * : </label>
@@ -49,7 +49,7 @@
                                     <input type="text" class="form-control formatTgl" id="tgl_mutasi" name="tgl_mutasi" value="{{date('d-m-Y')}}"/>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            {{-- <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Perusahaan * : </label>
                                 <div class="col-sm-10 error-text">
                                     <select class="form-control select2" id="perusahaan" name="perusahaan" {{isset($stokmutasi)? ($stokmutasi->flag_proses=='1'?'disabled':'') : ''}}>
@@ -59,24 +59,26 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                
-                            </div>
+
+                            </div> --}}
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Dari Gudang * </label>
+                                {{-- <label class="col-sm-2 col-form-label">Dari Gudang * </label>
                                 <div class="col-sm-4 error-text">
                                     <select class="form-control select2" id="gudang_from" name="gudang_from">
-                                        
+
                                     </select>
-                                </div>
+                                </div> --}}
                                 <label class="col-sm-2 col-form-label">Tujuan Gudang * </label>
-                                <div class="col-sm-4 error-text">
+                                <div class="col-sm-10 error-text">
                                     <select class="form-control select2" id="gudang_to" name="gudang_to">
-                                        
+                                        <option value="0">Pilih Gudang</option>
+                                        <option value="1">Gudang Penjualan</option>
+                                        <option value="2">Gudang BS</option>
                                     </select>
                                 </div>
                             </div>
-                            
-                           
+
+
 
                             <div class="hr-line-dashed"></div>
                             <div class="form-group row">
@@ -86,9 +88,9 @@
                                     </select>
                                 </div>
                             </div>
-                            
 
-                           
+
+
 
                             <div class="hr-line-dashed"></div>
                             <div class="table-responsive">
@@ -97,13 +99,13 @@
                                 <tr>
                                     <th class="no-sort">Produk</th>
                                     <th>Stok Gudang</th>
-                                    <th>Satuan</th> 
-                                    <th>Qty Mutasi</th> 
+                                    <th>Satuan</th>
+                                    <th>Qty Mutasi</th>
                                     <th class="text-right">Aksi</th>
                                 </tr>
                                 </thead>
                                 <tbody id="detailData">
-                                </tbody>       
+                                </tbody>
                             </table>
                             </div>
                         </form>
@@ -112,17 +114,17 @@
                                 <div class="col-sm-4 col-sm-offset-2">
                                     @can('stokmutasi.tambah')
                                     <button class="btn btn-primary btn-sm" type="button" id="simpan">Simpan</button>
-                                    @endcan 
+                                    @endcan
                                 </div>
                             </div>
-                        
-                      
+
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
-            
+
 @endsection
 @push('scripts')
 
@@ -138,8 +140,8 @@
     var table;
     $(".select2").select2();
     $(document).ready(function () {
-        
-        
+
+
         $('.formatTgl').datepicker({
             todayBtn: "linked",
             keyboardNavigation: false,
@@ -153,7 +155,7 @@
             "pageLength": 100,
         });
         $("#perusahaan").on('change', function(){
-            
+
             var perusahaan_id = $(this).val();
             if(perusahaan_id) {
                 $.ajax({
@@ -171,7 +173,7 @@
                     }
                 });
             }else{
-                Swal.fire('Ups','Silahkan Pilih Perusahaan terlebih dahulu','info'); 
+                Swal.fire('Ups','Silahkan Pilih Perusahaan terlebih dahulu','info');
                 $('#gudang_from').empty();
             }
             loadProduct();
@@ -179,7 +181,7 @@
         $("#gudang_from").on('change', function(){
             var gudang_id = $(this).val();
             if(gudang_id=="") {
-                Swal.fire('Ups','Silahkan Pilih Gudang Awal terlebih dahulu','info'); 
+                Swal.fire('Ups','Silahkan Pilih Gudang Awal terlebih dahulu','info');
             }else{
                 $('#table1 tbody > tr').remove();
             }
@@ -192,7 +194,7 @@
                 var jumlah=$('#table1 >tbody >tr').length;
                 if(jumlah==0){
                     Swal.hideLoading();
-                    Swal.fire('Ups','Tidak ada data Mutasi Stok. Silahkan tambahkan produk terlebih dahulu','info'); 
+                    Swal.fire('Ups','Tidak ada data Mutasi Stok. Silahkan tambahkan produk terlebih dahulu','info');
                     return false;
                 }else{
                     SimpanData();
@@ -228,7 +230,7 @@
                 required: "Gudang Awal wajib dipilih salah satu."
             },
             tgl_transaksi: {
-                required: "Tanggal Mutasi tidak boleh kosong",        
+                required: "Tanggal Mutasi tidak boleh kosong",
             },
             gudang_to: {
                 required: "Gudang Tujuan wajib dipilih salah satu."
@@ -237,9 +239,9 @@
             errorElement: 'span',
             errorPlacement: function (error, element) {
             error.addClass('invalid-feedback');
-           
+
             element.closest('.error-text').append(error);
-            
+
             },
             highlight: function (element, errorClass, validClass) {
                 $(element).addClass('is-invalid');
@@ -251,31 +253,31 @@
     });
 </script>
 <script>
-        function loadGudangTujuan(){
-            var perusahaan_id = $('#perusahaan').val();
-            var gudang_from   = $('#gudang_from').val();
-            if(perusahaan_id) {
-                $.ajax({
-                    url: '{{route("stokmutasi.perusahaan_gudang",[null])}}/' + perusahaan_id,
-                    type: "GET",
-                    dataType: "json",
-                    success:function(data) {
-                        // $('#gudang').empty();
-                        $("#gudang_to").empty().trigger('change')
-                        $('#gudang_to').append('<option value="">Pilih Gudang Tujuan</option>');
-                        $.each(data, function(key, value) {
-                            if(value['id'] != gudang_from){
-                                $('#gudang_to').append('<option value="'+ value['id'] +'">'+ value['name'] +'</option>');
-                            }
-                        });
-                        $('#table1 tbody > tr').remove();
-                    }
-                });
-            }else{
-                Swal.fire('Ups','Silahkan Pilih Perusahaan terlebih dahulu','info'); 
-                $('#gudang_to').empty();
-            }
-        }
+        // function loadGudangTujuan(){
+        //     var perusahaan_id = $('#perusahaan').val();
+        //     var gudang_from   = $('#gudang_from').val();
+        //     if(perusahaan_id) {
+        //         $.ajax({
+        //             url: '{{route("stokmutasi.perusahaan_gudang",[null])}}/' + perusahaan_id,
+        //             type: "GET",
+        //             dataType: "json",
+        //             success:function(data) {
+        //                 // $('#gudang').empty();
+        //                 $("#gudang_to").empty().trigger('change')
+        //                 $('#gudang_to').append('<option value="">Pilih Gudang Tujuan</option>');
+        //                 $.each(data, function(key, value) {
+        //                     if(value['id'] != gudang_from){
+        //                         $('#gudang_to').append('<option value="'+ value['id'] +'">'+ value['name'] +'</option>');
+        //                     }
+        //                 });
+        //                 $('#table1 tbody > tr').remove();
+        //             }
+        //         });
+        //     }else{
+        //         Swal.fire('Ups','Silahkan Pilih Perusahaan terlebih dahulu','info');
+        //         $('#gudang_to').empty();
+        //     }
+        // }
         function SimpanData(){
             $('#simpan').addClass("disabled");
             var form = $('#submitData').serializeArray()
@@ -285,7 +287,7 @@
             $.each(form, function(idx, val) {
                 dataFile.append(val.name, val.value)
             })
-           
+
             $.ajax({
                 type: 'POST',
                 url : "{{route('stokmutasi.simpan')}}",
@@ -301,12 +303,12 @@
                     if (data.success) {
                         Swal.fire('Yes',data.message,'info');
                         location.reload();
-                       
+
                     } else {
-                        Swal.fire('Ups',data.message,'info'); 
+                        Swal.fire('Ups',data.message,'info');
                     }
                 },
-                complete: function () { 
+                complete: function () {
                         Swal.hideLoading();
                         $('#simpan').removeClass("disabled");
                 },
@@ -320,9 +322,15 @@
     $("#table1").on('click', '.remove', function() {
          $(this).closest('tr').remove();
     });
+    $('#gudang_to').on('change', function(){
+        // console.log('tes');
+        loadProduct();
+        $('#table1 tbody > tr').remove();
+    });
     function loadProduct(){
-        var perusahaan_id = $('#perusahaan').val();
-        var gudang_id = $('#gudang_from').val();
+        // var perusahaan_id = $('#perusahaan').val();
+        // console.log('tes');
+        var gudang_id = $('#gudang_to').val();
         $('.selectProduct').select2({
         ajax: {
             url: '{{route('stokmutasi.getproduct')}}',
@@ -330,7 +338,6 @@
             data: function (params) {
                 var query = {
                     term: params.term,
-                    perusahaan_id: perusahaan_id,
                     gudang_id : gudang_id,
                 }
                 return query;
@@ -338,44 +345,40 @@
         }
     })
     }
-    
+
 </script>
 
 <script>
-    
-   
+
+
     $( "#pilihProduct" ).change(function() {
-        var perusahaan = $('#perusahaan').val();
-        var gudang_id = $('#gudang_from').val();
+        var gudang_id = $('#gudang_to').val();
         var val = [];
+
         $("input[name='product[]']").each(function(i){
             val[i] = $(this).val();
         });
-        if(perusahaan==''){
-            Swal.fire('Ups','Silahkan Pilih Perusahaan terlebih dahulu','info'); 
-            return false;
-        }
-        else if(gudang_id==''){
-            Swal.fire('Ups','Silahkan Pilih Gudang terlebih dahulu','info'); 
+        if(gudang_id==''){
+            Swal.fire('Ups','Silahkan Pilih Gudang terlebih dahulu','info');
             return false;
         }else{
             if(jQuery.inArray($(this).val(), val) != -1) {
                 Swal.fire('Ups','Produk sudah ada di data keranjang','info');
                 $('#pilihProduct').val('');
             }else {
-                
+                var id = $(this).val();
                 $.ajax({
                     type: 'POST',
                     url: '{{route('stokmutasi.tambahproduk')}}',
                     data: {
                         _token  : '{{csrf_token()}}',
                         id_product    : $(this).val(),
-                        perusahaan_id : perusahaan,
                         gudang_id: gudang_id,
                     },
                     dataType: 'json',
                     success: function(result){
                         $('#detailData').append(result.data);
+                        $('.satuan_select'+id).select2();
                         $(".qty").TouchSpin({
                                 min:1,
                                 max:result.stok,
@@ -387,8 +390,9 @@
                 $('#pilihProduct').val('');
             }
         }
+
     });
-    
-   
+
+
 </script>
 @endpush

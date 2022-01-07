@@ -50,6 +50,7 @@ use App\Http\Controllers\ReportBarangMasukController;
 use App\Http\Controllers\ReportReturRevisiController;
 use App\Http\Controllers\ReportTandaTerimaController;
 use App\Http\Controllers\DraftPurchaseController;
+use App\Http\Controllers\PenjualanImportController;
 use App\Http\Controllers\ReportBarangKeluarController;
 use App\Http\Controllers\ReportRekapInvoiceController;
 
@@ -224,6 +225,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('manage/stokopname/detail/{id}', [StokOpnameController::class, 'detail'])->name('stokopname.detail');
     Route::get('manage/stokopname/print/{id}', [StokOpnameController::class, 'print'])->name('stokopname.print');
     Route::post('manage/stokopname/detaildataform', [StokOpnameController::class, 'detaildataform'])->name('stokopname.detaildataform');
+    Route::get('manage/stockopname/detaildata/{id?}', [StokOpnameController::class, 'getdatadetail'])->name('stockopname.getdatadetail');
 
     Route::get('manage/stokopname/opname/getgudang/{id?}', [StokOpnameController::class, 'perusahaan_gudang'])->name('stokopname.perusahaan_gudang');
     Route::get('manage/stokopname/getproduk', [StokOpnameController::class, 'getProduk'])->name('stokopname.getproduct');
@@ -469,6 +471,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::get('/showpo/{id?}', [PurchaseController::class, 'showpo'])->name('showpo');
             Route::get('/check_gudang/{id?}', [PurchaseController::class, 'check_gudang'])->name('check_gudang');
             Route::get('/search_produk', [PurchaseController::class, 'search_produk'])->name('search');
+            Route::get('/search_satuan', [PurchaseController::class, 'search_satuan'])->name('search_satuan');
             Route::post('/expedisi', [PurchaseController::class, 'expedisi'])->name('expedisi');
             Route::post('/simpanexpedisi', [PurchaseController::class, 'simpan_expedisi'])->name('simpanexpedisi');
             Route::post('/simpan', [PurchaseController::class, 'simpan'])->name('simpan');
@@ -476,8 +479,16 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/updatepo', [PurchaseController::class, 'updatepo'])->name('updatepo');
             Route::post('/updatepokrnditolak', [PurchaseController::class, 'updatepokrnditolak'])->name('updatepokrnditolak');
 
+            //IMPORT PENJUALAN
+            Route::get('/import', [PenjualanImportController::class, 'index'])->name('import');
+            Route::get('/importsimpan', [PenjualanImportController::class, 'importsimpan'])->name('importsimpan');
+            Route::get('/importbatal', [PenjualanImportController::class, 'importbatal'])->name('importbatal');
+            Route::post('/uploadimport', [PenjualanImportController::class, 'import'])->name('uploadimport');
+            Route::post('/deleteimport', [PenjualanImportController::class, 'hapus'])->name('deleteimport');
+
             Route::post('/note', [PurchaseController::class, 'note'])->name('note');
-            Route::post('/proses_hitung', [PurchaseController::class, 'total_price'])->name('proses_hitung');
+            Route::post('/harga_product', [PurchaseController::class, 'harga_product'])->name('harga_product');
+            Route::post('/total_harga', [PurchaseController::class, 'total_harga'])->name('total_harga');
             Route::post('/status_po', [PurchaseController::class, 'status_po'])->name('status_po');
 
             Route::post('/scan_qty_kirim', [PurchaseController::class, 'scan_qty_kirim'])->name('scan_qty_kirim');

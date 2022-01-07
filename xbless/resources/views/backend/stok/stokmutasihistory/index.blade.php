@@ -28,7 +28,7 @@
                 <div class="ibox-content">
                 <form id="submitData" name="submitData">
                             <div class="hr-line-dashed"></div>
-                            <div class="form-group row">
+                            {{-- <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Perusahaan : </label>
                                 <div class="col-sm-8 error-text">
                                     <select class="form-control select2" id="perusahaan" name="perusahaan">
@@ -39,20 +39,22 @@
                                     </select>
                                 </div>
 
-                            </div>
+                            </div> --}}
                             <div class="form-group row">
 
-                                <label class="col-sm-2 col-form-label">Dari Gudang :</label>
-                                <div class="col-sm-3 error-text">
+                                <label class="col-sm-2 col-form-label">Gudang Tujuan :</label>
+                                <div class="col-sm-10 error-text">
                                     <select class="form-control select2" id="gudang" name="gudang">
-                                        <option value="">Pilih Gudang Awal</option>
-                                        @foreach($gudang as $key => $row)
+                                        <option value="">Pilih Gudang Tujuan</option>
+                                        <option value="1">Gudang Penjualan</option>
+                                        <option value="2">Gudang BS</option>
+                                        {{-- @foreach($gudang as $key => $row)
                                         <option value="{{$row->id}}"{{ $selectedgudang == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}</option>
-                                        @endforeach
+                                        @endforeach --}}
                                     </select>
                                     </select>
                                 </div>
-                                <label class="col-sm-2 col-form-label">Ke Gudang :</label>
+                                {{-- <label class="col-sm-2 col-form-label">Ke Gudang :</label>
                                 <div class="col-sm-3 error-text">
                                     <select class="form-control select2" id="gudang_form" name="gudang_form">
                                         <option value="">Pilih Gudang Tujuan</option>
@@ -61,7 +63,7 @@
                                         @endforeach
                                     </select>
                                     </select>
-                                </div>
+                                </div> --}}
                             </div>
 
                             <div class="form-group row">
@@ -107,7 +109,7 @@
                         <tr>
                             <th width="5%" >No</th>
                             <th>Produk</th>
-                            <th>Perusahaan</th>
+                            {{-- <th>Perusahaan</th> --}}
                             <th>Gudang Lama</th>
                             <th>Gudang Baru</th>
                             <th>Stock Sebelum Mutasi</th>
@@ -181,7 +183,7 @@
                  "orderable" : false,
                },
                { "data": "nama_produk"},
-               { "data": "nama_perusahaan"},
+            //    { "data": "nama_perusahaan"},
                { "data": "nama_gudang_awal"},
                { "data": "nama_gudang_tujuan"},
                { "data": "dari_stock"},

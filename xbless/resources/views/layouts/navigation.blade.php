@@ -139,6 +139,9 @@
                     @can('purchaseorder.tambah')
                         <li class=""><a href="{{ route('purchaseorder.tambah') }}">Tambah Penjualan Produk</a></li>
                     @endcan
+                    @can('purchaseorder.tambah')
+                        <li class=""><a href="{{ route('purchaseorder.import') }}">Upload Penjualan</a></li>
+                    @endcan
                     <!-- @can('draftpurchaseorder.index')
                         <li><a href="{{ route('draftpurchaseorder.index') }}">Draft PO</a></li>
                     @endcan -->

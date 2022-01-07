@@ -53,19 +53,21 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Perusahaan * : </label>
+                                <label class="col-sm-2 col-form-label">Dari Gudang * : </label>
                                 <div class="col-sm-4 error-text">
-                                    <select class="form-control select2" id="perusahaan" name="perusahaan" {{isset($stokopname)? ($stokopname->flag_proses=='1'?'disabled':'') : ''}}>
-                                        <option value="">Pilih Perusahaan</option>
-                                        @foreach($perusahaan as $key => $row)
-                                        <option value="{{$row->id}}"{{ $selectedperusahaan == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}</option>
-                                        @endforeach
+                                    <select class="form-control select2" id="gudang_dari" name="gudang_dari" {{isset($stokopname)? ($stokopname->flag_proses=='1'?'disabled':'') : ''}}>
+                                        <option value="">Pilih Gudang</option>
+                                        <option value="0">Gudang Pembelian</option>
+                                        <option value="1">Gudang Penjualan</option>
+                                        <option value="2">Gudang BS</option>
                                     </select>
                                 </div>
-                                <label class="col-sm-2 col-form-label">Gudang * </label>
-                                <div class="col-sm-4 error-text">
-                                    <select class="form-control select2" id="gudang" name="gudang" {{isset($stokopname)? ($stokopname->flag_proses=='1'?'disabled':'') : ''}}>
-
+                                <label class="col-sm-2 col-form-label">Gudang Tujuan * </label>
+                                <div class="col-sm-3 error-text">
+                                    <select class="form-control select2" id="gudang" name="gudang">
+                                        <option value="">Pilih Gudang Tujuan</option>
+                                        <option value="1">Gudang Penjualan</option>
+                                        <option value="2">Gudang BS</option>
                                     </select>
                                 </div>
                             </div>
@@ -175,6 +177,7 @@
     var table;
     $(".select2").select2();
     $(document).ready(function () {
+
         @if(isset($stokopname))
             var perusahaan_id = $('#perusahaan').val();
             var selectedgudang = '{{$selectedgudang}}';
@@ -310,6 +313,7 @@
             "dom": 'rt',
             "ordering": false,
             "pageLength": 100,
+
         });
         $("#perusahaan").on('change', function(){
 
@@ -336,13 +340,24 @@
             loadProduct();
         });
         $("#gudang").on('change', function(){
-            var gudang_id = $(this).val();
-            if(gudang_id=="") {
-                Swal.fire('Ups','Silahkan Pilih Gudang terlebih dahulu','info');
-            }else{
-                $('#table1 tbody > tr').remove();
-            }
+            // var gudang_id = $(this).val();
+            // if(gudang_id=="") {
+            //     Swal.fire('Ups','Silahkan Pilih Gudang terlebih dahulu','info');
+            // }else{
+            //     $('#table1 tbody > tr').remove();
+            // }
             loadProduct();
+            deleterow();
+        });
+        $("#gudang_dari").on('change', function(){
+            // var gudang_id = $(this).val();
+            // if(gudang_id=="") {
+            //     Swal.fire('Ups','Silahkan Pilih Gudang terlebih dahulu','info');
+            // }else{
+            //     $('#table1 tbody > tr').remove();
+            // }
+            loadProduct();
+            deleterow();
         });
         $('#simpan').on('click', function() {
             if($("#submitData").valid()){
@@ -473,11 +488,16 @@
             dataType: 'json',
             data: function (params) {
                 return {
-                    term: params.term
+                    term: params.term,
                 }
             }
         }
-    })
+    });
+    }
+
+    function deleterow(){
+        $('#table1 tbody > tr').remove();
+
     }
     function loadDataDetail(){
         var enc_id = $('#enc_id').val();
@@ -533,21 +553,15 @@
 
 
     $( "#pilihProduct" ).change(function() {
-        var perusahaan = $('#perusahaan').val();
-        var gudang_id = $('#gudang').val();
+
         var val = [];
+        var id_product    = $(this).val();
+        var gudang        = $('#gudang_dari').val();
         $("input[name='product[]']").each(function(i){
             val[i] = $(this).val();
         });
-        if(perusahaan==''){
-            Swal.fire('Ups','Silahkan Pilih Perusahaan terlebih dahulu','info');
-            return false;
-        }
-        else if(gudang_id==''){
-            Swal.fire('Ups','Silahkan Pilih Gudang terlebih dahulu','info');
-            return false;
-        }else{
-            if(jQuery.inArray($(this).val(), val) != -1) {
+            if(jQuery.inArray(id_product, val) != -1) {
+
                 Swal.fire('Ups','Produk sudah ada di data keranjang','info');
                 $('#pilihProduct').val('');
             }else {
@@ -558,13 +572,13 @@
                     data: {
                         _token        : '{{csrf_token()}}',
                         id_product    : $(this).val(),
-                        perusahaan_id : perusahaan,
-                        gudang_id     : gudang_id,
+                        gudang_dari   : gudang,
                     },
                     success: function(result){
                         $('#detailData').append(result.html);
+                        $('.satuan_select'+id_product).select2();
                         $(".qty").TouchSpin({
-                            min :-result.stok,
+                            min : 0,
                             max : 1000000,
                             buttondown_class: 'btn btn-white',
                             buttonup_class: 'btn btn-white'
@@ -573,7 +587,6 @@
                 });
                 $('#pilihProduct').val('');
             }
-        }
     });
 
 

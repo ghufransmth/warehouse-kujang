@@ -22,7 +22,7 @@
         <br/>
         <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Refresh Data"><span class="fa fa-refresh"></span></button>
         @can('produk.tambah')
-          <a href="{{ route('produk.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
+          <a href="{{ route('adjstok.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
         @endcan
     </div>
 </div>
@@ -109,7 +109,7 @@
             </div>
           </div>
         </div>
-      </div>
+    </div>
     {{-- <div class="modal fade" id="modal_stok"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2050 !important;">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -333,8 +333,8 @@
                                         +'<td>1</td>'
                                         +'<td>'+data.data.getproduct.nama+'</td>'
                                         +'<td>'+data.data.getproduct.getkategori.nama+'</td>'
-                                        +'<td>'+data.data.getproduct.getsatuan.nama+' = '+satuan_stock_penjualan+'<br> PCS = '+pcs_stock_penjualan+'</td>'
-                                        +'<td>'+data.data.getproduct.getsatuan.nama+' = '+satuan_stock_bs+'<br> PCS = '+pcs_stock_bs+'</td>'
+                                        +'<td>'+data.data.getproduct.getsatuan.nama+' = '+satuan_stock_penjualan.toFixed(0)+'<br> PCS = '+pcs_stock_penjualan+'</td>'
+                                        +'<td>'+data.data.getproduct.getsatuan.nama+' = '+satuan_stock_bs.toFixed(0)+'<br> PCS = '+pcs_stock_bs+'</td>'
                                     +'</tr>')
                         }
                         $('#exampleModal').modal('show');

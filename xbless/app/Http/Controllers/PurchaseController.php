@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailPenjualan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -21,7 +22,10 @@ use App\Models\Expedisi;
 use App\Models\Product;
 use App\Models\Member;
 use App\Models\Gudang;
+use App\Models\Penjualan;
 use App\Models\Sales;
+use App\Models\StockAdj;
+use App\Models\TransaksiStock;
 use Illuminate\Support\Facades\Gate;
 
 use Carbon\Carbon;
@@ -67,9 +71,9 @@ class PurchaseController extends Controller
     }
 
     public function index(){
-        $member     = Member::all();
-        $perusahaan = Perusahaan::all();
-        $gudang     = Gudang::all();
+        // $member     = Member::all();
+        // $perusahaan = Perusahaan::all();
+        // $gudang     = Gudang::all();
 
         if(session('filter_perusahaan')==""){
             $selectedperusahaan = "";
@@ -82,6 +86,9 @@ class PurchaseController extends Controller
         }else{
             $selectedmember = session('filter_member');
         }
+        $member = array();
+        $perusahaan = array();
+        $gudang = array();
         return view('backend/purchase/index',compact('member','perusahaan','gudang','selectedmember','selectedperusahaan'));
     }
 
@@ -643,16 +650,21 @@ class PurchaseController extends Controller
     }
 
     public function tambah(){
-        $member = Member::all();
+        // $member = Member::all();
+        $member = array();
         $selectedmember ="";
-        $sales = Sales::all();
+        // $sales = Sales::all();
+        $sales = array();
         $selectedsales ="";
-        $expedisi = Expedisi::all();
+        // $expedisi = Expedisi::all();
+        $expedisi = array();
         $selectedexpedisi ="";
-        $expedisivia = ExpedisiVia::all();
+        // $expedisivia = ExpedisiVia::all();
+        $expedisivia = array();
         $selectedexpedisivia ="";
         $selectedproduct ="";
-        $tipeharga = $this->jenisharga();
+        // $tipeharga = $this->jenisharga();
+        $tipeharga = array();
         $selectedtipeharga ="";
 
         return view('backend/purchase/form',compact('tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia',
@@ -676,37 +688,30 @@ class PurchaseController extends Controller
 
     }
     public function addproduk(Request $request){
-        $expedisivia = ExpedisiVia::all();
-        $tipeharga = $this->jenisharga();
-        $expedisi = Expedisi::all();
-        $product = Product::offset(0)->limit(10)->get();
-        $member = Member::all();
-        $sales = Sales::all();
         $total = $request->total;
-
         echo "
             <tr id='dataajaxproduk_".$total."'>
                 <td>
-                <select class='select2_".$total."' id='produk_".$total."' name='produk[]' onchange='hitung(this.options[this.selectedIndex].value, ".$total.")'>
+                <select class='select2_produk_".$total."' id='produk_".$total."' name='produk[]' onchange='hitung(this.options[this.selectedIndex].value, ".$total.")'>
                     <option value=''>Pilih Produk </option>
                 </select>
-                </td>
+
                 <td>
-                <select class='form-control' id='tipeharga_".$total."' name='tipeharga[]' onchange='harga(this.options[this.selectedIndex].value, ".$total.")'>
-                    <option value=''>Pilih Tipe Harga </option>
-                echo ";
-                    foreach($tipeharga as $key => $row){
-                    echo"
-                        <option value=".$key.">".$row."</option>";
-                    }echo"
+                <input type='text' class='form-control' name='stock_product[]' id='stock_product_".$total."' readonly>
+                </td>
+                <td><input type='text' class='form-control' id='harga_product_".$total."' name='harga_product[]' readonly></td>
+                <td>
+                <select class='select2_satuan_".$total."' id='tipe_satuan_".$total."' name='tipesatuan[]' onchange='satuan(this.options[this.selectedIndex].value, ".$total.")'>
+                    <option value='null'>Pilih Tipe Satuan </option>
                 </select>
                 </td>
-                <td><input type='text' class='form-control' id='hargasatuan_".$total."' name='hargasatuan[]' readonly></td>
                 <td><input type='text' class='form-control touchspin".$total."' id='qty_".$total."' name='qty[]' value='1' onkeyup='hitung_qty(".$total.")' onchange='hitung_qty(".$total.")'> </td>
-                <td><input type='text' class='form-control' id='total_".$total."' name='total[]' readonly></td>
+                <td><input type='text' class='form-control total_harga' id='total_".$total."' name='total[]' readonly></td>
                 <td><a href='#!' onclick='javascript:deleteProduk(".$total.")' class='btn btn-danger btn-sm icon-btn sm-btn-flat product-tooltip' title='Hapus'><i class='fa fa-trash'></i></a></td>
             </tr>
             <script>
+                select_satuan(".$total.");
+                select_product(".$total.");
                 $('.touchspin".$total."').TouchSpin({
                     min: 1,
                     max: 9999999999999999999999,
@@ -714,43 +719,29 @@ class PurchaseController extends Controller
                     buttonup_class: 'btn btn-white'
                 });
 
-                $('.select2_".$total."').select2({allowClear: false, width: '200px',
-                    ajax: {
-                        url: '".route('purchaseorder.search')."',
-                        dataType: 'JSON',
-                        delay: 250,
-                        data: function(params) {
-                          return {
-                            search: params.term
-                          }
-                        },
-                        processResults: function (data) {
-                        var results = [];
-                        $.each(data, function(index, item){
-                          results.push({
-                              id: item.id,
-                              text : item.product_code+'-'+item.product_name,
-                          });
-                        });
-                        return{
-                          results: results
-                        };
-                    }
-                }
-                });
+
             </script>
         ";
     }
 
     public function search_produk(Request $request){
         $product = Product::select('*')
-                    ->orWhere('product_code', 'LIKE', "%{$request->search}%")
-                    ->orWhere('product_name', 'LIKE', "%{$request->search}%")
+                    ->orWhere('kode_product', 'LIKE', "%{$request->search}%")
+                    ->orWhere('nama', 'LIKE', "%{$request->search}%")
+                    ->orderBy('id', 'DESC')
+                    ->limit(10)
+                    ->get();
+        return json_encode($product);
+    }
+    public function search_satuan(Request $request){
+        $satuan = Satuan::select('*')
+                    ->orWhere('nama', 'LIKE', "%{$request->search}%")
+                    ->orWhere('qty', 'LIKE', "%{$request->search}%")
                     ->orderBy('id', 'DESC')
                     ->limit(10)
                     ->get();
 
-        return json_encode($product);
+        return json_encode($satuan);
     }
 
 
@@ -795,8 +786,127 @@ class PurchaseController extends Controller
             // {{tgl}{bln}{thn}{Kode sales}{5 digit Nomor}
             return date('dmy').$salescode.$next_no;
     }
-
     public function simpan(Request $req){
+        // return $req->all();
+        $no_transaksi           = $req->no_transaksi;
+        $array_harga_product    = $req->harga_product;
+        $array_product          = $req->produk;
+        $array_stock_product    = $req->stock_product;
+        $array_qty              = $req->qty;
+        $id_sales               = $req->sales;
+        $status_pembayaran      = $req->status_pembayaran; // 1 = lunas, 0 = belum lunas;
+        $tgl_jatuh_tempo        = date('Y-m-d',strtotime($req->tgl_jatuh_tempo));
+        $tgl_transaksi          = date('Y-m-d', strtotime($req->tgl_transaksi));
+        $array_id_satuan        = $req->tipesatuan;
+        $id_toko                = $req->toko;
+        $array_total_harga      = $req->total;
+        $total_product          = $req->total_produk;
+        $total_harga_penjualan  = $req->total_harga_penjualan;
+        //VALIDASI
+            if($no_transaksi == null){
+                return response()->json([
+                    'success' => FALSE,
+                    'message' => 'Nomor transaksi harus diisi'
+                ]);
+            }
+            if($status_pembayaran == null){
+                return response()->json([
+                    'success' => FALSE,
+                    'message' => 'Status pembayaran harus diisi'
+                ]);
+            }
+            if(count($array_total_harga) < 1){
+                return response()->json([
+                    'success' => FALSE,
+                    'message' => 'Product harus diisi'
+                ]);
+            }
+
+            for($i=0;$i<$total_product;$i++){
+                $satuan = Satuan::find($array_id_satuan[$i]);
+                $stockadj = StockAdj::where('id_product', $array_product[$i])->first();
+                $total_qty = $array_qty[$i] * $satuan->qty;
+                if($stockadj->stock_penjualan < $total_qty){
+                    return response()->json([
+                        'success' => FALSE,
+                        'message' => 'Stock penjualan tidak cukup'
+                    ]);
+                }
+            }
+
+        //END VALIDASI
+        if($total_product > 0){
+            $penjualan = new Penjualan;
+            $penjualan->no_faktur   = $no_transaksi;
+            $penjualan->id_sales    = $id_sales;
+            $penjualan->id_toko     = $id_toko;
+            $penjualan->tgl_jatuh_tempo = $tgl_jatuh_tempo;
+            $penjualan->tgl_faktur  = $tgl_transaksi;
+            $penjualan->total_harga = $total_harga_penjualan;
+            $penjualan->status_lunas = $status_pembayaran;
+            $penjualan->created_by  = auth()->user()->username;
+            if($penjualan->save()){
+                for($i=0;$i<$total_product;$i++){
+                    $satuan = Satuan::find($array_id_satuan[$i]);
+                    $detail_penjualan = new DetailPenjualan;
+                    $detail_penjualan->id_penjualan = $penjualan->id;
+                    $detail_penjualan->no_faktur = $penjualan->no_faktur;
+                    $detail_penjualan->id_product = $array_product[$i];
+                    $detail_penjualan->qty = $array_qty[$i] * $satuan->qty;
+                    $detail_penjualan->harga_product = $array_harga_product[$i];
+                    $detail_penjualan->total_harga = $array_total_harga[$i];
+                    if($detail_penjualan->save()){
+                        if($penjualan->status_lunas == 0){
+                            $stockadj = StockAdj::where('id_product', $array_product[$i])->first();
+                            $stockadj->stock_penjualan  -= $detail_penjualan->qty;
+                            $stockadj->stock_approve    += $detail_penjualan->qty;
+                        }else{
+                            $stockadj = StockAdj::where('id_product', $array_product[$i])->first();
+                            $stockadj->stock_penjualan  -= $detail_penjualan->qty;
+                        }
+                        if(!$stockadj->save()){
+                            return response()->json([
+                                'success' => FALSE,
+                                'message' => 'Gagal mengupdate stock product'
+                            ]);
+                            break;
+                        }
+                    }else{
+                        return response()->json([
+                            'success' => FALSE,
+                            'message' => 'Gagal menyimpan detail penjualan'
+                        ]);
+                    }
+                }
+                $transaksi_stock = new TransaksiStock;
+                $transaksi_stock->no_transaksi  = $penjualan->no_faktur;
+                $transaksi_stock->tgl_transaksi = $tgl_transaksi;
+                $transaksi_stock->flag_transaksi = 3;
+                $transaksi_stock->created_by = auth()->user()->username;
+                $transaksi_stock->note = '-';
+                if($transaksi_stock->save()){
+                    return response()->json([
+                        'success' => TRUE,
+                        'message' => 'Penjualan berhasil disimpan'
+                    ]);
+                }else{
+                    return response()->json([
+                        'success' => FALSE,
+                        'message' => 'Penjualan gagal disimpan'
+                    ]);
+                }
+            }else{
+                return response()->json([
+                    'success' => FALSE,
+                    'message' => 'Gagal menyimpan table Penjualan'
+                ]);
+            }
+        }
+
+
+
+    }
+    public function simpan_(Request $req){
 
         try {
             $dt = new Carbon();
@@ -881,17 +991,24 @@ class PurchaseController extends Controller
     }
 
     // To Be Continue
-    public function total_price(Request $request){
+    public function harga_product(Request $request){
 
-        $memberplus      = Member::select('member.id','type_price.name')->join('type_price','type_price.id','member.operation_price')->where('member.id',$request->member)->first();
-        $tambahan = $memberplus?$memberplus->name:0;
-        $product = Product::select('id', 'normal_price', 'export_price')->where('id', $request->produk_id)->first();
+        // $memberplus      = Member::select('member.id','type_price.name')->join('type_price','type_price.id','member.operation_price')->where('member.id',$request->member)->first();
+        // $tambahan = $memberplus?$memberplus->name:0;
+        $product = Product::where('id', $request->produk_id)->with(['getstock'])->first();
+
         return response()->json([
+            'success' => TRUE,
             'data' => $product,
-            'persen' => $tambahan
         ]);
     }
-
+    public function total_harga(Request $request){
+        $satuan = Satuan::find($request->satuan_id);
+        return response()->json([
+            'success' => TRUE,
+            'data'  => $satuan,
+        ]);
+    }
     public function expedisi(Request $request){
         $expedisi = Expedisi::select('id', 'name')->where('status', 1)->get();
         return response()->json([

@@ -34,10 +34,14 @@ class StokAdjController extends Controller
     {
         return view('backend/stok/stokadj/index');
     }
+    public function satuan($id_satuan){
+        $satuan = Satuan::find($id_satuan);
+        return $satuan->qty;
+    }
     public function tambah(){
         $product = Product::all();
         $satuan = Satuan::all();
-        return view('backend/stok/stokadj/form');
+        return view('backend/stok/stokadj/form', ['product' => $product, 'satuan' => $satuan]);
     }
     public function getData(Request $request){
         $limit = $request->length;
@@ -64,6 +68,7 @@ class StokAdjController extends Controller
         $querydb->limit($limit);
         $querydb->offset($start);
         $data = $querydb->get();
+
         foreach ($data as $key => $value) {
             $enc_id = $this->safe_encode(Crypt::encryptString($value->id));
             $action = "";
@@ -342,8 +347,34 @@ class StokAdjController extends Controller
 
 
     }
-
-    public function simpan(Request $req)
+    public function simpan(Request $req){
+        $cek_product = StockAdj::where('id_product', $req->id_product)->first();
+        // return $req->all();
+        // VALIDASI
+        if(isset($cek_product)){
+            return response()->json([
+                'success' => FALSE,
+                'message' => 'Product sudah pernah diinputkan'
+            ]);
+        }
+        // END VALIDASI
+        $stok = new StockAdj;
+        $stok->id_product       = $req->id_product;
+        $stok->stock_penjualan  = $this->satuan($req->satuan_id) * $req->stock_penjualan;
+        $stok->stock_bs         = $this->satuan($req->satuan_id) * $req->stock_bs;
+        if($stok->save()){
+            return response()->json([
+                'success' => TRUE,
+                'message' => 'Stock berhasil ditambahkan'
+            ]);
+        }else{
+            return response()->json([
+                'success' => FALSE,
+                'message' => 'Stock gagal ditambahkan'
+            ]);
+        }
+    }
+    public function simpan_(Request $req)
     {
 
             if (!array_filter($req->qty_adj)) {
