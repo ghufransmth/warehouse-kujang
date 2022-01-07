@@ -502,7 +502,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::delete('/hapus/{id?}', [ProdukController::class, 'delete'])->name('delete');
         });
 
-
+        //PURCHASEORDER
         Route::get('/tambahpo', [PurchaseController::class, 'tambah'])->name('purchaseorder.tambah');
         Route::group(['prefix' => 'purchaseorder', 'as' => 'purchaseorder.'], function () {
             Route::get('/', [PurchaseController::class, 'index'])->name('index');

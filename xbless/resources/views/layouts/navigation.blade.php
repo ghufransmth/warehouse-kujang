@@ -95,8 +95,6 @@
                     @endcan -->
                 </ul>
             </li>
-            @can('historymutasistok.index')
-            <li><a href="{{route('historymutasistok.index')}}">History Mutasi Stok</a></li>
             @endcan
             @can('stokopname.index')
             <li><a href="{{route('stokopname.index')}}">Opname Stok</a></li>
