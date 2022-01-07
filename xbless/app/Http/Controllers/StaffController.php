@@ -47,11 +47,16 @@ class StaffController extends Controller
           $page  = $start +1;
           $search = $request->search['value'];
 
-          
+          $roles = Role::orWhere('name','LIKE',"sales")->first();
 
           $admins = User::select('id','fullname','email','username','flag_user','status','created_at');
+          // $admins->where('flag_user', != );
           if($request->user()->id !=1){
              $admins->where('id','!=',1);
+          }
+
+          if($roles){
+            $admins->where('flag_user','!=',$roles->id);
           }
           $admins->where('id','!=',$request->user()->id);
           if(array_key_exists($request->order[0]['column'], $this->original_column)){
@@ -305,7 +310,6 @@ class StaffController extends Controller
                     "message"         => 'Data gagal ditambahkan.'
               );
             }
-            
           }
         }
            return json_encode($json_data); 

@@ -49,6 +49,7 @@ use App\Http\Controllers\StokAdjHistoryController;
 use App\Http\Controllers\ReportPenjualanController;
 use App\Http\Controllers\RequestPurchaseController;
 use App\Http\Controllers\ReportSisaHutangController;
+use App\Http\Controllers\ReportTransaksiController;
 use App\Http\Controllers\ReportBarangMasukController;
 use App\Http\Controllers\ReportReturRevisiController;
 use App\Http\Controllers\ReportTandaTerimaController;
@@ -621,7 +622,6 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::group(['prefix' => 'tandaterima', 'as' => 'tandaterima.'], function () {
             Route::get('/', [TandaTerimaController::class, 'index'])->name('index');
             Route::get('/filter', [TandaTerimaController::class, 'filter_data'])->name('filter');
-            // Route::get('/proses', [TandaTerimaController::class, 'proses'])->name('proses');
             Route::get('/data_tanda_terima/{menu?}/{id?}', [TandaTerimaController::class, 'data_tanda_terima'])->name('tanda_terima');
             Route::get('/data_pengiriman/{menu?}/{id?}', [TandaTerimaController::class, 'data_pengiriman'])->name('pengiriman');
             Route::post('/input_pengiriman', [TandaTerimaController::class, 'input_pengiriman'])->name('input_pengiriman');
@@ -630,15 +630,17 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/getdata', [TandaTerimaController::class, 'getData'])->name('getdata');
             Route::post('/proses_tanda_terima', [TandaTerimaController::class, 'process_tanda_terima'])->name('proses_tanda_terima');
         });
-        Route::group(['prefix' => 'pembayaran', 'as' => 'pembayaran.'], function () {
-            Route::get('/', function () {
-                return view('backend/pembayaran/pembayaran/index');
-            })->name('index');
-        });
-        Route::group(['prefix' => 'keuangan', 'as' => 'keuangan.'], function () {
-            Route::get('/', function () {
-                return view('backend/pembayaran/keuangan/index');
-            })->name('index');
+
+        Route::group(['prefix' => 'transaksi', 'as' => 'transaksi.'], function(){
+            Route::group(['prefix' => 'pembayaran', 'as' => 'pembayaran.'], function () {
+                Route::get('/', function () {
+                    return view('backend/pembayaran/pembayaran/index');
+                })->name('index');
+            });
+            Route::group(['prefix' => 'keuangan', 'as' => 'keuangan.'], function () {
+                Route::get('/', [ReportTransaksiController::class, 'index'])->name('index');
+                Route::post('/getdata', [ReportTransaksiController::class, 'getData'])->name('getdata');
+            });
         });
     });
 });
