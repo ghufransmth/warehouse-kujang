@@ -150,6 +150,74 @@ class PurchaseController extends Controller
         $start = $request->start;
         $page  = $start +1;
         $search = $request->search['value'];
+        $request->session()->put('filter_toko', $request->filter_toko);
+        $request->session()->put('filter_sales', $request->filter_sales);
+        $request->session()->put('type', $request->type);
+        $penjualan = Penjualan::select('*');
+
+        $penjualan->orderBy('id', 'ASC');
+
+        if(array_key_exists($request->order[0]['column'], $this->original_column)){
+            $penjualan->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
+        }
+
+        if($search) {
+            $penjualan->where(function ($query) use ($search) {
+                    $query->orWhere('no_nota','LIKE',"%{$search}%");
+                    $query->orWhere('kode_rpo','LIKE',"%{$search}%");
+            });
+        }
+        $totalData = $penjualan->get()->count();
+
+        $totalFiltered = $penjualan->get()->count();
+        $penjualan->limit($limit);
+        $penjualan->offset($start);
+        $data = $penjualan->get();
+
+        foreach($data as $key => $result){
+            $aksi = "";
+            $result->id             = $result->id;
+            $result->no             = $key+$page;
+            $result->no_faktur = $result->no_faktur;
+            $result->sales = $result->getsales->nama;
+            $result->toko = $result->gettoko->name;
+            $result->tgl_jatuh_tempo = $result->tgl_jatuh_tempo;
+            $result->tgl_transaksi = $result->tgl_faktur;
+            $result->total_harga = $result->total_harga;
+            $result->tgl_lunas = $result->tgl_lunas;
+            if($result->status_lunas == 0){
+                $result->status_pembayaran = 'Belum Lunas';
+            }else{
+                $result->status_pembayaran = 'Lunas';
+            }
+            $result->created_by = $result->created_by;
+            $result->aksi = $aksi;
+        }
+        if ($request->user()->can('purchaseorder.index')) {
+            $json_data = array(
+                "draw"            => intval($request->input('draw')),
+                "recordsTotal"    => intval($totalData),
+                "recordsFiltered" => intval($totalFiltered),
+                "data"            => $data
+            );
+        }else{
+            $json_data = array(
+                "draw"            => intval($request->input('draw')),
+                "recordsTotal"    => 0,
+                "recordsFiltered" => 0,
+                "data"            => []
+            );
+        }
+
+        return json_encode($json_data);
+
+
+    }
+    public function getData_(Request $request){
+        $limit = $request->length;
+        $start = $request->start;
+        $page  = $start +1;
+        $search = $request->search['value'];
 
         $request->session()->put('filter_perusahaan', $request->filter_perusahaan);
         $request->session()->put('filter_member', $request->filter_member);

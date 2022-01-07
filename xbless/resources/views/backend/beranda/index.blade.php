@@ -154,7 +154,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                
+
                             </tbody>
                             <tfoot>
                                 <tr class="text-white text-center bg-primary">
@@ -197,7 +197,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                          
+
                             </tbody>
                             <tfoot>
                                 <tr class="text-white text-center bg-primary">
@@ -600,8 +600,31 @@
             ]
         });
     });
+
+    $(document).on('change', '#start', function(){
+        var end = $('#end').val()
+        if(end != ''){
+            refresh()
+            getdata()
+        }
+    })
+
+    $(document).on('change', '#end', function(){
+        var start = $('#start').val()
+        if(end != ''){
+            refresh()
+            getdata()
+        }
+    })
 </script>
 <script>
+    function refresh(){
+        table_unilever.ajax.reload(null, true)
+        table_penjualan.ajax.reload(null, true)
+        table_retur.ajax.reload(null, true)
+        table_piutang.ajax.eload(null, true)
+        table_tagihan.ajax.reload(null, true)
+    }
     function number_to_price(data){
         if(data==0){return '0,00';}
         data=parseFloat(data);

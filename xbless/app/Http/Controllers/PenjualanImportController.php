@@ -148,6 +148,7 @@ class PenjualanImportController extends Controller
                 $penjualan->id_toko = $import->id_toko;
                 $penjualan->tgl_faktur = date('Y-m-d');
                 $penjualan->tgl_jatuh_tempo = date('Y-m-d');
+                $penjualan->tgl_lunas   = date('Y-m-d');
                 $penjualan->total_harga = $data_import->sum('total_harga');
                 $penjualan->status_lunas = 1;
                 $penjualan->created_by = auth()->user()->username;

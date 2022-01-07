@@ -54,6 +54,7 @@ use App\Http\Controllers\ReportReturRevisiController;
 use App\Http\Controllers\ReportTandaTerimaController;
 use App\Http\Controllers\DraftPurchaseController;
 use App\Http\Controllers\PenjualanImportController;
+use App\Http\Controllers\ProdukImportController;
 use App\Http\Controllers\ReportBarangKeluarController;
 use App\Http\Controllers\ReportRekapInvoiceController;
 
@@ -500,6 +501,13 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/produk_image', [ProdukController::class, 'ProdukImage'])->name('image');
             Route::post('/delete_qrcode', [ProdukController::class, 'delete_qrcode'])->name('delete_qrcode');
             Route::delete('/hapus/{id?}', [ProdukController::class, 'delete'])->name('delete');
+
+            //IMPORT PRODUCT
+            Route::get('/import', [ProdukImportController::class, 'index'])->name('import');
+            Route::get('/importsimpan', [ProdukImportController::class, 'importsimpan'])->name('importsimpan');
+            Route::get('/importbatal', [ProdukImportController::class, 'importbatal'])->name('importbatal');
+            Route::post('/uploadimport', [ProdukImportController::class, 'import'])->name('uploadimport');
+            Route::post('/deleteimport', [ProdukImportController::class, 'hapus'])->name('deleteimport');
         });
 
         //PURCHASEORDER
