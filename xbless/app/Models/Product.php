@@ -17,5 +17,8 @@ class Product extends Model
     public function getkategori(){
         return $this->hasOne(Kategori::class, 'id', 'id_kategori');
     }
+    public function getstock(){
+        return $this->hasOne(StockAdj::class, 'id_product', 'id');
+    }
 
 }

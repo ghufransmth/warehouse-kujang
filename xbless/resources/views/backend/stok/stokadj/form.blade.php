@@ -59,7 +59,7 @@
                                     <select name="id_product" class="form-control select2" id="id_product">
                                     <option value="">Pilih Product</option>
                                         @foreach($product as $key => $row)
-                                        <option value="{{$row->id}}"{{ $selectedkategori == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->kode_product)}} | {{ $row->nama }}</option>
+                                        <option value="{{$row->id}}">{{ucfirst($row->kode_product)}} | {{ $row->nama }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -70,14 +70,23 @@
                                     <select name="satuan_id" class="form-control select2" id="satuan_id">
                                         <option value="">Pilih Satuan</option>
                                         @foreach($satuan as $key => $row)
-                                        <option value="{{$row->id}}"{{ $selectedsatuan == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->nama )}}</option>
+                                        <option value="{{$row->id}}">{{ucfirst($row->nama )}}</option>
                                         @endforeach
                                     </select>
                                 </div>
 
-                                <label class="col-sm-2 col-form-label">Isi Produk (Pcs) *</label>
-                                <div class="col-sm-3 error-text">
-                                    <input type="text" class="form-control" id="satuan_value" name="satuan_value" min="1"  value="{{isset($produk)? $produk->satuan_value : ''}}">
+
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Stock Penjualan</label>
+                                <div class="col-sm-10 error-text">
+                                    <input type="text" class="form-control" id="stock_penjualan" name="stock_penjualan" min="1"  value="{{isset($produk)? $produk->stock_penjualan : ''}}">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Stock BS</label>
+                                <div class="col-sm-10 error-text">
+                                    <input type="text" class="form-control" id="stock_bs" name="stock_bs" min="1"  value="{{isset($produk)? $produk->stock_bs : ''}}">
                                 </div>
                             </div>
 
@@ -123,63 +132,6 @@
 <script src="{{ asset('assets/js/jquery-3.1.1.min.js')}}"></script>
 <script>
     $(document).ready(function () {
-        $('#liner_id').on('change', function() {
-            var liner_id = $(this).val();
-            if(liner_id=='Y') {
-                $('#cekprodukshadow').show();
-            }else{
-                $('#cekprodukshadow').hide();
-            }
-        });
-        $('#satuan_id').on('change', function() {
-            var satuan_id = $(this).find("option:selected").text();
-            if(satuan_id.toLowerCase()=='pcs') {
-                $('#satuan_value').val('1');
-                $('#satuan_value').attr('readonly', 'true');
-            }else{
-                $('#satuan_value').val('');
-                $('#satuan_value').attr('readonly', false);
-            }
-        });
-        $('#submitData').on('keyup keypress', function(e) {
-            var keyCode = e.keyCode || e.which;
-            if (keyCode === 13) {
-                e.preventDefault();
-                return false;
-            }
-        });
-        $('#cover').change(function(){
-            var fp = $("#cover");
-            var lg = fp[0].files.length; // get length
-            var items = fp[0].files;
-            var fileSize = 0;
-
-            if (lg > 0) {
-                for (var i = 0; i < lg; i++) {
-                    fileSize = fileSize+items[i].size; // get file size
-                }
-                if(fileSize > 2097152) {
-                    Swal.fire('Yes','Ukuran File Tidak Boleh Lebih Dari 2 MB','info');
-                    $('#cover').val('');
-                }
-            }
-        });
-        $('#product_img').change(function(){
-            var fp = $("#product_img");
-            var lg = fp[0].files.length; // get length
-            var items = fp[0].files;
-            var fileSize = 0;
-
-            if (lg > 0) {
-                for (var i = 0; i < lg; i++) {
-                    fileSize = fileSize+items[i].size; // get file size
-                }
-                if(fileSize > 2097152) {
-                    Swal.fire('Yes','Ukuran File Tidak Boleh Lebih Dari 2 MB','info');
-                    $('#product_img').val('');
-                }
-            }
-        });
         $(".select2").select2({allowClear: true});
 
         $('#submitData').validate({
@@ -237,7 +189,7 @@
                 SimpanData();
             }
         });
-        $("#harga_beli" ).keyup(function() {
+        $("#stock_penjualan" ).keyup(function() {
 
         var value = Number(this.value.replace(/\./g, ""));
         var numberRegex = /^[+-]?\d+(\.\d+)?([eE][+-]?\d+)?$/;
@@ -245,42 +197,42 @@
         value = formatRupiah(this.value, '');
         var nilai = this.value.replace(/\./g, "");
         if(!numberRegex.test(nilai)){
-             $('#harga_beli').val(0);
+             $('#stock_penjualan').val(0);
              Swal.fire('Ups','Harga Beli Produk harus angka','info');
              return false;
 
         }
 
         if(value.charAt(0) > 0){
-            $('#harga_beli').val(getprice(nilai));
+            $('#stock_penjualan').val(getprice(nilai));
         }else{
             if(value.charAt(1)=='0'){
-                $('#harga_beli').val(0);
+                $('#stock_penjualan').val(0);
             }else{
-                $('#harga_beli').val(getprice(value));
+                $('#stock_penjualan').val(getprice(value));
             }
         }
 
     });
-    $("#harga_jual" ).keyup(function() {
+    $("#stock_bs" ).keyup(function() {
         var value = Number(this.value.replace(/\./g, ""));
         var numberRegex = /^[+-]?\d+(\.\d+)?([eE][+-]?\d+)?$/;
         value = formatRupiah(this.value, '');
         var nilai = this.value.replace(/\./g, "");
          if(!numberRegex.test(nilai)){
-             $('#harga_jual').val(0);
+             $('#stock_bs').val(0);
              Swal.fire('Ups','Harga Jual Produk harus angka','info');
              return false;
 
         }
 
         if(value.charAt(0) > 0){
-            $('#harga_jual').val(getprice(nilai));
+            $('#stock_bs').val(getprice(nilai));
         }else{
             if(value.charAt(1)=='0'){
-                $('#harga_jual').val(0);
+                $('#stock_bs').val(0);
             }else{
-                $('#harga_jual').val(getprice(value));
+                $('#stock_bs').val(getprice(value));
             }
         }
 
@@ -297,7 +249,7 @@
                 })
             $.ajax({
                 type: 'POST',
-                url : "{{route('produk.simpan')}}",
+                url : "{{route('adjstok.simpan')}}",
                 headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                 data:dataFile,
                 processData: false,
@@ -328,45 +280,6 @@
             });
         }
 
-
-    function delete_qrcode(no, qrcode){
-        window.addEventListener("click", function(event) {
-            event.preventDefault();
-        });
-        let idpro = $('#enc_id').val()
-        Swal.fire({
-            title: 'Apakah anda yakin?',
-            text: "Menghapus data ini",
-            icon: 'danger',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, hapus',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    type: 'POST',
-                    url : "{{route('produk.delete_qrcode')}}",
-                    headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
-                    dataType: "json",
-                    data:{
-                        'qrcode': qrcode,
-                        'enc_id': idpro
-                    },
-                    success: function(response){
-                        if(response.success){
-                            Swal.fire('Yes',`${response.message}`,'info');
-                            $('#qr'+no).val('')
-                            $('#isi'+no).val('')
-                        }else{
-                            Swal.fire('Ups',`${response.message}`,'info');
-                        }
-                    },
-                });
-            }
-        })
-    }
 
 
 

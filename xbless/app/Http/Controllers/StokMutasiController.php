@@ -10,11 +10,12 @@ use App\Models\Product;
 use App\Models\ProductPerusahaanGudang;
 use App\Models\ProductBarcode;
 use App\Models\ReportStock;
+use App\Models\Satuan;
 use App\Models\StockOpname;
 use App\Models\StockOpnameDetail;
 use App\Models\StockMutasi;
 use App\Models\StockAdj;
-
+use App\Models\TransaksiStock;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Auth;
@@ -33,14 +34,81 @@ class StokMutasiController extends Controller
 
     public function tambah(Request $request)
     {
-        $gudang = Gudang::all();
-        $selectedgudang = '';
-        $perusahaan = Perusahaan::all();
-        $selectedperusahaan = '';
-        return view('backend/stok/stokmutasi/form', compact('gudang', 'selectedgudang', 'perusahaan', 'selectedperusahaan'));
+        // $gudang = Gudang::all();
+        // $selectedgudang = '';
+        // $perusahaan = Perusahaan::all();
+        // $selectedperusahaan = '';
+        return view('backend/stok/stokmutasi/form');
     }
-    public function simpan(Request $req)
+    public function simpan(Request $req){
+        // return Auth::user()->username;
+        // VALIDASI
+            $cek_notrans = StockMutasi::where('no_transaksi', $req->no_transaksi)->first();
+            if(isset($cek_notrans)){
+                return response()->json([
+                    'success' => FALSE,
+                    'message' => 'No transaksi sudah pernah dipakai'
+                ]);
+            }
+        // END VALIDASI
+        $transaksi_stock = new TransaksiStock;
+        $transaksi_stock->no_transaksi = $req->no_transaksi;
+        $transaksi_stock->tgl_transaksi = date('Y-m-d', strtotime($req->tgl_mutasi));
+        $transaksi_stock->flag_transaksi = 1;
+        $transaksi_stock->created_by = Auth::user()->username;
+        if($transaksi_stock->save()){
+            for($i = 0; $i < $req->jumlahdata; $i++){
+                $transaksi_mutasi = new StockMutasi;
+                $transaksi_mutasi->gudang_tujuan    = $req->gudang_to;
+                $transaksi_mutasi->no_transaksi     = $req->no_transaksi;
+                $transaksi_mutasi->id_product       = $req->product[$i];
+                $transaksi_mutasi->qty_mutasi       = $req->qty_mutasi[$i];
+                $transaksi_mutasi->id_satuan_mutasi = $req->satuan[$i];
+                $transaksi_mutasi->stock_awal       = $req->stok[$i];
+                $transaksi_mutasi->stock_akhir      = $transaksi_mutasi->stock_awal - $transaksi_mutasi->qty_mutasi;
+                $transaksi_mutasi->tgl_mutasi       = date('Y-m-d', strtotime($req->tgl_mutasi));
+                $transaksi_mutasi->created_by       = Auth::user()->username;
+                if($transaksi_mutasi->save()){
+                    $stock = StockAdj::where('id_product', $transaksi_mutasi->id_product)->first();
+                    if($transaksi_mutasi->gudang_tujuan == 1){
+                        $stock->stock_penjualan += ($transaksi_mutasi->satuan->qty * $transaksi_mutasi->qty_mutasi);
+                        $stock->stock_bs        -= ($transaksi_mutasi->satuan->qty * $transaksi_mutasi->qty_mutasi);
+                    }else if($transaksi_mutasi->gudang_tujuan == 2){
+                        $stock->stock_penjualan -= ($transaksi_mutasi->satuan->qty * $transaksi_mutasi->qty_mutasi);
+                        $stock->stock_bs        += ($transaksi_mutasi->satuan->qty * $transaksi_mutasi->qty_mutasi);
+                    }
+                    if($stock->save()){
+                        continue;
+                    }else{
+                        return response()->json([
+                            'success' => FALSE,
+                            'message' => 'Gagal mengupdate stock product'
+                        ]);
+                        break;
+                    }
+
+                }else{
+                    return response()->json([
+                        'success' => FALSE,
+                        'message' => 'Gagal menyimpan transaksi mutasi'
+                    ]);
+                    break;
+                }
+            }
+            return response()->json([
+                'success' => TRUE,
+                'message' => 'Data berhasil disimpan'
+            ]);
+        }else{
+            return response()->json([
+                'success' => FALSE,
+                'message' => 'Gagal menyimpan history transaksi'
+            ]);
+        }
+    }
+    public function simpan_(Request $req)
     {
+        return $req->all();
         $cekperusahaangudang = PerusahaanGudang::where('perusahaan_id', $req->perusahaan)->where('gudang_id', $req->gudang_from)->first();
         if ($cekperusahaangudang) {
             for ($i = 0; $i < $req->jumlahdata; $i++) {
@@ -146,16 +214,21 @@ class StokMutasiController extends Controller
 
     public function getProduk(Request $request)
     {
-        $perusahaan_id = $request->perusahaan_id;
-        $gudang_id     = $request->gudang_id;
+        // return $request->all();
+        if($request->gudang_id == 1){
+            $gudang_id = 'stock_bs';
+        }else if($request->gudang_id == 2){
+            $gudang_id = 'stock_penjualan';
+        }
+        // $gudang_id     = $request->gudang_id;
         $term          = $request->term;
-        $cekperusahaangudang = PerusahaanGudang::where('perusahaan_id', $perusahaan_id)->where('gudang_id', $gudang_id)->first();
+        // $cekperusahaangudang = PerusahaanGudang::where('perusahaan_id', $perusahaan_id)->where('gudang_id', $gudang_id)->first();
 
-        $query = Product::select('product.id', 'product.product_code', 'product.product_name')->join('product_perusahaan_gudang', 'product.id', 'product_perusahaan_gudang.product_id')->where('product_perusahaan_gudang.perusahaan_gudang_id', $cekperusahaangudang->id)->take(20);
-
+        // $query = Product::select('product.id', 'product.product_code', 'product.product_name')->join('product_perusahaan_gudang', 'product.id', 'product_perusahaan_gudang.product_id')->where('product_perusahaan_gudang.perusahaan_gudang_id', $cekperusahaangudang->id)->take(20);
+        $query = StockAdj::where($gudang_id, '>', 0)->with(['getproduct']);
         if ($term) {
-            $query->where('product_name', 'LIKE', "%{$term}%");
-            $query->orWhere('product_code', 'LIKE', "%{$term}%");
+            $query->where('getproduct.nama', 'LIKE', "%{$term}%");
+            $query->orWhere('getproduct.kode_product', 'LIKE', "%{$term}%");
         }
         $produks = $query->get();
         $out = [
@@ -167,7 +240,7 @@ class StokMutasiController extends Controller
         foreach ($produks as $value) {
             array_push($out['results'], [
                 'id'   => $value->id,
-                'text' => $value->product_code . '-' . $value->product_name
+                'text' => $value->getproduct->kode_product . '-' . $value->getproduct->nama
             ]);
         }
         return response()->json($out, 200);
@@ -355,32 +428,44 @@ class StokMutasiController extends Controller
     public function tambahProduk(Request $request)
     {
         $id            = $request->id_product;
-        $perusahaan_id = $request->perusahaan_id;
         $gudang_id     = $request->gudang_id;
-        $cekperusahaangudang = PerusahaanGudang::where('perusahaan_id', $perusahaan_id)->where('gudang_id', $gudang_id)->first();
+        // $cekperusahaangudang = PerusahaanGudang::where('perusahaan_id', $perusahaan_id)->where('gudang_id', $gudang_id)->first();
         // $cek = ProductPerusahaanGudang::select('stok')->where('product_id', $id)->where('perusahaan_gudang_id', $cekperusahaangudang->id)->first();
         // if ($cek) {
         //     $stok = $cek->stok;
         // } else {
         //     $stok = '-';
         // }
-        $stok   = $this->cekStokAkhir($id, $perusahaan_id, $gudang_id);
+        // $stok   = $this->cekStokAkhir($id, $perusahaan_id, $gudang_id);
+        $stok = StockAdj::where('id_product', $id)->first();
+        if($gudang_id == 1){
+            $stok = $stok->stock_bs;
+        }else if($gudang_id == 2){
+            $stok = $stok->stock_penjualan;
+        }
         $product = Product::find($id);
 
-        $satuan = $product->getsatuan ? $product->getsatuan->name : '-';
+        // $satuan = $product->getsatuan ? $product->getsatuan : '-';
+        $satuan = Satuan::all();
         $html = '';
         $html .= '<tr>';
         $html .= '<td>';
-        $html .= '<span class="product">' . $product->product_name . '</span>';
+        $html .= '<span class="product">' . $product->nama . '</span>';
         $html .= '<input type="hidden" class="product_value"  name="product[]" value="' . $product->id . '">';
         $html .= '</td>';
         $html .= '<td>';
-        $html .= '<span class="price">' . $stok . '</span>';
+        $html .= '<span class="price">' . $stok . ' PCS </span>';
         $html .= '<input type="hidden" class="stok_value" min=0  name="stok[]" value="' . $stok . '">';
         $html .= '</td>';
         $html .= '<td>';
-        $html .= '<span class="choose">' . $satuan . '</span>';
-        $html .= '<input type="hidden" class="satuan_value" min=0 name="satuan[]" value="' . $satuan . '">';
+        $html .= '<select class="satuan_select'.$id.'" name="satuan[]" style="min-width:100px">';
+        foreach($satuan as $tuan){
+            $html .= '<option value="'.$tuan->id.'">'.$tuan->nama.'</option>';
+        }
+        $html .= '</select>';
+        // $html .= '<input type="hidden" class="satuan_value" min=0 name="satuan[]" value="' . $satuan->id . '">';
+        // $html .= '<span class="choose">' . $satuan->nama . '</span>';
+        // $html .= '<input type="hidden" class="satuan_value" min=0 name="satuan[]" value="' . $satuan->id . '">';
         $html .= '</td>';
         $html .= '<td width="13%">';
         $html .= '<input type="text" class="form-control qty" min=1  name="qty_mutasi[]" value="1">';

@@ -8,20 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class StockOpname extends Model
 {
     use HasFactory;
-    protected $table    = 'stock_opname';
+    protected $table    = 'tbl_stockopname';
 
-    public function getperusahaan()
-    {
-        return $this->belongsTo('App\Models\Perusahaan','perusahaan_id');
+    public function getproduct(){
+        return $this->hasOne(Product::class, 'id', 'id_product');
+    }
+    public function gettransaksi(){
+        return $this->hasOne(TransaksiStock::class, 'no_transaksi', 'no_transaksi');
+    }
+    public function getsatuan(){
+        return $this->hasOne(Satuan::class, 'id', 'id_satuan_so');
     }
 
-    public function getgudang()
-    {
-        return $this->belongsTo('App\Models\Gudang','gudang_id');
-    }
 
-    public function details()
-    {
-        return $this->hasMany('App\Models\StockOpnameDetail','so_id');
-    }
 }

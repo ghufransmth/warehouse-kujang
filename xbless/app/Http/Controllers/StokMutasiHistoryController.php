@@ -29,15 +29,15 @@ class StokMutasiHistoryController extends Controller
     );
     public function index()
     {
-        $gudang     = Gudang::all();
-        $perusahaan = Perusahaan::all();
+        // $gudang     = Gudang::all();
+        // $perusahaan = Perusahaan::all();
 
         if(session('filter_perusahaan')==""){
             $selectedperusahaan = "";
         }else{
             $selectedperusahaan = session('filter_perusahaan');
         }
-       
+
         if(session('filter_gudang')==""){
             $selectedgudang = '';
         }else{
@@ -49,123 +49,115 @@ class StokMutasiHistoryController extends Controller
         }else{
             $selectedgudangtujuan = session('filter_gudang_tujuan');
         }
-       
-    
+
+
         if(session('filter_tgl_start')==""){
             $tgl_start = date('d-m-Y', strtotime(' - 30 days'));
         }else{
             $tgl_start = session('filter_tgl_start');
         }
-      
+
         if(session('filter_tgl_end')==""){
             $tgl_end = date('d-m-Y');
         }else{
             $tgl_end = session('filter_tgl_end');
         }
-        
-       
-        return view('backend/stok/stokmutasihistory/index',compact('gudang','selectedgudang','selectedgudangtujuan','perusahaan','selectedperusahaan','tgl_start','tgl_end'));
+
+
+        return view('backend/stok/stokmutasihistory/index',compact('selectedgudang','selectedgudangtujuan','selectedperusahaan','tgl_start','tgl_end'));
     }
     public function getData(Request $request)
     {
-     
-       
         $limit = $request->length;
         $start = $request->start;
         $page  = $start +1;
         $search = $request->search['value'];
 
-        $request->session()->put('filter_perusahaan', $request->filter_perusahaan);
+        // $request->session()->put('filter_perusahaan', $request->filter_perusahaan);
         $request->session()->put('filter_gudang', $request->filter_gudang);
-        $request->session()->put('filter_gudang_tujuan', $request->filter_gudang_tujuan);
+        // $request->session()->put('filter_gudang_tujuan', $request->filter_gudang_tujuan);
         $request->session()->put('filter_tgl_start', $request->filter_tgl_start);
         $request->session()->put('filter_tgl_end', $request->filter_tgl_end);
 
+        $querydb = StockMutasi::select('*');
 
-        $querydb = StockMutasi::select('log_stock.*','product.product_name','satuan.name');
-        $querydb->join('product_perusahaan_gudang','product_perusahaan_gudang.id','log_stock.product_perusahaan_gudang_id');
-        $querydb->join('product','product.id','product_perusahaan_gudang.product_id');
-        $querydb->join('satuan','product.satuan_id','satuan.id');
-     
         if(array_key_exists($request->order[0]['column'], $this->original_column)){
             $querydb->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
         }
         else{
             $querydb->orderBy('id','DESC');
         }
-        
-        if($request->filter_perusahaan != ""){
-            $querydb->where('log_stock.from_perusahaan_id',$request->filter_perusahaan);
-        }else{
-            $querydb->where('log_stock.from_perusahaan_id',0);
-        }
+
+        // if($request->filter_perusahaan != ""){
+        //     $querydb->where('log_stock.from_perusahaan_id',$request->filter_perusahaan);
+        // }else{
+        //     $querydb->where('log_stock.from_perusahaan_id',0);
+        // }
         if($request->filter_gudang != ""){
-            $querydb->where('log_stock.from_gudang_id',$request->filter_gudang);
-        }else{
-            $querydb->where('log_stock.from_gudang_id',0);
+            $querydb->where('gudang_tujuan',$request->filter_gudang);
         }
-        if($request->filter_gudang_tujuan != ""){
-            $querydb->where('log_stock.to_gudang_id',$request->filter_gudang_tujuan);
-        }else{
-            $querydb->where('log_stock.to_gudang_id',0);
-        }
+        // if($request->filter_gudang_tujuan != ""){
+        //     $querydb->where('log_stock.to_gudang_id',$request->filter_gudang_tujuan);
+        // }else{
+        //     $querydb->where('log_stock.to_gudang_id',0);
+        // }
 
         if($request->filter_tgl_start != "" && $request->filter_tgl_end !=""){
-            $querydb->whereDate('log_stock.created_at','>=',date('Y-m-d',strtotime($request->filter_tgl_start)));
-            $querydb->whereDate('log_stock.created_at','<=',date('Y-m-d',strtotime($request->filter_tgl_end)));
-           
+            $querydb->whereDate('tgl_mutasi','>=',date('Y-m-d',strtotime($request->filter_tgl_start)));
+            $querydb->whereDate('tgl_mutasi','<=',date('Y-m-d',strtotime($request->filter_tgl_end)));
+
         }
 
        if($search) {
-        $querydb->where(function ($query) use ($search) {
-                $query->orWhere('product_name','LIKE',"%{$search}%");
-                $query->orWhere('name','LIKE',"%{$search}%");
-        });
+            $querydb->whereHas('product', function($query) use ($search){
+                $query->orwhere('nama','LIKE',"%{$search}%");
+                $query->orwhere('kode_product','LIKE',"%{$search}%");
+            });
       }
       $totalData = $querydb->get()->count();
-  
+
       $totalFiltered = $querydb->get()->count();
-  
+
       $querydb->limit($limit);
       $querydb->offset($start);
       $data = $querydb->get();
+    //   return $data;
       foreach($data as $key=> $value)
       {
         $enc_id = $this->safe_encode(Crypt::encryptString($value->id));
         $action = "";
-        
-    
+
+
         $value->no                = $key+$page;
         $value->id                = $value->id;
-        $value->nama_produk       = $value->product_name;
-        $value->nama_perusahaan   = $value->getperusahaanFrom?$value->getperusahaanFrom->name:'-';
-        $value->nama_gudang_awal  = $value->getgudangAwal?$value->getgudangAwal->name:'-';
-        $value->nama_gudang_tujuan= $value->getgudangTujuan?$value->getgudangTujuan->name:'-';
-        $value->dari_stock        = $value->from_stock.' '.$value->name;
-        $value->ke_stock          = $value->to_stock.' '.$value->name;
-        $value->new_stock         = ($value->from_stock - $value->to_stock).' '.$value->name;
-        $value->note              = 'Mutasi dari Gudang <b>'.$value->nama_gudang_awal.' (Qty : '.$value->dari_stock.')</b> Ke Gudang <b>'.$value->nama_gudang_tujuan.' (Qty : '.$value->ke_stock.')</b></b>';
-        $value->tgl_mutasi        = date('d-m-Y H:i',strtotime($value->created_at));
+        $value->nama_produk       = $value->product->nama;
+        $value->nama_gudang_awal  = $value->gudang_tujuan == 1?'Gudang BS':'Gudang Penjualan';
+        $value->nama_gudang_tujuan= $value->gudang_tujuan == 1?'Gudang Penjualan':'Gudang BS';
+        $value->dari_stock        = $value->stock_awal.' '.$value->satuan->nama;
+        $value->ke_stock          = $value->qty_mutasi.' '.$value->satuan->nama;
+        $value->new_stock         = ($value->from_stock - $value->to_stock).' '.$value->satuan->nama;
+        $value->note              = 'Mutasi dari Gudang <b>'.(($value->gudang_tujuan == 1)?"Gudang BS":"Gudang Penjualan").' (Qty : '.$value->dari_stock.')</b> Ke Gudang <b>'.$value->nama_gudang_tujuan.' (Qty : '.$value->ke_stock.')</b></b>';
+        $value->tgl_mutasi        = date('d-m-Y H:i',strtotime($value->tgl_mutasi));
         $value->created_by        = $value->created_by;
       }
       if ($request->user()->can('historymutasistok.index')) {
         $json_data = array(
-                  "draw"            => intval($request->input('draw')),  
-                  "recordsTotal"    => intval($totalData),  
-                  "recordsFiltered" => intval($totalFiltered), 
+                  "draw"            => intval($request->input('draw')),
+                  "recordsTotal"    => intval($totalData),
+                  "recordsFiltered" => intval($totalFiltered),
                   "data"            => $data
                   );
       }else{
          $json_data = array(
-                  "draw"            => intval($request->input('draw')),  
-                  "recordsTotal"    => 0,  
-                  "recordsFiltered" => 0, 
-                  "data"            => []  
+                  "draw"            => intval($request->input('draw')),
+                  "recordsTotal"    => 0,
+                  "recordsFiltered" => 0,
+                  "data"            => []
                   );
-      }    
-      return json_encode($json_data); 
+      }
+      return json_encode($json_data);
     }
-    
+
     function safe_encode($string) {
         $data = str_replace(array('/'),array('_'),$string);
         return $data;
@@ -210,7 +202,7 @@ class StokMutasiHistoryController extends Controller
         if($tgl_start != "" && $tgl_end !=""){
             $querydb->whereDate('log_stock.created_at','>=',date('Y-m-d',strtotime($tgl_start)));
             $querydb->whereDate('log_stock.created_at','<=',date('Y-m-d',strtotime($tgl_end)));
-           
+
         }
 
         $data = $querydb->get();
@@ -263,7 +255,7 @@ class StokMutasiHistoryController extends Controller
         if($tgl_start != "" && $tgl_end !=""){
             $querydb->whereDate('log_stock.created_at','>=',date('Y-m-d',strtotime($tgl_start)));
             $querydb->whereDate('log_stock.created_at','<=',date('Y-m-d',strtotime($tgl_end)));
-        
+
         }
 
         $data = $querydb->get();
@@ -306,13 +298,13 @@ class StokMutasiHistoryController extends Controller
         return $pdf->download('History Mutasi Stock "'.date('d_m_Y H_i_s').'".pdf');
     }
     public function excel(Request $request)
-    {   
+    {
         $filter_perusahaan = session('filter_perusahaan');
         $filter_gudang     = session('filter_gudang');
         $filter_gudang_tujuan   = session('filter_gudang_tujuan');
         $tgl_start         = session('filter_tgl_start');
         $tgl_end           = session('filter_tgl_end');
-        
+
         return Excel::download(new HistoryMutasiStockExports($filter_perusahaan,$filter_gudang, $filter_gudang_tujuan,$tgl_start,$tgl_end),'History Mutasi Stock.xlsx');
     }
 

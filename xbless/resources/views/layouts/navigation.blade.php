@@ -75,6 +75,27 @@
             @can('stokmutasi.tambah')
             <li><a href="{{route('stokmutasi.tambah')}}">Mutasi Stok</a></li>
             @endcan
+            {{-- ACL JANGAN LUPA --}} -->
+
+            {{-- @can('menupurchaserder.index')
+            <li>
+                <a href="#"><i class="fa fa-list-alt"></i> <span class="nav-label">Penjualannn Produk</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    @can('purchaseorder.index')
+                        <li><a href="{{ route('purchaseorder.index') }}">List Penjualan Produk</a></li>
+                    @endcan
+                    @can('purchaseorder.tambah')
+                        <li class=""><a href="{{ route('purchaseorder.tambah') }}">Tambah Penjualan Produk</a></li>
+                    @endcan
+                    @can('purchaseorder.tambah')
+                        <li class=""><a href="{{ route('purchaseorder.import') }}">Upload Penjualan</a></li>
+                    @endcan
+                    <!-- @can('draftpurchaseorder.index')
+                        <li><a href="{{ route('draftpurchaseorder.index') }}">Draft PO</a></li>
+                    @endcan -->
+                </ul>
+            </li>
+            @endcan --}}
             @can('historymutasistok.index')
             <li><a href="{{route('historymutasistok.index')}}">History Mutasi Stok</a></li>
             @endcan
@@ -126,6 +147,25 @@
                 </ul>
             </li>
             @endcan
+                <li><a href="">List Penjualan Produk</a></li>
+                @can('purchaseorder.tambah')
+                <li class=""><a href="{{ route('purchaseorder.tambah') }}">Tambah Penjualan Produk</a></li>
+                @endcan
+                @can('purchaseorder.tambah')
+                    <li class=""><a href="{{ route('purchaseorder.import') }}">Upload Penjualan</a></li>
+                @endcan
+            </ul>
+        </li>
+        {{-- @can('menuorder.index')
+        <li>
+            <a href="#"><i class="fa fa-cart-plus"></i> <span class="nav-label">Pembelian Produk</span><span
+                    class="fa arrow"></span></a>
+            <ul class="nav nav-second-level collapse">
+                <li class=""><a href="#">List Pembelian Produk</a></li>
+                <li class=""><a href="#">Tambah Pembelian Produk</a></li>
+            </ul>
+        </li>
+        @endcan --}}
         @can('menureport.index')
         <li>
             <a href="#"><i class="fa fa-paste"></i> <span class="nav-label">Report</span><span

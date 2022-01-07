@@ -43,60 +43,55 @@
 
                             <div class="hr-line-dashed"></div>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Customer </label>
+                                <label class="col-sm-2 col-form-label">No Transaksi </label>
                                 <div class="col-sm-4 error-text">
-                                    <select class="form-control select2" id="member" name="member">
-                                        <option value="">Pilih Customer</option>
+                                    <input type="text" name="no_transaksi" class="form-control" id="no_transaksi">
+                                </div>
+                                <label class="col-sm-2 col-form-label">Tgl Transaksi </label>
+                                <div class="col-sm-4 error-text">
+                                    <input type="text" class="form-control formatTgl" id="tgl_transaksi" name="tgl_transaksi">
 
-                                        @foreach($member as $key => $row)
-                                            <option value="{{$row->id}}"{{ $selectedmember == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}} - {{ucfirst($row->city)}}</option>
-                                        @endforeach
-
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Toko </label>
+                                <div class="col-sm-4 error-text">
+                                    <select class="form-control select2" id="toko" name="toko">
+                                        <option value="1">Pilih Toko</option>
                                     </select>
                                 </div>
                                 <label class="col-sm-2 col-form-label">Sales </label>
                                 <div class="col-sm-4 error-text">
                                     <select class="form-control select2" id="sales" name="sales">
-                                        <option value="">Pilih Sales</option>
+                                        <option value="1">Pilih Sales</option>
 
-                                        @foreach($sales as $key => $row)
-                                            <option value="{{$row->id}}"{{ $selectedsales == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}</option>
-                                        @endforeach
+
 
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Expedisi </label>
+                                <label class="col-sm-2 col-form-label">Status Pembayaran </label>
                                 <div class="col-sm-4 error-text">
-                                    <select class="form-control select2" id="expedisi" name="expedisi">
-                                        <option value="">Pilih Expedisi</option>
-
-                                        @foreach($expedisi as $key => $row)
-                                        <option value="{{$row->id}}"{{ $selectedexpedisi == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}</option>
-                                        @endforeach
-
+                                    <select class="form-control select2" id="status_pembayaran" name="status_pembayaran">
+                                        <option value="">Pilih Status Pembayaran</option>
+                                        <option value="1">Lunas</option>
+                                        <option value="0">Belum Lunas</option>
                                     </select>
                                 </div>
-                                <label class="col-sm-2 col-form-label">Expedisi Via </label>
+                                <label class="col-sm-2 col-form-label">Tgl Jatuh Tempo </label>
                                 <div class="col-sm-4 error-text">
-                                    <select class="form-control select2" id="expedisi_via" name="expedisi_via">
-                                        <option value="">Pilih Expedisi Via</option>
-
-                                        @foreach($expedisivia as $key => $row)
-                                        <option value="{{$row->id}}"{{ $selectedexpedisivia == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}</option>
-                                        @endforeach
-
-                                    </select>
+                                    <input type="text" name="tgl_jatuh_tempo" class="form-control formatTgl" id="tgl_jatuh_tempo">
+                                    <input type="hidden" name="total_harga_penjualan" id="total_harga_penjualan" value="0">
                                 </div>
                             </div>
 
-                            <div class="form-group row">
+                            {{-- <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Catatan </label>
                                 <div class="col-sm-10 error-text">
                                 <textarea class="form-control" id="note" name="note">{{isset($purchaseorder)? $purchaseorder->note : ''}}</textarea>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="">
                                 <a href="#!" onclick="tambahProduk()" class="btn btn-success btn-sm icon-btn sm-btn-flat product-tooltip" title="Tambah Produk">Tambah Produk</a>
                             </div>
@@ -106,37 +101,38 @@
                                     <thead>
                                         <tr>
                                             <th>Produk</th>
-                                            <th>Tipe Harga</th>
-                                            <th>Harga Satuan</th>
+                                            <th>Stock Product (PCS)</th>
+                                            <th>Harga Product</th>
+                                            <th>Tipe Satuan</th>
                                             <th>Qty Order</th>
-                                            <th>Total Satuan</th>
+                                            <th>Total Harga</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody id="ajax_produk">
                                         <tr>
                                             <td>
-                                                <select class="select2_produk" id="produk_1" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, 1)" width="100%">
+                                                <select class="select2_produk_1" id="product_1" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, 1)" width="100%">
                                                     <option value="0">Pilih Produk </option>
 
                                                 </select>
                                             </td>
                                             <td>
-                                                <select class="form-control" id="tipeharga_1" name="tipeharga[]" onchange="harga(this.options[this.selectedIndex].value, 1)">
-                                                    <option value="">Pilih Tipe Harga </option>
-                                                    @foreach($tipeharga as $key => $row)
-                                                    <option value="{{$key}}"{{ $selectedproduct == $key ? 'selected=""' : '' }}>{{ucfirst($row)}}</option>
-                                                    @endforeach
-                                                </select>
+                                                <input type="text" class="form-control" name="stock_product[]" id="stock_product_1" readonly>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control" id="hargasatuan_1" name="hargasatuan[]" readonly>
+                                                <input type="text" class="form-control" id="harga_product_1" name="harga_product[]" value=" PCS" readonly>
+                                            </td>
+                                            <td>
+                                                <select class="select2_satuan_1" id="tipe_satuan_1" name="tipesatuan[]" onchange="satuan(this.options[this.selectedIndex].value, 1)">
+                                                    <option value="null">Pilih Tipe Satuan </option>
+                                                </select>
                                             </td>
                                             <td width="15%">
                                                 <input type="text" class="form-control touchspin" id="qty_1" name="qty[]" value="1" onkeyup="hitung_qty(1)" onchange="hitung_qty(1)">
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control" id="total_1" name="total[]" readonly>
+                                                <input type="text" class="form-control total_harga" id="total_1" name="total[]" readonly>
                                             </td>
                                             <td>
                                                 -
@@ -145,8 +141,16 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <input type="hidden" class="form-control mb-1" name="total_produk" id="total_produk" value="0">
+                            <input type="hidden" class="form-control mb-1" name="total_produk" id="total_produk" value="1">
                             <div class="hr-line-dashed"></div>
+                            <table style="min-width: 100%">
+                                <tr>
+                                    <td class="text-right">Total Harga Penjualan</td>
+                                    <td width="1%"></td>
+                                    <td class="text-center" width="13%" id="harga_penjualan"></td>
+                                    <td width="5%"></td>
+                                </tr>
+                            </table>
                             <div class="form-group row">
                                 <div class="col-sm-6 col-sm-offset-2">
                                     <a class="btn btn-white btn-sm" href="{{route('provinsi.index')}}">Batal</a>
@@ -155,7 +159,7 @@
                                 @can('draftpurchaseorder.tambah')
                                 <div class="col-sm-6 text-right" >
 
-                                    <button class="btn btn-info btn-sm" type="button" id="draft">Simpan Draft</button>
+                                    {{-- <button class="btn btn-info btn-sm" type="button" id="draft">Simpan Draft</button> --}}
                                 </div>
                                 @endcan
                             </div>
@@ -171,30 +175,9 @@
 <script>
     $(document).ready(function () {
         $(".select2").select2({allowClear: true});
-        $('.select2_produk').select2({allowClear: false, width: '200px',
-            ajax: {
-                    url: '{{ route("purchaseorder.search") }}',
-                    dataType: 'JSON',
-                    delay: 250,
-                    data: function(params) {
-                      return {
-                        search: params.term
-                      }
-                    },
-                    processResults: function (data) {
-                    var results = [];
-                    $.each(data, function(index, item){
-                      results.push({
-                          id: item.id,
-                          text : item.product_code+'-'+item.product_name,
-                      });
-                    });
-                    return{
-                      results: results
-                    };
-                }
-            }
-        });
+
+        select_satuan(1);
+        select_product(1);
         $("#simpan").on('click',function(){
             if($("#submitData").valid())
             {
@@ -303,7 +286,76 @@
                 }
             });
         }
+        $('.formatTgl').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            calendarWeeks: true,
+            autoclose: true,
+            format: "dd-mm-yyyy"
+        });
 });
+function total_penjualan(){
+    var sum = 0;
+    var tes = $('.total_harga');
+    // console.log(tes);
+    $('.total_harga').each(function(){
+        sum += parseFloat($(this).val());  // Or this.innerHTML, this.innerText
+    });
+    $('#harga_penjualan').text(sum);
+    $('#total_harga_penjualan').val(sum);
+}
+function select_product(num){
+    $('.select2_produk_'+num).select2({allowClear: false, width: '200px',
+        ajax: {
+                url: '{{ route("purchaseorder.search") }}',
+                dataType: 'JSON',
+                delay: 250,
+                data: function(params) {
+                    return {
+                    search: params.term
+                    }
+                },
+                processResults: function (data) {
+                var results = [];
+                $.each(data, function(index, item){
+                    results.push({
+                        id: item.id,
+                        text : item.kode_product+' - '+item.nama,
+                    });
+                });
+                return{
+                    results: results
+                };
+            }
+        }
+    });
+}
+function select_satuan(num){
+    $('.select2_satuan_'+num).select2({allowClear: false, width: '200px',
+        ajax: {
+                url: '{{ route("purchaseorder.search_satuan") }}',
+                dataType: 'JSON',
+                delay: 250,
+                data: function(params) {
+                    return {
+                    search: params.term
+                    }
+                },
+                processResults: function (data) {
+                var results = [];
+                $.each(data, function(index, item){
+                    results.push({
+                        id: item.id,
+                        text : item.nama+' - '+item.qty+' PCS',
+                    });
+                });
+                return{
+                    results: results
+                };
+            }
+        }
+    });
+}
 </script>
 <script>
     $( "#sales" ).change(function() {
@@ -339,8 +391,23 @@
         });
         $('#ajax_produk').html('');
     });
-
     function tambahProduk(){
+        var total_produk = $('#total_produk').val();
+        var total = 1 + parseInt(total_produk);
+        $('#total_produk').val(total);
+        console.log(total)
+        $.ajax({
+            type: 'POST',
+            data: 'total='+total,
+            url: '{{route("purchaseorder.addproduk")}}',
+            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+            success: function(response) {
+                console.log(response)
+                $('#ajax_produk').prepend(response);
+            }
+        });
+    }
+    function tambahProduk_(){
         var member = $('#member').val();
         var sales = $('#sales').val();
         if(member==''){
@@ -366,9 +433,64 @@
             });
         }
     }
-
-    // To Be Continue
     function hitung(value, num){
+        console.log('tes');
+        $.ajax({
+            type: 'POST',
+            data: {
+                'produk_id': value,
+                'urut' : num
+            },
+            url: '{{route("purchaseorder.harga_product")}}',
+            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+            success: function(response) {
+                console.log(response)
+                if(response.success){
+                    $('#harga_product_'+num).val(response.data.harga_jual);
+                    $('#stock_product_'+num).val(response.data.getstock.stock_penjualan);
+                }else{
+                    Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
+                }
+            }
+        });
+    }
+
+    function satuan(value, num){
+        if($('#harga_product_'+num).val() == ""){
+            Swal.fire('Ups', 'Pilih product terlebih dahulu', 'info');
+            return false;
+        }
+        $.ajax({
+            type: 'POST',
+            data: {
+                'satuan_id': value,
+                'urut' : num
+            },
+            url: '{{route("purchaseorder.total_harga")}}',
+            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+            success: function(response) {
+                console.log(response)
+                if(response.success){
+                    var total_qty = response.data.qty * $('#qty_'+num).val();
+                    // console.log($('#stock_product_'+num).val() );
+                    if($('#stock_product_'+num).val() < total_qty){
+                        Swal.fire('Ups','Stock product tidak cukup', 'info');
+                        return false;
+                    }
+                    var total = $('#harga_product_'+num).val() * total_qty;
+                    $('#total_'+num).val(total);
+                    total_penjualan();
+
+
+                }else{
+                    Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
+                }
+            }
+        });
+        $('total_'+num).val('')
+    }
+    // To Be Continue
+    function hitung_(value, num){
         $('#hargasatuan_'+num).val('')
         $('#total_'+num).val('')
         $('#tipeharga_'+num).val('')
@@ -392,7 +514,7 @@
                     'produk_id': value,
                     'urut' : num
                 },
-                url: '{{route("purchaseorder.proses_hitung")}}',
+                url: '{{route("purchaseorder.harga_product")}}',
                 headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                 success: function(response) {
                     console.log(response)
@@ -428,7 +550,7 @@
                     'urut' : num,
                     'member' : member,
                 },
-                url: '{{route("purchaseorder.proses_hitung")}}',
+                url: '{{route("purchaseorder.harga_product")}}',
                 headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                 success: function(response) {
                     console.log(response)
@@ -451,11 +573,39 @@
     }
 
     function hitung_qty(num){
-        $qty = $('#qty_'+num).val()
-        var value = $('#hargasatuan_'+num).val().replace(/\./g, "") * $qty
-        console.log(value)
-        // console.log($('#hargasatuan_'+num).val())
-        $('#total_'+num).val(formatRupiah(value, ''))
+        // console.log($('#product_'+num+' option:selected').val());
+        if($('#product_'+num).val() == 0){
+            Swal.fire('Ups', 'Pilih product terlebih dahulu');
+            return false;
+        }else if($('#tipe_satuan_'+num).val() == "null"){
+            Swal.fire('Ups', 'Pilih satuan terlebih dahulu');
+            return false;
+        }else{
+            $.ajax({
+                type: 'POST',
+                data: {
+                    'satuan_id': $('#tipe_satuan_'+num).val(),
+                    'urut' : num
+                },
+                url: '{{route("purchaseorder.total_harga")}}',
+                headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+                success: function(response) {
+                    console.log(response)
+                    if(response.success){
+                        var total_qty = response.data.qty * $('#qty_'+num).val();
+                        if($('#stock_product_'+num).val() < total_qty){
+                            Swal.fire('Ups', 'Stock product tidak cukup', 'info');
+                            return false;
+                        }
+                        var total = $('#harga_product_'+num).val() * total_qty;
+                        $('#total_'+num).val(total);
+                        total_penjualan();
+                    }else{
+                        Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
+                    }
+                }
+            });
+        }
     }
 
     $(".touchspin").TouchSpin({
@@ -479,10 +629,11 @@
             if (result.isConfirmed) {
                 $('#dataajaxproduk_'+id).remove();
                 var total_produk = $('#total_produk').val();
-                console.log(total_produk)
+                // console.log(total_produk)
                 var total = parseInt(total_produk) - 1;
                 $('#total_produk').val(total);
-                console.log(total)
+                // console.log(total)
+                total_penjualan();
                 Swal.fire(
                   'Pesan',
                   'Produk berhasil dihapus.',
