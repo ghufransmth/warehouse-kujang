@@ -51,6 +51,12 @@
                           </div>
 
                     @if(isset($data) && count($data) > 0)
+                    <div class="d-flex flex-row-reverse">
+                        <a href="{{ route('purchaseorder.importsimpan') }}" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</a>
+                        <a href="{{ route('purchaseorder.importbatal') }}" class="btn btn-danger" style="margin-right: 10px"><i class="fa fa-close"></i> Batal</a>
+
+                    </div>
+                    <br>
                         <div class="table-responsive">
                             <table id="table1" class="table display table-bordered">
                                 <thead>
@@ -83,11 +89,7 @@
 
                                 </tfoot>
                             </table>
-                            <div class="d-flex flex-row-reverse">
-                                <a href="{{ route('purchaseorder.importsimpan') }}" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</a>
-                                <a href="{{ route('purchaseorder.importbatal') }}" class="btn btn-danger" style="margin-right: 10px"><i class="fa fa-close"></i> Batal</a>
 
-                            </div>
                         </div>
                     @endif
 

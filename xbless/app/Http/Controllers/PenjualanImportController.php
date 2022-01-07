@@ -92,6 +92,16 @@ class PenjualanImportController extends Controller
                 $total_qty     = $data->qty * $satuan->qty;
                 $product = Product::where('kode_product', $data->kode_product)->first();
                 $stockadj_product = StockAdj::where('id_product', $product->id)->first();
+                if(!isset($product)){
+                    $message = array(
+                        'status' => 'danger',
+                        'desc' => 'SKU product tidak ditemukan, baris-'.($key+1)
+
+                    );
+                    session(['status' => $message['status'], 'desc' => $message['desc']]);
+                    return view('backend/purchase/import', ['data' => $data_import]);
+                    // return view('backend/purchase/import')->with('message_alert', $message['status'])->with('message_desc', $message['desc']);
+                }
                 if(!isset($stockadj_product)){
                     $message = array(
                         'status' => 'danger',
@@ -138,7 +148,9 @@ class PenjualanImportController extends Controller
                 $penjualan->id_toko = $import->id_toko;
                 $penjualan->tgl_faktur = date('Y-m-d');
                 $penjualan->tgl_jatuh_tempo = date('Y-m-d');
+                $penjualan->tgl_lunas   = date('Y-m-d');
                 $penjualan->total_harga = $data_import->sum('total_harga');
+                $penjualan->status_lunas = 1;
                 $penjualan->created_by = auth()->user()->username;
                 if(!$penjualan->save()){
                     $message = array(
