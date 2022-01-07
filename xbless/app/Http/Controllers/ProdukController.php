@@ -122,10 +122,9 @@ class ProdukController extends Controller
 
             $action .= "";
             $action .= "<div class='btn-group'>";
-            if ($request->user()->can('produk.detail')) {
-                $action .= '<a href="' . route('produk.detail', $enc_id) . '" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Detail"><i class="fa fa-eye"></i></a>&nbsp;';
-            }
-            $action .= '<a href="#modal_image_produk"  id="image_produk_detail" role="button" data-id="' . $enc_id . '" data-toggle="modal" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip"><i class="fa fa-image"></i></a>&nbsp';
+            // if ($request->user()->can('produk.detail')) {
+            //     $action .= '<a href="' . route('produk.detail', $enc_id) . '" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Detail"><i class="fa fa-eye"></i></a>&nbsp;';
+            // }
             if ($request->user()->can('produk.ubah')) {
                 $action .= '<a href="' . route('produk.ubah', $enc_id) . '" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
             }

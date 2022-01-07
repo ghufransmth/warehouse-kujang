@@ -5,18 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Distrik;
+use App\Models\JenisToko;
 use DB;
 use Auth;
 
-class DistrikController extends Controller
+class JenisTokoController extends Controller
 {
     protected $original_column = array(
         1 => "name",
     );
 
     public function index(){
-        return view('backend/master/distrik/index');
+        return view('backend/master/toko/jenis/index');
     }
 
     function safe_encode($string) {
@@ -30,7 +30,7 @@ class DistrikController extends Controller
     }
 
     private function cekExist($column,$var,$id){
-      $cek = Distrik::where('id','!=',$id)->where($column,'=',$var)->first();
+      $cek = JenisToko::where('id','!=',$id)->where($column,'=',$var)->first();
       return (!empty($cek) ? false : true);
     }
 
@@ -40,10 +40,11 @@ class DistrikController extends Controller
       $page  = $start +1;
       $search = $request->search['value'];
       
-      $country = Distrik::select('*');
+      $country = JenisToko::select('*');
       if(array_key_exists($request->order[0]['column'], $this->original_column)){
          $country->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
-      } else{
+      }
+       else{
         $country->orderBy('id','DESC');
       }
        if($search) {
@@ -65,7 +66,7 @@ class DistrikController extends Controller
        
         $action.="";
         $action.="<div class='btn-group'>";
-        $action.='<a href="'.route('distrik.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
+        $action.='<a href="'.route('toko.jenis.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
         $action.='<a href="#" onclick="deleteNegara(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
         $action.="</div>";
 
@@ -101,7 +102,7 @@ class DistrikController extends Controller
     }
 
     public function tambah(){
-      return view('backend/master/distrik/form');
+      return view('backend/master/toko/jenis/form');
     }
 
     public function simpan(Request $req){
@@ -120,7 +121,7 @@ class DistrikController extends Controller
             );
         }else {
           if($enc_id){
-            $negara = Distrik::find($dec_id);
+            $negara = JenisToko::find($dec_id);
             $negara->name      = $req->name;
             $negara->save();
             if ($negara) {
@@ -135,7 +136,7 @@ class DistrikController extends Controller
                  );
             }
           }else{
-            $negara              = new Distrik;
+            $negara              = new JenisToko;
             $negara->name        = $req->name;
             $negara->save();
             if($negara) {
@@ -158,8 +159,8 @@ class DistrikController extends Controller
     public function ubah($enc_id){
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         if ($dec_id) {
-          $distrik = Distrik::find($dec_id);
-          return view('backend/master/distrik/form',compact('enc_id', 'distrik'));
+          $toko = JenisToko::find($dec_id);
+          return view('backend/master/toko/jenis/form',compact('enc_id', 'toko'));
         } else {
             return view('errors/noaccess');
         }
@@ -167,7 +168,7 @@ class DistrikController extends Controller
 
     public function delete(Request $request, $enc_id){
         $dec_id   = $this->safe_decode(Crypt::decryptString($enc_id));
-        $negara   = Distrik::find($dec_id);
+        $negara   = JenisToko::find($dec_id);
         if($negara) {
           $negara->delete();
           return response()->json(['status'=>"success",'message'=>'Data Berhasil dihapus.']);

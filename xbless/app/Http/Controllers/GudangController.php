@@ -187,17 +187,12 @@ class GudangController extends Controller
   public function delete(Request $request, $enc_id){
     $dec_id       = $this->safe_decode(Crypt::decryptString($enc_id));
     $gudang       = Gudang::find($dec_id);
-    $cekexist     = PerusahaanGudang::where('gudang_id',$dec_id)->first();
-    $cekexistgd   = PurchaseOrderDetail::where('gudang_id',$dec_id)->first();
+    
+    // return response()->json(['data' => $perusahaan_gudang]);
     if($gudang){
-      if($cekexist) {
-        return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Gudang sudah direlasikan dengan Perusahaan Gudang, Silahkan hapus checklist gudang terkait pada perusahaan']);
-      }else if($cekexistgd) {
-        return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Gudang sudah digunakan untuk Transaksi, Silahkan hapus Transaksi yang terkait pada Gudang ini']);
-      }else{
-        $gudang->delete();
-        return response()->json(['status'=>"success",'message'=>'Data Berhasil dihapus.']);
-      }
+      $perusahaan_gudang = PerusahaanGudang::where('gudang_id', $gudang->id)->delete();
+      $gudang->delete();
+      return response()->json(['status'=>"success",'message'=>'Data Berhasil dihapus.']);
     }else {
         return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Silahkan ulangi kembali.']);
     }

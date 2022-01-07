@@ -10,6 +10,7 @@ use App\Http\Controllers\SalesController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\EngineController;
 use App\Http\Controllers\GudangController;
+use App\Http\Controllers\DiskonController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SatuanController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReportBoController;
 use App\Http\Controllers\ReportPoController;
 use App\Http\Controllers\ReportSoController;
+use App\Http\Controllers\JenisTokoController;
 use App\Http\Controllers\BackorderController;
 use App\Http\Controllers\StokAdminController;
 use App\Http\Controllers\StokSalesController;
@@ -35,6 +37,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\ReportStokController;
 use App\Http\Controllers\StokMutasiController;
+use App\Http\Controllers\KategoriTokoController;
 use App\Http\Controllers\StokMutasiHistoryController;
 use App\Http\Controllers\StokOpnameController;
 use App\Http\Controllers\TypeChannelController;
@@ -56,8 +59,6 @@ use App\Http\Controllers\ReportRekapInvoiceController;
 
 
 
-
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -73,8 +74,17 @@ Route::get('/manage/login', [LoginController::class, 'index'])->name('manage.log
 Route::post('/manage/login', [LoginController::class, 'checkLogin'])->name('manage.checklogin');
 Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('/', [BerandaController::class, 'index'])->name('manage.beranda');
-
-    Route::post('/getdata/count', [BerandaController::class, 'getdataCount'])->name('getdata.show_count');
+    Route::group(['prefix' => 'beranda', 'as' => 'beranda.'], function(){
+        Route::post('/getdata', [BerandaController::class, 'getData'])->name('getdata');
+        Route::group(['prefix' => 'unilever', 'as' => 'unilever.'], function(){
+            Route::post('/getdataunlever', [BerandaController::class, 'getDataUnilever'])->name('getdata');
+            Route::get('/getdata/{id}', [BerandaController::class, 'detailUnilever'])->name('detail');
+        });
+        Route::group(['prefix' => 'penjualan', 'as' => 'penjualan.'], function(){
+            Route::post('/getdatapenjualan', [BerandaController::class, 'getDataPenjualan'])->name('getdata');
+            Route::get('/getdata/{id}', [BerandaController::class, 'detailPenjualan'])->name('detail');
+        });
+    });
 
     Route::get('/manage/logout', [LoginController::class, 'logout'])->name('manage.logout');
 
@@ -348,7 +358,6 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::get('/data_pembayaran/{menu?}/{id?}', [PembayaranController::class, 'data_pembayaran'])->name('data_pembayaran');
         Route::post('/input_pengiriman', [PembayaranController::class, 'input_pengiriman'])->name('input_pengiriman');
         Route::post('/simpan_pengiriman', [PembayaranController::class, 'simpan_pengiriman'])->name('simpan_pengiriman');
-
     });
 
     //retur revisi
@@ -364,7 +373,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     });
 
     Route::group(['prefix' => '/manage'], function () {
-        // EXPEDISI VIA
+        // TYPE CHANNEL
         Route::group(['prefix' => 'type_channel', 'as' => 'type_channel.'], function(){
             Route::get('manage/type_channel', [TypeChannelController::class, 'index'])->name('index');
             Route::post('manage/type_channel/getdata', [TypeChannelController::class, 'getData'])->name('getdata');
@@ -379,6 +388,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::get('/', [JenisBayarController::class, 'index'])->name('index');
             Route::get('/tambah', [JenisBayarController::class, 'tambah'])->name('tambah');
             Route::get('/ubah/{id}', [JenisBayarController::class, 'ubah'])->name('ubah');
+            Route::get('/parent', [JenisBayarController::class, 'parent'])->name('parent');
             Route::post('/getData', [JenisBayarController::class, 'getData'])->name('getdata');
             Route::post('/simpan', [JenisBayarController::class, 'simpan'])->name('simpan');
             Route::delete('/hapus/{id?}', [JenisBayarController::class, 'delete'])->name('delete');
@@ -402,6 +412,36 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/getData', [GudangController::class, 'getData'])->name('getdata');
             Route::post('/simpan', [GudangController::class, 'simpan'])->name('simpan');
             Route::delete('/hapus/{id?}', [GudangController::class, 'delete'])->name('delete');
+        });
+
+        Route::group(['prefix' => 'diskon', 'as' => 'diskon.'], function () {
+            Route::get('/', [DiskonController::class, 'index'])->name('index');
+            Route::get('/tambah', [DiskonController::class, 'tambah'])->name('tambah');
+            Route::get('/product', [DiskonController::class, 'get_product'])->name('product');
+            Route::get('/ubah/{id}', [DiskonController::class, 'ubah'])->name('ubah');
+            Route::post('/getData', [DiskonController::class, 'getData'])->name('getdata');
+            Route::post('/simpan', [DiskonController::class, 'simpan'])->name('simpan');
+            Route::delete('/hapus/{id?}', [DiskonController::class, 'delete'])->name('delete');
+        });
+
+        Route::group(['prefix' => 'toko', 'as' => 'toko.'], function () {
+            Route::group(['prefix' => 'jenis', 'as' => 'jenis.'], function () {
+                Route::get('/', [JenisTokoController::class, 'index'])->name('index');
+                Route::get('/tambah', [JenisTokoController::class, 'tambah'])->name('tambah');
+                Route::get('/ubah/{id}', [JenisTokoController::class, 'ubah'])->name('ubah');
+                Route::post('/getData', [JenisTokoController::class, 'getData'])->name('getdata');
+                Route::post('/simpan', [JenisTokoController::class, 'simpan'])->name('simpan');
+                Route::delete('/hapus/{id?}', [JenisTokoController::class, 'delete'])->name('delete');
+            });
+
+            Route::group(['prefix' => 'kategori', 'as' => 'kategori.'], function () {
+                Route::get('/', [KategoriTokoController::class, 'index'])->name('index');
+                Route::get('/tambah', [KategoriTokoController::class, 'tambah'])->name('tambah');
+                Route::get('/ubah/{id}', [KategoriTokoController::class, 'ubah'])->name('ubah');
+                Route::post('/getData', [KategoriTokoController::class, 'getData'])->name('getdata');
+                Route::post('/simpan', [KategoriTokoController::class, 'simpan'])->name('simpan');
+                Route::delete('/hapus/{id?}', [KategoriTokoController::class, 'delete'])->name('delete');
+            });
         });
 
         //PERUSAHAAN
@@ -462,7 +502,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::delete('/hapus/{id?}', [ProdukController::class, 'delete'])->name('delete');
         });
 
-        // PURCHASE ORDER
+
         Route::get('/tambahpo', [PurchaseController::class, 'tambah'])->name('purchaseorder.tambah');
         Route::group(['prefix' => 'purchaseorder', 'as' => 'purchaseorder.'], function () {
             Route::get('/', [PurchaseController::class, 'index'])->name('index');
@@ -580,6 +620,16 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/list_menu', [TandaTerimaController::class, 'menu_data_list'])->name('menu_data_list');
             Route::post('/getdata', [TandaTerimaController::class, 'getData'])->name('getdata');
             Route::post('/proses_tanda_terima', [TandaTerimaController::class, 'process_tanda_terima'])->name('proses_tanda_terima');
+        });
+        Route::group(['prefix' => 'pembayaran', 'as' => 'pembayaran.'], function () {
+            Route::get('/', function () {
+                return view('backend/pembayaran/pembayaran/index');
+            })->name('index');
+        });
+        Route::group(['prefix' => 'keuangan', 'as' => 'keuangan.'], function () {
+            Route::get('/', function () {
+                return view('backend/pembayaran/keuangan/index');
+            })->name('index');
         });
     });
 });
