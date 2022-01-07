@@ -58,8 +58,6 @@ use App\Http\Controllers\ReportRekapInvoiceController;
 
 
 
-
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -75,8 +73,13 @@ Route::get('/manage/login', [LoginController::class, 'index'])->name('manage.log
 Route::post('/manage/login', [LoginController::class, 'checkLogin'])->name('manage.checklogin');
 Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('/', [BerandaController::class, 'index'])->name('manage.beranda');
-
-    Route::post('/getdata/count', [BerandaController::class, 'getdataCount'])->name('getdata.show_count');
+    Route::group(['prefix' => 'beranda', 'as' => 'beranda.'], function(){
+        Route::post('/getdata', [BerandaController::class, 'getData'])->name('getdata');
+        Route::group(['prefix' => 'unilever', 'as' => 'unilever.'], function(){
+            Route::post('/getdataunlever', [BerandaController::class, 'getDataUnilever'])->name('getdata');
+            Route::get('/getdata/{id}', [BerandaController::class, 'detailUnilever'])->name('detail');
+        });
+    });
 
     Route::get('/manage/logout', [LoginController::class, 'logout'])->name('manage.logout');
 

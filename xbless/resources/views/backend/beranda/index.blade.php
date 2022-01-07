@@ -41,9 +41,9 @@
             <div class="form-group" id="data_5">
                 <div class="input-daterange input-group" id="datepicker">
                     <span class="input-group-addon px-3 bg-white border"><i class="fa fa-calendar"></i></span>
-                    <input type="text" class="form-control-sm form-control" name="start" value="05/14/2014">
+                    <input type="text" class="form-control-sm form-control" name="start" id="start" value="{{ $periode_start }}">
                     <span class="input-group-addon px-3 bg-primary">to</span>
-                    <input type="text" class="form-control-sm form-control" name="end" value="05/22/2014">
+                    <input type="text" class="form-control-sm form-control" name="end" id="end" value="{{ $periode_end }}">
                     <span class="input-group-addon px-3 bg-white  border"><i class="fa fa-calendar"></i></span>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                                     class="fa fa-dollar"></i></div>
                         </div>
                         <div class="col-md-8 m-auto text-right">
-                            <h1 class="no-margins">206,12</h1>
+                            <h1 class="no-margins"><span id="omset">Rp. 0</span></h1>
                             <div class="font-bold text-navy">
                                 Total Omset
                             </div>
@@ -79,7 +79,7 @@
                                     class="fa fa-cart-plus"></i></div>
                         </div>
                         <div class="col-md-8 m-auto text-right">
-                            <h1 class="no-margins">206,12</h1>
+                            <h1 class="no-margins"><span id="retur">Rp. 0</span></h1>
                             <div class="font-bold text-navy">
                                 Total Retur
                             </div>
@@ -97,7 +97,7 @@
                                     class="fa fa-signal"></i></div>
                         </div>
                         <div class="col-md-8 m-auto text-right">
-                            <h1 class="no-margins">206,12</h1>
+                            <h1 class="no-margins"><span id="fatur">Rp. 0</span></h1>
                             <div class="font-bold text-navy">
                                 Nominal Fatur
                             </div>
@@ -115,7 +115,7 @@
                                     class="fa fa-money"></i></div>
                         </div>
                         <div class="col-md-8 m-auto text-right">
-                            <h1 class="no-margins">206,12</h1>
+                            <h1 class="no-margins"><span id="pajak">Rp. 0</span></h1>
                             <div class="font-bold text-navy">
                                 Pajak Pendapatan
                             </div>
@@ -154,66 +154,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="">
-                                    <td>2021-12-27</td>
-                                    <td>234567</td>
-                                    <td>360.000</td>
-                                    <td class="text-center">
-                                        <a href="" class="btn btn-sm btn-danger p-1" style="font-size: 11px;">
-                                            Belum Bayar
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="" class="btn btn-sm btn-success rounded-circle">
-                                            <i class="fa fa-search"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr class="">
-                                    <td>2021-12-27</td>
-                                    <td>234567</td>
-                                    <td>360.000</td>
-                                    <td class="text-center">
-                                        <a href="" class="btn btn-sm btn-danger p-1" style="font-size: 11px;">
-                                            Belum Bayar
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="" class="btn btn-sm btn-success rounded-circle">
-                                            <i class="fa fa-search"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr class="">
-                                    <td>2021-12-27</td>
-                                    <td>234567</td>
-                                    <td>360.000</td>
-                                    <td class="text-center">
-                                        <a href="" class="btn btn-sm btn-danger p-1" style="font-size: 11px;">
-                                            Belum Bayar
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="" class="btn btn-sm btn-success rounded-circle">
-                                            <i class="fa fa-search"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr class="">
-                                    <td>2021-12-27</td>
-                                    <td>234567</td>
-                                    <td>360.000</td>
-                                    <td class="text-center">
-                                        <a href="" class="btn btn-sm btn-danger p-1" style="font-size: 11px;">
-                                            Belum Bayar
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="" class="btn btn-sm btn-success rounded-circle">
-                                            <i class="fa fa-search"></i>
-                                        </a>
-                                    </td>
-                                </tr>
+                                
                             </tbody>
                             <tfoot>
                                 <tr class="text-white text-center bg-primary">
@@ -509,138 +450,200 @@
 @endsection
 @push('scripts')
 <script>
+    var table_unilever, table_penjualan, table_retur, table_piutang, table_tagihan;
     $(document).ready(function () {
-            $('#data_5 .input-daterange').datepicker({
-                keyboardNavigation: false,
-                forceParse: false,
-                autoclose: true
-            });
-            $('#table_faktur_unilever').DataTable({
-                pageLength: 10,
-                responsive: true,
-                dom: '<"html5buttons"B>lTfgitp',
-                buttons: [
-                    {
-                        extend: 'copy',
-                        exportOptions: {
-                            orthogonal: 'export'
-                        },
-                        header: true,
-                        footer: true,
-                        className: 'btn btn-outline btn-default btn-lg',
-                    },
-                    {
-                        extend: 'excel',
-                        exportOptions: {
-                            orthogonal: 'export'
-                        },
-                        header: true,
-                        footer: true,
-                        className: 'btn btn-block bg-primary text-white',
-                    }
-                ]
-            });
-            $('#table_penjualan').DataTable({
-                pageLength: 10,
-                responsive: true,
-                dom: '<"html5buttons"B>lTfgitp',
-                buttons: [
-                    {
-                        extend: 'copy',
-                        exportOptions: {
-                            orthogonal: 'export'
-                        },
-                        header: true,
-                        footer: true,
-                        className: 'btn btn-outline btn-default btn-lg',
-                    },
-                    {
-                        extend: 'excel',
-                        exportOptions: {
-                            orthogonal: 'export'
-                        },
-                        header: true,
-                        footer: true,
-                        className: 'btn btn-block bg-primary text-white',
-                    }
-                ]
-            });
-            $('#table_retur').DataTable({
-                pageLength: 10,
-                responsive: true,
-                dom: '<"html5buttons"B>lTfgitp',
-                buttons: [
-                    {
-                        extend: 'copy',
-                        exportOptions: {
-                            orthogonal: 'export'
-                        },
-                        header: true,
-                        footer: true,
-                        className: 'btn btn-outline btn-default btn-lg',
-                    },
-                    {
-                        extend: 'excel',
-                        exportOptions: {
-                            orthogonal: 'export'
-                        },
-                        header: true,
-                        footer: true,
-                        className: 'btn btn-block bg-primary text-white',
-                    }
-                ]
-            });
-            $('#table_faktur_piutang').DataTable({
-                pageLength: 10,
-                responsive: true,
-                dom: '<"html5buttons"B>lTfgitp',
-                buttons: [
-                    {
-                        extend: 'copy',
-                        exportOptions: {
-                            orthogonal: 'export'
-                        },
-                        header: true,
-                        footer: true,
-                        className: 'btn btn-outline btn-default btn-lg',
-                    },
-                    {
-                        extend: 'excel',
-                        exportOptions: {
-                            orthogonal: 'export'
-                        },
-                        header: true,
-                        footer: true,
-                        className: 'btn btn-block bg-primary text-white',
-                    }
-                ]
-            });
-            $('#table_faktur_tertagih').DataTable({
-                pageLength: 10,
-                responsive: true,
-                dom: '<"html5buttons"B>lTfgitp',
-                buttons: [
-                    {
-                        extend: 'copy',
-                        exportOptions: {
-                            orthogonal: 'export'
-                        },
-                        header: true,
-                        footer: true,
-                        className: 'btn btn-outline btn-default btn-lg',
-                    },
-                    {
-                        extend: 'excel',
-                        exportOptions: {
-                            orthogonal: 'export'
-                        },
-                        header: true,
-                        footer: true,
-                        className: 'btn btn-block bg-primary text-white',
-                    }
-                ]
-            });
+        getdata()
+        $('#data_5 .input-daterange').datepicker({
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true,
+            format: 'dd-mm-yyyy'
         });
+        table_unilever = $('#table_faktur_unilever').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "pageLength": 25,
+            "select" : true,
+            "responsive": true,
+            "stateSave"  : true,
+            "dom": '<"html5">lftip',
+            "ajax":{
+                        "url": "{{ route("beranda.unilever.getdata") }}",
+                        "dataType": "json",
+                        "type": "POST",
+                        data: function ( d ) {
+                        d._token= "{{csrf_token()}}";
+                        d.periode_start = $('#start').val()
+                        d.periode_end = $('#end').val()
+                        }
+                    },
 
+            "columns": [
+                { "data": "faktur"},
+                { "data": "no_faktur"},
+                { "data": "nominal" },
+                { "data": "status" },
+                { "data" : "action",
+                    "orderable" : false,
+                    "className" : "text-center",
+                },
+            ],
+            pageLength: 10,
+            responsive: true,
+            dom: '<"html5buttons"B>lTfgitp',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        orthogonal: 'export'
+                    },
+                    header: true,
+                    footer: true,
+                    className: 'btn btn-outline btn-default btn-lg',
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        orthogonal: 'export'
+                    },
+                    header: true,
+                    footer: true,
+                    className: 'btn btn-block bg-primary text-white',
+                }
+            ]
+        });
+        $('#table_penjualan').DataTable({
+            pageLength: 10,
+            responsive: true,
+            dom: '<"html5buttons"B>lTfgitp',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        orthogonal: 'export'
+                    },
+                    header: true,
+                    footer: true,
+                    className: 'btn btn-outline btn-default btn-lg',
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        orthogonal: 'export'
+                    },
+                    header: true,
+                    footer: true,
+                    className: 'btn btn-block bg-primary text-white',
+                }
+            ]
+        });
+        $('#table_retur').DataTable({
+            pageLength: 10,
+            responsive: true,
+            dom: '<"html5buttons"B>lTfgitp',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        orthogonal: 'export'
+                    },
+                    header: true,
+                    footer: true,
+                    className: 'btn btn-outline btn-default btn-lg',
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        orthogonal: 'export'
+                    },
+                    header: true,
+                    footer: true,
+                    className: 'btn btn-block bg-primary text-white',
+                }
+            ]
+        });
+        $('#table_faktur_piutang').DataTable({
+            pageLength: 10,
+            responsive: true,
+            dom: '<"html5buttons"B>lTfgitp',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        orthogonal: 'export'
+                    },
+                    header: true,
+                    footer: true,
+                    className: 'btn btn-outline btn-default btn-lg',
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        orthogonal: 'export'
+                    },
+                    header: true,
+                    footer: true,
+                    className: 'btn btn-block bg-primary text-white',
+                }
+            ]
+        });
+        $('#table_faktur_tertagih').DataTable({
+            pageLength: 10,
+            responsive: true,
+            dom: '<"html5buttons"B>lTfgitp',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        orthogonal: 'export'
+                    },
+                    header: true,
+                    footer: true,
+                    className: 'btn btn-outline btn-default btn-lg',
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        orthogonal: 'export'
+                    },
+                    header: true,
+                    footer: true,
+                    className: 'btn btn-block bg-primary text-white',
+                }
+            ]
+        });
+    });
+</script>
+<script>
+    function number_to_price(data){
+        if(data==0){return '0,00';}
+        data=parseFloat(data);
+        data=data.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+        data=data.split('.').join('*').split(',').join('.').split('*').join(',');
+        return data;
+    }
+    function getdata(){
+        var start = $('#start').val()
+        var end = $('#end').val()
+        var token = '{{ csrf_token() }}';
+        $.ajax({
+            type: 'POST',
+            headers: {'X-CSRF-TOKEN': token},
+            data:{
+                periode_start: start,
+                periode_end: end
+            },
+            url: '{{ route("beranda.getdata") }}',
+            success: function(response){
+                // console.log(response)
+                if(response.code == 200){
+                    $('#omset').html(`Rp. ${number_to_price(response.detail.omset)}`)
+                    $('#pajak').html(`Rp. ${number_to_price(response.detail.pajak)}`)
+                }else{
+                    Swal.fire(response.code,"Terjadi kesalahan pada sistem.",'Info');
+                }
+            }
+        })
+    }
 </script>
 @endpush
