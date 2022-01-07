@@ -526,6 +526,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/uploadimport', [PenjualanImportController::class, 'import'])->name('uploadimport');
             Route::post('/deleteimport', [PenjualanImportController::class, 'hapus'])->name('deleteimport');
 
+
             Route::post('/note', [PurchaseController::class, 'note'])->name('note');
             Route::post('/harga_product', [PurchaseController::class, 'harga_product'])->name('harga_product');
             Route::post('/total_harga', [PurchaseController::class, 'total_harga'])->name('total_harga');

@@ -77,9 +77,9 @@
             @endcan
             {{-- ACL JANGAN LUPA --}} -->
 
-            @can('menupurchaserder.index')
+            {{-- @can('menupurchaserder.index')
             <li>
-                <a href="#"><i class="fa fa-list-alt"></i> <span class="nav-label">Penjualan Produk</span><span class="fa arrow"></span></a>
+                <a href="#"><i class="fa fa-list-alt"></i> <span class="nav-label">Penjualannn Produk</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse">
                     @can('purchaseorder.index')
                         <li><a href="{{ route('purchaseorder.index') }}">List Penjualan Produk</a></li>
@@ -95,6 +95,9 @@
                     @endcan -->
                 </ul>
             </li>
+            @endcan --}}
+            @can('historymutasistok.index')
+            <li><a href="{{route('historymutasistok.index')}}">History Mutasi Stok</a></li>
             @endcan
             @can('stokopname.index')
             <li><a href="{{route('stokopname.index')}}">Opname Stok</a></li>
@@ -122,7 +125,12 @@
                     class="fa arrow"></span></a>
             <ul class="nav nav-second-level collapse">
                 <li><a href="">List Penjualan Produk</a></li>
-                <li class=""><a href="#">Tambah Penjualan Produk</a></li>
+                @can('purchaseorder.tambah')
+                <li class=""><a href="{{ route('purchaseorder.tambah') }}">Tambah Penjualan Produk</a></li>
+                @endcan
+                @can('purchaseorder.tambah')
+                    <li class=""><a href="{{ route('purchaseorder.import') }}">Upload Penjualan</a></li>
+                @endcan
             </ul>
         </li>
         @can('menuorder.index')

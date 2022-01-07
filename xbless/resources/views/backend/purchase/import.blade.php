@@ -19,7 +19,7 @@
     <div class="col-lg-2">
         <br/>
         {{-- <a class="btn btn-danger btn-sm" href="{{route('purchaseorder.index')}}">Batal</a> --}}
-        <button class="btn btn-primary" style="margin-left: 10px"><i class="fa fa-file-excel-o"></i>  Download Template</button>
+        <a href="{{ asset('/assets/excel/Import_Penjualan.xlsx') }}" class="btn btn-primary" style="margin-left: 10px"><i class="fa fa-file-excel-o"></i>  Download Template</a>
     </div>
 </div>
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -27,10 +27,10 @@
             <div class="col-lg-12">
                 <div class="ibox ">
                     <div class="ibox-title">
-                        @if(session('message'))
-                            <div class="alert alert-{{session('message')['status']}}">
+                        @if(session('status'))
+                            <div class="alert alert-{{session('status')}}">
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            {{ session('message')['desc'] }}
+                            {{ session('desc') }}
                             </div>
                         @endif
                         <form action="{{ route('purchaseorder.uploadimport') }}" method="POST" enctype="multipart/form-data">
@@ -50,7 +50,7 @@
                             MEMBER INI BELUM MELAKUKAN PEMBAYARAN PADA INVOICE
                           </div>
 
-                    @if(count($data) > 0)
+                    @if(isset($data) && count($data) > 0)
                         <div class="table-responsive">
                             <table id="table1" class="table display table-bordered">
                                 <thead>
