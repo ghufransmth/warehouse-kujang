@@ -197,45 +197,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="">
-                                    <td>2021-12-6</td>
-                                    <td>23000000004567</td>
-                                    <td>60.000</td>
-                                    <td>Berkah Jaya</td>
-                                    <td>Joko</td>
-                                </tr>
-                            <tbody>
-                                <tr class="">
-                                    <td>2021-12-6</td>
-                                    <td>23000000004567</td>
-                                    <td>60.000</td>
-                                    <td>Berkah Jaya</td>
-                                    <td>Joko</td>
-                                </tr>
-                            <tbody>
-                                <tr class="">
-                                    <td>2021-12-6</td>
-                                    <td>23000000004567</td>
-                                    <td>60.000</td>
-                                    <td>Berkah Jaya</td>
-                                    <td>Joko</td>
-                                </tr>
-                            <tbody>
-                                <tr class="">
-                                    <td>2021-12-6</td>
-                                    <td>23000000004567</td>
-                                    <td>60.000</td>
-                                    <td>Berkah Jaya</td>
-                                    <td>Joko</td>
-                                </tr>
-                            <tbody>
-                                <tr class="">
-                                    <td>2021-12-6</td>
-                                    <td>23000000004567</td>
-                                    <td>60.000</td>
-                                    <td>Berkah Jaya</td>
-                                    <td>Joko</td>
-                                </tr>
+                          
                             </tbody>
                             <tfoot>
                                 <tr class="text-white text-center bg-primary">
@@ -512,7 +474,32 @@
                 }
             ]
         });
-        $('#table_penjualan').DataTable({
+        table_penjualan = $('#table_penjualan').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "pageLength": 25,
+            "select" : true,
+            "responsive": true,
+            "stateSave"  : true,
+            "dom": '<"html5">lftip',
+            "ajax":{
+                        "url": "{{ route("beranda.penjualan.getdata") }}",
+                        "dataType": "json",
+                        "type": "POST",
+                        data: function ( d ) {
+                        d._token= "{{csrf_token()}}";
+                        d.periode_start = $('#start').val()
+                        d.periode_end = $('#end').val()
+                        }
+                    },
+
+            "columns": [
+                { "data": "faktur"},
+                { "data": "no_faktur"},
+                { "data": "total_harga" },
+                { "data": "name" },
+                {"data": "nama"}
+            ],
             pageLength: 10,
             responsive: true,
             dom: '<"html5buttons"B>lTfgitp',

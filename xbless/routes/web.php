@@ -79,6 +79,10 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/getdataunlever', [BerandaController::class, 'getDataUnilever'])->name('getdata');
             Route::get('/getdata/{id}', [BerandaController::class, 'detailUnilever'])->name('detail');
         });
+        Route::group(['prefix' => 'penjualan', 'as' => 'penjualan.'], function(){
+            Route::post('/getdatapenjualan', [BerandaController::class, 'getDataPenjualan'])->name('getdata');
+            Route::get('/getdata/{id}', [BerandaController::class, 'detailPenjualan'])->name('detail');
+        });
     });
 
     Route::get('/manage/logout', [LoginController::class, 'logout'])->name('manage.logout');
