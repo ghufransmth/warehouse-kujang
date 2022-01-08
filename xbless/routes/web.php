@@ -54,6 +54,7 @@ use App\Http\Controllers\ReportBarangMasukController;
 use App\Http\Controllers\ReportReturRevisiController;
 use App\Http\Controllers\ReportTandaTerimaController;
 use App\Http\Controllers\DraftPurchaseController;
+use App\Http\Controllers\ImportPembelianController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PenjualanImportController;
 use App\Http\Controllers\ProdukImportController;
@@ -668,6 +669,14 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::post('/tambah_product',[PembelianController::class, 'tambah_product'])->name('tambah_detail');
         Route::get('/search_product', [PembelianController::class, 'search_product'])->name('search_product');
         Route::delete('/delete/{id?}', [PembelianController::class, 'hapus'])->name('hapus');
-
     });
+
+     //IMPORT PEMBELIAN
+     Route::group(['prefix' => 'pembelian_import', 'as' => 'pembelian_import.'], function(){
+        Route::get('/import', [ImportPembelianController::class, 'index'])->name('import');
+        Route::get('/importsimpan', [ImportPembelianController::class, 'importsimpan'])->name('importsimpan');
+        Route::get('/importbatal', [ImportPembelianController::class, 'importbatal'])->name('importbatal');
+        Route::post('/uploadimport', [ImportPembelianController::class, 'import'])->name('uploadimport');
+        Route::post('/deleteimport', [ImportPembelianController::class, 'hapus'])->name('deleteimport');
+     });
 });

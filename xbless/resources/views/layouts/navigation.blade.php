@@ -109,6 +109,9 @@
                     @can('purchaseorder.tambah')
                         <li class=""><a href="{{ route('pembelian.tambah') }}">Tambah Pembelian Produk</a></li>
                     @endcan
+
+                    <li class=""><a href="{{ route('pembelian_import.import') }}">Upload Pembelian Produk</a></li>
+
                 </ul>
             </li>
             @endcan
