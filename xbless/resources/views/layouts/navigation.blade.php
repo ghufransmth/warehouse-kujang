@@ -31,13 +31,8 @@
                     <li class=""><a href="{{route('expedisi.index')}}">Master Expedisi</a></li>
                     <li class=""><a href="{{route('type_channel.index')}}">Master Tipe Channel</a></li>
                     <li class=""><a href="{{ route('gudang.index') }}">Master Gudang</a></li>
-<<<<<<< HEAD
                     <li class=""><a href="{{ route('diskon.index') }}">Master Diskon</a></li>
                     <li class=""><a href="{{ route('distrik.index') }}">Master Distrik</a></li>
-=======
-                    <li class=""><a href="#">Master Diskon (coming soon)</a></li>
-                    <li  class=""><a href="{{ route('distrik.index') }}">Master Distrik</a></li>
->>>>>>> 3dafbd279ecca3f7835e241693b5683a89e980f8
                     <li class=""><a href="{{ route('payment.index') }}">Master Jenis Bayar</a></li>
                     <li class=""><a href="{{ route('perusahaan.index') }}">Master Jenis Toko (coming soon)</a></li>
                     <li class=""><a href="#">Master Kategori Toko (coming soon)</a></li>
