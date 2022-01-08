@@ -3,13 +3,13 @@
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Upload Penjualan</h2>
+        <h2>Upload Pembelian</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{route('purchaseorder.index')}}">Penjualan</a>
+                <a href="{{route('pembelian.index')}}">Pembelian</a>
             </li>
             <li class="breadcrumb-item active">
                 <strong>Upload</strong>
@@ -18,8 +18,8 @@
     </div>
     <div class="col-lg-2">
         <br/>
-        {{-- <a class="btn btn-danger btn-sm" href="{{route('purchaseorder.index')}}">Batal</a> --}}
-        <a href="{{ asset('/assets/excel/Import_Penjualan.xlsx') }}" class="btn btn-primary" style="margin-left: 10px"><i class="fa fa-file-excel-o"></i>  Download Template</a>
+        {{-- <a class="btn btn-danger btn-sm" href="{{route('pembelian.index')}}">Batal</a> --}}
+        <a href="{{ asset('/assets/excel/templateDataPembelian.xlsx') }}" class="btn btn-primary" style="margin-left: 10px"><i class="fa fa-file-excel-o"></i>  Download Template</a>
     </div>
 </div>
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -33,10 +33,10 @@
                             {{ session('desc') }}
                             </div>
                         @endif
-                        <form action="{{ route('purchaseorder.uploadimport') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('pembelian_import.uploadimport') }}" method="POST" enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <div class="custom-file mb-3">
-                              <input type="file" class="custom-file-input" id="customFile" name="file_penjualan">
+                              <input type="file" class="custom-file-input" id="customFile" name="file_pembelian">
                               <label class="custom-file-label" for="customFile">Choose file</label>
                             </div>
                             <div class="d-flex flex-row-reverse">
@@ -52,8 +52,8 @@
 
                     @if(isset($data) && count($data) > 0)
                     <div class="d-flex flex-row-reverse">
-                        <a href="{{ route('purchaseorder.importsimpan') }}" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</a>
-                        <a href="{{ route('purchaseorder.importbatal') }}" class="btn btn-danger" style="margin-right: 10px"><i class="fa fa-close"></i> Batal</a>
+                        <a href="{{ route('pembelian_import.importsimpan') }}" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</a>
+                        <a href="{{ route('pembelian_import.importbatal') }}" class="btn btn-danger" style="margin-right: 10px"><i class="fa fa-close"></i> Batal</a>
 
                     </div>
                     <br>
@@ -64,8 +64,6 @@
                                         <th width="5%">No</th>
                                         <th>Nomor Faktur</th>
                                         <th>SKU Code</th>
-                                        <th>Toko</th>
-                                        <th>Sales</th>
                                         <th>Satuan</th>
                                         <th>QTY</th>
                                         <th>Aksi</th>
@@ -77,8 +75,6 @@
                                             <td>{{ $key+1 }}</td>
                                             <td>{{ $value->no_faktur }}</td>
                                             <td>{{ $value->kode_product }}</td>
-                                            <td>{{ $value->id_toko }}</td>
-                                            <td>{{ $value->id_sales }}</td>
                                             <td>{{ $value->id_satuan }}</td>
                                             <td>{{ $value->qty }}</td>
                                             <td>{!! $value->aksi !!}</td>
@@ -123,7 +119,7 @@
             if (result.isConfirmed) {
                 $.ajax({
                     type: 'POST',
-                    url : "{{route('purchaseorder.deleteimport')}}",
+                    url : "{{route('pembelian_import.deleteimport')}}",
                     headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                     data:{
                         id_detail : id
@@ -138,7 +134,7 @@
                         // return false;
                         if (data.success) {
                             Swal.fire('Yes',data.message,'info');
-                            window.location.replace('{{route("purchaseorder.import")}}');
+                            window.location.replace('{{route("pembelian_import.import")}}');
 
 
                         } else {
