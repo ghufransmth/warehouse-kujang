@@ -13,6 +13,8 @@ use App\Models\Engine;
 use App\Models\Satuan;
 use App\Models\Brand;
 use App\Models\InvoiceDetail;
+use App\Models\Pembelian;
+use App\Models\PembelianDetail;
 use App\Models\PurchaseOrderDetail;
 use DB;
 use Auth;
@@ -377,4 +379,5 @@ class ProdukController extends Controller
             return response()->json(['status' => "failed", 'message' => 'Gagal menghapus data. Silahkan ulangi kembali.']);
         }
     }
+
 }
