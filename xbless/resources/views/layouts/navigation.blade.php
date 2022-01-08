@@ -27,7 +27,7 @@
                 <a href="#"><i class="fa fa-cog"></i> <span class="nav-label">Master</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse">
                     <li class=""><a href="{{route('staff.index')}}">Master User</a></li>
-                    <li class=""><a href="#">Master Sales (coming soon)</a></li>
+                    <li class=""><a href="{{ route('sales.index') }}">Master Sales (coming soon)</a></li>
                     <li class=""><a href="{{route('expedisi.index')}}">Master Expedisi</a></li>
                     <li class=""><a href="{{route('type_channel.index')}}">Master Tipe Channel</a></li>
                     <li class=""><a href="{{ route('gudang.index') }}">Master Gudang</a></li>
@@ -48,6 +48,9 @@
                     @endcan
                     @can('produk.tambah')
                     <li class=""><a href="{{ route('produk.tambah') }}">Tambah Produk</a></li>
+                    @endcan
+                    @can('produk.tambah')
+                    <li class=""><a href="{{ route('produk.import') }}">Upload Produk</a></li>
                     @endcan
                     @can('kategori.index')
                     <li class=""><a href="{{ route('kategori.index') }}">List Kategori</a></li>
@@ -128,7 +131,7 @@
                     </li>
                 @endcan
             @endcan
-            {{-- ACL JANGAN LUPA --}} -->
+            {{-- ACL JANGAN LUPA --}}
 
             @can('menupurchaserder.index')
             <li>
@@ -189,11 +192,31 @@
                     </li>
                 @endcan
             @endcan
-            @can('menubackorder.index')
-                @can('backorder.index')
-                    <li>
-                        <a href="{{ route('backorder.index') }}"><i class="fa fa-suitcase"></i> <span class="nav-label">Back Order </span><span id="back_order_count" class="label label-info float-right">0</span></a>
-                    </li>
+        </ul>
+        </li>
+        <li>
+            <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">Master Toko</span><span
+                    class="fa arrow"></span></a>
+            <ul class="nav nav-second-level collapse">
+                <li class=""><a href="{{ route('member.index') }}">List Toko</a></li>
+                <li class=""><a href="{{ route('member.tambah') }}">Tambah Toko</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#"><i class="fa fa-dollar"></i> <span class="nav-label"> Keuangan</span><span
+                    class="fa arrow"></span></a>
+            <ul class="nav nav-second-level collapse">
+                <li><a href="{{ route('transaksi.pembayaran.index') }}">Transaksi Pembayaran</a></li>
+                <li><a href="{{ route('transaksi.keuangan.index') }}">Transaksi Keuangan</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#"><i class="fa fa-list-alt"></i> <span class="nav-label">Penjualan Produk</span><span
+                    class="fa arrow"></span></a>
+            <ul class="nav nav-second-level collapse">
+                <li><a href="{{ route('purchaseorder.index') }}">List Penjualan Produk</a></li>
+                @can('purchaseorder.tambah')
+                <li class=""><a href="{{ route('purchaseorder.tambah') }}">Tambah Penjualan Produk</a></li>
                 @endcan
             @endcan -->
             @can('menureport.index')

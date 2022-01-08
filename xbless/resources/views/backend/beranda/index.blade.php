@@ -154,7 +154,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                
+
                             </tbody>
                             <tfoot>
                                 <tr class="text-white text-center bg-primary">
@@ -197,7 +197,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                          
+
                             </tbody>
                             <tfoot>
                                 <tr class="text-white text-center bg-primary">
@@ -412,7 +412,7 @@
 @endsection
 @push('scripts')
 <script>
-    var table_unilever, table_penjualan, table_retur, table_piutang, table_tagihan;
+    var table_unilever, table_penjualan;
     $(document).ready(function () {
         getdata()
         $('#data_5 .input-daterange').datepicker({
@@ -600,8 +600,29 @@
             ]
         });
     });
+
+    $(document).on('change', '#start', function(){
+        var end = $('#end').val()
+        if(end != ''){
+            refresh()
+            getdata()
+        }
+    })
+
+    $(document).on('change', '#end', function(){
+        var start = $('#start').val()
+        if(end != ''){
+            refresh()
+            getdata()
+        }
+    })
 </script>
 <script>
+    function refresh(){
+        table_unilever.ajax.reload(null, true)
+        table_penjualan.ajax.reload(null, true)
+
+    }
     function number_to_price(data){
         if(data==0){return '0,00';}
         data=parseFloat(data);
@@ -622,7 +643,6 @@
             },
             url: '{{ route("beranda.getdata") }}',
             success: function(response){
-                // console.log(response)
                 if(response.code == 200){
                     $('#omset').html(`Rp. ${number_to_price(response.detail.omset)}`)
                     $('#pajak').html(`Rp. ${number_to_price(response.detail.pajak)}`)

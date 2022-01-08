@@ -16,7 +16,7 @@ class BerandaController extends Controller
     public function index(){
         $periode_start = date('d-m-Y', strtotime("-1 Month"));
         $periode_end = date('d-m-Y');
-    	
+
         return view('backend/beranda/index', compact('periode_start', 'periode_end'));
     }
 
@@ -24,7 +24,7 @@ class BerandaController extends Controller
         $data = str_replace(array('/'),array('_'),$string);
         return $data;
     }
-  
+
     function safe_decode($string,$mode=null) {
         $data = str_replace(array('_'),array('/'),$string);
         return $data;
@@ -57,15 +57,14 @@ class BerandaController extends Controller
         $penjualan = DB::table('tbl_penjualan')
                     ->whereDate('tgl_faktur', '>=', date('Y-m-d', strtotime($periode_start)))
                     ->whereDate('tgl_faktur', '<=', date('Y-m-d', strtotime($periode_end)))
-                    ->get();
+                    ->sum('total_harga');
 
-        $total_pajak = 0;
-        foreach ($penjualan as $key => $value) {
-            $pajak = ($value->total_harga / 100) * 10;
-            $value->pajak = $pajak;
+        $pembelian = DB::table('pembelian')
+                    ->whereDate('tgl_faktur', '>=', date('Y-m-d', strtotime($periode_start)))
+                    ->whereDate('tgl_faktur', '<=', date('Y-m-d', strtotime($periode_end)))
+                    ->sum('nominal');
 
-            $total_pajak += $value->pajak;
-        }
+        $total_pajak = round((($pembelian + $penjualan) / 100) * 10);
 
         return $total_pajak;
     }
