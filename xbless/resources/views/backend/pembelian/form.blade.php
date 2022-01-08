@@ -1,199 +1,281 @@
 @extends('layouts.layout')
-@section('title', 'Manajemen Purchase Order ')
+@section('title', 'Pembelian')
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>{{isset($purchaseorder) ? 'Edit' : 'Tambah'}} Purchase Order</h2>
+        <h2>Pembelian Produk</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{route('purchaseorder.index')}}">Purchase Order</a>
+                <a href="">Pembelian Produk</a>
             </li>
             <li class="breadcrumb-item active">
-                <strong>{{isset($purchaseorder) ? 'Edit' : 'Tambah'}}</strong>
+                <strong>{{isset($produk) ? 'Edit' : 'Tambah'}}</strong>
             </li>
         </ol>
     </div>
     <div class="col-lg-2">
         <br/>
-        <a class="btn btn-white btn-sm" href="{{route('purchaseorder.index')}}">Batal</a>
+        <a class="btn btn-white btn-sm" href="">Kembali</a>
     </div>
 </div>
-    <div class="wrapper wrapper-content animated fadeInRight">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="ibox ">
-                    <div class="ibox-title">
-                        @if(session('message'))
-                            <div class="alert alert-{{session('message')['status']}}">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            {{ session('message')['desc'] }}
-                            </div>
-                        @endif
-                    </div>
-                    <div class="ibox-content">
-                        <div class="alert alert-danger" id="showAlert" style="display: none">
-                            MEMBER INI BELUM MELAKUKAN PEMBAYARAN PADA INVOICE
-                          </div>
-                        <form id="submitData">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <input type="hidden" name="enc_id" id="enc_id" value="{{isset($purchaseorder)? $enc_id : ''}}">
 
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">No Transaksi </label>
-                                <div class="col-sm-4 error-text">
-                                    <input type="text" name="no_transaksi" class="form-control" id="no_transaksi">
-                                </div>
-                                <label class="col-sm-2 col-form-label">Tgl Transaksi </label>
-                                <div class="col-sm-4 error-text">
-                                    <input type="text" class="form-control formatTgl" id="tgl_transaksi" name="tgl_transaksi">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    @if(session('message'))
+                        <div class="alert alert-{{session('message')['status']}}">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        {{ session('message')['desc'] }}
+                        </div>
+                     @endif
+                </div>
+                <div class="ibox-content">
+                    <form id="submitData">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="enc_id" id="enc_id" value="{{isset($pembelian)? $enc_id : ''}}">
 
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Toko </label>
-                                <div class="col-sm-4 error-text">
-                                    <select class="form-control select2" id="toko" name="toko">
-                                        <option value="1">Pilih Toko</option>
-                                    </select>
-                                </div>
-                                <label class="col-sm-2 col-form-label">Sales </label>
-                                <div class="col-sm-4 error-text">
-                                    <select class="form-control select2" id="sales" name="sales">
-                                        <option value="1">Pilih Sales</option>
-
-
-
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Status Pembayaran </label>
-                                <div class="col-sm-4 error-text">
-                                    <select class="form-control select2" id="status_pembayaran" name="status_pembayaran">
-                                        <option value="">Pilih Status Pembayaran</option>
-                                        <option value="1">Lunas</option>
-                                        <option value="0">Belum Lunas</option>
-                                    </select>
-                                </div>
-                                <label class="col-sm-2 col-form-label">Tgl Jatuh Tempo </label>
-                                <div class="col-sm-4 error-text">
-                                    <input type="text" name="tgl_jatuh_tempo" class="form-control formatTgl" id="tgl_jatuh_tempo">
-                                    <input type="hidden" name="total_harga_penjualan" id="total_harga_penjualan" value="0">
-                                </div>
+                        <div class="form-group row">
+                            <label for=""  class="col-sm-2 col-form-label">No Faktur *</label>
+                            <div class="col-sm-4 error-text">
+                                <input type="text" class="form-control" id="nofaktur" name="nofaktur">
                             </div>
 
-                            {{-- <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Catatan </label>
-                                <div class="col-sm-10 error-text">
-                                <textarea class="form-control" id="note" name="note">{{isset($purchaseorder)? $purchaseorder->note : ''}}</textarea>
+                            <label class="col-sm-2 col-form-label">Tanggal Faktur *</label>
+                            <div class="col-sm-3 error-text">
+                                <div class="input-group date">
+                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="date" class="form-control" id="faktur_date" name="faktur_date" value="{{isset($order)? $order->faktur_date : ''}}">
                                 </div>
-                            </div> --}}
-                            <div class="">
-                                <a href="#!" onclick="tambahProduk()" class="btn btn-success btn-sm icon-btn sm-btn-flat product-tooltip" title="Tambah Produk">Tambah Produk</a>
                             </div>
-                            <div class="hr-line-dashed"></div>
-                            <div class="table-responsive">
-                                <table id="table1" class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Produk</th>
-                                            <th>Stock Product (PCS)</th>
-                                            <th>Harga Product</th>
-                                            <th>Tipe Satuan</th>
-                                            <th>Qty Order</th>
-                                            <th>Total Harga</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="ajax_produk">
-                                        <tr>
-                                            <td>
-                                                <select class="select2_produk_1" id="product_1" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, 1)" width="100%">
-                                                    <option value="0">Pilih Produk </option>
+                        </div>
 
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control" name="stock_product[]" id="stock_product_1" readonly>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control" id="harga_product_1" name="harga_product[]" value=" PCS" readonly>
-                                            </td>
-                                            <td>
-                                                <select class="select2_satuan_1" id="tipe_satuan_1" name="tipesatuan[]" onchange="satuan(this.options[this.selectedIndex].value, 1)">
-                                                    <option value="null">Pilih Tipe Satuan </option>
-                                                </select>
-                                            </td>
-                                            <td width="15%">
-                                                <input type="text" class="form-control touchspin" id="qty_1" name="qty[]" value="1" onkeyup="hitung_qty(1)" onchange="hitung_qty(1)">
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control total_harga" id="total_1" name="total[]" readonly>
-                                            </td>
-                                            <td>
-                                                -
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-2 col-form-label">Nominal Faktur *</label>
+                            <div class="col-sm-4 error-text">
+                                <input type="text" class="form-control" id="nominal" name="nominal">
                             </div>
-                            <input type="hidden" class="form-control mb-1" name="total_produk" id="total_produk" value="1">
-                            <div class="hr-line-dashed"></div>
-                            <table style="min-width: 100%">
-                                <tr>
-                                    <td class="text-right">Total Harga Penjualan</td>
-                                    <td width="1%"></td>
-                                    <td class="text-center" width="13%" id="harga_penjualan"></td>
-                                    <td width="5%"></td>
+
+                            <label class="col-sm-2 col-form-label">Tanggal Jatuh Tempo *</label>
+                            <div class="col-sm-3 error-text">
+                                <div class="input-group date">
+                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" class="form-control jatuh_tempo" id="jatuh_tempo" name="jatuh_tempo" placeholder="dd-mm-yyyy" autocomplete="off">
+                                    <input type="hidden" name="total_harga_pembelian" id="total_harga_pembelian" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Keterangan *</label>
+                            <div class="col-sm-4 error-text">
+                                <textarea type="text" class="form-control" id="ket" name="ket"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <div class="col-lg-2">
+                            <input type="hidden" class="mb-1 form-control" value="0">
+                            <a id="tambah_detail_product" onclick="tambahProduk()" class="text-white btn btn-success"><span class="fa fa-pencil-square-o"></span>Tambah</a>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="example">
+                            <thead>
+                                <tr class="bg-blue">
+                                    <th>Produk</th>
+                                    <th>Satuan</th>
+                                    <th>Harga Product</th>
+                                    <th>Qty Order</th>
+                                    <th>Total Harga</th>
+                                    <th>#</th>
                                 </tr>
-                            </table>
-                            <div class="form-group row">
-                                <div class="col-sm-6 col-sm-offset-2">
-                                    <a class="btn btn-white btn-sm" href="{{route('provinsi.index')}}">Batal</a>
-                                    <button class="btn btn-primary btn-sm" type="button" id="simpan">Selesai</button>
-                                </div>
-                                @can('draftpurchaseorder.tambah')
-                                <div class="col-sm-6 text-right" >
-
-                                    {{-- <button class="btn btn-info btn-sm" type="button" id="draft">Simpan Draft</button> --}}
-                                </div>
-                                @endcan
-                            </div>
-                        </form>
+                            </thead>
+                            <tbody id="detail_form">
+                               <tr>
+                                   <td>
+                                       <select name="produk[]" id="product_1" class="select2_produk_1" onchange="hitung(this.options[this.selectedIndex].value,1)" width="100%">
+                                           <option value="0">Pilih Produk</option>
+                                       </select>
+                                   </td>
+                                   <td>
+                                       <select name="tipesatuan[]" onchange="satuan(this.options[this.selectedIndex].value,1)" id="tipe_satuan_1" class="select2_satuan_1">
+                                            <option value="null">Pilih Tipe Satuan</option>
+                                        </select>
+                                   </td>
+                                   <td>
+                                       <input type="text" class="form-control" name="harga_product[]" id="harga_product_1">
+                                   </td>
+                                   <td width="15%">
+                                    <input type="text" class="form-control touchspin" id="qty_1" name="qty[]" value="1" onkeyup="hitung_qty(1)" onchange="hitung_qty(1)">
+                                  </td>
+                                   <td>
+                                    <input type="text" class="form-control total_harga" id="total_1" name="total[]" readonly>
+                                   </td>
+                                   <td>
+                                    <a class="text-white btn btn-danger btn-hemisperich btn-xs" data-original-title='Hapus Data' id='deleteModal'><i class='fa fa-trash'></i></a>
+                                </td>
+                               </tr>
+                            </tbody>
+                        </table>
                     </div>
+                    <input type="hidden" class="form-control mb-1" name="total_produk" id="total_produk" value="1">
+                    <div class="hr-line-dashed"></div>
+                    <table style="min-width: 100%">
+                        <tr>
+                            <td class="text-right"><h3><b>Total Harga Pembelian<b></h3></td>
+                            <td width="1%"></td>
+                            <td class="text-center" width="13%" id="harga_pembelian"></td>
+                            <td width="5%"></td>
+                        </tr>
+                    </table>
+                        <!--<div class="form-group row">
+                            <div class="col-sm-4 col-sm-offset-2 float-right">
+                                <a class="btn btn-white btn-sm" href="{{route('pembelian.index')}}">Batal</a>
+                                <button class="btn btn-primary btn-sm" type="submit" id="simpan">Simpan</button>
+                                {{-- <button class="btn btn-success btn-sm" type="submit" id="simpanselesai">Selesai & Simpan</button> --}}
+                            </div>
+                        </div>-->
+
+                        <div class="form-group row">
+                            <div class="col-sm-6 col-sm-offset-2">
+                                <a class="btn btn-white btn-sm" href="{{route('pembelian.index')}}">Batal</a>
+                                <button class="btn btn-primary btn-sm" type="button" id="simpan">Selesai</button>
+                            </div>
+                            @can('draftpurchaseorder.tambah')
+                            <div class="col-sm-6 text-right" >
+
+                                {{-- <button class="btn btn-info btn-sm" type="button" id="draft">Simpan Draft</button> --}}
+                            </div>
+                            @endcan
+                        </div>
+
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 @endsection
 @push('scripts')
+{{-- <script>
+    $(document).on('click', '#tambah_detail_product', function(){
+        var total_detail = $('#total_detail').val();
+        console.log(total_detail)
+        var total = 1 + parseInt(total_detail);
+        $('#total_detail').val(total);
+        $.ajax({
+            type: 'POST',
+            data: 'total='+total,
+            url: '{{ route("pembelian.tambah_detail") }}',
+            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+            success: function(msg){
+                $('#detail_form').append(msg);
+            }
+        });
+   });
+
+   $(document).on('click', '#simpan', function(e){
+        e.preventDefault()
+        var form = $('#submitData').serializeArray()
+        var dataFile = new FormData()
+        $.each(form, function(idx, val) {
+            dataFile.append(val.name, val.value)
+        })
+        console.log(dataFile)
+        $.ajax({
+            type: 'POST',
+            url : "{{route('pembelian.simpan')}}",
+            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+            data:dataFile,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            beforeSend: function () {
+                Swal.showLoading();
+            },
+            success: function(data){
+                console.log(data)
+                if (data.success) {
+                    Swal.fire('Yes',data.message,'info');
+                    window.location.replace('{{route("pembelian.index")}}');
+                } else {
+                    Swal.fire('Ups',data.message,'info');
+                }
+            },
+            complete: function () {
+                Swal.hideLoading();
+                $('#simpan').removeClass("disabled");
+            },
+        });
+    })
+
+   $('#example').DataTable({
+        'searching': false,
+        'paging': false,
+        'ordering': false,
+        'info': false,
+        language : {
+            "zeroRecords": " "
+        }
+    })
+
+    $('.select2_product').select2({
+        placeholder: 'Pilih Product',
+        ajax: {
+            url: '{{ route("pembelian.search_product") }}',
+            dataType: 'JSON',
+            data: function(params) {
+                return {
+                search: params.term
+                }
+            },
+            processResults: function (data) {
+                var results = [];
+                $.each(data, function(index, item){
+                results.push({
+                    id: item.id,
+                    text : item.code+' | '+item.name,
+                    satuan: item.satuan_product
+                });
+                });
+                return{
+                    results: results
+                };
+            }
+        }
+    });
+
+    $('.jatuh_tempo').datepicker({
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        calendarWeeks: true,
+        autoclose: true,
+        format: "dd-mm-yyyy"
+    });
+</script> --}}
 <script>
-    $(document).ready(function () {
+    $(document).ready(function(){
         $(".select2").select2({allowClear: true});
 
-        select_satuan(1);
-        select_product(1);
-        $("#simpan").on('click',function(){
-            if($("#submitData").valid())
-            {
-                Swal.showLoading();
-                SimpanData(0);
-            }
-        });
-        $("#draft").on('click',function(){
-            if($("#submitData").valid())
-            {
-                Swal.showLoading();
-                SimpanData(1);
-            }
-        });
-        $('#submitData').validate({
-            rules: {
-                member:{
+select_satuan(1);
+select_product(1);
+$("#simpan").on('click',function(){
+        if($("#submitData").valid())
+        {
+            Swal.showLoading();
+            SimpanData(1);
+        }
+    });
+    $('#submitData').validate({
+        rules: {
+            member:{
                     required: true
                 },
                 sales:{
@@ -206,7 +288,7 @@
                     required: true
                 }
             },
-            messages: {
+            messages:{
                 member:{
                     required: "Member tidak boleh kosong"
                 },
@@ -231,46 +313,38 @@
             unhighlight: function (element, errorClass, validClass) {
                 $(element).removeClass('is-invalid');
             },
-            // submitHandler: function(form) {
-            //     Swal.showLoading();
-            //     SimpanData();
-            // }
         });
-        function SimpanData(draft){
-
-            $('#simpan').addClass("disabled");
-                var form = $('#submitData').serializeArray()
-                var dataFile = new FormData()
+            function SimpanData(draft){
+                $('#simpan').addClass("disabled");
+                var form = $('#submitData').serializeArray();
+                var dataFile = new FormData();
                 var total_produk = $('#total_produk').val();
 
-
-            $.each(form, function(idx, val) {
-                dataFile.append(val.name, val.value)
-                dataFile.append('total_produk', total_produk);
-                dataFile.append('draft', draft);
-            })
-            $.ajax({
-                type: 'POST',
-                url : "{{route('purchaseorder.simpan')}}",
-                headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
-                data:dataFile,
-                processData: false,
-                contentType: false,
-                dataType: "json",
-                beforeSend: function () {
-                Swal.showLoading();
-                },
-                success: function(data){
-                    if (data.success) {
+                $.each(form, function(idx,val){
+                    dataFile.append(val.name, val.value);
+                    dataFile.append('total_produk', total_produk);
+                    dataFile.append('draft', draft);
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('pembelian.simpan') }}",
+                    headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+                    data: dataFile,
+                    processData: false,
+                    contentType: false,
+                    dataType: "json",
+                    beforeSend: function(){
+                        Swal.showLoading();
+                    },
+                    success: function(data){
+                    if(data.success){
                         Swal.fire('Yes',data.message,'info');
                         if(data.draft=='0'){
-                            window.location.replace('{{route("requestpurchaseorder.index")}}');
+                            window.location.replace('{{ route("pembelian.index") }}');
                         }else{
-                            //ke draft
-                            window.location.replace('{{route("purchaseorder.tambah")}}');
+                            window.location.replace('{{ route("pembelian.tambah") }}');
                         }
-
-                    } else {
+                    }else{
                         Swal.fire('Ups',data.message,'info');
                     }
                 },
@@ -283,27 +357,27 @@
                     Swal.hideLoading();
                     Swal.fire('Maaf','silahkan check kembali form anda' ,'info');
                 }
-            });
-        }
-        $('.formatTgl').datepicker({
+                });
+            }
+            $('.formatTgl').datepicker({
             todayBtn: "linked",
             keyboardNavigation: false,
             calendarWeeks: true,
             autoclose: true,
             format: "dd-mm-yyyy"
         });
-});
-function total_penjualan(){
-    var sum = 0;
-    var tes = $('.total_harga');
-    // console.log(tes);
-    $('.total_harga').each(function(){
-        sum += parseFloat($(this).val());  // Or this.innerHTML, this.innerText
     });
-    $('#harga_penjualan').text(sum);
-    $('#total_harga_penjualan').val(sum);
-}
-function select_product(num){
+    function total_pembelian(){
+        var sum = 0;
+        var tes = $('.total_harga');
+        // console.log(tes);
+        $('.total_harga').each(function(){
+            sum += parseFloat($(this).val());  // Or this.innerHTML, this.innerText
+        });
+        $('#harga_pembelian').text(sum);
+        $('#total_harga_pembelian').val(sum);
+    }
+    function select_product(num){
     $('.select2_produk_'+num).select2({allowClear: false, width: '200px',
         ajax: {
                 url: '{{ route("purchaseorder.search") }}',
@@ -355,9 +429,18 @@ function select_satuan(num){
         }
     });
 }
+
+$('.jatuh_tempo').datepicker({
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        calendarWeeks: true,
+        autoclose: true,
+        format: "dd-mm-yyyy"
+    });
 </script>
 <script>
-    $( "#sales" ).change(function() {
+     $( "#sales" ).change(function() {
         var member = $('#member').val();
         var val = [];
         if(member==''){
@@ -388,7 +471,7 @@ function select_satuan(num){
                 }
             }
         });
-        $('#ajax_produk').html('');
+        $('#detail_form').html('');
     });
     function tambahProduk(){
         var total_produk = $('#total_produk').val();
@@ -398,11 +481,11 @@ function select_satuan(num){
         $.ajax({
             type: 'POST',
             data: 'total='+total,
-            url: '{{route("purchaseorder.addproduk")}}',
+            url: '{{route("pembelian.tambah_detail")}}',
             headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
             success: function(response) {
                 console.log(response)
-                $('#ajax_produk').prepend(response);
+                $('#detail_form').prepend(response);
             }
         });
     }
@@ -423,37 +506,36 @@ function select_satuan(num){
             $.ajax({
                 type: 'POST',
                 data: 'total='+total,
-                url: '{{route("purchaseorder.addproduk")}}',
+                url: '{{route("pembelian.tambah_detail")}}',
                 headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                 success: function(response) {
                     console.log(response)
-                  $('#ajax_produk').prepend(response);
+                  $('#detail_form').prepend(response);
                 }
             });
         }
     }
-    function hitung(value, num){
-        console.log('tes');
-        $.ajax({
-            type: 'POST',
-            data: {
-                'produk_id': value,
-                'urut' : num
-            },
-            url: '{{route("purchaseorder.harga_product")}}',
-            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
-            success: function(response) {
-                console.log(response)
-                if(response.success){
-                    $('#harga_product_'+num).val(response.data.harga_jual);
-                    $('#stock_product_'+num).val(response.data.getstock.stock_penjualan);
-                }else{
-                    Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
-                }
-            }
-        });
-    }
-
+    // function hitung(value, num){
+    //     console.log('tes');
+    //     $.ajax({
+    //         type: 'POST',
+    //         data: {
+    //             'produk_id': value,
+    //             'urut' : num
+    //         },
+    //         url: '{{route("purchaseorder.harga_product")}}',
+    //         headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+    //         success: function(response) {
+    //             console.log(response)
+    //             if(response.success){
+    //                 $('#harga_product_'+num).val(response.data.harga_jual);
+    //                 $('#stock_product_'+num).val(response.data.getstock.stock_penjualan);
+    //             }else{
+    //                 Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
+    //             }
+    //         }
+    //     });
+    // }
     function satuan(value, num){
         if($('#harga_product_'+num).val() == ""){
             Swal.fire('Ups', 'Pilih product terlebih dahulu', 'info');
@@ -478,7 +560,7 @@ function select_satuan(num){
                     }
                     var total = $('#harga_product_'+num).val() * total_qty;
                     $('#total_'+num).val(total);
-                    total_penjualan();
+                    total_pembelian();
 
 
                 }else{
@@ -488,7 +570,6 @@ function select_satuan(num){
         });
         $('total_'+num).val('')
     }
-    // To Be Continue
     function hitung_(value, num){
         $('#hargasatuan_'+num).val('')
         $('#total_'+num).val('')
@@ -521,7 +602,6 @@ function select_satuan(num){
             });
         }
     }
-
     function harga(value, num){
         var member = $('#member').val();
 
@@ -598,7 +678,7 @@ function select_satuan(num){
                         }
                         var total = $('#harga_product_'+num).val() * total_qty;
                         $('#total_'+num).val(total);
-                        total_penjualan();
+                        total_pembelian();
                     }else{
                         Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
                     }
@@ -626,13 +706,13 @@ function select_satuan(num){
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                $('#dataajaxproduk_'+id).remove();
+                $('#detail_product_'+id).remove();
                 var total_produk = $('#total_produk').val();
                 // console.log(total_produk)
                 var total = parseInt(total_produk) - 1;
                 $('#total_produk').val(total);
                 // console.log(total)
-                total_penjualan();
+                total_pembelian();
                 Swal.fire(
                   'Pesan',
                   'Produk berhasil dihapus.',

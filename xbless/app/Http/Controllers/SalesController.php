@@ -38,19 +38,20 @@ class SalesController extends Controller
           $page  = $start +1;
           $search = $request->search['value'];
 
-          $querydb = Sales::select('*');
+          $querydb = Sales::select('tbl_sales.id','tbl_sales.nama as name','tbl_sales.code','users.username','users.email','users.no_hp','users.no_hp','users.created_at');
+          $querydb->leftJoin('users','users.id','tbl_sales.user_id');
 
           if(array_key_exists($request->order[0]['column'], $this->original_column)){
              $querydb->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
           }
            else{
-            $querydb->orderBy('id','DESC');
+            $querydb->orderBy('tbl_sales.id','DESC');
           }
            if($search) {
             $querydb->where(function ($query) use ($search) {
-                    $query->orWhere('name','LIKE',"%{$search}%");
-                    $query->orWhere('email','LIKE',"%{$search}%");
-                    $query->orWhere('username','LIKE',"%{$search}%");
+                    $query->orWhere('tbl_sales.nama','LIKE',"%{$search}%");
+                    $query->orWhere('users.email','LIKE',"%{$search}%");
+                    $query->orWhere('users.username','LIKE',"%{$search}%");
             });
           }
           $totalData = $querydb->get()->count();
@@ -68,27 +69,18 @@ class SalesController extends Controller
             $action.="";
             $action.="<div class='btn-group'>";
 
-            if($request->user()->can('sales.detail')){
-              $action.='<a href="'.route('sales.detail',$enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Detail" data-original-title="Show"><i class="fa fa-eye"></i> View</a>&nbsp';
-            }
             if($request->user()->can('sales.ubah')){
               $action.='<a href="'.route('sales.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
             }
             if($request->user()->can('sales.hapus')){
               $action.='<a href="#" onclick="deleteData(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
             }
-            if($request->user()->can('sales.resetapp')){
-                $action.='<a href="#" onclick="resetApp(this,\''.$key.'\')" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Reset APP"><i class="fa fa-mobile"></i> Reset APP</a>&nbsp;';
-            }
             $action.="</div>";
 
             $sales->no             = $key+$page;
-            $sales->id             = $sales->id;
             $sales->enc_id         = $enc_id;
-            $sales->name           = $sales->name;
-            $sales->email          = $sales->email;
-            $sales->username       = $sales->username;
-            $sales->tgl            = $sales->created_at==null?'-':date('d-m-Y H:i',strtotime($sales->created_at));
+            $sales->phone          = $sales->no_hp;
+            $sales->tgl            = $sales->created_at==null?'-':date('d F Y H:i',strtotime($sales->created_at));
             $sales->action         = $action;
           }
           if ($request->user()->can('sales.index')) {
@@ -116,6 +108,12 @@ class SalesController extends Controller
        return (!empty($cek) ? false : true);
       }
 
+      private function cekExistUser($column,$var,$id)
+      {
+       $cek = User::where('id','!=',$id)->where($column,'=',$var)->first();
+       return (!empty($cek) ? false : true);
+      }
+
       function safe_encode($string) {
 
         $data = str_replace(array('/'),array('_'),$string);
@@ -128,9 +126,21 @@ class SalesController extends Controller
         return $data;
       }
 
+      public function status()
+      {
+        $value = array('1'=>'Aktif' ,'0'=>'Tidak Aktif','2'=>'Blokir');
+        return $value;
+      }
+
+      
       public function tambah()
       {
-        return view('backend/master/sales/form');
+        $status= $this->status();
+        $selectedstatus   = '1';
+        $roles = Role::orWhere('name','LIKE',"sales")->first();
+        $roleselected = "";
+
+        return view('backend/master/sales/form', compact('roles','roleselected','status','selectedstatus'));
       }
 
       public function ubah($enc_id)
@@ -138,7 +148,13 @@ class SalesController extends Controller
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         if($dec_id) {
           $sales= Sales::find($dec_id);
-          return view('backend/master/sales/form',compact('enc_id','sales'));
+          $status= $this->status();
+          $selectedstatus   = $sales->status;
+          $roles = Role::orWhere('name','LIKE',"sales")->first();
+          $roleselected = $sales->flag_user;
+          
+          // return response()->json(['data' => $roles]);
+          return view('backend/master/sales/form',compact('enc_id','sales','roles','roleselected','status','selectedstatus'));
         } else {
           return view('errors/noaccess');
         }
@@ -170,11 +186,10 @@ class SalesController extends Controller
             $dec_id = null;
         }
         $cek_kode = $this->cekExist('code',$req->code,$dec_id);
-        $cek_mail = $this->cekExist('email',$req->email,$dec_id);
-        $cek_username = $this->cekExist('username',$req->username,$dec_id);
+        $cek_mail = $this->cekExistUser('email',$req->email,$dec_id);
+        $cek_username = $this->cekExistUser('username',$req->username,$dec_id);
 
-        if(!$cek_kode)
-        {
+        if(!$cek_kode){
             $json_data = array(
                 "success"         => FALSE,
                 "message"         => 'Mohon maaf. Kode Sales yang Anda masukan sudah terdaftar pada sistem.'
@@ -194,69 +209,71 @@ class SalesController extends Controller
                 );
         }
         else {
+          DB::BeginTransaction();
             if($enc_id){
                 $sales = Sales::find($dec_id);
-                // $sales->code        = $req->code;
-                $sales->name        = $req->name;
-                $sales->username    = $req->username;
-                $sales->email       = $req->email;
-                $sales->password    = bcrypt($req->password);
-                $sales->phone       = $req->phone;
-                $sales->address     = $req->alamat;
-                $sales->flag_sales  = 0;
-                $sales->npwp        = $req->npwp;
-                $sales->ktp         = $req->ktp;
-                $sales->jk          = $req->jk;
-                $sales->no_rek      = $req->no_rek;
-                $sales->bank_name   = $req->bank_name;
-                $sales->holder_name = $req->holder_name;
+
+                $staff = User::find($sales->user_id);
+                $staff->fullname    = $req->name;
+                $staff->email       = $req->email;
                 if($req->password!=""){
-                    $sales->password    = bcrypt($req->password);
+                  $staff->password    = bcrypt($req->password);
                 }
-                $sales->save();
-                if($sales){
-                    $json_data = array(
-                        "success"         => TRUE,
-                        "message"         => 'Data berhasil diperbarui.'
-                        );
+                $staff->username    = $req->username;
+                $staff->address     = $req->alamat;
+                $staff->no_hp       = $req->phone;
+                $staff->flag_user   = $req->level;
+                $staff->npwp        = $req->npwp;
+                $staff->ktp         = $req->ktp;
+                $staff->jk          = $req->jk;
+                $staff->status      = $req->status;
+                $staff->save();
+
+                if($staff){
+                  $sales->user_id     = $staff->id;
+                  $sales->code        = $req->code;
+                  $sales->nama        = $req->name;
+                  $sales->save();
+                  DB::commit();
+                  $json_data = array(
+                      "success"         => TRUE,
+                      "message"         => 'Data berhasil diperbarui.'
+                      );
                 }else{
-                    $json_data = array(
-                        "success"         => FALSE,
-                        "message"         => 'Data gagal diperbarui.'
-                        );
+                  DB::rollback();
+                  $json_data = array(
+                      "success"         => FALSE,
+                      "message"         => 'Data gagal diperbarui.'
+                      );
                 }
             }else{
-                $sales = new Sales;
-                $sales->code        = $req->code;
-                $sales->name        = $req->name;
-                $sales->username    = $req->username;
-                $sales->email       = $req->email;
-                $sales->password    = bcrypt($req->password);
-                $sales->phone       = $req->phone;
-                $sales->address     = $req->alamat;
-                $sales->flag_sales  = 0;
-                $sales->npwp        = $req->npwp;
-                $sales->ktp         = $req->ktp;
-                $sales->jk          = $req->jk;
-                $sales->no_rek      = $req->no_rek;
-                $sales->bank_name   = $req->bank_name;
-                $sales->holder_name = $req->holder_name;
-                $sales->save();
-                if($sales) {
-                    //input member_sales juga yaa
-                    $datamember = Member::all();
-                    foreach($datamember as $key=>$member){
-                        $member_sales = new MemberSales;
-                        $member_sales->member_id = $member->id;
-                        $member_sales->sales_id  = $sales->id;
-                        $member_sales->active    =1;
-                        $member_sales->save();
-                    }
-                    $json_data = array(
-                        "success"         => TRUE,
-                        "message"         => 'Data berhasil ditambahkan.'
-                    );
+                $staff = new User;
+                $staff->fullname    = $req->name;
+                $staff->email       = $req->email;
+                $staff->password    = bcrypt($req->password);
+                $staff->username    = $req->username;
+                $staff->address     = $req->alamat;
+                $staff->no_hp       = $req->phone;
+                $staff->flag_user   = $req->level;
+                $staff->npwp        = $req->npwp;
+                $staff->ktp         = $req->ktp;
+                $staff->jk          = $req->jk;
+                $staff->status      = $req->status;
+                $staff->save();
+                if($staff){
+                  $sales = new Sales;
+                  $sales->user_id     = $staff->id;
+                  $sales->code        = $req->code;
+                  $sales->nama        = $req->name;
+                  $sales->save();
+                  
+                  DB::commit();
+                  $json_data = array(
+                      "success"         => TRUE,
+                      "message"         => 'Data berhasil ditambahkan.'
+                  );
                 }else{
+                  DB::rollback();
                     $json_data = array(
                         "success"         => FALSE,
                         "message"         => 'Data gagal ditambahkan.'

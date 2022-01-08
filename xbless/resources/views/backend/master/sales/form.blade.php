@@ -34,7 +34,6 @@
                             {{ session('message')['desc'] }}
                             </div>
                         @endif
-
                     </div>
                     <div class="ibox-content">
                         <form id="submitData">
@@ -42,12 +41,13 @@
                             <input type="hidden" name="enc_id" id="enc_id" value="{{isset($sales)? $enc_id : ''}}">
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Kode *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="code" name="code" value="{{isset($sales)? $sales->code : ''}}" {{isset($sales)? 'readonly' : ''}}>
+                                    <input type="text" class="form-control" id="code" name="code" value="{{isset($sales)? $sales->code : ''}}">
+                                    <!-- <input type="text" class="form-control" id="code" name="code" value="{{isset($sales)? $sales->code : ''}}" {{isset($sales)? 'readonly' : ''}}> -->
                                 </div>
                             </div>
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Nama Lengkap *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($sales)? $sales->name : ''}}">
+                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($sales)? $sales->nama : ''}}">
                                 </div>
                             </div>
 
@@ -120,31 +120,22 @@
                                 </div>
                             </div>
 
-
-                            <div class="form-group row"><label class="col-sm-2 col-form-label">No Rekening</label>
+                            <div class="hr-line-dashed"></div>
+                            <input type="hidden" name="Level" id="level" value="{{ $roles->id }}">
+                            <!-- <div class="form-group row"><label class="col-sm-2 col-form-label">Pilih Level Admin *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="no_rek" name="no_rek" value="{{isset($sales)? $sales->no_rek : ''}}">
-
+                                    
+                                </div>
+                            </div> -->
+                            <div class="form-group row"><label class="col-sm-2 col-form-label">Status *</label>
+                                <div class="col-sm-10 error-text">
+                                    <select name="status" class="form-control" id="status">
+                                        @foreach($status as $key => $row)
+                                        <option value="{{$key}}"{{ $selectedstatus == $key ? 'selected=""' : '' }}>{{ucfirst($row)}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
-
-
-                            <div class="form-group row"><label class="col-sm-2 col-form-label">Nama Bank</label>
-                                <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="bank_name" name="bank_name" value="{{isset($sales)? $sales->bank_name : ''}}">
-
-                                </div>
-                            </div>
-
-
-                            <div class="form-group row"><label class="col-sm-2 col-form-label">Nama Pemilik Rekening</label>
-                                <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="holder_name" name="holder_name" value="{{isset($sales)? $sales->holder_name : ''}}">
-
-                                </div>
-                            </div>
-
-
                             <div class="hr-line-dashed"></div>
                             <div class="form-group row">
                                 <div class="col-sm-4 col-sm-offset-2">
@@ -188,9 +179,6 @@
                 minlength: 5
             },
             @endif
-            alamat:{
-                required: true,
-            },
             phone:{
                 required: true,
             },
@@ -214,9 +202,6 @@
             password: {
                 required: "Password wajib diisi.",
                 minlength: "Password minimal 5 karakter"
-            },
-            alamat: {
-                required: "Alamat tidak boleh kosong"
             },
             phone: {
                 required: "No HP tidak boleh kosong"

@@ -64,7 +64,7 @@ class BerandaController extends Controller
                     ->whereDate('tgl_faktur', '<=', date('Y-m-d', strtotime($periode_end)))
                     ->sum('nominal');
 
-        $total_pajak = round((($pembelian + $penjualan) / 100) * 10);
+        $total_pajak = round((($penjualan - $pembelian) / 100) * 10);
 
         return $total_pajak;
     }
