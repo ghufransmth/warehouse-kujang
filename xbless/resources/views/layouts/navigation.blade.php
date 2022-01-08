@@ -34,8 +34,8 @@
                     <li class=""><a href="{{ route('diskon.index') }}">Master Diskon</a></li>
                     <li class=""><a href="{{ route('distrik.index') }}">Master Distrik</a></li>
                     <li class=""><a href="{{ route('payment.index') }}">Master Jenis Bayar</a></li>
-                    <li class=""><a href="{{ route('perusahaan.index') }}">Master Jenis Toko (coming soon)</a></li>
-                    <li class=""><a href="#">Master Kategori Toko (coming soon)</a></li>
+                    <li class=""><a href="{{ route('toko.jenis.index') }}">Master Jenis Toko</a></li>
+                    <li class=""><a href="{{ route('toko.kategori.index') }}">Master Kategori Toko</a></li>
                 </ul>
             </li>
             @endcan
@@ -98,57 +98,6 @@
                     <li class=""><a href="{{ route('toko.tambah') }}">Tambah Toko</a></li>
                 </ul>
             </li>
-            {{-- ACL JANGAN LUPA @done 0311 --}}
-            <!-- @can('menutandaterima.index')
-            <li class="{{ Route::currentRouteName() === 'pembayaran.index' ? 'active' : '' }}">
-                <a href="#"><i class="fa fa-check"></i> <span class="nav-label">Tanda Terima</span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level collapse {{ Route::currentRouteName() === 'pembayaran.index' ? 'in' : '' }}">
-                    @can('tandaterima.proses')
-                    <li><a href="{{ route('tandaterima.proses') }}">Proses Tanda Terima</a></li>
-                    @endcan
-                    @can('tandaterima.invoice')
-                    <li><a href="{{ route('tandaterima.index') }}">Invoice Tanda Terima</a></li>
-                    @endcan
-                    @can('pembayaran.index')
-                    <li><a href="{{ route('pembayaran.index') }}" class="{{ Route::currentRouteName() === 'pembayaran.index' ? 'text-white' : '' }}">Input Pembayaran</a></li>
-                    @endcan
-                </ul>
-            </li>
-            @endcan
-            {{-- ACL JANGAN LUPA  @done 0311--}}
-            @can('menuinvoice.index')
-                @can('invoice.index')
-                <li class="">
-                    <a href="{{route('invoice.index')}}"><i class="fa fa-calculator"></i> <span class="nav-label">Invoices</span></a>
-                </li>
-                @endcan
-            @endcan
-            {{-- ACL JANGAN LUPA --}}
-            @can('menureturrevisi.index')
-                @can('returrevisi.index')
-                    <li class="{{ Route::currentRouteName() === 'returrevisi.index' ? 'active' : '' }}">
-                        <a href="{{ route('returrevisi.index') }}"><i class="fa fa-retweet"></i> <span class="nav-label">Proses Retur Revisi</span></a>
-                    </li>
-                @endcan
-            @endcan
-            {{-- ACL JANGAN LUPA --}}
-
-            @can('menupurchaserder.index')
-            <li>
-                <a href="#"><i class="fa fa-list-alt"></i> <span class="nav-label">Penjualan Produk</span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level collapse">
-                    @can('purchaseorder.index')
-                        <li><a href="{{ route('purchaseorder.index') }}">List Penjualan Produk</a></li>
-                    @endcan
-                    @can('purchaseorder.tambah')
-                        <li class=""><a href="{{ route('purchaseorder.tambah') }}">Tambah Penjualan Produk</a></li>
-                    @endcan
-                    <!-- @can('draftpurchaseorder.index')
-                        <li><a href="{{ route('draftpurchaseorder.index') }}">Draft PO</a></li>
-                    @endcan -->
-                </ul>
-            </li>
-            @endcan
 
             @can('menuorder.index')
             <li>
@@ -177,48 +126,6 @@
                 </ul>
             </li>
             @endcan --}}
-            <!-- @can('menurequestpurchaseorder.index')
-                @can('requestpurchaseorder.index')
-                    <li>
-                        <a href="{{ route('requestpurchaseorder.index') }}"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Request PO </span><span id="req_po_count" class="label label-info float-right">0</span></a>
-                    </li>
-                @endcan
-            @endcan
-
-            @can('menupurchasebatal.index')
-                @can('purchasebatal.index')
-                    <li>
-                        <a href="{{ route('purchasebatal.index') }}"><i class="fa fa-ban"></i> <span class="nav-label">PO Batal </span><span id="po_batal_count" class="label label-info float-right">0</span></a>
-                    </li>
-                @endcan
-            @endcan
-        </ul>
-        </li>
-        <li>
-            <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">Master Toko</span><span
-                    class="fa arrow"></span></a>
-            <ul class="nav nav-second-level collapse">
-                <li class=""><a href="{{ route('member.index') }}">List Toko</a></li>
-                <li class=""><a href="{{ route('member.tambah') }}">Tambah Toko</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#"><i class="fa fa-dollar"></i> <span class="nav-label"> Keuangan</span><span
-                    class="fa arrow"></span></a>
-            <ul class="nav nav-second-level collapse">
-                <li><a href="{{ route('transaksi.pembayaran.index') }}">Transaksi Pembayaran</a></li>
-                <li><a href="{{ route('transaksi.keuangan.index') }}">Transaksi Keuangan</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#"><i class="fa fa-list-alt"></i> <span class="nav-label">Penjualan Produk</span><span
-                    class="fa arrow"></span></a>
-            <ul class="nav nav-second-level collapse">
-                <li><a href="{{ route('purchaseorder.index') }}">List Penjualan Produk</a></li>
-                @can('purchaseorder.tambah')
-                <li class=""><a href="{{ route('purchaseorder.tambah') }}">Tambah Penjualan Produk</a></li>
-                @endcan
-            @endcan -->
             @can('menureport.index')
             <li>
                 <a href="#"><i class="fa fa-paste"></i> <span class="nav-label">Report</span><span class="fa arrow"></span></a>
