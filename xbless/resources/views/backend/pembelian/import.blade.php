@@ -36,9 +36,10 @@
                         <form action="{{ route('pembelian_import.uploadimport') }}" method="POST" enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <div class="custom-file mb-3">
-                              <input type="file" class="custom-file-input" id="customFile" name="file_pembelian">
-                              <label class="custom-file-label" for="customFile">Choose file</label>
+                                <input type="file" class="custom-file-input" id="customFile" name="file_pembelian">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
                             </div>
+                            <input type="text" name="tgl_transaksi" class="formatTgl transaksi" id="" placeholder="Tgl Transaksi" autocomplete="off" value="{{ date('d-m-Y') }}">
                             <div class="d-flex flex-row-reverse">
                                 <input type="submit" class="btn btn-primary" style="display:none" id="upload" value="Upload">
                             </div>
@@ -63,7 +64,7 @@
                                     <tr>
                                         <th width="5%">No</th>
                                         <th>Nomor Faktur</th>
-                                        <th>SKU Code</th>
+                                        <th>Kode Product</th>
                                         <th>Satuan</th>
                                         <th>QTY</th>
                                         <th>Aksi</th>
@@ -75,7 +76,7 @@
                                             <td>{{ $key+1 }}</td>
                                             <td>{{ $value->no_faktur }}</td>
                                             <td>{{ $value->kode_product }}</td>
-                                            <td>{{ $value->id_satuan }}</td>
+                                            <td>{{ $value->satuan_id }}</td>
                                             <td>{{ $value->qty }}</td>
                                             <td>{!! $value->aksi !!}</td>
                                         </tr>
@@ -155,5 +156,14 @@
         })
 
     }
+
+    $('.transaksi').datepicker({
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        calendarWeeks: true,
+        autoclose: true,
+        format: "dd-mm-yyyy"
+    });
 </script>
 @endpush

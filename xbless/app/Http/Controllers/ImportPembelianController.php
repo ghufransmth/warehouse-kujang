@@ -41,8 +41,9 @@ class ImportPembelianController extends Controller
         return redirect()->route('pembelian_import.import');
     }
 
-    public function importsimpan(){
+    public function importsimpan(Request $req){
         $data_import = ImportPembelian::all();
+        // return response()->json($data_import);
         if(count($data_import) > 0){
             foreach($data_import as $data){
                 $aksi = "";
@@ -52,11 +53,13 @@ class ImportPembelianController extends Controller
         }else{
             $data_import = array();
         }
+
         // VALIDASI
         foreach($data_import as $key => $data){
-            $satuan = Satuan::find($data->id_satuan);
-            $total_qty = $data->qty * $satuan->qty;
-            $product = Product::where('kode_product', $data->id)->first();
+            $satuan = Satuan::find($data->satuan_id);
+            // return response()->json($satuan);
+            // $total_qty = $data->qty * $satuan->qty;
+            $product = Product::where('kode_product', $data->kode_product)->first();
             $stockadj = StockAdj::where('id_product', $product->id)->first();
             if(!isset($product)){
                 $message = array(
@@ -76,17 +79,19 @@ class ImportPembelianController extends Controller
                 session(['status' => $message['status'], 'desc' => $message['desc']]);
                 return view('backend/pembelian/import',['data' => $data_import]);
             }
-            if($stockadj->stock_pembelian < $total_qty){
-                $message = array(
-                    'status' => 'danger',
-                    'desc' => 'Stock product harus diisi, baris-'.($key+1)
+            // if($stockadj->stock_pembelian < $total_qty){
+            //     $message = array(
+            //         'status' => 'danger',
+            //         'desc' => 'Stock product harus diisi, baris-'.($key+1)
 
-                );
-                session(['status' => $message['status'], 'desc' => $message['desc']]);
-                return view('backend/pembelian/import', ['data' => $data_import]);
+            //     );
+            //     session(['status' => $message['status'], 'desc' => $message['desc']]);
+            //     return view('backend/pembelian/import', ['data' => $data_import]);
 
-            }
+            // }
+
             $cek_faktur = Pembelian::where('no_faktur', $data->no_faktur)->first();
+            // return $cek_faktur;
             if(!isset($cek_faktur)){
                     $message = array(
                         'status' => 'danger',
