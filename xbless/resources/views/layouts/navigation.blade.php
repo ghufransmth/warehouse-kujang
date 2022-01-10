@@ -49,9 +49,9 @@
                     @can('produk.tambah')
                     <li class=""><a href="{{ route('produk.tambah') }}">Tambah Produk</a></li>
                     @endcan
-                    {{-- @can('produk.tambah')
+                    @can('produk.tambah')
                     <li class=""><a href="{{ route('produk.import') }}">Upload Produk</a></li>
-                    @endcan --}}
+                    @endcan
                     @can('kategori.index')
                     <li class=""><a href="{{ route('kategori.index') }}">List Kategori</a></li>
                     @endcan
@@ -74,7 +74,7 @@
                 <a href="#"><i class="fa fa-database"></i> <span class="nav-label">Master Stok</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse">
                     @can('stokadmin.index')
-                    <li><a href="{{route('stokadmin.index')}}">Informasi Stok</a></li>
+                    {{-- <li><a href="{{route('stokadmin.index')}}">Informasi Stok</a></li> --}}
                     @endcan
                     @can('adjstok.index')
                     <li><a href="{{route('adjstok.index')}}">Update Stok</a></li>

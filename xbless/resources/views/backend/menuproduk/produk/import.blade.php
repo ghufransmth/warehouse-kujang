@@ -19,7 +19,7 @@
     <div class="col-lg-2">
         <br/>
         {{-- <a class="btn btn-danger btn-sm" href="{{route('purchaseorder.index')}}">Batal</a> --}}
-        <a href="{{ asset('/assets/excel/Import_Penjualan.xlsx') }}" class="btn btn-primary" style="margin-left: 10px"><i class="fa fa-file-excel-o"></i>  Download Template</a>
+        <a href="{{ asset('/assets/excel/Import_Produk.xlsx') }}" class="btn btn-primary" style="margin-left: 10px"><i class="fa fa-file-excel-o"></i>  Download Template</a>
     </div>
 </div>
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -52,8 +52,8 @@
 
                     @if(isset($data) && count($data) > 0)
                     <div class="d-flex flex-row-reverse">
-                        <a href="{{ route('purchaseorder.importsimpan') }}" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</a>
-                        <a href="{{ route('purchaseorder.importbatal') }}" class="btn btn-danger" style="margin-right: 10px"><i class="fa fa-close"></i> Batal</a>
+                        <a href="{{ route('produk.importsimpan') }}" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</a>
+                        <a href="{{ route('produk.importbatal') }}" class="btn btn-danger" style="margin-right: 10px"><i class="fa fa-close"></i> Batal</a>
 
                     </div>
                     <br>

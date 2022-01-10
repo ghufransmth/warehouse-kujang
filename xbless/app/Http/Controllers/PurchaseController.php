@@ -90,7 +90,9 @@ class PurchaseController extends Controller
         $member = array();
         $perusahaan = array();
         $gudang = array();
-        return view('backend/purchase/index',compact('member','perusahaan','gudang','selectedmember','selectedperusahaan'));
+        $toko = Toko::all();
+        $sales = Sales::all();
+        return view('backend/purchase/index',compact('member','perusahaan','gudang','selectedmember','selectedperusahaan', 'sales', 'toko'));
     }
 
     function safe_encode($string) {
@@ -151,12 +153,26 @@ class PurchaseController extends Controller
         $start = $request->start;
         $page  = $start +1;
         $search = $request->search['value'];
+        $type = $request->type;
+        $filter_toko = $request->filter_toko;
+        $filter_sales = $request->filter_sales;
         $request->session()->put('filter_toko', $request->filter_toko);
         $request->session()->put('filter_sales', $request->filter_sales);
         $request->session()->put('type', $request->type);
         $penjualan = Penjualan::select('*');
 
         $penjualan->orderBy('id', 'ASC');
+        if($filter_toko != null || $filter_toko != ""){
+            $penjualan->where('id_toko', $filter_toko);
+        }
+        if($filter_sales != null || $filter_sales != ""){
+            $penjualan->where('id_sales', $filter_sales);
+        }
+        if($type == 1){
+            $penjualan->where('status_lunas', 0);
+        }else if($type == 2){
+            $penjualan->where('status_lunas', 1);
+        }
 
         if(array_key_exists($request->order[0]['column'], $this->original_column)){
             $penjualan->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
@@ -177,6 +193,7 @@ class PurchaseController extends Controller
 
         foreach($data as $key => $result){
             $aksi = "";
+            $enc_id = $this->safe_encode(Crypt::encryptString($result->id));
             $result->id             = $result->id;
             $result->no             = $key+$page;
             $result->no_faktur = $result->no_faktur;
@@ -186,10 +203,14 @@ class PurchaseController extends Controller
             $result->tgl_transaksi = $result->tgl_faktur;
             $result->total_harga = $result->total_harga;
             $result->tgl_lunas = $result->tgl_lunas;
+            $aksi .= '<a href="#" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail Penjualan </a> <br>';
             if($result->status_lunas == 0){
-                $result->status_pembayaran = 'Belum Lunas';
+                $result->status_pembayaran = '<span class="badge badge-success">Belum Lunas</span>';
+                $aksi .= '<a href="#" onclick="approve(\''.$enc_id.'\')" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip" style="margin-top:5px">Aprrove </a> <a href="#" onclick="reject(\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" style="margin-top:5px">Reject </a>';
+            }else if($result->status_lunas == 2){
+                $result->status_pembayaran = '<span class="badge badge-danger">Ditolak</span>';
             }else{
-                $result->status_pembayaran = 'Lunas';
+                $result->status_pembayaran = '<span class="badge badge-primary">Lunas</span>';
             }
             $result->created_by = $result->created_by;
             $result->aksi = $aksi;
@@ -213,6 +234,41 @@ class PurchaseController extends Controller
         return json_encode($json_data);
 
 
+    }
+    public function approve($enc_id){
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        $penjualan = Penjualan::find($dec_id);
+        $penjualan->status_lunas = 1;
+        $penjualan->tgl_lunas = date('Y-m-d');
+        if($penjualan->save()){
+            return response()->json([
+                'success' => true,
+                'message' => 'Status Lunas berhasil diubah'
+            ]);
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => 'Status Lunas gagal diubah'
+            ]);
+        }
+
+    }
+    public function reject($enc_id){
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        $penjualan = Penjualan::find($dec_id);
+        $penjualan->status_lunas = 2;
+        $penjualan->tgl_lunas = date('Y-m-d');
+        if($penjualan->save()){
+            return response()->json([
+                'success' => true,
+                'message' => 'Status berhasil diubah'
+            ]);
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => 'Status gagal diubah'
+            ]);
+        }
     }
     public function getData_(Request $request){
         $limit = $request->length;

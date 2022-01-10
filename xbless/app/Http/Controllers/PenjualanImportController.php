@@ -41,7 +41,18 @@ class PenjualanImportController extends Controller
         // $file->move('file_siswa',$nama_file);
 
         // import data
-        Excel::import(new PenjualanImport, $file);
+        try{
+            Excel::import(new PenjualanImport, $file);
+        }catch(\Maatwebsite\Excel\Validators\ValidationException $e){
+            $message = array(
+                'status' => 'danger',
+                'desc' => 'Template yang dimasukkan salah'
+
+            );
+            session(['status' => $message['status'], 'desc' => $message['desc']]);
+            return view('backend/purchase/import', ['data' => array()]);
+        }
+        return redirect()->route('purchaseorder.import');
 
         // notifikasi dengan session
         // $datas = DetailPenjualanImport::all();
