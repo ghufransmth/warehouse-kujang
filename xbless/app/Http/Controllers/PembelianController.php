@@ -142,7 +142,7 @@ class PembelianController extends Controller
                 </select>
         </td>
         <td>
-            <input type='text' class='form-control' id='harga_product_".$total."' name='harga_beli[]'>
+            <input type='text' class='form-control' id='harga_product_".$total."' name='harga_product[]'>
         </td>
             <td><input type='text' class='form-control touchspin".$total."' id='qty_".$total."' name='qty[]' value='1' onkeyup='hitung_qty(".$total.")' onchange='hitung_qty(".$total.")'>
             </td>
@@ -222,7 +222,7 @@ class PembelianController extends Controller
         $array_total_harga = $req->total;
         $total_product = $req->total_produk;
         $total_harga_pembelian = $req->total_harga_pembelian;
-
+        // return $array_product;
         // VALIDASI
         if($nofaktur == null || $nofaktur == ''){
             return response()->json([
@@ -264,7 +264,7 @@ class PembelianController extends Controller
             $pembelian->created_user      = auth()->user()->username;
 
             if($pembelian->save()){
-                for($i=0;$i<$total_product;$i++){
+                for($i=0; $i < $total_product; $i++){
                     $satuan = Satuan::find($array_id_satuan[$i]);
                     $detail_pembelian                   = new PembelianDetail;
                     $detail_pembelian->pembelian_id     = $pembelian->id;
