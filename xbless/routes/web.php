@@ -533,7 +533,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
 
             //IMPORT PENJUALAN
             Route::get('/import', [PenjualanImportController::class, 'index'])->name('import');
-            Route::get('/importsimpan', [PenjualanImportController::class, 'importsimpan'])->name('importsimpan');
+            Route::post('/importsimpan', [PenjualanImportController::class, 'importsimpan'])->name('importsimpan');
             Route::get('/importbatal', [PenjualanImportController::class, 'importbatal'])->name('importbatal');
             Route::post('/uploadimport', [PenjualanImportController::class, 'import'])->name('uploadimport');
             Route::post('/deleteimport', [PenjualanImportController::class, 'hapus'])->name('deleteimport');

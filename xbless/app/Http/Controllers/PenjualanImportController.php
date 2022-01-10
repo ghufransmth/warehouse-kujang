@@ -75,7 +75,10 @@ class PenjualanImportController extends Controller
             ]);
         }
     }
-    public function importsimpan(){
+    public function importsimpan(Request $request){
+       // return $request->all();
+        // return date('Y-m-d', strtotime($request->tgl_transaksi));
+        $tgl_transaksi = $request->tgl_transaksi;
         $data_import = DetailPenjualanImport::all();
         if(count($data_import)> 0){
             foreach($data_import as $data){
@@ -146,9 +149,9 @@ class PenjualanImportController extends Controller
                 $penjualan->no_faktur = $import->no_faktur;
                 $penjualan->id_sales = $import->id_sales;
                 $penjualan->id_toko = $import->id_toko;
-                $penjualan->tgl_faktur = date('Y-m-d');
-                $penjualan->tgl_jatuh_tempo = date('Y-m-d');
-                $penjualan->tgl_lunas   = date('Y-m-d');
+                $penjualan->tgl_faktur = date('Y-m-d', strtotime($tgl_transaksi));
+                $penjualan->tgl_jatuh_tempo = date('Y-m-d', strtotime($tgl_transaksi));
+                $penjualan->tgl_lunas   = date('Y-m-d', strtotime($tgl_transaksi));
                 $penjualan->total_harga = $data_import->sum('total_harga');
                 $penjualan->status_lunas = 1;
                 $penjualan->created_by = auth()->user()->username;
