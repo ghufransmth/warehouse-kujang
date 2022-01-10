@@ -91,8 +91,8 @@ class ImportPembelianController extends Controller
             // }
 
             $cek_faktur = Pembelian::where('no_faktur', $data->no_faktur)->first();
-            // return $cek_faktur;
-            if(!isset($cek_faktur)){
+
+            if(isset($cek_faktur)){
                     $message = array(
                         'status' => 'danger',
                         'desc' => 'Nomor faktur baris '.($key+1).' sudah pernah digunakan'
@@ -112,8 +112,9 @@ class ImportPembelianController extends Controller
                 $pembelian->no_faktur = $import->no_faktur;
                 $pembelian->tgl_faktur = date('Y-m-d');
                 $pembelian->tgl_jatuh_tempo = date('Y-m-d');
-                $pembelian->tgl_lunas = date('Y-m-d');
-                $pembelian->nominal = $data_import->sum('total_harga');
+                // $pembelian->tgl_lunas = date('Y-m-d');
+                $pembelian->nominal = $import->sum('total_harga');
+                $pembelian->keterangan = '-';
                 $pembelian->status_pembelian = 1;
                 $pembelian->approve_pembelian = 0;
                 $pembelian->approved_by = auth()->user()->username;
