@@ -13,6 +13,7 @@ use App\Models\StockAdj;
 use App\Models\TransaksiStock;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 class PembelianController extends Controller
 {
@@ -247,6 +248,18 @@ class PembelianController extends Controller
         return $count_units;
     }
 
+    public function harga_product(Request $request){
+
+        // $memberplus      = Member::select('member.id','type_price.name')->join('type_price','type_price.id','member.operation_price')->where('member.id',$request->member)->first();
+        // $tambahan = $memberplus?$memberplus->name:0;
+        $product = Product::where('id', $request->produk_id)->with(['getstock'])->first();
+
+        return response()->json([
+            'success' => TRUE,
+            'data' => $product,
+        ]);
+    }
+
     // private function save_stock($res, $detail, $res_detail){
     //     // return $detail;
     //     $cek_stock_awal = StockAdj::where('product_id', $detail->product_id)->where('flag_status_product', 0)->first();
@@ -375,159 +388,9 @@ class PembelianController extends Controller
     //     return $product_detail;
     // }
 
-    public function simpan(Request $request){
-        // return $request->total_detail;
-        $enc_id     = $request->enc_id;
-
-        if ($enc_id != null) {
-          $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
-        }else{
-          $dec_id = null;
-        }
-        // $order_product = Pembelian::find($dec_id);
-
-        // DB::beginTransaction();
-        if($enc_id){
-            $result = Pembelian::find($dec_id);
-            $result->no_faktur            = $request->nofaktur;
-            $result->tgl_faktur           = $request->faktur_date;
-            // $result->tgl_pembelian     = date('Y-m-d', strtotime($request->tgl_pembelian));
-            $result->nominal              = $request->nominal;
-            $result->tgl_jatuh_tempo      = date('Y-m-d', strtotime($request->jatuh_tempo));
-            $result->keterangan           = $request->ket;
-            $result->status_pembelian     = 1;
-            $result->approve_pembelian    = 1;
-            $result->approved_by          = auth()->user()->username;
-            $result->created_user         = auth()->user()->username;
-            $result->save();
-
-            if($result){
-                for ($i=0; $i < $request->total_detail; $i++) {
-                    $satuan = Satuan::find($request->satuan[$i]);
-                    if(!empty($request->detail_product[$i]) || $request->detail_priduct[$i] != NULL || $request->detail_product[$i] != "" || $request->detail_product[$i] != "null"){
-                        $result_detail  = PembelianDetail::where('pembelian_id', $result->id)->where('id', $request->detail_product[$i])->first();
-                        $result_detail->product_id       = $request->product[$i];
-                        // $result_detail->qrcode        = $request->qrcode[$i];
-                        $result->notransaction           =   $result->no_faktur;
-                        $result_detail->qty              = $request->qty[$i];
-                        $result_detail->product_price    = $request->harga_beli[$i];
-                        $result_detail->total            =   $request->nominal;
-                        // $result_detail->satuan        = $satuan->name;
-                        // $result_detail->tgl_expired   = date('Y-m-d', strtotime($request->expired_date[$i]));
-                        $result_detail->created_user     = auth()->user()->username;
-                        $result_detail->save();
-                    }else{
-                        $result_detail  = new PembelianDetail;
-                        $result_detail->pembelian_id    = $result->id;
-                        $result_detail->product_id      = $request->product[$i];
-                        $result_detail->notransaction          =   $result->no_faktur;
-                        $result_detail->qty             = $request->qty[$i];
-                        $result_detail->product_price   = $request->harga_beli[$i];
-                        $result_detail->total           =   $request->nominal;
-                        $result_detail->created_user    = auth()->user()->username;
-                        $result_detail->save();
-                    }
-                }
-                // DB::commit();
-                $json_data  = array(
-                    'success'   => TRUE,
-                    'message'   => 'Data berhasil diupdate'
-                );
-            }else{
-                // DB::rollback();
-                $json_data  = array(
-                    'success'   => FALSE,
-                    'message'   => 'Data belanja gagal diupdate'
-                );
-            }
-        }else{
-            $result = new Pembelian();
-            $result->no_faktur            = $request->nofaktur;
-            $result->tgl_faktur           = $request->faktur_date;
-            // $result->tgl_pembelian     = date('Y-m-d', strtotime($request->tgl_pembelian));
-            $result->nominal              = $request->nominal;
-            $result->tgl_jatuh_tempo      = date('Y-m-d', strtotime($request->jatuh_tempo));
-            $result->keterangan           = $request->ket;
-            $result->status_pembelian     = 1;
-            $result->approve_pembelian    = 1;
-            $result->approved_by          = auth()->user()->username;
-            $result->created_user         = auth()->user()->username;
-            $result->save();
-
-            if($result){
-                for ($i=0; $i < $request->total_detail; $i++) {
-                    $satuan = Satuan::find($request->satuan[$i]);
-
-                    $result_detail  = new PembelianDetail();
-                    $result_detail->pembelian_id    = $result->id;
-                    $result_detail->product_id      = $request->product[$i];
-                    $result_detail->notransaction          =   $result->no_faktur;
-                    $result_detail->qty             = $request->qty[$i];
-                    // $result_detail->product_price   = $request->harga_beli[$i];
-                    $result_detail->total           =   $request->nominal;
-                    $result_detail->created_user    = auth()->user()->username;
-                    $result_detail->save();
-
-                    if($result_detail){
-                        if($result->status_pembelian == 1){
-                            $stockadj = StockAdj::where('id_product',$result_detail->product_id[$i])->first();
-                            $stockadj->stock_pembelian += $result_detail->qty;
-                            $stockadj->stock_approve += $result_detail->qty;
-                        }else{
-                            $stockadj = StockAdj::where('id_product',$result_detail->product_id[$i])->first();
-                            $stockadj->stock_pembelian += $result_detail->qty;
-                        }
-                        if(!$stockadj->save()){
-                            return response()->json([
-                                'success' => FALSE,
-                                'message' => 'Gagal mengupdate stock product'
-                            ]);
-                            break;
-                        }
-                    }else{
-                        return response()->json([
-                            'success' => FALSE,
-                            'message' => 'Gagal menyimpan detail pembelian'
-                        ]);
-                    }
-                }
-                $transaksi_stock = new TransaksiStock;
-                $transaksi_stock->no_transaksi = $result->no_faktur;
-                $transaksi_stock->tgl_transaksi = $result->tgl_faktur;
-                $transaksi_stock->flag_transaksi = 4;
-                $transaksi_stock->created_by = auth()->user()->username;
-                $transaksi_stock->note = '-';
-                if($transaksi_stock->save()){
-                    return response()->json([
-                        'success' => TRUE,
-                        'message' => 'Pembelian berhasil disimpan'
-                    ]);
-                }else{
-                    return response()->json([
-                        'success' => FALSE,
-                        'message' => 'Pembelian gagal disimpan'
-                    ]);
-                }
-                // DB::commit();
-                // $json_data  = array(
-                //     'success'   => TRUE,
-                //     'message'   => 'Data berhasil ditambahkan'
-                // );
-            }else{
-                // DB::rollback();
-                $json_data  = array(
-                    'success'   => FALSE,
-                    'message'   => 'Data belanja gagal ditambahkan'
-                );
-            }
-        }
-
-        return json_encode($json_data);
-
-    }
-
     public function coba_simpan(Request $req)
     {
+
         $nofaktur = $req->nofaktur;
         $tgl_faktur = $req->faktur_date;
         $nominal = $req->nominal;
@@ -544,7 +407,7 @@ class PembelianController extends Controller
         $total_harga_pembelian = $req->total_harga_pembelian;
 
         // VALIDASI
-        if($nofaktur == null){
+        if($nofaktur == null || $nofaktur == ''){
             return response()->json([
                 'success' => FALSE,
                 'message' => 'Nomor faktur harus diisi'
@@ -571,47 +434,71 @@ class PembelianController extends Controller
 
         // END VALIDASI
         if($total_product > 0){
-            $pembelian = new Pembelian;
-            $pembelian->no_faktur = $nofaktur;
-            $pembelian->tgl_faktur = $tgl_faktur;
-            $pembelian->nominal = $nominal;
-            $pembelian->tgl_jatuh_tempo = $tgl_jatuh_tempo;
-            $pembelian->keterangan = $keterangan;
-            $pembelian->status_pembelian = $status_pembelian;
+            $pembelian                    = new Pembelian;
+            $pembelian->no_faktur         = $nofaktur;
+            $pembelian->tgl_faktur        = $tgl_faktur;
+            $pembelian->nominal           = $nominal;
+            $pembelian->tgl_jatuh_tempo   = $tgl_jatuh_tempo;
+            $pembelian->keterangan        = $keterangan;
+            $pembelian->status_pembelian  = $status_pembelian;
             $pembelian->approve_pembelian = $approve_pembelian;
-            $pembelian->approved_by          = auth()->user()->username;
-            $pembelian->created_user         = auth()->user()->username;
+            $pembelian->approved_by       = auth()->user()->username;
+            $pembelian->created_user      = auth()->user()->username;
+
             if($pembelian->save()){
                 for($i=0;$i<$total_product;$i++){
                     $satuan = Satuan::find($array_id_satuan[$i]);
-                    $detail_pembelian = new PembelianDetail;
-                    $detail_pembelian->pembelian_id = $pembelian->id;
-                    $detail_pembelian->product_id = $array_product[$i];
-                    $detail_pembelian->notransaction = $pembelian->no_faktur;
-                    $detail_pembelian->qty = $array_qty[$i] * $satuan->qty;
-                    $detail_pembelian->product_price = $array_harga_product[$i];
-                    $detail_pembelian->total = $array_total_harga[$i];
-                    $detail_pembelian->created_user         = auth()->user()->username;
+                    $detail_pembelian                   = new PembelianDetail;
+                    $detail_pembelian->pembelian_id     = $pembelian->id;
+                    $detail_pembelian->product_id       = $array_product[$i];
+                    $detail_pembelian->notransaction    = $pembelian->no_faktur;
+                    $detail_pembelian->qty              = $array_qty[$i] * $satuan->qty;
+                    $detail_pembelian->product_price    = $array_harga_product[$i];
+                    $detail_pembelian->total            = $array_total_harga[$i];
+                    $detail_pembelian->created_user     = auth()->user()->username;
+
                     if($detail_pembelian->save()){
+                        // return $detail_pembelian;
                         if($pembelian->status_pembelian == 1){
                             $stockadj = StockAdj::where('id_product',$array_product[$i])->first();
-                            $stockadj->stock_pembelian += $detail_pembelian->qty;
-                        }else{
-                            $stockadj = StockAdj::where('id_product',$array_product[$i])->first();
-                            $stockadj->stock_pembelian += $detail_pembelian->qty;
+                            if(isset($stockadj)){
+                                $stockadj->stock_pembelian += $detail_pembelian->qty;
+                            }else{
+                                $stockbaru = new StockAdj;
+                                $stockbaru->id_product = $detail_pembelian->product_id;
+                                $stockbaru->stock_pembelian += $detail_pembelian->qty;
+                                $stockbaru->stock_penjualan = 0;
+                                $stockbaru->stock_bs = 0;
+                                $stockbaru->stock_approve = 0;
+                                // return response()->json($stockbaru);
+                                $stockbaru->save();
+                                if($stockbaru){
+                                    $json_data = array(
+                                        "success"         => TRUE,
+                                        "message"         => 'Data berhasil ditambahkan.'
+                                );
+                                }else {
+                                    $json_data = array(
+                                        "success"         => FALSE,
+                                        "message"         => 'Data gagal ditambahkan.'
+                                );
+                                }
+                            }
+
                         }
-                        if(!$stockadj->save()){
-                            return response()->json([
-                                'success' => FALSE,
-                                'message' => 'Gagal mengupdate stock product'
-                            ]);
-                            break;
-                        }
-                    }else{
-                        return response()->json([
-                            'success' => FALSE,
-                            'message' => 'Gagal menyimpan detail pembelian'
-                        ]);
+                    //     if(!$stockadj->save()){
+                    //         return response()->json([
+                    //             'success' => FALSE,
+                    //             'message' => 'Gagal mengupdate stock product'
+                    //         ]);
+                    //         // break;
+                    //     }
+                    // }else{
+                        // return response()->json([
+                        //     'success' => FALSE,
+                        //     'message' => 'Gagal menyimpan detail pembelian'
+                        // ]);
+
                     }
                 }
                 $transaksi_stock = new TransaksiStock;
@@ -688,5 +575,43 @@ class PembelianController extends Controller
     public function import(){
         return view('backend/pembelian/import');
     }
+
+    // public function simpan_lagi(Request $req){
+
+    //     try{
+    //         $pembelian = new Pembelian();
+    //         $pembelian->no_faktur         = $req->nofaktur;
+    //         $pembelian->tgl_faktur        = $req->faktur_date;
+    //         $pembelian->nominal           = $req->nominal;
+    //         $pembelian->tgl_jatuh_tempo   = date('Y-m-d',strtotime($req->jatuh_tempo));
+    //         $pembelian->keterangan        = $req->ket;
+    //         $pembelian->status_pembelian  = 1;
+    //         $pembelian->approve_pembelian = 1;
+    //         $pembelian->approved_by       = auth()->user()->username;
+    //         $pembelian->created_user      = auth()->user()->username;
+    //         $pembelian->save();
+    //         if($pembelian){
+    //             foreach($req->)
+    //         }
+
+    //     }catch(Throwable $tr){
+
+    //     }
+
+
+    //         // if($enc_id){
+    //         //     $pembelian = Pembelian::find($dec_id);
+    //         //     $pembelian->no_faktur         = $req->nofaktur;
+    //         //     $pembelian->tgl_faktur        = $req->faktur_date;
+    //         //     $pembelian->nominal           = $req->nominal;
+    //         //     $pembelian->tgl_jatuh_tempo   = date('Y-m-d',strtotime($req->jatuh_tempo));
+    //         //     $pembelian->keterangan        = $req->ket;
+    //         //     $pembelian->status_pembelian  = 1;
+    //         //     $pembelian->approve_pembelian = 1;
+    //         //     $pembelian->approved_by       = auth()->user()->username;
+    //         //     $pembelian->created_user      = auth()->user()->username;
+    //         //     $pembelian->save();
+    //         // }
+    // }
 
 }

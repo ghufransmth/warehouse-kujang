@@ -49,7 +49,7 @@
                             <div class="col-sm-3 error-text">
                                 <div class="input-group date">
                                      <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="date" class="form-control" id="faktur_date" name="faktur_date" value="{{isset($order)? $order->faktur_date : ''}}">
+                                    <input type="text" class="form-control jatuh_tempo" id="faktur_date" name="faktur_date" placeholder="dd-mm-yyyy" value="{{isset($order)? $order->faktur_date : ''}}">
                                 </div>
                             </div>
                         </div>
@@ -65,9 +65,9 @@
                                 <div class="input-group date">
                                      <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" class="form-control jatuh_tempo" id="jatuh_tempo" name="jatuh_tempo" placeholder="dd-mm-yyyy" autocomplete="off">
-                                    <input type="hidden" name="total_harga_pembelian" id="total_harga_pembelian" value="0">
                                 </div>
                             </div>
+                            <input type="hidden" name="total_harga_pembelian" id="total_harga_pembelian" value="0">
                         </div>
 
                         <div class="form-group row">
@@ -163,103 +163,6 @@
 </div>
 @endsection
 @push('scripts')
-{{-- <script>
-    $(document).on('click', '#tambah_detail_product', function(){
-        var total_detail = $('#total_detail').val();
-        console.log(total_detail)
-        var total = 1 + parseInt(total_detail);
-        $('#total_detail').val(total);
-        $.ajax({
-            type: 'POST',
-            data: 'total='+total,
-            url: '{{ route("pembelian.tambah_detail") }}',
-            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
-            success: function(msg){
-                $('#detail_form').append(msg);
-            }
-        });
-   });
-
-   $(document).on('click', '#simpan', function(e){
-        e.preventDefault()
-        var form = $('#submitData').serializeArray()
-        var dataFile = new FormData()
-        $.each(form, function(idx, val) {
-            dataFile.append(val.name, val.value)
-        })
-        console.log(dataFile)
-        $.ajax({
-            type: 'POST',
-            url : "{{route('pembelian.simpan')}}",
-            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
-            data:dataFile,
-            processData: false,
-            contentType: false,
-            dataType: "json",
-            beforeSend: function () {
-                Swal.showLoading();
-            },
-            success: function(data){
-                console.log(data)
-                if (data.success) {
-                    Swal.fire('Yes',data.message,'info');
-                    window.location.replace('{{route("pembelian.index")}}');
-                } else {
-                    Swal.fire('Ups',data.message,'info');
-                }
-            },
-            complete: function () {
-                Swal.hideLoading();
-                $('#simpan').removeClass("disabled");
-            },
-        });
-    })
-
-   $('#example').DataTable({
-        'searching': false,
-        'paging': false,
-        'ordering': false,
-        'info': false,
-        language : {
-            "zeroRecords": " "
-        }
-    })
-
-    $('.select2_product').select2({
-        placeholder: 'Pilih Product',
-        ajax: {
-            url: '{{ route("pembelian.search_product") }}',
-            dataType: 'JSON',
-            data: function(params) {
-                return {
-                search: params.term
-                }
-            },
-            processResults: function (data) {
-                var results = [];
-                $.each(data, function(index, item){
-                results.push({
-                    id: item.id,
-                    text : item.code+' | '+item.name,
-                    satuan: item.satuan_product
-                });
-                });
-                return{
-                    results: results
-                };
-            }
-        }
-    });
-
-    $('.jatuh_tempo').datepicker({
-        todayBtn: "linked",
-        keyboardNavigation: false,
-        forceParse: false,
-        calendarWeeks: true,
-        autoclose: true,
-        format: "dd-mm-yyyy"
-    });
-</script> --}}
 <script>
     $(document).ready(function(){
         $(".select2").select2({allowClear: true});
@@ -515,27 +418,27 @@ $('.jatuh_tempo').datepicker({
             });
         }
     }
-    // function hitung(value, num){
-    //     console.log('tes');
-    //     $.ajax({
-    //         type: 'POST',
-    //         data: {
-    //             'produk_id': value,
-    //             'urut' : num
-    //         },
-    //         url: '{{route("purchaseorder.harga_product")}}',
-    //         headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
-    //         success: function(response) {
-    //             console.log(response)
-    //             if(response.success){
-    //                 $('#harga_product_'+num).val(response.data.harga_jual);
-    //                 $('#stock_product_'+num).val(response.data.getstock.stock_penjualan);
-    //             }else{
-    //                 Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
-    //             }
-    //         }
-    //     });
-    // }
+    function hitung(value, num){
+        console.log('tes');
+        $.ajax({
+            type: 'POST',
+            data: {
+                'produk_id': value,
+                'urut' : num
+            },
+            url: '{{route("pembelian.harga_product")}}',
+            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+            success: function(response) {
+                console.log(response)
+                if(response.success){
+                    $('#harga_product_'+num).val(response.data.harga_jual);
+                    $('#stock_product_'+num).val(response.data.getstock.stock_penjualan);
+                }else{
+                    Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
+                }
+            }
+        });
+    }
     function satuan(value, num){
         if($('#harga_product_'+num).val() == ""){
             Swal.fire('Ups', 'Pilih product terlebih dahulu', 'info');

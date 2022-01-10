@@ -42,7 +42,7 @@ class ImportPembelianController extends Controller
     }
 
     public function importsimpan(){
-        $data_import = PembelianImport::all();
+        $data_import = ImportPembelian::all();
         if(count($data_import) > 0){
             foreach($data_import as $data){
                 $aksi = "";
