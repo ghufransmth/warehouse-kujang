@@ -51,10 +51,13 @@
                           </div>
 
                     @if(isset($data) && count($data) > 0)
-                    <div class="d-flex flex-row-reverse">
-                        <a href="{{ route('purchaseorder.importsimpan') }}" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</a>
-                        <a href="{{ route('purchaseorder.importbatal') }}" class="btn btn-danger" style="margin-right: 10px"><i class="fa fa-close"></i> Batal</a>
-
+                    <div class="col">
+                        <form action="{{ route('purchaseorder.importsimpan') }}" method="POST">
+                            {{ csrf_field() }}
+                            <input type="text" name="tgl_transaksi" class="formatTgl" id="" placeholder="Tgl Transaksi" autocomplete="off" value="{{ date('d-m-Y') }}">
+                            <button type="submit" class="btn btn-primary" style="float: right"><i class="fa fa-save"></i> Simpan</button>
+                            <a href="{{ route('purchaseorder.importbatal') }}" class="btn btn-danger" style="margin-right: 10px; float: right"><i class="fa fa-close"></i> Batal</a>
+                        </form>
                     </div>
                     <br>
                         <div class="table-responsive">
@@ -101,6 +104,17 @@
 
 @endsection
 @push('scripts')
+<script>
+    $(document).ready(function(){
+        $('.formatTgl').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            calendarWeeks: true,
+            autoclose: true,
+            format: "dd-mm-yyyy"
+        });
+    });
+</script>
 <script>
     $(".custom-file-input").on("change", function() {
         var fileName = $(this).val().split("\\").pop();

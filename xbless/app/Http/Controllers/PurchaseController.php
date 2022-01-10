@@ -25,6 +25,7 @@ use App\Models\Gudang;
 use App\Models\Penjualan;
 use App\Models\Sales;
 use App\Models\StockAdj;
+use App\Models\Toko;
 use App\Models\TransaksiStock;
 use Illuminate\Support\Facades\Gate;
 
@@ -721,8 +722,8 @@ class PurchaseController extends Controller
         // $member = Member::all();
         $member = array();
         $selectedmember ="";
-        // $sales = Sales::all();
-        $sales = array();
+        $sales = Sales::all();
+        // $sales = array();
         $selectedsales ="";
         // $expedisi = Expedisi::all();
         $expedisi = array();
@@ -734,9 +735,10 @@ class PurchaseController extends Controller
         // $tipeharga = $this->jenisharga();
         $tipeharga = array();
         $selectedtipeharga ="";
+        $toko = Toko::all();
 
         return view('backend/purchase/form',compact('tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia',
-                    'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember'));
+                    'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko'));
     }
 
     public function cekInvoiceBelumLunas(Request $req){
