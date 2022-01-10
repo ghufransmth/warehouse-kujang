@@ -41,9 +41,11 @@
             <div class="form-group" id="data_5">
                 <div class="input-daterange input-group" id="datepicker">
                     <span class="input-group-addon px-3 bg-white border"><i class="fa fa-calendar"></i></span>
-                    <input type="text" class="form-control-sm form-control" name="start" id="start" value="{{ $periode_start }}">
+                    <input type="text" class="form-control-sm form-control" name="start" id="start"
+                        value="{{ $periode_start }}">
                     <span class="input-group-addon px-3 bg-primary">to</span>
-                    <input type="text" class="form-control-sm form-control" name="end" id="end" value="{{ $periode_end }}">
+                    <input type="text" class="form-control-sm form-control" name="end" id="end"
+                        value="{{ $periode_end }}">
                     <span class="input-group-addon px-3 bg-white  border"><i class="fa fa-calendar"></i></span>
                 </div>
             </div>
@@ -56,16 +58,18 @@
             <div class="ibox ">
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-md-4 text-center m-auto">
-                            <div class="btn btn-primary  dim btn-large-dim rounded-circle" type="button"><i
-                                    class="fa fa-dollar"></i></div>
-                        </div>
-                        <div class="col-md-8 m-auto text-right">
-                            <h1 class="no-margins"><span id="omset">Rp. 0</span></h1>
-                            <div class="font-bold text-navy">
-                                Total Omset
+                        <div class="col-md-4 text-left m-auto">
+                            <div class="btn btn-primary btn-circle btn-lg" type="button"><i class="fa fa-dollar"></i>
                             </div>
                         </div>
+                        <div class="col-md-8 m-auto text-right">
+                            <p class="font-bold text-navy" style="font-size: 18px">Total Omset </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="col-md-12 m-auto text-right">
+                        <h2 class="no-margins"><span id="omset">Rp. 0</span></h2>
                     </div>
                 </div>
             </div>
@@ -74,16 +78,21 @@
             <div class="ibox ">
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-md-4 text-center m-auto">
-                            <div class="btn btn-primary  dim btn-large-dim rounded-circle" type="button"><i
-                                    class="fa fa-cart-plus"></i></div>
+                        <div class="col-md-4 text-left m-auto">
+                            <div class="btn btn-primary btn-circle btn-lg" type="button">
+                                <i class="fa fa-cart-plus"></i>
+                            </div>
                         </div>
                         <div class="col-md-8 m-auto text-right">
-                            <h1 class="no-margins"><span id="retur">Rp. 0</span></h1>
-                            <div class="font-bold text-navy">
+                            <p class="font-bold text-navy " style="font-size: 18px">
                                 Total Retur
-                            </div>
+                            </p>
                         </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="col-md-12 m-auto text-right">
+                        <h2 class="no-margins"><span id="retur">Rp. 0</span></h2>
                     </div>
                 </div>
             </div>
@@ -92,16 +101,21 @@
             <div class="ibox ">
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-md-4 text-center m-auto">
-                            <div class="btn btn-primary  dim btn-large-dim rounded-circle" type="button"><i
-                                    class="fa fa-signal"></i></div>
+                        <div class="col-md-4 text-left m-auto">
+                            <div class="btn btn-primary btn-circle btn-lg" type="button">
+                                <i class="fa fa-signal"></i>
+                            </div>
                         </div>
                         <div class="col-md-8 m-auto text-right">
-                            <h1 class="no-margins"><span id="fatur">Rp. 0</span></h1>
-                            <div class="font-bold text-navy">
+                            <p class="font-bold text-navy" style="font-size: 18px">
                                 Nominal Fatur
-                            </div>
+                            </p>
                         </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="col-md-12 m-auto text-right">
+                        <h2 class="no-margins"><span id="fatur">Rp. 0</span></h2>
                     </div>
                 </div>
             </div>
@@ -110,16 +124,21 @@
             <div class="ibox ">
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-md-4 text-center m-auto">
-                            <div class="btn btn-primary  dim btn-large-dim rounded-circle" type="button"><i
-                                    class="fa fa-money"></i></div>
-                        </div>
-                        <div class="col-md-8 m-auto text-right">
-                            <h1 class="no-margins"><span id="pajak">Rp. 0</span></h1>
-                            <div class="font-bold text-navy">
-                                Pajak Pendapatan
+                        <div class="col-md-3 text-left m-auto">
+                            <div class="btn btn-primary btn-circle btn-lg" type="button">
+                                <i class="fa fa-money"></i>
                             </div>
                         </div>
+                        <div class="col-md-9 m-auto text-right">
+                            <p class="font-bold text-navy" style="font-size: 18px">
+                                Pajak Pendapatan
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="col-md-12 m-auto text-right">
+                        <h2 class="no-margins"><span id="pajak">Rp. 0</span></h2>
                     </div>
                 </div>
             </div>

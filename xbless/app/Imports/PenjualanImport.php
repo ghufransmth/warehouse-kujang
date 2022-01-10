@@ -6,11 +6,12 @@ use App\Models\DetailPenjualanImport;
 use App\Models\Product;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\SkipsOnError;
+use Maatwebsite\Excel\Concerns\WithValidation;
 
 
 
-
-class PenjualanImport implements ToModel,WithHeadingRow
+class PenjualanImport implements ToModel,WithHeadingRow, WithValidation, SkipsOnError
 {
     /**
     * @param array $row
@@ -31,5 +32,33 @@ class PenjualanImport implements ToModel,WithHeadingRow
             'harga_product' => $harga_product,
             'total_harga' => $total_harga,
         ]);
+    }
+    public function rules(): array
+    {
+        return [
+            'sku_code' => [
+                'required',
+                'string',
+            ],
+            'sales_id' => [
+                'required',
+            ],
+            'outlet_id' => [
+                'required',
+            ],
+            'inv_number' => [
+                'required',
+            ],
+            'satuan' => [
+                'required',
+            ],
+            'quantity' => [
+                'required',
+            ],
+        ];
+    }
+    public function onError(\Throwable $e)
+    {
+        // Handle the exception how you'd like.
     }
 }

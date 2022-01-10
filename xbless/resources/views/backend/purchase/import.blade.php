@@ -54,6 +54,7 @@
                     <div class="col">
                         <form action="{{ route('purchaseorder.importsimpan') }}" method="POST">
                             {{ csrf_field() }}
+                            <label for=""><b>Tanggal Transaksi : </b>&nbsp;&nbsp;</label>
                             <input type="text" name="tgl_transaksi" class="formatTgl" id="" placeholder="Tgl Transaksi" autocomplete="off" value="{{ date('d-m-Y') }}">
                             <button type="submit" class="btn btn-primary" style="float: right"><i class="fa fa-save"></i> Simpan</button>
                             <a href="{{ route('purchaseorder.importbatal') }}" class="btn btn-danger" style="margin-right: 10px; float: right"><i class="fa fa-close"></i> Batal</a>
