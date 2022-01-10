@@ -62,7 +62,7 @@
                             <div class="btn btn-primary btn-circle btn-lg" type="button"><i class="fa fa-dollar"></i>
                             </div>
                         </div>
-                        <div class="col-md-8 m-auto text-center">
+                        <div class="col-md-8 m-auto text-right">
                             <p class="font-bold text-navy" style="font-size: 18px">Total Omset </p>
                         </div>
                     </div>
