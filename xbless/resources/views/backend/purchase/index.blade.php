@@ -38,8 +38,11 @@
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">Toko : </label>
                         <div class="col-sm-4 error-text">
-                            <select class="form-control select2" id="perusahaan" name="perusahaan">
+                            <select class="form-control select2" id="toko" name="toko">
                                 <option value="">Semua Toko</option>
+                                @foreach($toko as $key => $tko)
+                                    <option value="{{ $tko->id }}">{{ $tko->name }}</option>
+                                @endforeach
                                 {{-- @foreach($perusahaan as $key => $row)
                                     <option value="{{$row->id}}" {{ $selectedperusahaan == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}</option>
                                 @endforeach --}}
@@ -47,8 +50,12 @@
                         </div>
                         <label class="col-sm-2 col-form-label">Sales : </label>
                         <div class="col-sm-4 error-text">
-                            <select class="form-control select2" id="customer" name="customer">
+                            <select class="form-control select2" id="sales" name="sales">
                             <option value="">Semua Sales</option>
+                            @foreach($sales as $key => $sles)
+                            <option value="{{ $sles->id }}">{{ $sles->nama }}</option>
+
+                            @endforeach
                                 {{-- @foreach($member as $key => $row)
                                     <option value="{{$row->id}}" {{ $selectedmember == $row->id ? 'selected=""' : '' }} >{{ucfirst($row->name)}}-{{ucfirst($row->city)}}</option>
                                 @endforeach --}}
@@ -103,7 +110,7 @@
                           <th>Status Pembayaran</th>
                           <th>Total Harga</th>
                           <th>Created By</th>
-                          <th class="text-center">Aksi</th>
+                          <th class="text-center" width="11%">Aksi</th>
                       </tr>
                       </thead>
                       <tbody>
@@ -237,6 +244,61 @@
         table.ajax.reload(null, false);
     }
 
+function approve(id){
+    // console.log(id);
+    $.ajax({
+        type: 'GET',
+        url : "{{route('purchaseorder.approve', [null])}}/"+id,
+        dataType: "json",
+        beforeSend: function () {
+        Swal.showLoading();
+        },
+        success: function(data){
+            if (data.success) {
+                Swal.fire('Yes',data.message,'success');
+                table.ajax.reload(null, false);
+            } else {
+                Swal.fire('Ups',data.message,'info');
+            }
+        },
+        complete: function () {
+            Swal.hideLoading();
+            $('#simpan').removeClass("disabled");
+        },
+        error: function(data){
+            $('#simpan').removeClass("disabled");
+            Swal.hideLoading();
+            Swal.fire('Maaf','silahkan check kembali form anda' ,'info');
+        }
+    });
+}
+function reject(id){
+    $.ajax({
+        type: 'GET',
+        url : "{{route('purchaseorder.reject', [null])}}/"+id,
+        dataType: "json",
+        beforeSend: function () {
+        Swal.showLoading();
+        },
+        success: function(data){
+            if (data.success) {
+                Swal.fire('Yes',data.message,'success');
+                table.ajax.reload(null, false);
+            } else {
+                Swal.fire('Ups',data.message,'info');
+            }
+        },
+        complete: function () {
+            Swal.hideLoading();
+            $('#simpan').removeClass("disabled");
+        },
+        error: function(data){
+            $('#simpan').removeClass("disabled");
+            Swal.hideLoading();
+            Swal.fire('Maaf','silahkan check kembali form anda' ,'info');
+        }
+    });
+}
 
 
 

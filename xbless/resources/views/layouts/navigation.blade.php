@@ -52,17 +52,16 @@
                     @can('produk.tambah')
                     <li class=""><a href="{{ route('produk.tambah') }}">Tambah Produk</a></li>
                     @endcan
-                    {{-- @can('produk.tambah')
-                    <li class=""><a href="{{ route('produk.import') }}">Upload Produk</a>
-            </li>
-            @endcan --}}
-            @can('kategori.index')
-            <li class=""><a href="{{ route('kategori.index') }}">List Kategori</a></li>
-            @endcan
-            @can('satuan.index')
-            <li class=""><a href="{{ route('satuan.index') }}">List Satuan</a></li>
-            @endcan
-            <!-- @can('jenisharga.index')
+                    @can('produk.tambah')
+                    <li class=""><a href="{{ route('produk.import') }}">Upload Produk</a></li>
+                    @endcan
+                    @can('kategori.index')
+                    <li class=""><a href="{{ route('kategori.index') }}">List Kategori</a></li>
+                    @endcan
+                    @can('satuan.index')
+                    <li class=""><a href="{{ route('satuan.index') }}">List Satuan</a></li>
+                    @endcan
+                    <!-- @can('jenisharga.index')
                     <li class=""><a href="{{ route('jenisharga.index') }}">List Jenis Harga</a></li>
                     @endcan
                     @can('brand.index')
@@ -71,29 +70,30 @@
                     @can('engine.index')
                     <li class=""><a href="{{ route('engine.index') }}">List Engine Model</a></li>
                     @endcan -->
+                </ul>
+            </li>
+            @endcan
+            <li>
+                <a href="#"><i class="fa fa-database"></i> <span class="nav-label">Master Stok</span><span
+                        class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    @can('stokadmin.index')
+                    {{-- <li><a href="{{route('stokadmin.index')}}">Informasi Stok</a>
+            </li> --}}
+            @endcan
+            @can('adjstok.index')
+            <li><a href="{{route('adjstok.index')}}">Update Stok</a></li>
+            @endcan
+            @can('stokmutasi.tambah')
+            <li><a href="{{route('stokmutasi.tambah')}}">Mutasi Stok</a></li>
+            @endcan
+            @can('historymutasistok.index')
+            <li><a href="{{route('historymutasistok.index')}}">History Mutasi Stok</a></li>
+            @endcan
+            @can('stokopname.index')
+            <li><a href="{{route('stokopname.index')}}">Opname Stok</a></li>
+            @endcan
         </ul>
-        </li>
-        @endcan
-        <li>
-            <a href="#"><i class="fa fa-database"></i> <span class="nav-label">Master Stok</span><span
-                    class="fa arrow"></span></a>
-            <ul class="nav nav-second-level collapse">
-                @can('stokadmin.index')
-                <li><a href="{{route('stokadmin.index')}}">Informasi Stok</a></li>
-                @endcan
-                @can('adjstok.index')
-                <li><a href="{{route('adjstok.index')}}">Update Stok</a></li>
-                @endcan
-                @can('stokmutasi.tambah')
-                <li><a href="{{route('stokmutasi.tambah')}}">Mutasi Stok</a></li>
-                @endcan
-                @can('historymutasistok.index')
-                <li><a href="{{route('historymutasistok.index')}}">History Mutasi Stok</a></li>
-                @endcan
-                @can('stokopname.index')
-                <li><a href="{{route('stokopname.index')}}">Opname Stok</a></li>
-                @endcan
-            </ul>
         </li>
         <li>
             <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">Master Toko</span><span

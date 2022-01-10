@@ -538,6 +538,10 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/uploadimport', [PenjualanImportController::class, 'import'])->name('uploadimport');
             Route::post('/deleteimport', [PenjualanImportController::class, 'hapus'])->name('deleteimport');
 
+            //Approve & Reject Penjualan
+            Route::get('/approve/{id?}', [PurchaseController::class, 'approve'])->name('approve');
+            Route::get('/reject/{id?}', [PurchaseController::class, 'reject'])->name('reject');
+
 
             Route::post('/note', [PurchaseController::class, 'note'])->name('note');
             Route::post('/harga_product', [PurchaseController::class, 'harga_product'])->name('harga_product');
