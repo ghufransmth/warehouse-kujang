@@ -49,7 +49,7 @@
                                 </div>
                                 <label class="col-sm-2 col-form-label">Tgl Transaksi </label>
                                 <div class="col-sm-4 error-text">
-                                    <input type="text" class="form-control formatTgl" id="tgl_transaksi" name="tgl_transaksi">
+                                    <input type="text" class="form-control formatTgl" id="tgl_transaksi" value="{{ date('d-m-Y') }}" name="tgl_transaksi" autocomplete="off">
 
                                 </div>
                             </div>
@@ -57,13 +57,19 @@
                                 <label class="col-sm-2 col-form-label">Toko </label>
                                 <div class="col-sm-4 error-text">
                                     <select class="form-control select2" id="toko" name="toko">
-                                        <option value="1">Pilih Toko</option>
+                                        <option value="0">Pilih Toko</option>
+                                        @foreach($toko as $key => $value)
+                                            <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <label class="col-sm-2 col-form-label">Sales </label>
                                 <div class="col-sm-4 error-text">
                                     <select class="form-control select2" id="sales" name="sales">
-                                        <option value="1">Pilih Sales</option>
+                                        <option value="0">Pilih Sales</option>
+                                        @foreach($sales as $key => $value)
+                                            <option value="{{ $value->id }}">{{ $value->nama }}</option>
+                                        @endforeach
 
 
 
@@ -81,7 +87,7 @@
                                 </div>
                                 <label class="col-sm-2 col-form-label">Tgl Jatuh Tempo </label>
                                 <div class="col-sm-4 error-text">
-                                    <input type="text" name="tgl_jatuh_tempo" class="form-control formatTgl" id="tgl_jatuh_tempo">
+                                    <input type="text" name="tgl_jatuh_tempo" class="form-control formatTgl" id="tgl_jatuh_tempo" value="{{ date('d-m-Y') }}" autocomplete="off">
                                     <input type="hidden" name="total_harga_penjualan" id="total_harga_penjualan" value="0">
                                 </div>
                             </div>

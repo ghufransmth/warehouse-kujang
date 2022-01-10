@@ -49,9 +49,9 @@
                     @can('produk.tambah')
                     <li class=""><a href="{{ route('produk.tambah') }}">Tambah Produk</a></li>
                     @endcan
-                    @can('produk.tambah')
+                    {{-- @can('produk.tambah')
                     <li class=""><a href="{{ route('produk.import') }}">Upload Produk</a></li>
-                    @endcan
+                    @endcan --}}
                     @can('kategori.index')
                     <li class=""><a href="{{ route('kategori.index') }}">List Kategori</a></li>
                     @endcan
