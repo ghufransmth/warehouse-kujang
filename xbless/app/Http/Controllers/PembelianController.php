@@ -132,7 +132,7 @@ class PembelianController extends Controller
         <tr id='detail_product_".$total."'>
         <!-- <input type='hidden' id='detail_product' name='detail_product[]'> -->
             <td>
-                <select id='product_".$total."' name='product[]' class='select2_".$total." form-control'>
+                <select id='product_".$total."' name='produk[]' class='select2_produk_".$total." form-control' onchange='hitung(this.options[this.selectedIndex].value,".$total.")'>
                     <option value='0' selected disabled>Pilih Product</option>
                 </select>
             </td>
@@ -142,42 +142,15 @@ class PembelianController extends Controller
                 </select>
         </td>
         <td>
-            <input type='text' class='form-control' id='harga_beli_".$total."' name='harga_beli[]'>
+            <input type='text' class='form-control' id='harga_product_".$total."' name='harga_beli[]'>
         </td>
-            <td><input type='text' class='form-control' id='qty_".$total."' name='qty[]' value='1'>
+            <td><input type='text' class='form-control touchspin".$total."' id='qty_".$total."' name='qty[]' value='1' onkeyup='hitung_qty(".$total.")' onchange='hitung_qty(".$total.")'>
             </td>
 
              <td><input type='text' class='form-control total_harga' id='total_".$total."' name='total[]' readonly></td>
             <td><a class='text-white btn btn-danger btn-hemisperich btn-xs' onclick='javascript:deleteObat(".$total.")' data-original-title='Hapus Data' id='deleteModal'><i class='fa fa-trash'></i></a></td>
         </tr>
         <script>
-            $(function () {
-                $('.select2_".$total."').select2({
-                    width: '200px',
-                    placeholder: 'Pilih Product',
-                    ajax: {
-                        url: '".route('pembelian.search_product')."',
-                        dataType: 'JSON',
-                        data: function(params) {
-                          return {
-                            search: params.term
-                          }
-                        },
-                        processResults: function (data) {
-                          var results = [];
-                          $.each(data, function(index, item){
-                            results.push({
-                                id: item.id,
-                                text : item.nama,
-                            });
-                          });
-                          return{
-                            results: results
-                          };
-                      }
-                    }
-                })
-
                 select_satuan(".$total.");
                 select_product(".$total.");
                 $('.touchspin".$total."').TouchSpin({
@@ -186,41 +159,7 @@ class PembelianController extends Controller
                     buttondown_class: 'btn btn-white',
                     buttonup_class: 'btn btn-white'
                 });
-
-                $('#qty_".$total."').TouchSpin({
-                     min: 1,
-                     max: 999999,
-                     buttondown_class: 'btn btn-white',
-                     buttonup_class: 'btn btn-white'
-                })
-
-                $('#satuan_".$total."').select2({
-                    width: '200px',
-                    placeholder: 'Pilih Obat',
-                    ajax: {
-                        url: '".route('pembelian.get_satuan')."',
-                        dataType: 'JSON',
-                        data: function(params) {
-                          return {
-                            search: params.term
-                          }
-                        },
-                        processResults: function (data) {
-                          var results = [];
-                          $.each(data, function(index, item){
-                            results.push({
-                                id: item.id,
-                                text : item.nama,
-                            });
-                          });
-                          return{
-                            results: results
-                          };
-                      }
-                    }
-                  })
-            })
-        </script>
+            </script>
         <script>
             function deleteObat(id){
                 $('#detail_product_'+id).remove();
@@ -228,6 +167,7 @@ class PembelianController extends Controller
                 var total = parseInt(total_obat) - 1;
                 $('#total_detail').val(total);
             }
+
         </script>
         ";
     }
@@ -239,6 +179,18 @@ class PembelianController extends Controller
 
         return $count_units;
     }
+
+    public function search_satuan(Request $request){
+        $satuan = Satuan::select('*')
+                    ->orWhere('nama', 'LIKE', "%{$request->search}%")
+                    ->orWhere('qty', 'LIKE', "%{$request->search}%")
+                    ->orderBy('id', 'DESC')
+                    ->limit(10)
+                    ->get();
+
+        return json_encode($satuan);
+    }
+
 
     public function harga_product(Request $request){
 
@@ -254,9 +206,11 @@ class PembelianController extends Controller
 
     public function coba_simpan(Request $req)
     {
-
+        // return $req->all();
         $nofaktur = $req->nofaktur;
-        $tgl_faktur = $req->faktur_date;
+        $tgl_faktur = date('Y-m-d',strtotime($req->faktur_date));
+        $tgl_jatuh_tempo = date('Y-m-d',strtotime($req->jatuh_tempo));
+        $tgl_transaksi = date('Y-m-d',strtotime($req->tgl_transaksi));
         $nominal = $req->nominal;
         $keterangan = $req->ket;
         $status_pembelian = 1;
@@ -264,7 +218,6 @@ class PembelianController extends Controller
         $array_harga_product = $req->harga_product;
         $array_product = $req->produk;
         $array_qty = $req->qty;
-        $tgl_jatuh_tempo = date('Y-m-d',strtotime($req->jatuh_tempo));
         $array_id_satuan = $req->tipesatuan;
         $array_total_harga = $req->total;
         $total_product = $req->total_produk;
@@ -301,6 +254,7 @@ class PembelianController extends Controller
             $pembelian                    = new Pembelian;
             $pembelian->no_faktur         = $nofaktur;
             $pembelian->tgl_faktur        = $tgl_faktur;
+            $pembelian->tgl_transaksi     = $tgl_transaksi;
             $pembelian->nominal           = $nominal;
             $pembelian->tgl_jatuh_tempo   = $tgl_jatuh_tempo;
             $pembelian->keterangan        = $keterangan;
@@ -320,7 +274,6 @@ class PembelianController extends Controller
                     $detail_pembelian->product_price    = $array_harga_product[$i];
                     $detail_pembelian->total            = $array_total_harga[$i];
                     $detail_pembelian->created_user     = auth()->user()->username;
-
                     if($detail_pembelian->save()){
                         // return $detail_pembelian;
                         if($pembelian->status_pembelian == 1){
@@ -350,18 +303,6 @@ class PembelianController extends Controller
                             }
 
                         }
-                    //     if(!$stockadj->save()){
-                    //         return response()->json([
-                    //             'success' => FALSE,
-                    //             'message' => 'Gagal mengupdate stock product'
-                    //         ]);
-                    //         // break;
-                    //     }
-                    // }else{
-                        // return response()->json([
-                        //     'success' => FALSE,
-                        //     'message' => 'Gagal menyimpan detail pembelian'
-                        // ]);
 
                     }
                 }

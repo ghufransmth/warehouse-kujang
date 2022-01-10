@@ -42,14 +42,14 @@
                         <div class="form-group row">
                             <label for=""  class="col-sm-2 col-form-label">No Faktur *</label>
                             <div class="col-sm-4 error-text">
-                                <input type="text" class="form-control" id="nofaktur" name="nofaktur">
+                                <input type="text" class="form-control" id="nofaktur" name="nofaktur" autocomplete="off">
                             </div>
 
                             <label class="col-sm-2 col-form-label">Tanggal Faktur *</label>
                             <div class="col-sm-3 error-text">
                                 <div class="input-group date">
                                      <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control jatuh_tempo" id="faktur_date" name="faktur_date" placeholder="dd-mm-yyyy" value="{{isset($order)? $order->faktur_date : ''}}">
+                                    <input type="text" class="form-control jatuh_tempo" id="faktur_date" name="faktur_date" placeholder="dd-mm-yyyy" value="{{isset($order)? $order->faktur_date : ''}}" autocomplete="off">
                                 </div>
                             </div>
                         </div>
@@ -57,7 +57,7 @@
                         <div class="form-group row">
                             <label for="" class="col-sm-2 col-form-label">Nominal Faktur *</label>
                             <div class="col-sm-4 error-text">
-                                <input type="text" class="form-control" id="nominal" name="nominal">
+                                <input type="text" class="form-control" id="nominal" name="nominal" autocomplete="off">
                             </div>
 
                             <label class="col-sm-2 col-form-label">Tanggal Jatuh Tempo *</label>
@@ -70,16 +70,26 @@
                             <input type="hidden" name="total_harga_pembelian" id="total_harga_pembelian" value="0">
                         </div>
 
+
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Keterangan *</label>
                             <div class="col-sm-4 error-text">
                                 <textarea type="text" class="form-control" id="ket" name="ket"></textarea>
                             </div>
-                        </div>
+
+                            {{-- <div class="form-group row"> --}}
+                                <label class="col-sm-2 col-form-label">Tanggal Transaksi *</label>
+                                    <div class="col-sm-3 error-text">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                            <input type="text" class="form-control jatuh_tempo" id="tgl_transaksi" name="tgl_transaksi" placeholder="dd-mm-yyyy" autocomplete="off">
+                                        </div>
+                                    </div>
+                                </div>
 
                         <div class="hr-line-dashed"></div>
                         <div class="col-lg-2">
-                            <input type="hidden" class="mb-1 form-control" value="0">
+                            <input type="hidden" id="total_produk" class="mb-1 form-control" value="1">
                             <a id="tambah_detail_product" onclick="tambahProduk()" class="text-white btn btn-success"><span class="fa fa-pencil-square-o"></span>Tambah</a>
                         </div>
 
@@ -124,13 +134,13 @@
                             </tbody>
                         </table>
                     </div>
-                    <input type="hidden" class="form-control mb-1" name="total_produk" id="total_produk" value="1">
+                    {{-- <input type="hidden" class="form-control mb-1" name="total_produk" id="total_produk" value="1"> --}}
                     <div class="hr-line-dashed"></div>
                     <table style="min-width: 100%">
                         <tr>
                             <td class="text-right"><h3><b>Total Harga Pembelian<b></h3></td>
                             <td width="1%"></td>
-                            <td class="text-center" width="13%" id="harga_pembelian"></td>
+                            <td class="text-center" width="13%" id="harga_pembelian"><b></b></td>
                             <td width="5%"></td>
                         </tr>
                     </table>
@@ -309,7 +319,7 @@ $("#simpan").on('click',function(){
 function select_satuan(num){
     $('.select2_satuan_'+num).select2({allowClear: false, width: '200px',
         ajax: {
-                url: '{{ route("purchaseorder.search_satuan") }}',
+                url: '{{ route("pembelian.search_satuan") }}',
                 dataType: 'JSON',
                 delay: 250,
                 data: function(params) {
