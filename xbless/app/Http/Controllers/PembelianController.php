@@ -49,7 +49,7 @@ class PembelianController extends Controller
         $page  = $start +1;
         $search = $request->search['value'];
 
-        $dataquery = Pembelian::select('id', 'no_faktur','tgl_faktur', 'keterangan', 'created_user');
+        $dataquery = Pembelian::select('id', 'no_faktur','tgl_faktur', 'tgl_transaksi', 'keterangan', 'created_user');
         if(array_key_exists($request->order[0]['column'], $this->original_column)){
            $dataquery->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
         }
@@ -89,6 +89,7 @@ class PembelianController extends Controller
             $result->id                   = $result->id;
             $result->no_faktur            = $result->no_faktur;
             $result->tgl_faktur           = date('d M Y', strtotime($result->tgl_faktur));
+            $result->tgl_transaksi        = date('d M Y', strtotime($result->tgl_transaksi));
             $result->keterangan           = $result->keterangan;
             $result->created_user         = $result->created_user;
             $result->action               = $action;

@@ -39,6 +39,9 @@
                                 <input type="file" class="custom-file-input" id="customFile" name="file_pembelian">
                                 <label class="custom-file-label" for="customFile">Choose file</label>
                             </div>
+                            <div class="d-flex flex-row-reverse">
+                                <input type="submit" class="btn btn-primary" style="display:none" id="upload" value="Upload">
+                            </div>
                         </form>
 
                     </div>
@@ -53,9 +56,7 @@
                             {{ csrf_field() }}
                             <label for="">Tanggal Transaksi</label>
                             <input type="text" name="tgl_transaksi" class="formatTgl transaksi" id="" autocomplete="off" value="{{ date('d-m-Y') }}">
-                            <div class="d-flex flex-row-reverse">
-                                <input type="submit" class="btn btn-primary" style="display:none" id="upload" value="Upload">
-                            </div>
+
                             <br>
                             <div class="text-right">
                                 <button type="submit" class="btn btn-primary" ><i class="fa fa-save mr-1"></i>Simpan</button>
