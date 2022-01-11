@@ -3,7 +3,7 @@
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Pembelian Produk</h2>
+        <h2>{{ isset($pembelian) ? 'Edit' : 'Tambah' }}Pembelian Produk</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
@@ -42,14 +42,14 @@
                         <div class="form-group row">
                             <label for=""  class="col-sm-2 col-form-label">No Faktur *</label>
                             <div class="col-sm-4 error-text">
-                                <input type="text" class="form-control" id="nofaktur" name="nofaktur" autocomplete="off">
+                                <input type="text" class="form-control" id="nofaktur" name="nofaktur" autocomplete="off"  value="{{isset($pembelian)? $pembelian->no_faktur: ''}}">
                             </div>
 
                             <label class="col-sm-2 col-form-label">Tanggal Faktur *</label>
                             <div class="col-sm-3 error-text">
                                 <div class="input-group date">
                                      <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control jatuh_tempo" id="faktur_date" name="faktur_date" placeholder="dd-mm-yyyy" value="{{isset($order)? $order->faktur_date : ''}}" autocomplete="off">
+                                    <input type="text" class="form-control jatuh_tempo" id="faktur_date" name="faktur_date" placeholder="dd-mm-yyyy" value="{{isset($order)? $order->tgl_faktur : ''}}" autocomplete="off">
                                 </div>
                             </div>
                         </div>
@@ -57,14 +57,14 @@
                         <div class="form-group row">
                             <label for="" class="col-sm-2 col-form-label">Nominal Faktur *</label>
                             <div class="col-sm-4 error-text">
-                                <input type="text" class="form-control" id="nominal" name="nominal" autocomplete="off">
+                                <input type="text" class="form-control" id="nominal" name="nominal" autocomplete="off"  value="{{isset($pembelian)? $pembelian->nominal: ''}}">
                             </div>
 
                             <label class="col-sm-2 col-form-label">Tanggal Jatuh Tempo *</label>
                             <div class="col-sm-3 error-text">
                                 <div class="input-group date">
                                      <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control jatuh_tempo" id="jatuh_tempo" name="jatuh_tempo" placeholder="dd-mm-yyyy" autocomplete="off">
+                                    <input type="text" class="form-control jatuh_tempo" id="jatuh_tempo" name="jatuh_tempo" placeholder="dd-mm-yyyy" autocomplete="off"  value="{{isset($pembelian)? $pembelian->tgl_jatuh_tempo: ''}}">
                                 </div>
                             </div>
                             <input type="hidden" name="total_harga_pembelian" id="total_harga_pembelian" value="0">

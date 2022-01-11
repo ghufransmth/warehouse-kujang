@@ -356,24 +356,34 @@ class PembelianController extends Controller
         return json_encode($satuan);
       }
 
-      public function ubah($enc_id){
-        $dec_id   = $this->safe_decode(Crypt::decryptString($enc_id));
-        $product_beli = Pembelian::select('pembelian.*')->where('pembelian.id', $dec_id)->first();
-        // $product_beli->transaction = date('d-m-Y', strtotime($product_beli->tgl_pembelian));
+    //   public function ubah($enc_id){
+    //     $dec_id   = $this->safe_decode(Crypt::decryptString($enc_id));
+    //     $product_beli = Pembelian::select('pembelian.*')->where('pembelian.id', $dec_id)->first();
+    //     // $product_beli->transaction = date('d-m-Y', strtotime($product_beli->tgl_pembelian));
 
-        $query = PembelianDetail::select('pembelian_detail.id','pembelian_detail.qty','pembelian_detail.product_id','tbl_product.kode_product as product_code','tbl_product.nama as product_name');
-        $query->leftJoin('tbl_product','tbl_product.id','pembelian_detail.product_id');
-        $query->where('pembelian_detail.pembelian_id', $dec_id);
-        $total_beli_detail = $query->count();
-        $product_beli_detail = $query->get();
-        foreach ($product_beli_detail as $key => $value) {
-            $get_satuan_id  = Satuan::where('nama','LIKE',"%{$value->satuan}%")->first();
+    //     $query = PembelianDetail::select('pembelian_detail.id','pembelian_detail.qty','pembelian_detail.product_id','tbl_product.kode_product as product_code','tbl_product.nama as product_name');
+    //     $query->leftJoin('tbl_product','tbl_product.id','pembelian_detail.product_id');
+    //     $query->where('pembelian_detail.pembelian_id', $dec_id);
+    //     $total_beli_detail = $query->count();
+    //     $product_beli_detail = $query->get();
+    //     foreach ($product_beli_detail as $key => $value) {
+    //         $get_satuan_id  = Satuan::where('nama','LIKE',"%{$value->satuan}%")->first();
 
-            // $value->expired = date('d-m-Y', strtotime($value->tgl_expired));
-            $value->satuan_id = $get_satuan_id->id;
+    //         // $value->expired = date('d-m-Y', strtotime($value->tgl_expired));
+    //         $value->satuan_id = $get_satuan_id->id;
+    //     }
+
+    //     return view('backend/pembelian/form', compact('enc_id','product_beli','product_beli_detail', 'total_beli_detail'));
+    // }
+    public function ubah($enc_id){
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        if($dec_id){
+            $pembelian = Pembelian::find($dec_id);
+
+            return view('backend/pembelian/form',compact('enc_id','pembelian'));
+        }else{
+            return view('errors/noaccess');
         }
-
-        return view('backend/pembelian/form', compact('enc_id','product_beli','product_beli_detail', 'total_beli_detail'));
     }
 
     public function hapus($enc_id){}

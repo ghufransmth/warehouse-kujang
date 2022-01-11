@@ -39,23 +39,30 @@
                                 <input type="file" class="custom-file-input" id="customFile" name="file_pembelian">
                                 <label class="custom-file-label" for="customFile">Choose file</label>
                             </div>
-                            <input type="text" name="tgl_transaksi" class="formatTgl transaksi" id="" placeholder="Tgl Transaksi" autocomplete="off" value="{{ date('d-m-Y') }}">
-                            <div class="d-flex flex-row-reverse">
-                                <input type="submit" class="btn btn-primary" style="display:none" id="upload" value="Upload">
-                            </div>
                         </form>
 
                     </div>
                     <div class="ibox-content">
-                        <div class="alert alert-danger" id="showAlert" style="display: none">
+                        {{-- <div class="alert alert-danger" id="showAlert" style="display: none">
                             MEMBER INI BELUM MELAKUKAN PEMBAYARAN PADA INVOICE
-                          </div>
+                          </div> --}}
 
                     @if(isset($data) && count($data) > 0)
-                    <div class="d-flex flex-row-reverse">
-                        <a href="{{ route('pembelian_import.importsimpan') }}" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</a>
-                        <a href="{{ route('pembelian_import.importbatal') }}" class="btn btn-danger" style="margin-right: 10px"><i class="fa fa-close"></i> Batal</a>
-
+                    <div class="col">
+                        <form action="{{ route('pembelian_import.importsimpan') }}" method="POST">
+                            {{ csrf_field() }}
+                            <label for="">Tanggal Transaksi</label>
+                            <input type="text" name="tgl_transaksi" class="formatTgl transaksi" id="" autocomplete="off" value="{{ date('d-m-Y') }}">
+                            <div class="d-flex flex-row-reverse">
+                                <input type="submit" class="btn btn-primary" style="display:none" id="upload" value="Upload">
+                            </div>
+                            <br>
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary" ><i class="fa fa-save mr-1"></i>Simpan</button>
+                                <a href="{{ route('pembelian_import.importbatal') }}" class="btn btn-danger" style="margin-right: 10px"><i class="fa fa-close"></i> Batal</a>
+                            </div>
+                            </form>
+                        </div>
                     </div>
                     <br>
                         <div class="table-responsive">
@@ -89,7 +96,6 @@
 
                         </div>
                     @endif
-
                     </div>
                 </div>
             </div>

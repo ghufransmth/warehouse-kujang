@@ -1,9 +1,9 @@
 @extends('layouts.layout')
-@section('title', 'Satuan')
+@section('title', 'Pembelian')
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-9">
-        <h2>Satuan</h2>
+        <h2>Pembelian</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>

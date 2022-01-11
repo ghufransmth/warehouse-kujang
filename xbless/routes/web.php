@@ -680,9 +680,10 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
      //IMPORT PEMBELIAN
      Route::group(['prefix' => 'pembelian_import', 'as' => 'pembelian_import.'], function(){
         Route::get('/import', [ImportPembelianController::class, 'index'])->name('import');
-        Route::get('/importsimpan', [ImportPembelianController::class, 'importsimpan'])->name('importsimpan');
+        // Route::get('/importsimpan', [ImportPembelianController::class, 'importsimpan'])->name('importsimpan');
         Route::get('/importbatal', [ImportPembelianController::class, 'importbatal'])->name('importbatal');
         Route::post('/uploadimport', [ImportPembelianController::class, 'import'])->name('uploadimport');
         Route::post('/deleteimport', [ImportPembelianController::class, 'hapus'])->name('deleteimport');
+        Route::post('/importsimpan', [ImportPembelianController::class, 'coba_importsimpan'])->name('importsimpan');
      });
 });
