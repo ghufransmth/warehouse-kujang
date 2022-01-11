@@ -66,7 +66,7 @@
                         </div>
                     </div>
                     <br>
-                        <div class="table-responsive">
+                        < class="table-responsive">
                             <table id="table1" class="table display table-bordered">
                                 <thead>
                                     <tr>
