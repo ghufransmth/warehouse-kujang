@@ -50,16 +50,17 @@ class BerandaController extends Controller
         $penjualan = DB::table('tbl_penjualan')
                     ->whereDate('tgl_faktur', '>=', date('Y-m-d', strtotime($periode_start)))
                     ->whereDate('tgl_faktur', '<=', date('Y-m-d', strtotime($periode_end)))
-                    ->sum('total_harga');
+                    ->get();
+        $total_harga = 0;
+        foreach ($penjualan as $key => $value) {
+            $total_harga += $value->total_harga + $value->total_diskon;
+        }
 
-        return $penjualan;
+        return $total_harga;
     }
 
-    private function pajak($periode_start, $periode_end){
-        $penjualan = DB::table('tbl_penjualan')
-                    ->whereDate('tgl_faktur', '>=', date('Y-m-d', strtotime($periode_start)))
-                    ->whereDate('tgl_faktur', '<=', date('Y-m-d', strtotime($periode_end)))
-                    ->sum('total_harga');
+  private function pajak($periode_start, $periode_end){
+        $penjualan = $this->omset($periode_start, $periode_end);
 
         $pembelian = DB::table('pembelian')
                     ->whereDate('tgl_faktur', '>=', date('Y-m-d', strtotime($periode_start)))
@@ -189,11 +190,20 @@ class BerandaController extends Controller
             $action.='<a href="'.route('beranda.unilever.detail', $enc_id).'" class="btn btn-sm btn-primary rounded"><i class="fa fa-eye"></i>&nbsp; Detail</a>';
             $action.='</div>';
 
+            $total_harga     = 0;
+            $total_harga    += $result->total_harga + $result->total_diskon;
+            $result->total_harga = "Rp. ".number_format($total_harga, 0, ',', '.');
             $result->no             = $key+$page;
 
             $result->faktur         = date('d F Y', strtotime($result->tgl_faktur));
             // $result->action         = $action;
         }
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data
+        );
         $json_data = array(
             "draw"            => intval($request->input('draw')),
             "recordsTotal"    => intval($totalData),

@@ -104,6 +104,14 @@
             </ul>
         </li>
         <li>
+            <a href="#"><i class="fa fa-dollar"></i> <span class="nav-label"> Keuangan</span><span
+                    class="fa arrow"></span></a>
+            <ul class="nav nav-second-level collapse">
+                <li><a href="{{ route('pembayaran.index') }}">Transaksi Pembayaran</a></li>
+                <li><a href="{{ route('transaksi.keuangan.index') }}">Transaksi Keuangan</a></li>
+            </ul>
+        </li>
+        <li>
             <a href="#"><i class="fa fa-list-alt"></i> <span class="nav-label">Penjualan Produk</span><span
                     class="fa arrow"></span></a>
             <ul class="nav nav-second-level collapse">
