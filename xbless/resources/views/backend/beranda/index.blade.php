@@ -108,14 +108,14 @@
                         </div>
                         <div class="col-md-8 m-auto text-right">
                             <p class="font-bold text-navy" style="font-size: 18px">
-                                Nominal Fatur
+                                Nominal Faktur
                             </p>
                         </div>
                     </div>
                 </div>
                 <div class="ibox-content">
                     <div class="col-md-12 m-auto text-right">
-                        <h2 class="no-margins"><span id="fatur">Rp. 0</span></h2>
+                        <h2 class="no-margins"><span id="faktur">Rp. 0</span></h2>
                     </div>
                 </div>
             </div>
@@ -665,6 +665,7 @@
                 if(response.code == 200){
                     $('#omset').html(`Rp. ${number_to_price(response.detail.omset)}`)
                     $('#pajak').html(`Rp. ${number_to_price(response.detail.pajak)}`)
+                    $('#faktur').html(`Rp. ${number_to_price(response.detail.pembelian)}`)
                 }else{
                     Swal.fire(response.code,"Terjadi kesalahan pada sistem.",'Info');
                 }

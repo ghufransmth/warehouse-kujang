@@ -18,7 +18,7 @@ class PembelianImport implements ToModel,WithHeadingRow
     return new ImportPembelian([
         'no_faktur' => $row['inv_number'],
         'kode_product' => $row['kode_product'],
-        'id_satuan' => $row['satuan'],
+        'satuan_id' => $row['satuan'],
         'qty' => $row['quantity'],
         'harga_product' => $harga_product,
         'total_harga' => $total_harga,

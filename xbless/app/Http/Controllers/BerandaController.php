@@ -33,13 +33,15 @@ class BerandaController extends Controller
     public function getData(Request $request){
         $penjualan = $this->omset($request->periode_start, $request->periode_end);
         $pajak = $this->pajak($request->periode_start, $request->periode_end);
+        $pembelian = $this->pembelian($request->periode_start, $request->periode_end);
 
         return response()->json([
             'code' => 200,
             'message' => 'data berhasil didapat',
             'detail' => [
                 'omset' => $penjualan,
-                'pajak' => $pajak
+                'pajak' => $pajak,
+                'pembelian' => $pembelian
             ]
         ]);
     }
@@ -67,6 +69,15 @@ class BerandaController extends Controller
         $total_pajak = round((($penjualan - $pembelian) / 100) * 10);
 
         return $total_pajak;
+    }
+
+    private function pembelian($periode_start, $periode_end){
+        $pembelian = DB::table('pembelian')
+                    ->whereDate('tgl_faktur', '>=', date('Y-m-d', strtotime($periode_start)))
+                    ->whereDate('tgl_faktur', '<=', date('Y-m-d', strtotime($periode_end)))
+                    ->sum('nominal');
+
+        return $pembelian;
     }
 
     public function getDataUnilever(Request $request){
