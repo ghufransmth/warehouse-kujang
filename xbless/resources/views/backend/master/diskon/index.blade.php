@@ -14,9 +14,10 @@
         </ol>
     </div>
     <div class="col-lg-2">
-        <br/>
+        <br />
         <!-- <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Refresh Data"><span class="fa fa-refresh"></span></button> -->
-        <a href="{{ route('diskon.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
+        <a href="{{ route('diskon.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top"
+            title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
     </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
@@ -26,23 +27,30 @@
                 <div class="ibox-content">
 
                     <div class="table-responsive">
-                        <table id="table1" class="table">
-                        <thead>
-                        <tr>
-                            <th width="10px;">No</th>
-                            <th>Diskon</th>
-                            <th>Kategori</th>
-                            <th>Keterangan</th>
-                            <th class="text-center">Aksi</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                        <table id="table1" class="table display table table p-0 table-hover table-striped"
+                            style="overflow-x: auto;">
+                            <thead>
+                                <tr class=" text-white text-center bg-primary">
+                                    <th width="5%">No</th>
+                                    <th>Diskon</th>
+                                    <th>Kategori</th>
+                                    <th>Keterangan</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                        </tbody>
-                        <tfoot>
-
-                        </tfoot>
-                    </table>
+                            </tbody>
+                            <tfoot>
+                                <tr class=" text-white text-center bg-primary">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
 
                 </div>
@@ -192,5 +200,5 @@
 
            }
        });
- </script>
+</script>
 @endpush
