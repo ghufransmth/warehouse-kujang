@@ -2,9 +2,9 @@
 @section('title', 'History Mutasi Stok')
 @section('content')
 <style>
-.swal2-container{
-    z-index: 99999 !important;
-}
+    .swal2-container {
+        z-index: 99999 !important;
+    }
 </style>
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -26,113 +26,132 @@
         <div class="col-lg-12">
             <div class="ibox">
                 <div class="ibox-content">
-                <form id="submitData" name="submitData">
-                            <div class="hr-line-dashed"></div>
-                            {{-- <div class="form-group row">
+                    <form id="submitData" name="submitData">
+                        <div class="hr-line-dashed"></div>
+                        {{-- <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Perusahaan : </label>
                                 <div class="col-sm-8 error-text">
                                     <select class="form-control select2" id="perusahaan" name="perusahaan">
                                         <option value="">Pilih Perusahaan</option>
                                         @foreach($perusahaan as $key => $row)
-                                        <option value="{{$row->id}}"{{ $selectedperusahaan == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                                        <option value="{{$row->id}}"{{ $selectedperusahaan == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}
+                        </option>
+                        @endforeach
+                        </select>
+                </div>
 
-                            </div> --}}
-                            <div class="form-group row">
+            </div> --}}
+            <div class="form-group row">
 
-                                <label class="col-sm-2 col-form-label">Gudang Tujuan :</label>
-                                <div class="col-sm-10 error-text">
-                                    <select class="form-control select2" id="gudang" name="gudang">
-                                        <option value="">Pilih Gudang Tujuan</option>
-                                        <option value="1">Gudang Penjualan</option>
-                                        <option value="2">Gudang BS</option>
-                                        {{-- @foreach($gudang as $key => $row)
-                                        <option value="{{$row->id}}"{{ $selectedgudang == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}</option>
-                                        @endforeach --}}
-                                    </select>
-                                    </select>
-                                </div>
-                                {{-- <label class="col-sm-2 col-form-label">Ke Gudang :</label>
+                <label class="col-sm-2 col-form-label">Gudang Tujuan :</label>
+                <div class="col-sm-10 error-text">
+                    <select class="form-control select2" id="gudang" name="gudang">
+                        <option value="">Pilih Gudang Tujuan</option>
+                        <option value="1">Gudang Penjualan</option>
+                        <option value="2">Gudang BS</option>
+                        {{-- @foreach($gudang as $key => $row)
+                                        <option value="{{$row->id}}"{{ $selectedgudang == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}
+                        </option>
+                        @endforeach --}}
+                    </select>
+                    </select>
+                </div>
+                {{-- <label class="col-sm-2 col-form-label">Ke Gudang :</label>
                                 <div class="col-sm-3 error-text">
                                     <select class="form-control select2" id="gudang_form" name="gudang_form">
                                         <option value="">Pilih Gudang Tujuan</option>
                                         @foreach($gudang as $key => $row)
-                                        <option value="{{$row->id}}"{{ $selectedgudangtujuan == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}</option>
-                                        @endforeach
-                                    </select>
-                                    </select>
-                                </div> --}}
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Dari Tanggal : </label>
-                                <div class="col-sm-3 error-text">
-                                <input type="text" class="form-control formatTgl" id="tgl_start" name="tgl_start" value="{{$tgl_start}}">
-                                </div>
-                                <label class="col-sm-2 col-form-label">Sampai Tanggal : </label>
-                                <div class="col-sm-3 error-text">
-                                    <input type="text" class="form-control formatTgl" id="tgl_end" name="tgl_end" value="{{$tgl_end}}">
-                                </div>
-                                &nbsp;
-                                <div class="col-sm-1 error-text">
-                                   <button class="btn btn-success" id="cariData" type="button"><span class="fa fa-search"></span>&nbsp; Cari Data</button>
-                                </div>
-
-                            </div>
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group row">
-                                @can('historymutasistok.excel')
-                                <div class="col-xs-3">
-                                &nbsp;&nbsp;&nbsp;<button class="btn btn-primary" type="button" id="ExportExcel"><span class="fa fa-file-excel-o"></span> Export Excel </button>&nbsp;
-                                </div>
-                                @endcan
-                                @can('historymutasistok.print')
-                                <div class="col-xs-3">
-                                    <button class="btn btn-secondary" type="button" id="Print"><span class="fa fa-print"></span> Print</button>&nbsp;
-                                </div>
-                                @endcan
-                                @can('historymutasistok.pdf')
-                                <div class="col-xs-3">
-                                    <button class="btn btn-danger" type="button" id="ExportPdf"><span class="fa fa-file-pdf-o"></span> Export PDF</button>&nbsp;
-                                </div>
-                                @endcan
-                            </div>
-                            </form>
-
-                            <div class="hr-line-dashed"></div>
-
-                    <div class="table-responsive">
-                        <table id="table1" class="table display table-bordered">
-                        <thead>
-                        <tr>
-                            <th width="5%" >No</th>
-                            <th>Produk</th>
-                            {{-- <th>Perusahaan</th> --}}
-                            <th>Gudang Lama</th>
-                            <th>Gudang Baru</th>
-                            <th>Stock Sebelum Mutasi</th>
-                            <th>Stock Mutasi</th>
-                            <th>Stock Setelah Mutasi</th>
-                            <th>Keterangan</th>
-                            <th>Tanggal Mutasi</th>
-                            <th>Dibuat Oleh</th>
-                        </tr>
-
-                        </thead>
-                        <tbody>
-                        </tbody>
-                        <tfoot>
-
-                        </tfoot>
-                    </table>
-                    </div>
-
-                </div>
-            </div>
+                                        <option value="{{$row->id}}"{{ $selectedgudangtujuan == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}
+                </option>
+                @endforeach
+                </select>
+                </select>
+            </div> --}}
         </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Dari Tanggal : </label>
+            <div class="col-sm-3 error-text">
+                <input type="text" class="form-control formatTgl" id="tgl_start" name="tgl_start"
+                    value="{{$tgl_start}}">
+            </div>
+            <label class="col-sm-2 col-form-label">Sampai Tanggal : </label>
+            <div class="col-sm-3 error-text">
+                <input type="text" class="form-control formatTgl" id="tgl_end" name="tgl_end" value="{{$tgl_end}}">
+            </div>
+            &nbsp;
+            <div class="col-sm-1 error-text">
+                <button class="btn btn-success" id="cariData" type="button"><span class="fa fa-search"></span>&nbsp;
+                    Cari Data</button>
+            </div>
+
+        </div>
+        <div class="hr-line-dashed"></div>
+        <div class="form-group row">
+            @can('historymutasistok.excel')
+            <div class="col-xs-3">
+                &nbsp;&nbsp;&nbsp;<button class="btn btn-primary" type="button" id="ExportExcel"><span
+                        class="fa fa-file-excel-o"></span> Export Excel </button>&nbsp;
+            </div>
+            @endcan
+            @can('historymutasistok.print')
+            <div class="col-xs-3">
+                <button class="btn btn-secondary" type="button" id="Print"><span class="fa fa-print"></span>
+                    Print</button>&nbsp;
+            </div>
+            @endcan
+            @can('historymutasistok.pdf')
+            <div class="col-xs-3">
+                <button class="btn btn-danger" type="button" id="ExportPdf"><span class="fa fa-file-pdf-o"></span>
+                    Export PDF</button>&nbsp;
+            </div>
+            @endcan
+        </div>
+        </form>
+
+        <div class="hr-line-dashed"></div>
+
+        <div class="table-responsive">
+            <table id="table1" class="table display p-0 table-hover table-striped" style="overflow-x: auto;">
+                <thead>
+                    <tr class="text-white text-center bg-primary">
+                        <th width="5%">No</th>
+                        <th>Produk</th>
+                        {{-- <th>Perusahaan</th> --}}
+                        <th>Gudang Lama</th>
+                        <th>Gudang Baru</th>
+                        <th>Stock Sebelum Mutasi</th>
+                        <th>Stock Mutasi</th>
+                        <th>Stock Setelah Mutasi</th>
+                        <th>Keterangan</th>
+                        <th>Tanggal Mutasi</th>
+                        <th>Dibuat Oleh</th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                </tbody>
+                <tfoot>
+                    <tr class="text-white text-center bg-primary">
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
     </div>
+</div>
+</div>
+</div>
 </div>
 @endsection
 @push('scripts')
@@ -329,5 +348,5 @@
            }
        });
 
- </script>
+</script>
 @endpush

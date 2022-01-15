@@ -14,10 +14,12 @@
         </ol>
     </div>
     <div class="col-lg-2">
-        <br/>
-        <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Refresh Data"><span class="fa fa-refresh"></span></button>
+        <br />
+        <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+            title="Refresh Data"><span class="fa fa-refresh"></span></button>
         @can('stokopname.tambah')
-        <a href="{{ route('stokopname.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
+        <a href="{{ route('stokopname.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top"
+            title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
         @endcan
     </div>
 </div>
@@ -28,76 +30,86 @@
                 <div class="ibox-content">
 
                     <div class="table-responsive">
-                        <table id="table1" class="table display table-bordered">
-                        <thead>
-                        <tr>
-                            <th width="10px;">No</th>
-                            <th>No Transaksi</th>
-                            {{-- <th>Perusahaan</th> --}}
-                            <th>Gudang Dari</th>
-                            <th>Gudang Tujuan</th>
-                            <th>Tanggal Transaksi</th>
+                        <table id="table1" class="table display p-0 table-hover table-striped"
+                            style="overflow-x: auto;">
+                            <thead>
+                                <tr class="text-white text-center bg-primary">
+                                    <th width="5%">No</th>
+                                    <th>No Transaksi</th>
+                                    {{-- <th>Perusahaan</th> --}}
+                                    <th>Gudang Dari</th>
+                                    <th>Gudang Tujuan</th>
+                                    <th>Tanggal Transaksi</th>
 
-                            <th>Dibuat Oleh</th>
-                            {{-- <th>Diapprove Oleh</th> --}}
-                            <th class="text-center">Aksi</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                                    <th>Dibuat Oleh</th>
+                                    {{-- <th>Diapprove Oleh</th> --}}
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                        </tbody>
-                        <tfoot>
-
-                        </tfoot>
-                    </table>
+                            </tbody>
+                            <tfoot>
+                                <tr class="text-white text-center bg-primary">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
 
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-                <table class="table display table-bordered">
-                    <thead>
-                        <th>No</th>
-                        <th>Product</th>
-                        <th>Gudang Dari</th>
-                        <th>Gudang Tujuan</th>
-                        <th>Satuan</th>
-                        <th>QTY</th>
-                        <th>Stock Awal</th>
-                        <th>Stock Akhir</th>
-                        <th>Tgl Transaksi</th>
-                    </thead>
-                    <tbody id="body_product">
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table display table-bordered">
+                        <thead>
+                            <th>No</th>
+                            <th>Product</th>
+                            <th>Gudang Dari</th>
+                            <th>Gudang Tujuan</th>
+                            <th>Satuan</th>
+                            <th>QTY</th>
+                            <th>Stock Awal</th>
+                            <th>Stock Akhir</th>
+                            <th>Tgl Transaksi</th>
+                        </thead>
+                        <tbody id="body_product">
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
 
-                    </tbody>
+                        </tbody>
 
-                </table>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 
+                </div>
             </div>
-          </div>
         </div>
     </div>
 
@@ -269,5 +281,5 @@
                 }
         });
     }
- </script>
+</script>
 @endpush
