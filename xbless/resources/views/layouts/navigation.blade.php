@@ -16,7 +16,7 @@
                     </ul>
                 </div>
                 <div class="logo-element">
-                    KM
+                    KM<span class="text-navy">U</span>
                 </div>
             </li>
             <li>
