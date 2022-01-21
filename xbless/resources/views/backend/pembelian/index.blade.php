@@ -1,9 +1,9 @@
 @extends('layouts.layout')
-@section('title', 'Satuan')
+@section('title', 'Pembelian')
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-9">
-        <h2>Satuan</h2>
+        <h2>Pembelian</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
@@ -22,7 +22,7 @@
             title="Refresh Data"><span class="fa fa-refresh"></span></button>
         @can('satuan.tambah')
         <a href="{{ route('pembelian.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top"
-            title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
+            title="Tambah Data"><span class="fa fa-pencil-square-o"></span> &nbsp; Tambah</a>
         @endcan
         @can('produk.tambah')
         <a href="{{ route('produk.tambah')}}" class="btn btn-warning" data-toggle="tooltip" data-placement="top"
@@ -37,24 +37,24 @@
                 <div class="ibox-content">
 
                     <div class="table-responsive">
-                    <table id="table1" class="table p-0 table-hover table-striped">
-                        <thead class="text-white text-center bg-primary">
-                        <tr>
-                            <th  width="10px;">No</th>
-                            <th>No Faktur</th>
-                            <th>Tgl Faktur</th>
-                            <th>Keterangan</th>
-                            <th>Created_user</th>
-                            <th class="text-center">Aksi</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                        <table id="table1" class="table p-0 table-hover table-striped">
+                            <thead class="text-white text-center bg-primary">
+                                <tr>
+                                    <th width="10px;">No</th>
+                                    <th>No Faktur</th>
+                                    <th>Tgl Faktur</th>
+                                    <th>Keterangan</th>
+                                    <th>Created_user</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                        </tbody>
-                        <tfoot>
+                            </tbody>
+                            <tfoot>
 
-                        </tfoot>
-                    </table>
+                            </tfoot>
+                        </table>
                     </div>
 
                 </div>

@@ -20,110 +20,113 @@
     </div>
 
 </div>
-    <div class="wrapper wrapper-content animated fadeInRight">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="ibox ">
-                    <div class="ibox-title">
-                        @if(session('message'))
-                            <div class="alert alert-{{session('message')['status']}}">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            {{ session('message')['desc'] }}
-                            </div>
-                        @endif
-
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    @if(session('message'))
+                    <div class="alert alert-{{session('message')['status']}}">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        {{ session('message')['desc'] }}
                     </div>
-                    <div class="ibox-content">
-                        <form id="submitData" name="submitData">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <input type="hidden" name="enc_id" id="enc_id" value="{{isset($stokmutasi)? $enc_id : ''}}">
+                    @endif
 
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">No Transaksi * : </label>
-                                <div class="col-sm-4 error-text">
-                                    <input type="text" class="form-control"  id="no_transaksi" name="no_transaksi" value="">
-                                </div>
-                                <label class="col-sm-2 col-form-label">Tanggal Mutasi * : </label>
-                                <div class="col-sm-4 error-text">
-                                    <input type="text" class="form-control formatTgl" id="tgl_mutasi" name="tgl_mutasi" value="{{date('d-m-Y')}}"/>
-                                </div>
+                </div>
+                <div class="ibox-content">
+                    <form id="submitData" name="submitData">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="enc_id" id="enc_id" value="{{isset($stokmutasi)? $enc_id : ''}}">
+
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">No Transaksi * : </label>
+                            <div class="col-sm-4 error-text">
+                                <input type="text" class="form-control" id="no_transaksi" name="no_transaksi" value="">
                             </div>
-                            {{-- <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Tanggal Mutasi * : </label>
+                            <div class="col-sm-4 error-text">
+                                <input type="text" class="form-control formatTgl" id="tgl_mutasi" name="tgl_mutasi"
+                                    value="{{date('d-m-Y')}}" />
+                            </div>
+                        </div>
+                        {{-- <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Perusahaan * : </label>
                                 <div class="col-sm-10 error-text">
                                     <select class="form-control select2" id="perusahaan" name="perusahaan" {{isset($stokmutasi)? ($stokmutasi->flag_proses=='1'?'disabled':'') : ''}}>
-                                        <option value="">Pilih Perusahaan</option>
-                                        @foreach($perusahaan as $key => $row)
-                                        <option value="{{$row->id}}"{{ $selectedperusahaan == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                        <option value="">Pilih Perusahaan</option>
+                        @foreach($perusahaan as $key => $row)
+                        <option value="{{$row->id}}" {{ $selectedperusahaan == $row->id ? 'selected=""' : '' }}>
+                            {{ucfirst($row->name)}}</option>
+                        @endforeach
+                        </select>
+                </div>
 
-                            </div> --}}
-                            <div class="form-group row">
-                                {{-- <label class="col-sm-2 col-form-label">Dari Gudang * </label>
+            </div> --}}
+            <div class="form-group row">
+                {{-- <label class="col-sm-2 col-form-label">Dari Gudang * </label>
                                 <div class="col-sm-4 error-text">
                                     <select class="form-control select2" id="gudang_from" name="gudang_from">
 
                                     </select>
                                 </div> --}}
-                                <label class="col-sm-2 col-form-label">Tujuan Gudang * </label>
-                                <div class="col-sm-10 error-text">
-                                    <select class="form-control select2" id="gudang_to" name="gudang_to">
-                                        <option value="0">Pilih Gudang</option>
-                                        <option value="1">Gudang Penjualan</option>
-                                        <option value="2">Gudang BS</option>
-                                    </select>
-                                </div>
-                            </div>
-
-
-
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Pilih Produk </label>
-                                <div class="col-sm-10 error-text">
-                                    <select class="form-control selectProduct" id="pilihProduct" name="pilihProduct">
-                                    </select>
-                                </div>
-                            </div>
-
-
-
-
-                            <div class="hr-line-dashed"></div>
-                            <div class="table-responsive">
-                                <table id="table1" class="table" >
-                                <thead>
-                                <tr>
-                                    <th class="no-sort">Produk</th>
-                                    <th>Stok Gudang</th>
-                                    <th>Satuan</th>
-                                    <th>Qty Mutasi</th>
-                                    <th class="text-right">Aksi</th>
-                                </tr>
-                                </thead>
-                                <tbody id="detailData">
-                                </tbody>
-                            </table>
-                            </div>
-                        </form>
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group row">
-                                <div class="col-sm-4 col-sm-offset-2">
-                                    @can('stokmutasi.tambah')
-                                    <button class="btn btn-primary btn-sm" type="button" id="simpan">Simpan</button>
-                                    @endcan
-                                </div>
-                            </div>
-
-
-                    </div>
+                <label class="col-sm-2 col-form-label">Tujuan Gudang * </label>
+                <div class="col-sm-10 error-text">
+                    <select class="form-control select2" id="gudang_to" name="gudang_to">
+                        <option value="0">Pilih Gudang</option>
+                        <option value="1">Gudang Penjualan</option>
+                        <option value="2">Gudang BS</option>
+                    </select>
                 </div>
             </div>
+
+
+
+            <div class="hr-line-dashed"></div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Pilih Produk </label>
+                <div class="col-sm-10 error-text">
+                    <select class="form-control selectProduct" id="pilihProduct" name="pilihProduct">
+                    </select>
+                </div>
+            </div>
+
+
+
+
+            <div class="hr-line-dashed"></div>
+            <div class="table-responsive">
+                <table id="table1" class="table display p-0 table-hover table-striped" style="overflow-x: auto;">
+                    <thead>
+                        <tr class="text-white text-center bg-primary">
+                            <th class="no-sort">Produk</th>
+                            <th>Stok Gudang</th>
+                            <th>Satuan</th>
+                            <th>Qty Mutasi</th>
+                            <th class="text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detailData">
+                    </tbody>
+                </table>
+            </div>
+            </form>
+            <div class="hr-line-dashed"></div>
+            <div class="form-group row">
+                <div class="col-sm-4 col-sm-offset-2">
+                    @can('stokmutasi.tambah')
+                    <button class="btn btn-primary btn-sm" type="button" id="simpan">Simpan</button>
+                    @endcan
+                </div>
+            </div>
+
+
         </div>
     </div>
+</div>
+</div>
+</div>
 
 @endsection
 @push('scripts')
@@ -253,7 +256,7 @@
     });
 </script>
 <script>
-        // function loadGudangTujuan(){
+    // function loadGudangTujuan(){
         //     var perusahaan_id = $('#perusahaan').val();
         //     var gudang_from   = $('#gudang_from').val();
         //     if(perusahaan_id) {
@@ -349,8 +352,6 @@
 </script>
 
 <script>
-
-
     $( "#pilihProduct" ).change(function() {
         var gudang_id = $('#gudang_to').val();
         var val = [];

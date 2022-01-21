@@ -125,7 +125,6 @@ class TokoController extends Controller
     }
 
     public function simpan(Request $req){
-        // return $req->all();
         $enc_id     = $req->enc_id;
 
         if ($enc_id != null) {

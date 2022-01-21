@@ -36,8 +36,8 @@
                         <form action="{{ route('pembelian_import.uploadimport') }}" method="POST" enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <div class="custom-file mb-3">
-                              <input type="file" class="custom-file-input" id="customFile" name="file_pembelian">
-                              <label class="custom-file-label" for="customFile">Choose file</label>
+                                <input type="file" class="custom-file-input" id="customFile" name="file_pembelian">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
                             </div>
                             <div class="d-flex flex-row-reverse">
                                 <input type="submit" class="btn btn-primary" style="display:none" id="upload" value="Upload">
@@ -46,15 +46,24 @@
 
                     </div>
                     <div class="ibox-content">
-                        <div class="alert alert-danger" id="showAlert" style="display: none">
+                        {{-- <div class="alert alert-danger" id="showAlert" style="display: none">
                             MEMBER INI BELUM MELAKUKAN PEMBAYARAN PADA INVOICE
-                          </div>
+                          </div> --}}
 
                     @if(isset($data) && count($data) > 0)
-                    <div class="d-flex flex-row-reverse">
-                        <a href="{{ route('pembelian_import.importsimpan') }}" class="btn btn-primary"><i class="fa fa-save"></i> Simpan</a>
-                        <a href="{{ route('pembelian_import.importbatal') }}" class="btn btn-danger" style="margin-right: 10px"><i class="fa fa-close"></i> Batal</a>
+                    <div class="col">
+                        <form action="{{ route('pembelian_import.importsimpan') }}" method="POST">
+                            {{ csrf_field() }}
+                            <label for="">Tanggal Transaksi</label>
+                            <input type="text" name="tgl_transaksi" class="formatTgl transaksi" id="" autocomplete="off" value="{{ date('d-m-Y') }}">
 
+                            <br>
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary" ><i class="fa fa-save mr-1"></i>Simpan</button>
+                                <a href="{{ route('pembelian_import.importbatal') }}" class="btn btn-danger" style="margin-right: 10px"><i class="fa fa-close"></i> Batal</a>
+                            </div>
+                            </form>
+                        </div>
                     </div>
                     <br>
                         <div class="table-responsive">
@@ -63,7 +72,7 @@
                                     <tr>
                                         <th width="5%">No</th>
                                         <th>Nomor Faktur</th>
-                                        <th>SKU Code</th>
+                                        <th>Kode Product</th>
                                         <th>Satuan</th>
                                         <th>QTY</th>
                                         <th>Aksi</th>
@@ -75,7 +84,7 @@
                                             <td>{{ $key+1 }}</td>
                                             <td>{{ $value->no_faktur }}</td>
                                             <td>{{ $value->kode_product }}</td>
-                                            <td>{{ $value->id_satuan }}</td>
+                                            <td>{{ $value->satuan_id }}</td>
                                             <td>{{ $value->qty }}</td>
                                             <td>{!! $value->aksi !!}</td>
                                         </tr>
@@ -88,7 +97,6 @@
 
                         </div>
                     @endif
-
                     </div>
                 </div>
             </div>
@@ -155,5 +163,14 @@
         })
 
     }
+
+    $('.transaksi').datepicker({
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        calendarWeeks: true,
+        autoclose: true,
+        format: "dd-mm-yyyy"
+    });
 </script>
 @endpush

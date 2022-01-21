@@ -29,7 +29,7 @@
         <h2>Dashboard</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#">This is</a>
+                <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item active">
                 <strong>Dashboard</strong>
@@ -58,19 +58,17 @@
             <div class="ibox ">
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-md-4 text-left m-auto">
-                            <div class="btn btn-primary btn-circle btn-lg" type="button"><i class="fa fa-dollar"></i>
+                        <div class="col-md-2 text-left m-auto">
+                            <div class="btn btn-primary btn-circle btn-sm" type="button"><i class="fa fa-dollar"></i>
                             </div>
                         </div>
-                        <div class="col-md-8 m-auto text-center">
-                            <p class="font-bold text-navy" style="font-size: 18px">Total Omset </p>
+                        <div class="col-md-10 m-auto text-right">
+                            <p class="font-bold text-navy my-auto" style="font-size: 14px">Total Omset </p>
                         </div>
                     </div>
                 </div>
-                <div class="ibox-content">
-                    <div class="col-md-12 m-auto text-right">
-                        <h2 class="no-margins"><span id="omset">Rp. 0</span></h2>
-                    </div>
+                <div class="ibox-content m-auto text-right">
+                    <h4 class="no-margins"><span id="omset">Rp. 0</span></h4>
                 </div>
             </div>
         </div>
@@ -78,22 +76,20 @@
             <div class="ibox ">
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-md-4 text-left m-auto">
-                            <div class="btn btn-primary btn-circle btn-lg" type="button">
+                        <div class="col-sm-2 text-left m-auto">
+                            <div class="btn btn-primary btn-circle btn-sm" type="button">
                                 <i class="fa fa-cart-plus"></i>
                             </div>
                         </div>
-                        <div class="col-md-8 m-auto text-right">
-                            <p class="font-bold text-navy " style="font-size: 18px">
+                        <div class="col-sm-10 m-auto text-right">
+                            <p class="font-bold text-navy my-auto" style="font-size: 14px">
                                 Total Retur
                             </p>
                         </div>
                     </div>
                 </div>
-                <div class="ibox-content">
-                    <div class="col-md-12 m-auto text-right">
-                        <h2 class="no-margins"><span id="retur">Rp. 0</span></h2>
-                    </div>
+                <div class="ibox-content m-auto text-right">
+                    <h4 class="no-margins"><span id="retur">Rp. 0</span></h4>
                 </div>
             </div>
         </div>
@@ -101,22 +97,20 @@
             <div class="ibox ">
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-md-4 text-left m-auto">
-                            <div class="btn btn-primary btn-circle btn-lg" type="button">
+                        <div class="col-sm-2 text-left m-auto">
+                            <div class="btn btn-primary btn-circle btn-sm" type="button">
                                 <i class="fa fa-signal"></i>
                             </div>
                         </div>
-                        <div class="col-md-8 m-auto text-right">
-                            <p class="font-bold text-navy" style="font-size: 18px">
-                                Nominal Fatur
+                        <div class="col-sm-10 m-auto text-right">
+                            <p class="font-bold text-navy my-auto" style="font-size: 14px">
+                                Nominal Faktur
                             </p>
                         </div>
                     </div>
                 </div>
-                <div class="ibox-content">
-                    <div class="col-md-12 m-auto text-right">
-                        <h2 class="no-margins"><span id="fatur">Rp. 0</span></h2>
-                    </div>
+                <div class="ibox-content m-auto text-right">
+                    <h4 class="no-margins"><span id="faktur">Rp. 0</span></h4>
                 </div>
             </div>
         </div>
@@ -124,22 +118,20 @@
             <div class="ibox ">
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-md-3 text-left m-auto">
-                            <div class="btn btn-primary btn-circle btn-lg" type="button">
+                        <div class="col-sm-2 text-left my-auto">
+                            <div class="btn btn-primary btn-circle btn-sm" type="button">
                                 <i class="fa fa-money"></i>
                             </div>
                         </div>
-                        <div class="col-md-9 m-auto text-right">
-                            <p class="font-bold text-navy" style="font-size: 18px">
+                        <div class="col-sm-10 m-auto text-right">
+                            <p class="font-bold text-navy my-auto" style="font-size: 14px">
                                 Pajak Pendapatan
                             </p>
                         </div>
                     </div>
                 </div>
-                <div class="ibox-content">
-                    <div class="col-md-12 m-auto text-right">
-                        <h2 class="no-margins"><span id="pajak">Rp. 0</span></h2>
-                    </div>
+                <div class="ibox-content m-auto text-right">
+                    <h4 class="no-margins"><span id="pajak">Rp. 0</span></h4>
                 </div>
             </div>
         </div>
@@ -149,7 +141,7 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>FAKTUR UNILEVER</h5>
+                    <h4>FAKTUR UNILEVER</h4>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -192,7 +184,7 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>PENJUALAN</h5>
+                    <h4>PENJUALAN</h4>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -235,7 +227,7 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>RETUR</h5>
+                    <h4>RETUR</h4>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -281,7 +273,7 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>FAKTUR PIUTANG</h5>
+                    <h4>FAKTUR PIUTANG</h4>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -354,7 +346,7 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>FAKTUR TERTAGIH</h5>
+                    <h4>FAKTUR TERTAGIH</h4>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -643,9 +635,9 @@
 
     }
     function number_to_price(data){
-        if(data==0){return '0,00';}
+        if(data==0){return '0';}
         data=parseFloat(data);
-        data=data.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+        data=data.toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
         data=data.split('.').join('*').split(',').join('.').split('*').join(',');
         return data;
     }
@@ -665,6 +657,7 @@
                 if(response.code == 200){
                     $('#omset').html(`Rp. ${number_to_price(response.detail.omset)}`)
                     $('#pajak').html(`Rp. ${number_to_price(response.detail.pajak)}`)
+                    $('#faktur').html(`Rp. ${number_to_price(response.detail.pembelian)}`)
                 }else{
                     Swal.fire(response.code,"Terjadi kesalahan pada sistem.",'Info');
                 }

@@ -3,7 +3,7 @@
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Pembelian Produk</h2>
+        <h2>{{ isset($pembelian) ? 'Edit' : 'Tambah' }}Pembelian Produk</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
@@ -17,7 +17,7 @@
         </ol>
     </div>
     <div class="col-lg-2">
-        <br/>
+        <br />
         <a class="btn btn-white btn-sm" href="">Kembali</a>
     </div>
 </div>
@@ -28,11 +28,12 @@
             <div class="ibox">
                 <div class="ibox-title">
                     @if(session('message'))
-                        <div class="alert alert-{{session('message')['status']}}">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <div class="alert alert-{{session('message')['status']}}">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
                         {{ session('message')['desc'] }}
-                        </div>
-                     @endif
+                    </div>
+                    @endif
                 </div>
                 <div class="ibox-content">
                     <form id="submitData">
@@ -40,16 +41,19 @@
                         <input type="hidden" name="enc_id" id="enc_id" value="{{isset($pembelian)? $enc_id : ''}}">
 
                         <div class="form-group row">
-                            <label for=""  class="col-sm-2 col-form-label">No Faktur *</label>
+                            <label for="" class="col-sm-2 col-form-label">No Faktur *</label>
                             <div class="col-sm-4 error-text">
-                                <input type="text" class="form-control" id="nofaktur" name="nofaktur">
+                                <input type="text" class="form-control" id="nofaktur" name="nofaktur" autocomplete="off"
+                                    value="{{isset($pembelian)? $pembelian->no_faktur: ''}}">
                             </div>
 
                             <label class="col-sm-2 col-form-label">Tanggal Faktur *</label>
                             <div class="col-sm-3 error-text">
                                 <div class="input-group date">
-                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="date" class="form-control" id="faktur_date" name="faktur_date" value="{{isset($order)? $order->faktur_date : ''}}">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" class="form-control jatuh_tempo" id="faktur_date"
+                                        name="faktur_date" placeholder="dd-mm-yyyy"
+                                        value="{{isset($order)? $order->tgl_faktur : ''}}" autocomplete="off">
                                 </div>
                             </div>
                         </div>
@@ -57,83 +61,110 @@
                         <div class="form-group row">
                             <label for="" class="col-sm-2 col-form-label">Nominal Faktur *</label>
                             <div class="col-sm-4 error-text">
-                                <input type="text" class="form-control" id="nominal" name="nominal">
+                                <input type="text" class="form-control" id="nominal" name="nominal" autocomplete="off"
+                                    value="{{isset($pembelian)? $pembelian->nominal: ''}}">
                             </div>
 
                             <label class="col-sm-2 col-form-label">Tanggal Jatuh Tempo *</label>
                             <div class="col-sm-3 error-text">
                                 <div class="input-group date">
-                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control jatuh_tempo" id="jatuh_tempo" name="jatuh_tempo" placeholder="dd-mm-yyyy" autocomplete="off">
-                                    <input type="hidden" name="total_harga_pembelian" id="total_harga_pembelian" value="0">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" class="form-control jatuh_tempo" id="jatuh_tempo"
+                                        name="jatuh_tempo" placeholder="dd-mm-yyyy" autocomplete="off"
+                                        value="{{isset($pembelian)? $pembelian->tgl_jatuh_tempo: ''}}">
                                 </div>
                             </div>
+                            <input type="hidden" name="total_harga_pembelian" id="total_harga_pembelian" value="0">
                         </div>
+
 
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Keterangan *</label>
                             <div class="col-sm-4 error-text">
                                 <textarea type="text" class="form-control" id="ket" name="ket"></textarea>
                             </div>
+
+                            {{-- <div class="form-group row"> --}}
+                            <label class="col-sm-2 col-form-label">Tanggal Transaksi *</label>
+                            <div class="col-sm-3 error-text">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" class="form-control jatuh_tempo" id="tgl_transaksi"
+                                        name="tgl_transaksi" placeholder="dd-mm-yyyy" autocomplete="off">
+                                </div>
+                            </div>
                         </div>
 
                         <div class="hr-line-dashed"></div>
                         <div class="col-lg-2">
-                            <input type="hidden" class="mb-1 form-control" value="0">
-                            <a id="tambah_detail_product" onclick="tambahProduk()" class="text-white btn btn-success"><span class="fa fa-pencil-square-o"></span>Tambah</a>
+                            <input type="hidden" id="total_produk" class="mb-1 form-control" value="1">
+                            <a id="tambah_detail_product" onclick="tambahProduk()"
+                                class="text-white btn btn-success"><span class="fa fa-pencil-square-o"></span>Tambah</a>
                         </div>
 
                         <div class="hr-line-dashed"></div>
                         <div class="table-responsive">
-                        <table class="table table-bordered table-striped" id="example">
-                            <thead>
-                                <tr class="bg-blue">
-                                    <th>Produk</th>
-                                    <th>Satuan</th>
-                                    <th>Harga Product</th>
-                                    <th>Qty Order</th>
-                                    <th>Total Harga</th>
-                                    <th>#</th>
-                                </tr>
-                            </thead>
-                            <tbody id="detail_form">
-                               <tr>
-                                   <td>
-                                       <select name="produk[]" id="product_1" class="select2_produk_1" onchange="hitung(this.options[this.selectedIndex].value,1)" width="100%">
-                                           <option value="0">Pilih Produk</option>
-                                       </select>
-                                   </td>
-                                   <td>
-                                       <select name="tipesatuan[]" onchange="satuan(this.options[this.selectedIndex].value,1)" id="tipe_satuan_1" class="select2_satuan_1">
-                                            <option value="null">Pilih Tipe Satuan</option>
-                                        </select>
-                                   </td>
-                                   <td>
-                                       <input type="text" class="form-control" name="harga_product[]" id="harga_product_1">
-                                   </td>
-                                   <td width="15%">
-                                    <input type="text" class="form-control touchspin" id="qty_1" name="qty[]" value="1" onkeyup="hitung_qty(1)" onchange="hitung_qty(1)">
-                                  </td>
-                                   <td>
-                                    <input type="text" class="form-control total_harga" id="total_1" name="total[]" readonly>
-                                   </td>
-                                   <td>
-                                    <a class="text-white btn btn-danger btn-hemisperich btn-xs" data-original-title='Hapus Data' id='deleteModal'><i class='fa fa-trash'></i></a>
+                            <table class="table display table p-0 table-hover table-striped" style="overflow-x: auto;"
+                                id="example">
+                                <thead>
+                                    <tr class="text-white text-center bg-primary">
+                                        <th>Produk</th>
+                                        <th>Satuan</th>
+                                        <th>Harga Product</th>
+                                        <th>Qty Order</th>
+                                        <th>Total Harga</th>
+                                        <th>#</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detail_form">
+                                    <tr>
+                                        <td>
+                                            <select name="produk[]" id="product_1" class="select2_produk_1"
+                                                onchange="hitung(this.options[this.selectedIndex].value,1)"
+                                                width="100%">
+                                                <option value="0">Pilih Produk</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select name="tipesatuan[]"
+                                                onchange="satuan(this.options[this.selectedIndex].value,1)"
+                                                id="tipe_satuan_1" class="select2_satuan_1">
+                                                <option value="null">Pilih Tipe Satuan</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" name="harga_product[]"
+                                                id="harga_product_1">
+                                        </td>
+                                        <td width="15%">
+                                            <input type="text" class="form-control touchspin" id="qty_1" name="qty[]"
+                                                value="1" onkeyup="hitung_qty(1)" onchange="hitung_qty(1)">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control total_harga" id="total_1"
+                                                name="total[]" readonly>
+                                        </td>
+                                        <td>
+                                            <a class="text-white btn btn-danger btn-hemisperich btn-xs"
+                                                data-original-title='Hapus Data' id='deleteModal'><i
+                                                    class='fa fa-trash'></i></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        {{-- <input type="hidden" class="form-control mb-1" name="total_produk" id="total_produk" value="1"> --}}
+                        <div class="hr-line-dashed"></div>
+                        <table style="min-width: 100%">
+                            <tr>
+                                <td class="text-right">
+                                    <h3><b>Total Harga Pembelian<b></h3>
                                 </td>
-                               </tr>
-                            </tbody>
+                                <td width="1%"></td>
+                                <td class="text-center" width="13%" id="harga_pembelian"><b></b></td>
+                                <td width="5%"></td>
+                            </tr>
                         </table>
-                    </div>
-                    <input type="hidden" class="form-control mb-1" name="total_produk" id="total_produk" value="1">
-                    <div class="hr-line-dashed"></div>
-                    <table style="min-width: 100%">
-                        <tr>
-                            <td class="text-right"><h3><b>Total Harga Pembelian<b></h3></td>
-                            <td width="1%"></td>
-                            <td class="text-center" width="13%" id="harga_pembelian"></td>
-                            <td width="5%"></td>
-                        </tr>
-                    </table>
                         <!--<div class="form-group row">
                             <div class="col-sm-4 col-sm-offset-2 float-right">
                                 <a class="btn btn-white btn-sm" href="{{route('pembelian.index')}}">Batal</a>
@@ -148,7 +179,7 @@
                                 <button class="btn btn-primary btn-sm" type="button" id="simpan">Selesai</button>
                             </div>
                             @can('draftpurchaseorder.tambah')
-                            <div class="col-sm-6 text-right" >
+                            <div class="col-sm-6 text-right">
 
                                 {{-- <button class="btn btn-info btn-sm" type="button" id="draft">Simpan Draft</button> --}}
                             </div>
@@ -163,103 +194,6 @@
 </div>
 @endsection
 @push('scripts')
-{{-- <script>
-    $(document).on('click', '#tambah_detail_product', function(){
-        var total_detail = $('#total_detail').val();
-        console.log(total_detail)
-        var total = 1 + parseInt(total_detail);
-        $('#total_detail').val(total);
-        $.ajax({
-            type: 'POST',
-            data: 'total='+total,
-            url: '{{ route("pembelian.tambah_detail") }}',
-            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
-            success: function(msg){
-                $('#detail_form').append(msg);
-            }
-        });
-   });
-
-   $(document).on('click', '#simpan', function(e){
-        e.preventDefault()
-        var form = $('#submitData').serializeArray()
-        var dataFile = new FormData()
-        $.each(form, function(idx, val) {
-            dataFile.append(val.name, val.value)
-        })
-        console.log(dataFile)
-        $.ajax({
-            type: 'POST',
-            url : "{{route('pembelian.simpan')}}",
-            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
-            data:dataFile,
-            processData: false,
-            contentType: false,
-            dataType: "json",
-            beforeSend: function () {
-                Swal.showLoading();
-            },
-            success: function(data){
-                console.log(data)
-                if (data.success) {
-                    Swal.fire('Yes',data.message,'info');
-                    window.location.replace('{{route("pembelian.index")}}');
-                } else {
-                    Swal.fire('Ups',data.message,'info');
-                }
-            },
-            complete: function () {
-                Swal.hideLoading();
-                $('#simpan').removeClass("disabled");
-            },
-        });
-    })
-
-   $('#example').DataTable({
-        'searching': false,
-        'paging': false,
-        'ordering': false,
-        'info': false,
-        language : {
-            "zeroRecords": " "
-        }
-    })
-
-    $('.select2_product').select2({
-        placeholder: 'Pilih Product',
-        ajax: {
-            url: '{{ route("pembelian.search_product") }}',
-            dataType: 'JSON',
-            data: function(params) {
-                return {
-                search: params.term
-                }
-            },
-            processResults: function (data) {
-                var results = [];
-                $.each(data, function(index, item){
-                results.push({
-                    id: item.id,
-                    text : item.code+' | '+item.name,
-                    satuan: item.satuan_product
-                });
-                });
-                return{
-                    results: results
-                };
-            }
-        }
-    });
-
-    $('.jatuh_tempo').datepicker({
-        todayBtn: "linked",
-        keyboardNavigation: false,
-        forceParse: false,
-        calendarWeeks: true,
-        autoclose: true,
-        format: "dd-mm-yyyy"
-    });
-</script> --}}
 <script>
     $(document).ready(function(){
         $(".select2").select2({allowClear: true});
@@ -406,7 +340,7 @@ $("#simpan").on('click',function(){
 function select_satuan(num){
     $('.select2_satuan_'+num).select2({allowClear: false, width: '200px',
         ajax: {
-                url: '{{ route("purchaseorder.search_satuan") }}',
+                url: '{{ route("pembelian.search_satuan") }}',
                 dataType: 'JSON',
                 delay: 250,
                 data: function(params) {
@@ -440,7 +374,7 @@ $('.jatuh_tempo').datepicker({
     });
 </script>
 <script>
-     $( "#sales" ).change(function() {
+    $( "#sales" ).change(function() {
         var member = $('#member').val();
         var val = [];
         if(member==''){
@@ -515,27 +449,27 @@ $('.jatuh_tempo').datepicker({
             });
         }
     }
-    // function hitung(value, num){
-    //     console.log('tes');
-    //     $.ajax({
-    //         type: 'POST',
-    //         data: {
-    //             'produk_id': value,
-    //             'urut' : num
-    //         },
-    //         url: '{{route("purchaseorder.harga_product")}}',
-    //         headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
-    //         success: function(response) {
-    //             console.log(response)
-    //             if(response.success){
-    //                 $('#harga_product_'+num).val(response.data.harga_jual);
-    //                 $('#stock_product_'+num).val(response.data.getstock.stock_penjualan);
-    //             }else{
-    //                 Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
-    //             }
-    //         }
-    //     });
-    // }
+    function hitung(value, num){
+        console.log('tes');
+        $.ajax({
+            type: 'POST',
+            data: {
+                'produk_id': value,
+                'urut' : num
+            },
+            url: '{{route("pembelian.harga_product")}}',
+            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+            success: function(response) {
+                console.log(response)
+                if(response.success){
+                    $('#harga_product_'+num).val(response.data.harga_jual);
+                    $('#stock_product_'+num).val(response.data.getstock.stock_penjualan);
+                }else{
+                    Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
+                }
+            }
+        });
+    }
     function satuan(value, num){
         if($('#harga_product_'+num).val() == ""){
             Swal.fire('Ups', 'Pilih product terlebih dahulu', 'info');

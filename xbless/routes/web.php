@@ -672,13 +672,15 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::post('/simpan', [PembelianController::class, 'coba_simpan'])->name('simpan');
         Route::post('/tambah_product',[PembelianController::class, 'tambah_product'])->name('tambah_detail');
         Route::get('/search_product', [PembelianController::class, 'search_product'])->name('search_product');
+        Route::get('/search_satuan', [PembelianController::class, 'search_satuan'])->name('search_satuan');
         Route::delete('/delete/{id?}', [PembelianController::class, 'hapus'])->name('hapus');
+        Route::post('/harga_product', [PembelianController::class, 'harga_product'])->name('harga_product');
     });
 
      //IMPORT PEMBELIAN
      Route::group(['prefix' => 'pembelian_import', 'as' => 'pembelian_import.'], function(){
         Route::get('/import', [ImportPembelianController::class, 'index'])->name('import');
-        Route::get('/importsimpan', [ImportPembelianController::class, 'importsimpan'])->name('importsimpan');
+        Route::post('/importsimpan', [ImportPembelianController::class, 'importsimpan'])->name('importsimpan');
         Route::get('/importbatal', [ImportPembelianController::class, 'importbatal'])->name('importbatal');
         Route::post('/uploadimport', [ImportPembelianController::class, 'import'])->name('uploadimport');
         Route::post('/deleteimport', [ImportPembelianController::class, 'hapus'])->name('deleteimport');

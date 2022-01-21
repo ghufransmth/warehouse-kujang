@@ -2,9 +2,9 @@
 @section('title', 'Adjustment Stok')
 @section('content')
 <style>
-.swal2-container{
-    z-index: 99999 !important;
-}
+    .swal2-container {
+        z-index: 99999 !important;
+    }
 </style>
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -19,10 +19,12 @@
         </ol>
     </div>
     <div class="col-lg-2">
-        <br/>
-        <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Refresh Data"><span class="fa fa-refresh"></span></button>
+        <br />
+        <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+            title="Refresh Data"><span class="fa fa-refresh"></span></button>
         @can('produk.tambah')
-          <a href="{{ route('adjstok.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
+        <a href="{{ route('adjstok.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top"
+            title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
         @endcan
     </div>
 </div>
@@ -32,23 +34,30 @@
             <div class="ibox">
                 <div class="ibox-content">
                     <div class="table-responsive">
-                        <table id="table1" class="table display table-bordered">
-                        <thead>
-                        <tr>
-                            <th width="5%">No</th>
-                            <th>Product</th>
-                            <th>Stock Penjualan (PCS)</th>
-                            <th>Stock BS (PCS)</th>
-                            <th>Aksi</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                        <table id="table1" class="table display p-0 table-hover table-striped"
+                            style="overflow-x: auto;">
+                            <thead>
+                                <tr class="text-white text-center bg-primary">
+                                    <th width="5%">No</th>
+                                    <th>Product</th>
+                                    <th>Stock Penjualan (PCS)</th>
+                                    <th>Stock BS (PCS)</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                        </tbody>
-                        <tfoot>
-
-                        </tfoot>
-                    </table>
+                            </tbody>
+                            <tfoot>
+                                <tr class="text-white text-center bg-primary">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
 
                 </div>
@@ -79,35 +88,36 @@
             </table>
         </div>
     </div>
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-                <table class="table display table-bordered">
-                    <thead>
-                        <th>No</th>
-                        <th>Product</th>
-                        <th>Kategori</th>
-                        <th id='stock_product1' class="text-center">Stock Penjualan <br> Satuan.PCS</th>
-                        <th id='stock_product2' class="text-center">Stock BS <br> Satuan.PCS</th>
-                    </thead>
-                    <tbody id="body_product">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table display table-bordered">
+                        <thead>
+                            <th>No</th>
+                            <th>Product</th>
+                            <th>Kategori</th>
+                            <th id='stock_product1' class="text-center">Stock Penjualan <br> Satuan.PCS</th>
+                            <th id='stock_product2' class="text-center">Stock BS <br> Satuan.PCS</th>
+                        </thead>
+                        <tbody id="body_product">
 
-                    </tbody>
+                        </tbody>
 
-                </table>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-          </div>
         </div>
     </div>
     {{-- <div class="modal fade" id="modal_stok"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2050 !important;">
@@ -123,42 +133,43 @@
                 <div class="ibox-content">
                     <form id="submitData" name="submitData">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="perusahaan_id" id="perusahaan_id">
-                        <input type="hidden" name="perusahaangudang_id" id="perusahaangudang_id">
-                        <input type="hidden" name="gudang_id" id="gudang_id">
-                        <div class="form-group row">
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" value="" id="key_value" name="key_value" placeholder="Masukan kode / nama produk">
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table id="tableproduct" class="table" >
-                                <thead>
-                                <tr>
-                                    <th width="5%">No</th>
-                                    <th>Kode Produk</th>
-                                    <th>Nama Produk</th>
-                                    <th>Stock Qty</th>
-                                    <th width='20%'>Tambah Stock</th>
-                                    <th>Catatan</th>
-                                </tr>
-                                </thead>
-                                <tbody id="detailData">
-                                </tbody>
-                            </table>
-                        </div>
-                    </form>
-                    @can('adjstok.tambah')
-                    <div class="modal-footer">
-                        <button class="btn btn-success btn-sm" type="submit" id="simpanAdj">Simpan</button>
-                    </div>
-                    @endcan
-
-                </div>
-
-            </div>
+    <input type="hidden" name="perusahaan_id" id="perusahaan_id">
+    <input type="hidden" name="perusahaangudang_id" id="perusahaangudang_id">
+    <input type="hidden" name="gudang_id" id="gudang_id">
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <input type="text" class="form-control" value="" id="key_value" name="key_value"
+                placeholder="Masukan kode / nama produk">
         </div>
-    </div> --}}
+    </div>
+    <div class="table-responsive">
+        <table id="tableproduct" class="table">
+            <thead>
+                <tr>
+                    <th width="5%">No</th>
+                    <th>Kode Produk</th>
+                    <th>Nama Produk</th>
+                    <th>Stock Qty</th>
+                    <th width='20%'>Tambah Stock</th>
+                    <th>Catatan</th>
+                </tr>
+            </thead>
+            <tbody id="detailData">
+            </tbody>
+        </table>
+    </div>
+    </form>
+    @can('adjstok.tambah')
+    <div class="modal-footer">
+        <button class="btn btn-success btn-sm" type="submit" id="simpanAdj">Simpan</button>
+    </div>
+    @endcan
+
+</div>
+
+</div>
+</div>
+</div> --}}
 
 </div>
 
@@ -506,5 +517,5 @@
                 }
         });
     }
- </script>
+</script>
 @endpush
