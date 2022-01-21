@@ -72,6 +72,7 @@
                                         <th>Sales</th>
                                         <th>Satuan</th>
                                         <th>QTY</th>
+                                        <th>Diskon</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -85,6 +86,7 @@
                                             <td>{{ $value->id_sales }}</td>
                                             <td>{{ $value->id_satuan }}</td>
                                             <td>{{ $value->qty }}</td>
+                                            <td>{{ $value->diskon }}</td>
                                             <td>{!! $value->aksi !!}</td>
                                         </tr>
                                     @endforeach

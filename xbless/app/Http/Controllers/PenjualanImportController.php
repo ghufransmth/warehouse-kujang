@@ -163,7 +163,10 @@ class PenjualanImportController extends Controller
                 $penjualan->tgl_faktur = date('Y-m-d', strtotime($tgl_transaksi));
                 $penjualan->tgl_jatuh_tempo = date('Y-m-d', strtotime($tgl_transaksi));
                 $penjualan->tgl_lunas   = date('Y-m-d', strtotime($tgl_transaksi));
-                $penjualan->total_harga = $data_import->sum('total_harga');
+                $total_inv = DetailPenjualanImport::where('no_faktur', $import->no_faktur)->sum('total_harga');
+                $diskon_inv = DetailPenjualanImport::where('no_faktur', $import->no_faktur)->sum('diskon');
+                $penjualan->total_harga = $total_inv;
+                $penjualan->total_diskon      = $diskon_inv;
                 $penjualan->status_lunas = 1;
                 $penjualan->created_by = auth()->user()->username;
                 if(!$penjualan->save()){
@@ -201,6 +204,7 @@ class PenjualanImportController extends Controller
             $data->qty = $import->qty * $satuan->qty;
             $data->harga_product = $import->harga_product;
             $data->total_harga = $import->total_harga;
+            $data->diskon       = $import->diskon;
             if($data->save()){
                 $stockadj = StockAdj::where('id_product', $data->id_product)->first();
                 $stockadj->stock_penjualan -= $data->qty;
