@@ -17,164 +17,175 @@
         </ol>
     </div>
     <div class="col-lg-2">
-        <br/>
+        <br />
         <a class="btn btn-white btn-sm" href="{{route('purchaseorder.index')}}">Batal</a>
     </div>
 </div>
-    <div class="wrapper wrapper-content animated fadeInRight">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="ibox ">
-                    <div class="ibox-title">
-                        @if(session('message'))
-                            <div class="alert alert-{{session('message')['status']}}">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            {{ session('message')['desc'] }}
-                            </div>
-                        @endif
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    @if(session('message'))
+                    <div class="alert alert-{{session('message')['status']}}">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        {{ session('message')['desc'] }}
                     </div>
-                    <div class="ibox-content">
-                        <div class="alert alert-danger" id="showAlert" style="display: none">
-                            MEMBER INI BELUM MELAKUKAN PEMBAYARAN PADA INVOICE
-                          </div>
-                        <form id="submitData">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <input type="hidden" name="enc_id" id="enc_id" value="{{isset($purchaseorder)? $enc_id : ''}}">
+                    @endif
+                </div>
+                <div class="ibox-content">
+                    <div class="alert alert-danger" id="showAlert" style="display: none">
+                        MEMBER INI BELUM MELAKUKAN PEMBAYARAN PADA INVOICE
+                    </div>
+                    <form id="submitData">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="enc_id" id="enc_id" value="{{isset($purchaseorder)? $enc_id : ''}}">
 
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">No Transaksi </label>
-                                <div class="col-sm-4 error-text">
-                                    <input type="text" name="no_transaksi" class="form-control" id="no_transaksi">
-                                </div>
-                                <label class="col-sm-2 col-form-label">Tgl Transaksi </label>
-                                <div class="col-sm-4 error-text">
-                                    <input type="text" class="form-control formatTgl" id="tgl_transaksi" value="{{ date('d-m-Y') }}" name="tgl_transaksi" autocomplete="off">
-
-                                </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">No Transaksi </label>
+                            <div class="col-sm-4 error-text">
+                                <input type="text" name="no_transaksi" class="form-control" id="no_transaksi">
                             </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Toko </label>
-                                <div class="col-sm-4 error-text">
-                                    <select class="form-control select2" id="toko" name="toko">
-                                        <option value="0">Pilih Toko</option>
-                                        @foreach($toko as $key => $value)
-                                            <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <label class="col-sm-2 col-form-label">Sales </label>
-                                <div class="col-sm-4 error-text">
-                                    <select class="form-control select2" id="sales" name="sales">
-                                        <option value="0">Pilih Sales</option>
-                                        @foreach($sales as $key => $value)
-                                            <option value="{{ $value->id }}">{{ $value->nama }}</option>
-                                        @endforeach
+                            <label class="col-sm-2 col-form-label">Tgl Transaksi </label>
+                            <div class="col-sm-4 error-text">
+                                <input type="text" class="form-control formatTgl" id="tgl_transaksi"
+                                    value="{{ date('d-m-Y') }}" name="tgl_transaksi" autocomplete="off">
 
-
-
-                                    </select>
-                                </div>
                             </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Status Pembayaran </label>
-                                <div class="col-sm-4 error-text">
-                                    <select class="form-control select2" id="status_pembayaran" name="status_pembayaran">
-                                        <option value="">Pilih Status Pembayaran</option>
-                                        <option value="1">Lunas</option>
-                                        <option value="0">Belum Lunas</option>
-                                    </select>
-                                </div>
-                                <label class="col-sm-2 col-form-label">Tgl Jatuh Tempo </label>
-                                <div class="col-sm-4 error-text">
-                                    <input type="text" name="tgl_jatuh_tempo" class="form-control formatTgl" id="tgl_jatuh_tempo" value="{{ date('d-m-Y') }}" autocomplete="off">
-                                    <input type="hidden" name="total_harga_penjualan" id="total_harga_penjualan" value="0">
-                                </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Toko </label>
+                            <div class="col-sm-4 error-text">
+                                <select class="form-control select2" id="toko" name="toko">
+                                    <option value="0">Pilih Toko</option>
+                                    @foreach($toko as $key => $value)
+                                    <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
+                            <label class="col-sm-2 col-form-label">Sales </label>
+                            <div class="col-sm-4 error-text">
+                                <select class="form-control select2" id="sales" name="sales">
+                                    <option value="0">Pilih Sales</option>
+                                    @foreach($sales as $key => $value)
+                                    <option value="{{ $value->id }}">{{ $value->nama }}</option>
+                                    @endforeach
 
-                            {{-- <div class="form-group row">
+
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Status Pembayaran </label>
+                            <div class="col-sm-4 error-text">
+                                <select class="form-control select2" id="status_pembayaran" name="status_pembayaran">
+                                    <option value="">Pilih Status Pembayaran</option>
+                                    <option value="1">Lunas</option>
+                                    <option value="0">Belum Lunas</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-2 col-form-label">Tgl Jatuh Tempo </label>
+                            <div class="col-sm-4 error-text">
+                                <input type="text" name="tgl_jatuh_tempo" class="form-control formatTgl"
+                                    id="tgl_jatuh_tempo" value="{{ date('d-m-Y') }}" autocomplete="off">
+                                <input type="hidden" name="total_harga_penjualan" id="total_harga_penjualan" value="0">
+                            </div>
+                        </div>
+
+                        {{-- <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Catatan </label>
                                 <div class="col-sm-10 error-text">
                                 <textarea class="form-control" id="note" name="note">{{isset($purchaseorder)? $purchaseorder->note : ''}}</textarea>
-                                </div>
-                            </div> --}}
-                            <div class="">
-                                <a href="#!" onclick="tambahProduk()" class="btn btn-success btn-sm icon-btn sm-btn-flat product-tooltip" title="Tambah Produk">Tambah Produk</a>
-                            </div>
-                            <div class="hr-line-dashed"></div>
-                            <div class="table-responsive">
-                                <table id="table1" class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Produk</th>
-                                            <th>Stock Product (PCS)</th>
-                                            <th>Harga Product</th>
-                                            <th>Tipe Satuan</th>
-                                            <th>Qty Order</th>
-                                            <th>Total Harga</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="ajax_produk">
-                                        <tr>
-                                            <td>
-                                                <select class="select2_produk_1" id="product_1" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, 1)" width="100%">
-                                                    <option value="0">Pilih Produk </option>
-
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control" name="stock_product[]" id="stock_product_1" readonly>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control" id="harga_product_1" name="harga_product[]" value=" PCS" readonly>
-                                            </td>
-                                            <td>
-                                                <select class="select2_satuan_1" id="tipe_satuan_1" name="tipesatuan[]" onchange="satuan(this.options[this.selectedIndex].value, 1)">
-                                                    <option value="null">Pilih Tipe Satuan </option>
-                                                </select>
-                                            </td>
-                                            <td width="15%">
-                                                <input type="text" class="form-control touchspin" id="qty_1" name="qty[]" value="1" onkeyup="hitung_qty(1)" onchange="hitung_qty(1)">
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control total_harga" id="total_1" name="total[]" readonly>
-                                            </td>
-                                            <td>
-                                                -
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <input type="hidden" class="form-control mb-1" name="total_produk" id="total_produk" value="1">
-                            <div class="hr-line-dashed"></div>
-                            <table style="min-width: 100%">
-                                <tr>
-                                    <td class="text-right">Total Harga Penjualan</td>
-                                    <td width="1%"></td>
-                                    <td class="text-center" width="13%" id="harga_penjualan"></td>
-                                    <td width="5%"></td>
-                                </tr>
-                            </table>
-                            <div class="form-group row">
-                                <div class="col-sm-6 col-sm-offset-2">
-                                    <a class="btn btn-white btn-sm" href="{{route('provinsi.index')}}">Batal</a>
-                                    <button class="btn btn-primary btn-sm" type="button" id="simpan">Selesai</button>
-                                </div>
-                                @can('draftpurchaseorder.tambah')
-                                <div class="col-sm-6 text-right" >
-
-                                    {{-- <button class="btn btn-info btn-sm" type="button" id="draft">Simpan Draft</button> --}}
-                                </div>
-                                @endcan
-                            </div>
-                        </form>
-                    </div>
                 </div>
+            </div> --}}
+            <div class="">
+                <a href="#!" onclick="tambahProduk()"
+                    class="btn btn-success btn-sm icon-btn sm-btn-flat product-tooltip" title="Tambah Produk">Tambah
+                    Produk</a>
             </div>
+            <div class="hr-line-dashed"></div>
+            <div class="table-responsive">
+                <table id="table1" class="table display table table-hover p-0 table-striped" style="overflow-x: auto;">
+                    <thead>
+                        <tr class="text-white text-center bg-primary">
+                            <th>Produk</th>
+                            <th>Stock Product (PCS)</th>
+                            <th>Harga Product</th>
+                            <th>Tipe Satuan</th>
+                            <th>Qty Order</th>
+                            <th>Total Harga</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ajax_produk" class="bg-white">
+                        <tr class="bg-white">
+                            <td>
+                                <select class="select2_produk_1" id="product_1" name="produk[]"
+                                    onchange="hitung(this.options[this.selectedIndex].value, 1)" width="100%">
+                                    <option value="0">Pilih Produk </option>
+
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="stock_product[]" id="stock_product_1"
+                                    readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" id="harga_product_1" name="harga_product[]"
+                                    value=" PCS" readonly>
+                            </td>
+                            <td>
+                                <select class="select2_satuan_1" id="tipe_satuan_1" name="tipesatuan[]"
+                                    onchange="satuan(this.options[this.selectedIndex].value, 1)">
+                                    <option value="null">Pilih Tipe Satuan </option>
+                                </select>
+                            </td>
+                            <td width="15%">
+                                <input type="text" class="form-control touchspin" id="qty_1" name="qty[]" value="1"
+                                    onkeyup="hitung_qty(1)" onchange="hitung_qty(1)">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control total_harga" id="total_1" name="total[]"
+                                    readonly>
+                            </td>
+                            <td>
+                                -
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <input type="hidden" class="form-control mb-1" name="total_produk" id="total_produk" value="1">
+            <div class="hr-line-dashed"></div>
+            <table style="min-width: 100%">
+                <tr>
+                    <td class="text-right">Total Harga Penjualan</td>
+                    <td width="1%"></td>
+                    <td class="text-center" width="13%" id="harga_penjualan"></td>
+                    <td width="5%"></td>
+                </tr>
+            </table>
+            <div class="form-group row">
+                <div class="col-sm-6 col-sm-offset-2">
+                    <a class="btn btn-white btn-sm" href="{{route('provinsi.index')}}">Batal</a>
+                    <button class="btn btn-primary btn-sm" type="button" id="simpan">Selesai</button>
+                </div>
+                @can('draftpurchaseorder.tambah')
+                <div class="col-sm-6 text-right">
+
+                    {{-- <button class="btn btn-info btn-sm" type="button" id="draft">Simpan Draft</button> --}}
+                </div>
+                @endcan
+            </div>
+            </form>
         </div>
     </div>
+</div>
+</div>
+</div>
 @endsection
 @push('scripts')
 <script>

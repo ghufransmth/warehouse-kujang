@@ -14,9 +14,10 @@
         </ol>
     </div>
     <div class="col-lg-2">
-        <br/>
+        <br />
         {{-- @can('brand.tambah') --}}
-          <a href="{{ route('toko.tambah') }}" class="btn btn-success"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
+        <a href="{{ route('toko.tambah') }}" class="btn btn-success"><span class="fa fa-pencil-square-o"></span>&nbsp;
+            Tambah</a>
         {{-- @endcan --}}
     </div>
 </div>
@@ -27,10 +28,11 @@
                 <div class="ibox-content">
 
                     <div class="table-responsive">
-                        <table id="table1" class="table display table-bordered">
+                        <table id="table1" class="table display p-0 table-hover table-striped"
+                            style="overflow-x: auto;">
                             <thead>
-                                <tr>
-                                    <th>No</th>
+                                <tr class="text-white text-center bg-primary">
+                                    <th width="5%">No</th>
                                     <th>Kode Toko</th>
                                     <th>Nama</th>
                                     <th>Nik</th>
@@ -39,17 +41,21 @@
                                     <th class="text-right">Aksi</th>
                                 </tr>
                             </thead>
-                        <tbody>
+                            <tbody>
 
-                        </tbody>
-                        <tfoot>
-                        {{-- <tr>
-                            <td colspan="3">
-                                <ul class="pagination float-right"></ul>
-                            </td>
-                        </tr> --}}
-                        </tfoot>
-                    </table>
+                            </tbody>
+                            <tfoot>
+                                <tr class="text-white text-center bg-primary">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
 
                 </div>
@@ -72,6 +78,7 @@
         //    "deferRender": true,
             "pageLength": 25,
             "select" : true,
+            "dom": '<"html5">lftip',
             "ajax":{
                 "url": "{{ route("toko.getdata") }}",
                 "dataType": "json",

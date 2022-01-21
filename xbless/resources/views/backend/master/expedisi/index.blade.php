@@ -16,10 +16,12 @@
         </ol>
     </div>
     <div class="col-lg-2">
-        <br/>
-        <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Refresh Data"><span class="fa fa-refresh"></span></button>
+        <br />
+        <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+            title="Refresh Data"><span class="fa fa-refresh"></span></button>
         @can('expedisi.tambah')
-        <a href="{{ route('expedisi.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
+        <a href="{{ route('expedisi.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top"
+            title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
         @endcan
     </div>
 </div>
@@ -30,23 +32,30 @@
                 <div class="ibox-content">
                     <div></div>
                     <div class="table-responsive">
-                        <table id="table1" class="table display table-bordered">
-                        <thead>
-                        <tr>
-                            <th width="10px;">No</th>
-                            <th>Nama</th>
-                            <th>No Telp</th>
-                            <th>Alamat</th>
-                            <th>Status</th>
-                            <th class="text-center">Aksi</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                        <tfoot>
-                        </tfoot>
-                    </table>
+                        <table id="table1" class="table p-0 table-hover table-striped" style="overflow-x: auto;">
+                            <thead>
+                                <tr class=" text-white text-center bg-primary">
+                                    <th width="5%">No</th>
+                                    <th>Nama</th>
+                                    <th>No Telp</th>
+                                    <th>Alamat</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class=" text-white text-center bg-primary">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                        </table>
                     </div>
 
                 </div>
@@ -232,5 +241,5 @@
           // }
 
        });
- </script>
+</script>
 @endpush

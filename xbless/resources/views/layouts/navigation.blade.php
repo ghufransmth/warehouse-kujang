@@ -16,7 +16,7 @@
                     </ul>
                 </div>
                 <div class="logo-element">
-                    KM
+                    KM<span class="text-navy">U</span>
                 </div>
             </li>
             <li>
@@ -101,6 +101,14 @@
             <ul class="nav nav-second-level collapse">
                 <li class=""><a href="{{ route('toko.index') }}">List Toko</a></li>
                 <li class=""><a href="{{ route('toko.tambah') }}">Tambah Toko</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#"><i class="fa fa-dollar"></i> <span class="nav-label"> Keuangan</span><span
+                    class="fa arrow"></span></a>
+            <ul class="nav nav-second-level collapse">
+                <li><a href="{{ route('pembayaran.index') }}">Transaksi Pembayaran</a></li>
+                <li><a href="{{ route('transaksi.keuangan.index') }}">Transaksi Keuangan</a></li>
             </ul>
         </li>
         <li>
