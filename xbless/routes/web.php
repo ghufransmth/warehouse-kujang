@@ -530,6 +530,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/addproduk', [PurchaseController::class, 'addproduk'])->name('addproduk');
             Route::post('/updatepo', [PurchaseController::class, 'updatepo'])->name('updatepo');
             Route::post('/updatepokrnditolak', [PurchaseController::class, 'updatepokrnditolak'])->name('updatepokrnditolak');
+            Route::get('/edit/{id?}', [PurchaseController::class, 'edit'])->name('edit');
 
             //IMPORT PENJUALAN
             Route::get('/import', [PenjualanImportController::class, 'index'])->name('import');
@@ -572,6 +573,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/process', [RequestPurchaseController::class, 'process'])->name('process');
             Route::post('/perusahaan', [RequestPurchaseController::class, 'perusahaan'])->name('perusahaan');
             Route::post('/cancel', [RequestPurchaseController::class, 'cancel'])->name('cancel');
+
         });
 
         // PURCHASE ORDER BATAL

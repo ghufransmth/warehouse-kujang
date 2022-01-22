@@ -147,7 +147,23 @@ class PurchaseController extends Controller
 
             return $next_no.'/'.$kode_perusahaan.'/'.date('m').'/'.date('y');
     }
-
+    public function edit($enc_id){
+        // return $enc_id;
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        // return $dec_id;
+        $penjualan = Penjualan::find($dec_id);
+        if(isset($penjualan)){
+            $detail_penjualan = DetailPenjualan::where('id_penjualan', $penjualan->id)->where('no_faktur', $penjualan->no_faktur)->get();
+            return $detail_penjualan;
+        }else{
+            return response()->json([
+                'success' => false,
+                'code' => 201,
+                'message' => 'No faktur tidak ditemukan'
+            ]);
+        }
+        return $penjualan;
+    }
     public function getData(Request $request){
         $limit = $request->length;
         $start = $request->start;
@@ -203,10 +219,12 @@ class PurchaseController extends Controller
             $result->tgl_transaksi = $result->tgl_faktur;
             $result->total_harga = $result->total_harga;
             $result->tgl_lunas = $result->tgl_lunas;
-            $aksi .= '<a href="#" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail Penjualan </a> <br>';
+            $aksi .= '<a href="#" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail </a>';
+            $aksi .= '<a href="#" onclick="edit(\''.$enc_id.'\')" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a> <br>';
+
             if($result->status_lunas == 0){
                 $result->status_pembayaran = '<span class="badge badge-success">Belum Lunas</span>';
-                $aksi .= '<a href="#" onclick="approve(\''.$enc_id.'\')" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip" style="margin-top:5px">Aprrove </a> <a href="#" onclick="reject(\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" style="margin-top:5px">Reject </a>';
+                $aksi .= '<a href="#" onclick="approve(\''.$enc_id.'\')" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip" style="margin-top:5px">Aprrove</a> <a href="#" onclick="reject(\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" style="margin-top:5px">Reject</a>';
             }else if($result->status_lunas == 2){
                 $result->status_pembayaran = '<span class="badge badge-danger">Ditolak</span>';
             }else{
