@@ -40,18 +40,18 @@
                     </div>
                     <form id="submitData">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="enc_id" id="enc_id" value="{{isset($purchaseorder)? $enc_id : ''}}">
+                        <input type="hidden" name="enc_id" id="enc_id" value="{{isset($penjualan)? $enc_id : ''}}">
 
                         <div class="hr-line-dashed"></div>
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">No Transaksi </label>
                             <div class="col-sm-4 error-text">
-                                <input type="text" name="no_transaksi" class="form-control" id="no_transaksi">
+                                <input type="text" name="no_transaksi" value="{{ isset($penjualan)? $penjualan->no_faktur : '' }}" class="form-control" id="no_transaksi">
                             </div>
                             <label class="col-sm-2 col-form-label">Tgl Transaksi </label>
                             <div class="col-sm-4 error-text">
                                 <input type="text" class="form-control formatTgl" id="tgl_transaksi"
-                                    value="{{ date('d-m-Y') }}" name="tgl_transaksi" autocomplete="off">
+                                    value="{{ isset($penjualan)? date('d-m-Y', strtotime($penjualan->tgl_faktur)) : date('d-m-Y') }}" name="tgl_transaksi" autocomplete="off">
 
                             </div>
                         </div>
@@ -61,7 +61,13 @@
                                 <select class="form-control select2" id="toko" name="toko">
                                     <option value="0">Pilih Toko</option>
                                     @foreach($toko as $key => $value)
-                                    <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                    <option value="{{ $value->id }}"
+                                    @if(isset($selectedtoko))
+                                        @if($value->id == $selectedtoko)
+                                            selected
+                                        @endif
+                                    @endif
+                                    >{{ $value->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -70,7 +76,13 @@
                                 <select class="form-control select2" id="sales" name="sales">
                                     <option value="0">Pilih Sales</option>
                                     @foreach($sales as $key => $value)
-                                    <option value="{{ $value->id }}">{{ $value->nama }}</option>
+                                    <option value="{{ $value->id }}"
+                                        @if(isset($selectedsales))
+                                            @if($value->id == $selectedsales)
+                                                selected
+                                            @endif
+                                        @endif
+                                    >{{ $value->nama }}</option>
                                     @endforeach
 
 
@@ -83,14 +95,26 @@
                             <div class="col-sm-4 error-text">
                                 <select class="form-control select2" id="status_pembayaran" name="status_pembayaran">
                                     <option value="">Pilih Status Pembayaran</option>
-                                    <option value="1">Lunas</option>
-                                    <option value="0">Belum Lunas</option>
+                                    <option value="1"
+                                        @if(isset($selectedstatuslunas))
+                                            @if($selectedstatuslunas == '1')
+                                                selected
+                                            @endif
+                                        @endif
+                                    >Lunas</option>
+                                    <option value="0"
+                                    @if(isset($selectedstatuslunas))
+                                        @if($selectedstatuslunas == 0)
+                                            selected
+                                        @endif
+                                    @endif
+                                    >Belum Lunas</option>
                                 </select>
                             </div>
                             <label class="col-sm-2 col-form-label">Tgl Jatuh Tempo </label>
                             <div class="col-sm-4 error-text">
                                 <input type="text" name="tgl_jatuh_tempo" class="form-control formatTgl"
-                                    id="tgl_jatuh_tempo" value="{{ date('d-m-Y') }}" autocomplete="off">
+                                    id="tgl_jatuh_tempo" value="{{ isset($penjualan)? date('d-m-Y', strtotime($penjualan->tgl_jatuh_tempo)) : date('d-m-Y') }}" autocomplete="off">
                                 <input type="hidden" name="total_harga_penjualan" id="total_harga_penjualan" value="0">
                             </div>
                         </div>
@@ -121,6 +145,46 @@
                         </tr>
                     </thead>
                     <tbody id="ajax_produk" class="bg-white">
+                        @if(isset($penjualan))
+                        <input type="hidden" name="jumlahdetail" value="{{ (count($detail_penjualan) > 0)? count($detail_penjualan) : '0'  }}" id="jumlahdetail">
+                            @foreach($detail_penjualan as $key => $detail)
+                            <tr class="bg-white" id='dataajaxproduk_{{ $key }}'>
+                                <td>
+                                    <select class="select2_produk_{{ $key }}" id="product_{{ $key }}" name="produk[]"
+                                        onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%">
+                                        <option value="{{ $detail->getproduct->id }}">{{ $detail->getproduct->nama }}</option>
+
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" name="stock_product[]" value="{{ $detail->getproduct->getstock->stock_penjualan }}" id="stock_product_{{ $key }}"
+                                        readonly>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" id="harga_product_{{ $key }}" name="harga_product[]"
+                                        value="{{$detail->harga_product}}" readonly>
+                                </td>
+                                <td>
+                                    <select class="select2_satuan_{{ $key }}" id="tipe_satuan_{{ $key }}" name="tipesatuan[]"
+                                        onchange="satuan(this.options[this.selectedIndex].value, {{ $key }})">
+                                        <option value="1">PCS </option>
+                                    </select>
+                                </td>
+                                <td width="15%">
+                                    <input type="text" class="form-control touchspin" id="qty_{{ $key }}" name="qty[]" value="{{ $detail->qty }}"
+                                        onkeyup="hitung_qty({{ $key }})" onchange="hitung_qty({{ $key }})">
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control total_harga" id="total_{{ $key }}" name="total[]" value="{{ $detail->total_harga }}"
+                                        readonly>
+                                </td>
+                                {{-- <td>
+                                    -
+                                </td> --}}
+                                <td><a href='#!' onclick='deleteProduk({{ $key }})' class='btn btn-danger btn-sm icon-btn sm-btn-flat product-tooltip' title='Hapus'><i class='fa fa-trash'></i></a></td>
+                            </tr>
+                            @endforeach
+                        @else
                         <tr class="bg-white">
                             <td>
                                 <select class="select2_produk_1" id="product_1" name="produk[]"
@@ -155,16 +219,17 @@
                                 -
                             </td>
                         </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
-            <input type="hidden" class="form-control mb-1" name="total_produk" id="total_produk" value="1">
+            <input type="hidden" class="form-control mb-1" name="total_produk" id="total_produk" value="{{ isset($penjualan)? count($detail_penjualan) : '1' }}">
             <div class="hr-line-dashed"></div>
             <table style="min-width: 100%">
                 <tr>
                     <td class="text-right">Total Harga Penjualan</td>
                     <td width="1%"></td>
-                    <td class="text-center" width="13%" id="harga_penjualan"></td>
+                    <td class="text-center" width="13%" id="harga_penjualan"> {{ isset($penjualan)? $penjualan->total_harga : '' }}</td>
                     <td width="5%"></td>
                 </tr>
             </table>
@@ -191,7 +256,14 @@
 <script>
     $(document).ready(function () {
         $(".select2").select2({allowClear: true});
-
+        @if(isset($penjualan))
+            var jumlahdetail = $('#jumlahdetail').val();
+            // console.log(jumlahdetail);
+            for(var i=0;i<jumlahdetail;i++){
+                select_satuan(i);
+                select_product(i);
+            }
+        @endif
         select_satuan(1);
         select_product(1);
         $("#simpan").on('click',function(){
@@ -321,6 +393,7 @@ function total_penjualan(){
     $('#total_harga_penjualan').val(sum);
 }
 function select_product(num){
+    console.log(num);
     $('.select2_produk_'+num).select2({allowClear: false, width: '200px',
         ajax: {
                 url: '{{ route("purchaseorder.search") }}',
@@ -408,10 +481,20 @@ function select_satuan(num){
         $('#ajax_produk').html('');
     });
     function tambahProduk(){
+
+        @if(isset($penjualan))
+        var total_produk = $('#jumlahdetail').val();
+        var total = 1 + parseInt(total_produk);
+        $('#total_produk').val(total);
+        $('#jumlahdetail').val(total);
+        console.log(total)
+        @else
         var total_produk = $('#total_produk').val();
         var total = 1 + parseInt(total_produk);
         $('#total_produk').val(total);
         console.log(total)
+        @endif
+
         $.ajax({
             type: 'POST',
             data: 'total='+total,
@@ -590,6 +673,7 @@ function select_satuan(num){
 
     function hitung_qty(num){
         // console.log($('#product_'+num+' option:selected').val());
+        console.log($('#product_'+num).val());
         if($('#product_'+num).val() == 0){
             Swal.fire('Ups', 'Pilih product terlebih dahulu');
             return false;
