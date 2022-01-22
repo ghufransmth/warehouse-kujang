@@ -379,7 +379,9 @@ class PembelianController extends Controller
     public function ubah($enc_id){
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         if($dec_id){
-            $pembelian = Pembelian::find($dec_id);
+            // $pembelian = Pembelian::find($dec_id);
+            $pembelian = Pembelian::select('pembelian.no_faktur','pembelian.nominal','pembelian.keterangan','pembelian.tgl_faktur','pembelian.tgl_jatuh_tempo')->get();
+            return response()->json($pembelian);
 
             return view('backend/pembelian/form',compact('enc_id','pembelian'));
         }else{
