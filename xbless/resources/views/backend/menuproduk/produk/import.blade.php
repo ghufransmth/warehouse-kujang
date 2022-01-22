@@ -123,7 +123,7 @@
             if (result.isConfirmed) {
                 $.ajax({
                     type: 'POST',
-                    url : "{{route('purchaseorder.deleteimport')}}",
+                    url : "{{route('produk.deleteimport')}}",
                     headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                     data:{
                         id_detail : id
@@ -138,7 +138,7 @@
                         // return false;
                         if (data.success) {
                             Swal.fire('Yes',data.message,'info');
-                            window.location.replace('{{route("purchaseorder.import")}}');
+                            window.location.replace('{{route("produk.import")}}');
 
 
                         } else {

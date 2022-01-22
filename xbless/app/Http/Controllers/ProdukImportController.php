@@ -213,7 +213,7 @@ class ProdukImportController extends Controller
         }
         $alldata = ProdukImport::all();
         session(['status' => $message['status'], 'desc' => $message['desc']]);
-        return view('backend/purchase/import', ['data' => $alldata]);
+        return view('backend/menuproduk/produk/import', ['data' => $alldata]);
     }
     public function downloadtemplate(){
         $file= public_path(). "/excel/Import_penjualan.xlsx";

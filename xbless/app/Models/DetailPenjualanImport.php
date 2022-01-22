@@ -10,5 +10,5 @@ class DetailPenjualanImport extends Model
     use HasFactory;
     protected $table = 'tbl_detail_penjualan_import';
 
-    protected $fillable = ['id_sales','id_toko','no_faktur', 'kode_product', 'id_satuan', 'qty', 'harga_product', 'total_harga'];
+    protected $fillable = ['id_sales','id_toko','no_faktur', 'kode_product', 'id_satuan', 'qty', 'harga_product', 'total_harga', 'diskon'];
 }
