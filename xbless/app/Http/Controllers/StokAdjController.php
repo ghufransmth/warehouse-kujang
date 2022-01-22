@@ -50,6 +50,7 @@ class StokAdjController extends Controller
         $search = $request->search['value'];
 
         $querydb = StockAdj::select('*');
+        $querydb->whereHas('getproduct');
 
         if (array_key_exists($request->order[0]['column'], $this->original_column)) {
         $querydb->orderByRaw($this->original_column[$request->order[0]['column']] . ' ' . $request->order[0]['dir']);
