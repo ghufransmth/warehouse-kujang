@@ -264,7 +264,6 @@
         $('#type').val(type);
         table.ajax.reload(null, false);
     }
-
 function approve(id){
     // console.log(id);
     $.ajax({

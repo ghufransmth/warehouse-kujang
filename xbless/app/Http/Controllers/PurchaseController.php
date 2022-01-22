@@ -176,6 +176,7 @@ class PurchaseController extends Controller
         $request->session()->put('filter_sales', $request->filter_sales);
         $request->session()->put('type', $request->type);
         $penjualan = Penjualan::select('*');
+        $penjualan->whereHas('getsales');
 
         $penjualan->orderBy('id', 'ASC');
         if($filter_toko != null || $filter_toko != ""){
@@ -220,7 +221,7 @@ class PurchaseController extends Controller
             $result->total_harga = $result->total_harga;
             $result->tgl_lunas = $result->tgl_lunas;
             $aksi .= '<a href="#" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail </a>';
-            $aksi .= '<a href="#" onclick="edit(\''.$enc_id.'\')" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a> <br>';
+            $aksi .= '<a href="'.route('purchaseorder.edit', $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a> <br>';
 
             if($result->status_lunas == 0){
                 $result->status_pembayaran = '<span class="badge badge-success">Belum Lunas</span>';
