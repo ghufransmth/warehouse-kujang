@@ -125,6 +125,14 @@
             </ul>
         </li>
         <li>
+            <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Kunjungan Sales</span><span
+                    class="fa arrow"></span></a>
+            <ul class="nav nav-second-level collapse">
+                <li class=""><a href="{{  route('kunjungan.index') }}">List Kunjungan Sales</a></li>
+                <li class=""><a href="{{  route('kunjungan.tambah') }}">Tambah Daftar Kunjungan</a></li>
+            </ul>
+        </li>
+        <li>
             <a href="#"><i class="fa fa-list-alt"></i> <span class="nav-label">Penjualan Produk</span><span
                     class="fa arrow"></span></a>
             <ul class="nav nav-second-level collapse">
