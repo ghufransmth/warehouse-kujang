@@ -239,4 +239,13 @@ class TokoController extends Controller
         }
         return json_encode($json_data);
     }
+
+    public function getToko(Request $request){
+      $query = Toko::select('id', 'name');
+      $query->orWhere('name', 'LIKE' , "%{$request->search}%");
+      $query->limit(10);
+      $result = $query->get();
+
+      return json_encode($result);
+  }
 }

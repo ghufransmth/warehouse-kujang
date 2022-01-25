@@ -20,7 +20,6 @@ use App\Http\Controllers\JenisBayarController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\StokAdjController;
 use App\Http\Controllers\ExpedisiController;
-use App\Http\Controllers\FeeSalesController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\ProvinsiController;
 use App\Http\Controllers\PurchaseController;
@@ -60,6 +59,7 @@ use App\Http\Controllers\PenjualanImportController;
 use App\Http\Controllers\ProdukImportController;
 use App\Http\Controllers\ReportBarangKeluarController;
 use App\Http\Controllers\TokoController;
+use App\Http\Controllers\KunjunganSalesController;
 use App\Http\Controllers\ReportRekapInvoiceController;
 use App\Http\Controllers\ReturController;
 
@@ -141,6 +141,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('manage/sales', [SalesController::class, 'index'])->name('sales.index');
     Route::post('manage/sales/getdata', [SalesController::class, 'getData'])->name('sales.getdata');
     Route::get('manage/sales/tambah', [SalesController::class, 'tambah'])->name('sales.tambah');
+    Route::get('manage/sales/getsales', [SalesController::class, 'getSales'])->name('sales.getSales');
     Route::get('manage/sales/detail/{id}', [SalesController::class, 'detail'])->name('sales.detail');
     Route::get('manage/sales/ubah/{id}', [SalesController::class, 'ubah'])->name('sales.ubah');
     Route::delete('manage/sales/hapus/{id?}', [SalesController::class, 'hapus'])->name('sales.hapus');
@@ -245,14 +246,6 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('manage/stokopname/getproduk', [StokOpnameController::class, 'getProduk'])->name('stokopname.getproduct');
     Route::post('manage/stokopname/tambahproduk', [StokOpnameController::class, 'tambahProduk'])->name('stokopname.tambahproduk');
     Route::post('manage/stokopname/tambahprodukbarcode', [StokOpnameController::class, 'tambahProdukBarcode'])->name('stokopname.tambahprodukbarcode');
-
-    //FEE SALES
-    Route::get('manage/feesales', [FeeSalesController::class, 'index'])->name('feesales.index');
-    Route::post('manage/feesales/getdata', [FeeSalesController::class, 'getData'])->name('feesales.getdata');
-    Route::get('manage/feesales/detail/{id}', [FeeSalesController::class, 'detail'])->name('feesales.detail');
-    Route::post('manage/feesales/detailgetdata', [FeeSalesController::class, 'getDataDetail'])->name('feesales.detailgetdata');
-
-
 
     //REPORT
     //REPORT SO
@@ -659,11 +652,22 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
                 Route::post('/getdata', [ReportTransaksiController::class, 'getData'])->name('getdata');
             });
         });
+
+        Route::group(['prefix' => 'kunjungan', 'as' => 'kunjungan.'], function(){
+            Route::get('/',[KunjunganSalesController::class, 'index'])->name('index');
+            Route::post('/list_data',[KunjunganSalesController::class, 'list_data'])->name('list_data');
+            Route::post('/getdata',[KunjunganSalesController::class, 'getData'])->name('getdata');
+            Route::post('/simpan',[KunjunganSalesController::class, 'simpan'])->name('simpan');
+            Route::get('/tambah', [KunjunganSalesController::class, 'tambah'])->name('tambah');
+            Route::get('/edit/{id}', [KunjunganSalesController::class, 'ubah'])->name('edit');
+            Route::delete('/delete/{id?}',[KunjunganSalesController::class,'hapus'])->name('delete');
+        });
     });
 
       // Toko
     Route::group(['prefix' => 'toko', 'as' => 'toko.'], function(){
        Route::get('/',[TokoController::class, 'index'])->name('index');
+       Route::get('/gettoko',[TokoController::class, 'getToko'])->name('gettoko');
        Route::post('/getdata',[TokoController::class, 'getData'])->name('getdata');
        Route::post('/simpan',[TokoController::class, 'simpan'])->name('simpan');
        Route::get('/tambah', [TokoController::class, 'tambah'])->name('tambah');
