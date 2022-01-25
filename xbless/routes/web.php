@@ -61,8 +61,7 @@ use App\Http\Controllers\ReportBarangKeluarController;
 use App\Http\Controllers\TokoController;
 use App\Http\Controllers\KunjunganSalesController;
 use App\Http\Controllers\ReportRekapInvoiceController;
-
-
+use App\Http\Controllers\ReturController;
 
 /*
 |--------------------------------------------------------------------------
@@ -555,6 +554,15 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::delete('/hapus/{id?}', [PurchaseController::class, 'delete'])->name('delete');
         });
 
+        //RETUR
+        Route::group(['prefix' => 'retur', 'as' => 'retur.'], function () {
+            Route::get('/', [ReturController::class, 'index'])->name('index');
+            Route::get('/form_retur', [ReturController::class, 'index_retur'])->name('index_retur');
+            Route::post('/getData', [ReturController::class, 'getdata'])->name('getdata');
+            Route::post('/getDataRetur', [ReturController::class, 'getdata_retur'])->name('getdata_retur');
+            Route::get('/penjualan', [ReturController::class, 'retur_penjualan'])->name('returpenjualan');
+            Route::get('/list_transaksi',[ReturController::class, 'list_transaksi'])->name('list_transaksi');
+        });
         // REQUEST PURCHASE ORDER
         Route::group(['prefix' => 'requestpurchaseorder', 'as' => 'requestpurchaseorder.'], function () {
             Route::get('/', [RequestPurchaseController::class, 'index'])->name('index');

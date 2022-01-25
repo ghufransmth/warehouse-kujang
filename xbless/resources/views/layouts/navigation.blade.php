@@ -115,13 +115,13 @@
             <a href="#"><i class="fa fa-exchange"></i> <span class="nav-label">Retur Produk</span><span
                     class="fa arrow"></span></a>
             <ul class="nav nav-second-level collapse">
-                <li><a href="{{ route('purchaseorder.index') }}">List Retur Produk</a></li>
+                <li><a href="{{ route('retur.index') }}">List Retur Produk</a></li>
                 @can('purchaseorder.tambah')
-                <li class=""><a href="{{ route('purchaseorder.tambah') }}">Retur Pembelian Produk</a></li>
+                <li class=""><a href="{{ route('retur.index_retur') }}">Form Retur Produk</a></li>
                 @endcan
-                @can('purchaseorder.tambah')
-                <li class=""><a href="{{ route('purchaseorder.import') }}">Retur Penjualan Produk</a></li>
-                @endcan
+                {{-- @can('purchaseorder.tambah')
+                <li class=""><a href="{{ route('purchaseorder.import') }}">Retur Pembelian Produk</a></li>
+                @endcan --}}
             </ul>
         </li>
         <li>
