@@ -175,7 +175,6 @@ class PurchaseController extends Controller
             $selectedstatuslunas = $penjualan->status_lunas;
 
             return view('backend/purchase/form',compact('enc_id','tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia', 'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko', 'selectedtoko', 'selectedstatuslunas', 'penjualan', 'detail_penjualan'));
-            return $detail_penjualan;
         }else{
             // return response()->json([
             //     'success' => false,

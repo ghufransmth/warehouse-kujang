@@ -9,4 +9,11 @@ class Pembelian extends Model
 {
     use HasFactory;
     protected $table = 'pembelian';
+
+    public function getdetailpembelian(){
+        return $this->hasMany(PembelianDetail::class, 'pembelian_id', 'id');
+    }
+    public function gettransaksi(){
+        return $this->hasOne(TransaksiStock::class, 'no_transaksi', 'no_faktur');
+    }
 }
