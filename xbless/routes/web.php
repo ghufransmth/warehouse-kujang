@@ -142,6 +142,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('manage/sales', [SalesController::class, 'index'])->name('sales.index');
     Route::post('manage/sales/getdata', [SalesController::class, 'getData'])->name('sales.getdata');
     Route::get('manage/sales/tambah', [SalesController::class, 'tambah'])->name('sales.tambah');
+    Route::get('manage/sales/getsales', [SalesController::class, 'getSales'])->name('sales.getSales');
     Route::get('manage/sales/detail/{id}', [SalesController::class, 'detail'])->name('sales.detail');
     Route::get('manage/sales/ubah/{id}', [SalesController::class, 'ubah'])->name('sales.ubah');
     Route::delete('manage/sales/hapus/{id?}', [SalesController::class, 'hapus'])->name('sales.hapus');
@@ -646,6 +647,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
 
         Route::group(['prefix' => 'kunjungan', 'as' => 'kunjungan.'], function(){
             Route::get('/',[KunjunganSalesController::class, 'index'])->name('index');
+            Route::post('/list_data',[KunjunganSalesController::class, 'list_data'])->name('list_data');
             Route::post('/getdata',[KunjunganSalesController::class, 'getData'])->name('getdata');
             Route::post('/simpan',[KunjunganSalesController::class, 'simpan'])->name('simpan');
             Route::get('/tambah', [KunjunganSalesController::class, 'tambah'])->name('tambah');
@@ -657,6 +659,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
       // Toko
     Route::group(['prefix' => 'toko', 'as' => 'toko.'], function(){
        Route::get('/',[TokoController::class, 'index'])->name('index');
+       Route::get('/gettoko',[TokoController::class, 'getToko'])->name('gettoko');
        Route::post('/getdata',[TokoController::class, 'getData'])->name('getdata');
        Route::post('/simpan',[TokoController::class, 'simpan'])->name('simpan');
        Route::get('/tambah', [TokoController::class, 'tambah'])->name('tambah');

@@ -26,7 +26,6 @@
         <div class="col-lg-12">
             <div class="ibox">
                 <div class="ibox-content">
-
                     <div class="table-responsive">
                         <table id="table1" class="table p-0 table-hover table-striped" style="overflow-x: auto;">
                             <thead>
@@ -82,7 +81,7 @@
            "stateSave"  : true,
            "dom": '<"html5">lftip',
            "ajax":{
-                    "url": "{{ route("sales.getdata") }}",
+                    "url": "{{ route("kunjungan.getdata") }}",
                     "dataType": "json",
                     "type": "POST",
                     data: function ( d ) {
@@ -97,11 +96,11 @@
                  "orderable" : false,
                },
 
-               { "data": "name"},
-               { "data": "username"},
-               { "data": "email" },
-               { "data": "phone" },
-               { "data": "tgl" },
+               { "data": "sales"},
+               { "data": "hari"},
+               { "data": "skala" },
+               { "data": "toko" },
+               { "data": "faktur_piutang" },
                { "data" : "action",
                  "orderable" : false,
                  "className" : "text-center",
@@ -173,68 +172,18 @@
              });
               $.ajax({
                type: 'DELETE',
-               url: '{{route("sales.hapus",[null])}}/' + enc_id,
+               url: '{{route("kunjungan.delete",[null])}}/' + enc_id,
                headers: {'X-CSRF-TOKEN': token},
-               success: function(data){
-                 if (data.status=='success') {
-                     Swal.fire('Yes',data.message,'success');
+               success: function(response){
+                 if (response.code==202) {
+                     Swal.fire('Yes',response.data.message,'success');
                      table.ajax.reload(null, true);
                   }else{
-                    Swal.fire('Ups',data.message,'info');
+                    Swal.fire('Ups',response.data.message,'info');
                   }
                },
-               error: function(data){
-                 console.log(data);
-                 Swal.fire("Ups!", "Terjadi kesalahan pada sistem.", "error");
-               }
-             });
-
-
-           } else {
-
-           }
-          });
-           @endcannot
-       }
-       function resetApp(e,key){
-           var data = table.row(key).data();
-           @cannot('sales.resetapp')
-               Swal.fire('Ups!', "Anda tidak memiliki HAK AKSES! Hubungi ADMIN Anda.",'error'); return false;
-           @else
-           var token = '{{ csrf_token() }}';
-           Swal.fire({
-             title: "Apakah Anda yakin",
-             text: "Mereset Akun APP "+data.name+" ?",
-             icon: 'warning',
-             showCancelButton: true,
-             confirmButtonClass: "btn-danger",
-             confirmButtonText: "Ya",
-             cancelButtonText:"Batal",
-             confirmButtonColor: "#ec6c62",
-             closeOnConfirm: false
-           }).then(function(result) {
-           if (result.value) {
-             $.ajaxSetup({
-               headers: { "X-CSRF-Token" : $("meta[name=csrf-token]").attr("content") }
-             });
-              $.ajax({
-               type: 'POST',
-               url: '{{route("sales.resetapp")}}',
-               headers: {'X-CSRF-TOKEN': token},
-               data: {
-                    enc_id: data.enc_id
-                },
-               dataType: "json",
-               success: function(data){
-                 if (data.status=='success') {
-                     Swal.fire('Yes',data.message,'success');
-                     table.ajax.reload(null, true);
-                  }else{
-                    Swal.fire('Ups',data.message,'info');
-                  }
-               },
-               error: function(data){
-                 console.log(data);
+               error: function(response){
+                //  console.log(response);
                  Swal.fire("Ups!", "Terjadi kesalahan pada sistem.", "error");
                }
              });
