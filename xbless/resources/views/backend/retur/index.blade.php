@@ -10,13 +10,13 @@
 </style>
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Penjualan</h2>
+        <h2>Retur Produk</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item active">
-                <a>Penjualan</a>
+                <a>Retur Produk</a>
             </li>
         </ol>
     </div>
@@ -38,13 +38,12 @@
                 <div class="ibox-content">
                     <form id="submitData" name="submitData">
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Toko : </label>
+                            <label class="col-sm-2 col-form-label">Jenis Transaksi : </label>
                             <div class="col-sm-4 error-text">
-                                <select class="form-control select2" id="toko" name="toko">
-                                    <option value="">Semua Toko</option>
-                                    @foreach($toko as $key => $tko)
-                                    <option value="{{ $tko->id }}">{{ $tko->name }}</option>
-                                    @endforeach
+                                <select class="form-control" id="jenis_transaksi" name="jenis_transaksi">
+                                    <option value="">Semua Transaksi</option>
+                                    <option value="3">Penjualan</option>
+                                    <option value="4">Pembelian</option>
                                     {{-- @foreach($perusahaan as $key => $row)
                                     <option value="{{$row->id}}"
                                     {{ $selectedperusahaan == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}
@@ -52,14 +51,13 @@
                                     @endforeach --}}
                                 </select>
                             </div>
-                            <label class="col-sm-2 col-form-label">Sales : </label>
+                            <label class="col-sm-2 col-form-label">No. Faktur : </label>
                             <div class="col-sm-4 error-text">
-                                <select class="form-control select2" id="sales" name="sales">
-                                    <option value="">Semua Sales</option>
-                                    @foreach($sales as $key => $sles)
+                                <select class="form-control" id="no_faktur" name="no_faktur">
+                                    <option value="">No Faktur</option>
+                                    {{-- @foreach($sales as $key => $sles)
                                     <option value="{{ $sles->id }}">{{ $sles->nama }}</option>
-
-                                    @endforeach
+                                    @endforeach --}}
                                     {{-- @foreach($member as $key => $row)
                                     <option value="{{$row->id}}" {{ $selectedmember == $row->id ? 'selected=""' : '' }}
                                     >{{ucfirst($row->name)}}-{{ucfirst($row->city)}}</option>
@@ -82,21 +80,21 @@
                         <li class="nav-item">
                             <a class="nav-link {{session('type')==0?'active':(session('type')==""?'active':'')}}"
                                 id="listpo-tab" value="0" onclick="change_type(0)" data-toggle="tab" href="#listpo"
-                                role="tab" aria-controls="listpo" aria-selected="true">LIST PENJUALAN</a>
+                                role="tab" aria-controls="listpo" aria-selected="true">LIST RETUR PRODUK</a>
                         </li>
                         @endif
                         @can('purchaseorder.liststatuspolisttolak')
                         <li class="nav-item">
                             <a class="nav-link {{session('type')==1?'active':''}}" id="listpotolak-tab" value="1"
                                 onclick="change_type(1)" data-toggle="tab" href="#listpotolak" role="tab"
-                                aria-controls="listpotolak" aria-selected="false">LIST PENJUALAN BELUM LUNAS</a>
+                                aria-controls="listpotolak" aria-selected="false">LIST RETUR PENJUALAN</a>
                         </li>
                         @endcan
                         @can('purchaseorder.liststatusinvoiceawal')
                         <li class="nav-item">
                             <a class="nav-link {{session('type')==2?'active':''}}" id="listpovalidasi-tab" value="1"
                                 onclick="change_type(2)" data-toggle="tab" href="#listpovalidasi" role="tab"
-                                aria-controls="listpovalidasi" aria-selected="false">LIST PENJUALAN LUNAS</a>
+                                aria-controls="listpovalidasi" aria-selected="false">LIST RETUR PEMBELIAN</a>
                         </li>
                         @endcan
                         {{-- @can('purchaseorder.liststatusgudang')
@@ -182,7 +180,7 @@
                 "responsive": true,
                 "dom": '<"html5">lftip',
                 "ajax":{
-                            "url": "{{ route("purchaseorder.getdata") }}",
+                            "url": "{{ route("retur.getdata") }}",
                             "dataType": "json",
                             "type": "POST",
                                 data: function ( d ) {
@@ -260,6 +258,33 @@
 
 </script>
 <script>
+    $(document).ready(function(){
+        $('#no_faktur').select2({allowClear: false,
+        ajax: {
+                url: '{{ route("retur.list_transaksi") }}',
+                dataType: 'JSON',
+                delay: 250,
+                data: function(params) {
+                    return {
+                    jenis_transaksi: $('#jenis_transaksi').val(),
+                    search: params.term
+                    }
+                },
+                processResults: function (data) {
+                var results = [];
+                $.each(data, function(index, item){
+                    results.push({
+                        id: item.id,
+                        text : item.no_transaksi,
+                    });
+                });
+                return{
+                    results: results
+                };
+            }
+        }
+    });
+    });
     function change_type(type){
         $('#type').val(type);
         table.ajax.reload(null, false);

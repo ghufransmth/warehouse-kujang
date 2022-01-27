@@ -323,4 +323,13 @@ class SalesController extends Controller
             return response()->json(['status'=>"failed",'message'=>'Gagal Mereset APP. Silahkan ulangi kembali.']);
         }
     }
+
+    public function getSales(Request $request){
+        $query = Sales::select('id', 'nama');
+        $query->orWhere('nama', 'LIKE' , "%{$request->search}%");
+        $query->limit(10);
+        $result = $query->get();
+
+        return json_encode($result);
+    }
 }
