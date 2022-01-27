@@ -38,7 +38,7 @@
                 <div class="ibox-content">
                     <form id="submitData">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="enc_id" id="enc_id" value="{{isset($pembelian)? $enc_id : ''}}">
+                        <input type="hidden" name="enc_id" id="enc_id" value="{{isset($data)? $enc_id : ''}}">
 
                         <div class="form-group row">
                             <label for="" class="col-sm-2 col-form-label">No Faktur *</label>
@@ -81,7 +81,7 @@
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Keterangan *</label>
                             <div class="col-sm-4 error-text">
-                                <textarea type="text" class="form-control" id="ket" name="ket"></textarea>
+                                <textarea type="text" class="form-control" id="ket" name="ket">{{ isset($pembelian)? $pembelian->keterangan: '' }}</textarea>
                             </div>
 
                             {{-- <div class="form-group row"> --}}
@@ -122,7 +122,7 @@
                                             <select name="produk[]" id="product_1" class="select2_produk_1"
                                                 onchange="hitung(this.options[this.selectedIndex].value,1)"
                                                 width="100%">
-                                                <option value="0">Pilih Produk</option>
+                                                <option value="">Pilih Produk</option>
                                             </select>
                                         </td>
                                         <td>

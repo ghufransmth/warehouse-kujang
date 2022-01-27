@@ -157,6 +157,10 @@
         </li>
         {{-- @endcan --}}
 
+        <li>
+            <a href="{{ route('retur_pembelian.index') }}"><i class="fa fa-cart-plus"></i><span class="nav-label">Retur Pembelian</span><span class="fa arrow"></span></a>
+        </li>
+
         {{-- @can('menuorder.index')
             <li>
                 <a href="#"><i class="fa fa-cart-plus"></i> <span class="nav-label">Pembelian Produk</span><span class="fa arrow"></span></a>
@@ -208,6 +212,9 @@
                 @can('reportpenjualan.index')
                 <li><a href="{{route('reportpenjualan.index')}}">Report Penjualan</a></li>
                 @endcan
+                {{-- @can('reportpembelian.index') --}}
+                <li><a href="{{route('reportpembelian.index')}}">Report Pembelian</a></li>
+                {{-- @endcan --}}
                 @can('reportstok.index')
                 <li><a href="{{route('reportstok.index')}}">Report Stok</a></li>
                 @endcan

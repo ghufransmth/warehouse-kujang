@@ -380,10 +380,13 @@ class PembelianController extends Controller
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         if($dec_id){
             // $pembelian = Pembelian::find($dec_id);
-            $pembelian = Pembelian::select('pembelian.no_faktur','pembelian.nominal','pembelian.keterangan','pembelian.tgl_faktur','pembelian.tgl_jatuh_tempo')->get();
-            return response()->json($pembelian);
+            // $pembelian = Pembelian::select('pembelian.no_faktur','pembelian.nominal','pembelian.keterangan','pembelian.tgl_faktur','pembelian.tgl_jatuh_tempo')->where('id',$dec_id);
+            $pembelian = Pembelian::select('*')->where('id',$dec_id)->first();
 
-            return view('backend/pembelian/form',compact('enc_id','pembelian'));
+            // return response()->json($pembelian->getDetailPembelian[0]->getProduct);
+            $data = $pembelian->getDetailPembelian[0]->getProduct;
+            // return response()->json($data);
+            return view('backend/pembelian/form',compact('enc_id','pembelian','data'));
         }else{
             return view('errors/noaccess');
         }
