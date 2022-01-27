@@ -952,9 +952,12 @@ class PurchaseController extends Controller
             return date('dmy').$salescode.$next_no;
     }
     public function simpan(Request $req){
-        // return $req->all();
+
         $enc_id                 = $req->enc_id;
-        $dec_id                 = $this->safe_decode(Crypt::decryptString($enc_id));
+        if(isset($enc_id)){
+            $dec_id                 = $this->safe_decode(Crypt::decryptString($enc_id));
+
+        }
         $no_transaksi           = $req->no_transaksi;
         $array_harga_product    = $req->harga_product;
         $array_product          = $req->produk;
@@ -970,6 +973,7 @@ class PurchaseController extends Controller
         $total_product          = $req->total_produk;
         $total_harga_penjualan  = $req->total_harga_penjualan;
         //VALIDASI
+        // return $req->all();
             if($no_transaksi == null){
                 return response()->json([
                     'success' => FALSE,
@@ -1005,6 +1009,7 @@ class PurchaseController extends Controller
 
         //END VALIDASI
         if($enc_id != null || isset($enc_id)){
+
             // return $dec_id;
             $penjualan = Penjualan::find($dec_id);
             $detail_penjualan = DetailPenjualan::where('id_penjualan', $penjualan->id)->where('no_faktur', $penjualan->no_faktur);
@@ -1085,6 +1090,7 @@ class PurchaseController extends Controller
             }
             // return $detail_penjualan;
         }else{
+
             if($total_product > 0){
                 $penjualan = new Penjualan;
                 $penjualan->no_faktur   = $no_transaksi;

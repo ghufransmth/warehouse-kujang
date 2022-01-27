@@ -64,6 +64,7 @@ use App\Http\Controllers\KunjunganSalesController;
 use App\Http\Controllers\ReportRekapInvoiceController;
 use App\Http\Controllers\ReturPembelianController;
 use App\Http\Controllers\ReturController;
+use App\Http\Controllers\ReturPenjualanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -568,6 +569,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/getDataRetur', [ReturController::class, 'getdata_retur'])->name('getdata_retur');
             Route::get('/penjualan', [ReturController::class, 'retur_penjualan'])->name('returpenjualan');
             Route::get('/list_transaksi',[ReturController::class, 'list_transaksi'])->name('list_transaksi');
+            Route::get('/penjualan/{nofaktur?}', [ReturPenjualanController::class, 'form_retur'])->name('retur_penjualan');
         });
         // REQUEST PURCHASE ORDER
         Route::group(['prefix' => 'requestpurchaseorder', 'as' => 'requestpurchaseorder.'], function () {

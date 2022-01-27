@@ -227,7 +227,7 @@ class ReturController extends Controller
         foreach($alldata as $key => $result){
             $results = [];
             // return $result['no_faktur'];
-                $aksi = '<a href="#" class="btn btn-success"><i class="fa fa-trash"></i> Retur</a> ';
+
                 $enc_id = $this->safe_encode(Crypt::encryptString($result['no_faktur']));
                 // $result->id             = $result->id;
                 $results['no']             = $key+$page;
@@ -236,6 +236,7 @@ class ReturController extends Controller
                 $results['total_harga'] = $result['total_harga'];
                 if($result['flag_transaksi'] == 3){
                     $results['jenis_transaksi'] = "Penjualan";
+                    $aksi = '<a href="'.route('retur.retur_penjualan', $result['no_faktur']).'" class="btn btn-success"><i class="fa fa-trash"></i> Retur</a> ';
                 }elseif($result['flag_transaksi'] == 4){
                     $results['jenis_transaksi'] = "Pembelian";
                 }
