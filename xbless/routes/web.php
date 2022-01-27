@@ -706,9 +706,9 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::post('/deleteimport', [ImportPembelianController::class, 'hapus'])->name('deleteimport');
      });
 
-     Route::group(['prefix' => 'retur_pembelian', 'as' => 'retur_pembelian.'],function(){
-        Route::get('/', [ReturPembelianController::class, 'index'])->name('index');
-        Route::post('/getdata', [ReturPembelianController::class, 'getData'])->name('getdata');
-        Route::get('/detail_retur/{id}', [ReturPembelianController::class, 'detail_retur'])->name('detail_retur');
-     });
+    //  Route::group(['prefix' => 'retur_pembelian', 'as' => 'retur_pembelian.'],function(){
+    //     Route::get('/', [ReturPembelianController::class, 'index'])->name('index');
+    //     Route::post('/getdata', [ReturPembelianController::class, 'getData'])->name('getdata');
+    //     Route::get('/detail_retur/{id}', [ReturPembelianController::class, 'detail_retur'])->name('detail_retur');
+    //  });
 });

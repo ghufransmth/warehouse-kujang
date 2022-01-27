@@ -165,9 +165,9 @@
         </li>
         {{-- @endcan --}}
 
-        <li>
+        {{-- <li>
             <a href="{{ route('retur_pembelian.index') }}"><i class="fa fa-cart-plus"></i><span class="nav-label">Retur Pembelian</span><span class="fa arrow"></span></a>
-        </li>
+        </li> --}}
 
         {{-- @can('menuorder.index')
             <li>
