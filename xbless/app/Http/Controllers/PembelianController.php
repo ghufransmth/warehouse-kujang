@@ -379,14 +379,15 @@ class PembelianController extends Controller
     public function ubah($enc_id){
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         $pembelian = Pembelian::find($dec_id);
-        if($pembelian){
+        if(isset($pembelian)){
             $pembelian_detail = PembelianDetail::where('pembelian_id',$pembelian->id)->where('notransaction',$pembelian->no_faktur)->with(['getproduct'])->get();
+            $selectedProduct = "";
 
-            // return response()->json($pembelian_detail);
             return view('backend/pembelian/form',compact('enc_id','pembelian','pembelian_detail'));
         }else{
             return view('errors/noaccess');
         }
+        return $pembelian;
     }
 
     public function hapus($enc_id){}

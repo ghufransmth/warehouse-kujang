@@ -18,10 +18,9 @@
     </div>
     <div class="col-lg-2">
         <br />
-        <a class="btn btn-white btn-sm" href="">Kembali</a>
+        <a class="btn btn-white btn-sm" href="pembelian.index">Kembali</a>
     </div>
 </div>
-
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
         <div class="col-lg-12">
@@ -38,7 +37,7 @@
                 <div class="ibox-content">
                     <form id="submitData">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="enc_id" id="enc_id" value="{{isset($data)? $enc_id : ''}}">
+                        <input type="hidden" name="enc_id" id="enc_id" value="{{isset($pembelian)? $enc_id : ''}}">
 
                         <div class="form-group row">
                             <label for="" class="col-sm-2 col-form-label">No Faktur *</label>
@@ -53,7 +52,7 @@
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" class="form-control jatuh_tempo" id="faktur_date"
                                         name="faktur_date" placeholder="dd-mm-yyyy"
-                                        value="{{isset($order)? $order->tgl_faktur : ''}}" autocomplete="off">
+                                        value="{{isset($pembelian)? $pembelian->tgl_faktur : ''}}" autocomplete="off">
                                 </div>
                             </div>
                         </div>
@@ -71,7 +70,7 @@
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" class="form-control jatuh_tempo" id="jatuh_tempo"
                                         name="jatuh_tempo" placeholder="dd-mm-yyyy" autocomplete="off"
-                                        value="{{isset($pembelian)? $pembelian->tgl_jatuh_tempo: ''}}">
+                                        value="{{isset($pembelian)? date('d-m-Y',strtotime($pembelian->tgl_jatuh_tempo)) : date('d-m-Y') }}">
                                 </div>
                             </div>
                             <input type="hidden" name="total_harga_pembelian" id="total_harga_pembelian" value="0">
@@ -90,7 +89,7 @@
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" class="form-control jatuh_tempo" id="tgl_transaksi"
-                                        name="tgl_transaksi" placeholder="dd-mm-yyyy" autocomplete="off">
+                                        name="tgl_transaksi" placeholder="dd-mm-yyyy" value="{{ isset($pembelian)? date('d-m-Y', strtotime($pembelian->tgl_transaksi)) : date('d-m-Y') }}" autocomplete="off">
                                 </div>
                             </div>
                         </div>
@@ -104,8 +103,7 @@
 
                         <div class="hr-line-dashed"></div>
                         <div class="table-responsive">
-                            <table class="table display table p-0 table-hover table-striped" style="overflow-x: auto;"
-                                id="example">
+                            <table class="table display table table-hover p-0 table-striped" style="overflow-x: auto;" id="example">
                                 <thead>
                                     <tr class="text-white text-center bg-primary">
                                         <th>Produk</th>
@@ -119,10 +117,10 @@
                                 <tbody id="detail_form">
                                     @if (isset($pembelian))
                                         <input type="hidden" name="totaldetail" value"{{ (count($pembelian_detail) > 0)? count($pembelian_detail) : '0' }}" id="jumlahdetail">
-                                        @foreach ($pembelian_detail as $key=> $item)
+                                         @foreach ($pembelian_detail as $key=> $item)
                                             <tr class="bg-white" id='product_{{ $key }}'>
                                                 <td>
-                                                    <select class="select2_produk_{{ $key }}" id="product_{{ $key }}" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%">
+                                                    <select class="select2_produk_1" id="product_{{ $key }}" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%" disabled>
                                                         <option value="{{ $item->getproduct->id }}">{{ $item->getproduct->nama }}</option>
                                                     </select>
                                                 </td>
@@ -130,7 +128,7 @@
                                                 <td>
                                                     <select name="tipesatuan[]"
                                                         onchange="satuan(this.options[this.selectedIndex].value,{{ $key }})"
-                                                        id="tipe_satuan_{{ $key }}" class="select2_satuan_{{ $key }}">
+                                                        id="tipe_satuan_{{ $key }}" class="select2_satuan_1">
                                                         <option value="1">PCS</option>
                                                     </select>
                                                 </td>
@@ -204,7 +202,7 @@
                                     <h3><b>Total Harga Pembelian<b></h3>
                                 </td>
                                 <td width="1%"></td>
-                                <td class="text-center" width="13%" id="harga_pembelian"><b></b></td>
+                                <td class="text-center" width="13%" id="harga_pembelian"><b> {{ isset($pembelian)? $pembelian->nominal : '' }}</b></td>
                                 <td width="5%"></td>
                             </tr>
                         </table>

@@ -713,5 +713,6 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::post('/getdata', [ReturPembelianController::class, 'getData'])->name('getdata');
         Route::get('/form-retur/{nofaktur?}', [ReturPembelianController::class, 'tambah'])->name('form-retur');
         Route::get('/detail_retur/{id}', [ReturPembelianController::class, 'detail_retur'])->name('detail_retur');
+        Route::post('/simpan', [ReturPembelianController::class, 'simpan'])->name('simpan');
      });
 });

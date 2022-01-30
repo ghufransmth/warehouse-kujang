@@ -114,6 +114,9 @@
                                     </tr>
                                 </thead>
                                 <tbody id="detail_form">
+                                    @if (isset($pembelian))
+                                    <input type="hidden" name="totaldetail" value"{{ (count($detail_pembelian) > 0)? count($detail_pembelian) : '0' }}" id="jumlahdetail">
+                                    @foreach ($detail_pembelian as $key=> $item)
                                     <tr>
                                         <td>
                                             <select name="produk[]" id="product_1" class="select2_produk_1"
@@ -147,6 +150,8 @@
                                                     class='fa fa-trash'></i></a>
                                         </td>
                                     </tr>
+                                    @endforeach
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -173,7 +178,7 @@
                         <div class="form-group row">
                             <div class="col-sm-6 col-sm-offset-2">
                                 <a class="btn btn-white btn-sm" href="{{route('pembelian.index')}}">Batal</a>
-                                <button class="btn btn-primary btn-sm" type="button" id="simpan">Selesai</button>
+                                <button class="btn btn-primary btn-sm" type="button" id="simpan">Simpan</button>
                             </div>
                             @can('draftpurchaseorder.tambah')
                             <div class="col-sm-6 text-right">
@@ -258,7 +263,7 @@ $("#simpan").on('click',function(){
                 });
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('pembelian.simpan') }}",
+                    url: "{{ route('retur_pembelian.simpan') }}",
                     headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                     data: dataFile,
                     processData: false,
@@ -271,9 +276,9 @@ $("#simpan").on('click',function(){
                     if(data.success){
                         Swal.fire('Yes',data.message,'info');
                         if(data.draft=='0'){
-                            window.location.replace('{{ route("pembelian.index") }}');
+                            window.location.replace('{{ route("retur.index_retur") }}');
                         }else{
-                            window.location.replace('{{ route("pembelian.tambah") }}');
+                            window.location.replace('{{ route("retur_pembelian.form-retur") }}');
                         }
                     }else{
                         Swal.fire('Ups',data.message,'info');

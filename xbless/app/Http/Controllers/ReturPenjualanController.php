@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 class ReturPenjualanController extends Controller
 {
     public function form_retur($no_faktur){
+        // return $no_faktur;
         $member = array();
         $selectedmember ="";
         $sales = Sales::all();

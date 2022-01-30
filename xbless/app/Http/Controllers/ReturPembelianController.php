@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pembelian;
+use App\Models\PembelianDetail;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -106,10 +107,26 @@ class ReturPembelianController extends Controller
         return $retur;
     }
 
-    public function tambah($no_faktur){
-        $selectedProduct = "";
-        $product = Product::all();
+    // public function tambah($enc_id){
 
-        return view('backend/returpembelian/form',compact('selectedProduct'));
+    //     $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+
+    //     $selectedProduct = "";
+    //     $product = Product::all();
+    //     $pembelian = Pembelian::find($enc_id);
+
+    //     return view('backend/returpembelian/form',compact('selectedProduct','product','pembelian','detail_pembelian'));
+    // }
+
+    public function tambah($no_faktur){
+
+        $pembelian = Pembelian::where('no_faktur',$no_faktur)->get();
+
+        return view('backend/returpembelian/form',compact('pembelian',''));
+    }
+
+    public function simpan(Request $req)
+    {
+        return $req->all();
     }
 }
