@@ -239,6 +239,7 @@ class ReturController extends Controller
                     $aksi = '<a href="'.route('retur.retur_penjualan', $result['no_faktur']).'" class="btn btn-success"><i class="fa fa-trash"></i> Retur</a> ';
                 }elseif($result['flag_transaksi'] == 4){
                     $results['jenis_transaksi'] = "Pembelian";
+                    $aksi = '<a href="'.route('retur_pembelian.form-retur', $result['no_faktur']).'" class="btn btn-success"><i class="fa fa-trash"></i> Retur</a> ';
                 }
 
                 $results['aksi'] = $aksi;

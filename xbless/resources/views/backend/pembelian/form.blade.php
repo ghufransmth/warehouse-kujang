@@ -3,7 +3,7 @@
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>{{ isset($pembelian) ? 'Edit' : 'Tambah' }}Pembelian Produk</h2>
+        <h2>{{ isset($pembelian) ? 'Edit' : 'Tambah' }} Pembelian Produk</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
@@ -117,39 +117,82 @@
                                     </tr>
                                 </thead>
                                 <tbody id="detail_form">
-                                    <tr>
-                                        <td>
-                                            <select name="produk[]" id="product_1" class="select2_produk_1"
-                                                onchange="hitung(this.options[this.selectedIndex].value,1)"
-                                                width="100%">
-                                                <option value="">Pilih Produk</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <select name="tipesatuan[]"
-                                                onchange="satuan(this.options[this.selectedIndex].value,1)"
-                                                id="tipe_satuan_1" class="select2_satuan_1">
-                                                <option value="null">Pilih Tipe Satuan</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control" name="harga_product[]"
-                                                id="harga_product_1">
-                                        </td>
-                                        <td width="15%">
-                                            <input type="text" class="form-control touchspin" id="qty_1" name="qty[]"
-                                                value="1" onkeyup="hitung_qty(1)" onchange="hitung_qty(1)">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control total_harga" id="total_1"
-                                                name="total[]" readonly>
-                                        </td>
-                                        <td>
-                                            <a class="text-white btn btn-danger btn-hemisperich btn-xs"
-                                                data-original-title='Hapus Data' id='deleteModal'><i
-                                                    class='fa fa-trash'></i></a>
-                                        </td>
-                                    </tr>
+                                    @if (isset($pembelian))
+                                        <input type="hidden" name="totaldetail" value"{{ (count($pembelian_detail) > 0)? count($pembelian_detail) : '0' }}" id="jumlahdetail">
+                                        @foreach ($pembelian_detail as $key=> $item)
+                                            <tr class="bg-white" id='product_{{ $key }}'>
+                                                <td>
+                                                    <select class="select2_produk_{{ $key }}" id="product_{{ $key }}" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%">
+                                                        <option value="{{ $item->getproduct->id }}">{{ $item->getproduct->nama }}</option>
+                                                    </select>
+                                                </td>
+
+                                                <td>
+                                                    <select name="tipesatuan[]"
+                                                        onchange="satuan(this.options[this.selectedIndex].value,{{ $key }})"
+                                                        id="tipe_satuan_{{ $key }}" class="select2_satuan_{{ $key }}">
+                                                        <option value="1">PCS</option>
+                                                    </select>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="harga_product[]"
+                                                        id="harga_product_{{ $key }}" value="{{ $item->product_price }}" readonly>
+                                                </td>
+
+                                                <td width="15%">
+                                                    <input type="text" class="form-control touchspin" id="qty_{{ $key }}" name="qty[]" value="{{ $item->qty }}" onkeyup="hitung_qty({{ $key }})" onchange="hitung_qty({{ $key }})">
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control total_harga" id="total_{{ $key }}"
+                                                        name="total[]" value="{{ $item->total }}" readonly>
+                                                </td>
+
+                                                <td>
+                                                    <a class="text-white btn btn-danger btn-hemisperich btn-xs"
+                                                        data-original-title='Hapus Data' id='deleteModal'><i
+                                                            class='fa fa-trash'></i></a>
+                                                </td>
+
+                                            </tr>
+                                        @endforeach
+                                        @else
+                                        <tr>
+                                            <td>
+                                                <select name="produk[]" id="product_1" class="select2_produk_1"
+                                                    onchange="hitung(this.options[this.selectedIndex].value,1)"
+                                                    width="100%">
+                                                    <option value="">Pilih Produk</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select name="tipesatuan[]"
+                                                    onchange="satuan(this.options[this.selectedIndex].value,1)"
+                                                    id="tipe_satuan_1" class="select2_satuan_1">
+                                                    <option value="null">Pilih Tipe Satuan</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control" name="harga_product[]"
+                                                    id="harga_product_1">
+                                            </td>
+                                            <td width="15%">
+                                                <input type="text" class="form-control touchspin" id="qty_1" name="qty[]"
+                                                    value="1" onkeyup="hitung_qty(1)" onchange="hitung_qty(1)">
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control total_harga" id="total_1"
+                                                    name="total[]" readonly>
+                                            </td>
+                                            <td>
+                                                <a class="text-white btn btn-danger btn-hemisperich btn-xs"
+                                                    data-original-title='Hapus Data' id='deleteModal'><i
+                                                        class='fa fa-trash'></i></a>
+                                            </td>
+                                        </tr>
+                                    @endif
+
                                 </tbody>
                             </table>
                         </div>

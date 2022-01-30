@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pembelian;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 
@@ -103,5 +104,12 @@ class ReturPembelianController extends Controller
             ]);
         }
         return $retur;
+    }
+
+    public function tambah($no_faktur){
+        $selectedProduct = "";
+        $product = Product::all();
+
+        return view('backend/returpembelian/form',compact('selectedProduct'));
     }
 }
