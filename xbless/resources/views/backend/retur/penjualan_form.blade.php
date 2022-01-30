@@ -151,7 +151,7 @@
                             <tr class="bg-white" id='dataajaxproduk_{{ $key }}'>
                                 <td>
                                     <select class="select2_produk_{{ $key }}" id="product_{{ $key }}" name="produk[]"
-                                        onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%">
+                                        onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%" disabled>
                                         <option value="{{ $detail->getproduct->id }}">{{ $detail->getproduct->nama }}</option>
 
                                     </select>
@@ -166,7 +166,7 @@
                                 </td>
                                 <td>
                                     <select class="select2_satuan_{{ $key }}" id="tipe_satuan_{{ $key }}" name="tipesatuan[]"
-                                        onchange="satuan(this.options[this.selectedIndex].value, {{ $key }})">
+                                        onchange="satuan(this.options[this.selectedIndex].value, {{ $key }})" disabled>
                                         <option value="1">PCS </option>
                                     </select>
                                 </td>
