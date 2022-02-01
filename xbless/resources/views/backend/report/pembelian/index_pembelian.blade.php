@@ -66,27 +66,27 @@
                              </div>
                         </div>
                         <div class="hr-line-dashed"></div>
-                        <div class="form-group row">
-                            {{-- @can('reportpenjualan.excel') --}}
+                        {{-- <div class="form-group row">
+                            @can('reportpenjualan.excel')
                             <div class="col-xs-3">
                             &nbsp;&nbsp;&nbsp;<button class="btn btn-primary" type="button" id="ExportExcel"><span class="fa fa-file-excel-o"></span> Export Excel </button>&nbsp;
                             </div>
-                            {{-- @endcan --}}
-                            {{-- @can('reportpenjualan.print') --}}
+                            @endcan
+                            @can('reportpenjualan.print')
                             <div class="col-xs-3">
                                 <button class="btn btn-secondary" type="button" id="Print"><span class="fa fa-print"></span> Print</button>&nbsp;
                             </div>
-                            {{-- @endcan --}}
-                            {{-- @can('reportpenjualan.pdf') --}}
+                            @endcan
+                            @can('reportpenjualan.pdf')
                             <div class="col-xs-3">
                                 <button class="btn btn-danger" type="button" id="ExportPdf"><span class="fa fa-file-pdf-o"></span> Export PDF</button>&nbsp;
                             </div>
-                            {{-- @endcan --}}
-                        </div>
+                            @endcan
+                        </div> --}}
                 </form>
                 <div class="hr-line-dashed"></div>
                 <div class="table-responsive">
-                    <table id="table1" class="table display table-bordered">
+                    <table id="example" class="table display table-bordered">
                         <thead>
                             <tr>
                                 <th width="5%">No</th>
@@ -98,12 +98,7 @@
                         <tbody>
 
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="5"></td>
-                                <ul class="pagination float-right"></ul>
-                            </tr>
-                        </tfoot>
+
                     </table>
                     <div>
 
@@ -115,17 +110,18 @@
 </div>
 @endsection
 @push('scripts')
-<script type="text/javascript">
+<script>
     var table,tabledata,table_index,tableproduct;
     $(document).ready(function(){
             $.ajaxSetup({
                 headers:{ "X-CSRF-Token": $("meta[name=csrf-token]").attr("content") }
             });
-            table=$('#table1').DataTable({
-                "processing": true,
-                "serverSide": true,
-                "pageLength": -1,
-                "select" : true,
+            table = $('#example').DataTable({
+                processing: true,
+                serverSide: true,
+                pageLength: 25,
+                ordering: true,
+                select: true,
                 // "bFilter":false,
                 "ajax":{
                     "url": "{{ route("reportpembelian.getdata") }}",
@@ -133,13 +129,26 @@
                     "type": "POST",
                     data: function( d ){
                         d._token= "{{ csrf_token() }}";
+                        }
                     },
                     "columns": [
-                        {"data": ""},
-                        {"data": ""},
-                        {"data": ""},
-                        {"data": ""},
-                        {"data": ""},
+                        {
+                            "data": 'nomor',
+                            "orderable": false,
+
+                        },
+                        {
+                            "data": "tgl_faktur",
+                            "orderable": false,
+                        },
+                        {
+                            "data": "no_faktur",
+                            "orderable": false,
+                        },
+                        {
+                            "data": 'keterangan',
+                            "orderable": false,
+                        },
                     ],
                     responsive: true,
                     language: {
@@ -157,9 +166,9 @@
                             "next": "Sesudah",
                             "previous": "Sebelum"
                         },
-                    }
+                    // }
                 }
-            })
+            });
         })
 
         $(document.body).on("keydown", function(e){

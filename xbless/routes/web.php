@@ -711,8 +711,8 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
      Route::group(['prefix' => 'retur_pembelian', 'as' => 'retur_pembelian.'],function(){
         Route::get('/', [ReturPembelianController::class, 'index'])->name('index');
         Route::post('/getdata', [ReturPembelianController::class, 'getData'])->name('getdata');
-        Route::get('/form-retur/{nofaktur?}', [ReturPembelianController::class, 'tambah'])->name('form-retur');
-        Route::get('/detail_retur/{id}', [ReturPembelianController::class, 'detail_retur'])->name('detail_retur');
+        Route::get('/form-retur/{id?}', [ReturPembelianController::class, 'tambah'])->name('form-retur');
+        // Route::get('/detail_retur/{id}', [ReturPembelianController::class, 'detail_retur'])->name('detail_retur');
         Route::post('/simpan', [ReturPembelianController::class, 'simpan'])->name('simpan');
      });
 });

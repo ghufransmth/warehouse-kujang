@@ -118,11 +118,14 @@ class ReturPembelianController extends Controller
     //     return view('backend/returpembelian/form',compact('selectedProduct','product','pembelian','detail_pembelian'));
     // }
 
-    public function tambah($no_faktur){
+    public function tambah($enc_id){
+        // return $enc_id;
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        // return $dec_id;
+        $pembelian = Pembelian::where('no_faktur',$dec_id)->first();
+        $pembelian_detail = PembelianDetail::where('pembelian_id',$pembelian->id)->where('notransaction',$pembelian->notransaction)->with(['getproduct'])->get();
 
-        $pembelian = Pembelian::where('no_faktur',$no_faktur)->get();
-
-        return view('backend/returpembelian/form',compact('pembelian',''));
+        return view('backend/returpembelian/form_retur',compact('enc_id','pembelian','pembelian_detail'));
     }
 
     public function simpan(Request $req)
