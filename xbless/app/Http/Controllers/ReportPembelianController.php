@@ -79,4 +79,30 @@ class ReportPembelianController extends Controller
 
           return response()->json($json_data);
     }
+
+    public function cekData(Request $req){
+        // return $req->all();
+        $tgl_start           = date('Y-m-d',strtotime($req->tgl_start));
+        // $tgl_end           = date('Y-m-d',strtotime($req->tgl_end));
+
+        $query = Pembelian::select('pembelian.tgl_faktur','pembelian.no_faktur');
+        $query->where('tgl_faktur',$tgl_start);
+        // $query->whereDate('tgl_faktur',$tgl_end);
+        $cek=$query->get();
+        return response()->json($cek);
+
+        if(count($cek) > 0){
+            $json_data = array(
+                "success"         => TRUE,
+                "message"         => 'Data berhasil diproses'
+                );
+        }else{
+            $json_data = array(
+                "success"         => FALSE,
+                "message"         => 'Mohon Maaf tidak ada data.'
+                );
+        }
+        return json_encode($json_data);
+    }
+
 }

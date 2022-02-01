@@ -287,6 +287,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     // REPORT PEMBELIAN
     Route::get('manage/reportpembelian', [ReportPembelianController::class, 'index'])->name('reportpembelian.index');
     Route::post('manage/reportpembelian/getdata', [ReportPembelianController::class, 'getData'])->name('reportpembelian.getdata');
+    Route::post('manage/reportpembelian/cekdata', [ReportPembelianController::class, 'cekData'])->name('reportpembelian.cekdata');
 
     //REPORT STOK
     Route::get('manage/reportstok', [ReportStokController::class, 'index'])->name('reportstok.index');

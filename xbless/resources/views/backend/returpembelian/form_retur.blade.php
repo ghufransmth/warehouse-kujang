@@ -90,6 +90,12 @@
                         </div>
 
                         <div class="hr-line-dashed"></div>
+                        <div class="col-lg-2">
+                            <input type="hidden" id="total_produk" class="mb-1 form-control" value="1">
+                            <a id="tambah_detail_product" onclick="tambahProduk()"
+                                class="text-white btn btn-success"><span class="fa fa-pencil-square-o"></span>Tambah</a>
+                        </div>
+
                         <div class="table-responsive">
                             <table class="table display table table-hover p-0 table-striped" style="overflow-x: auto;" id="table1">
                                 <thead>
@@ -104,7 +110,7 @@
                                 </thead>
                                 <tbody id="detail_form">
                                     @if(isset($pembelian))
-                                        <input type="hidden" name="totaldetail" id="jumlahdetail" value="{{ (count($pembelian_detail) > 0)? count($pembelian_detail) : '0' }}">
+                                        <input type="hidden" name="total_produk" id="jumlahdetail" value="{{ (count($pembelian_detail) > 0)? count($pembelian_detail) : '0' }}">
                                         @foreach($pembelian_detail as $key => $item)
                                             <tr class="bg-white" id="product_{{ $key }}">
                                                 <td>

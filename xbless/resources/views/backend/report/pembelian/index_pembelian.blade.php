@@ -28,17 +28,17 @@
                 <form id="submitData" name="submitData">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="hr-line-dashed"></div>
-                        <div class="form-group row">
+                        {{-- <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Cari Kode / Nama Produk : </label>
                             <div class="col-sm-8 error-text">
                                 <select class="form-control select2 selectProduct" id="filter_keyword" name="filter_keyword">
                                     <option value="0"> Semua Produk</option>
-                                    {{-- @foreach($product as $key => $row)
+                                    @foreach($product as $key => $row)
                                         <option value="{{$row->id}}" {{$selectedfilterkeyword == $row->id ? 'selected' : ''}}>{{strtoupper($row->product_code)}} | {{strtoupper($row->product_name)}}</option>
-                                    @endforeach --}}
+                                    @endforeach
                                 </select>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Dari Tanggal : </label>
                             <div class="col-sm-3 error-text">
@@ -49,17 +49,17 @@
                                 <input type="text" class="form-control formatTgl" id="tgl_end" name="tgl_end" value="">
                             </div>
                         </div>
-                        <div class="form-group row">
+                        {{-- <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Toko : </label>
                             <div class="col-sm-3 error-text">
                                 <select class="form-control select2" id="perusahaan" name="perusahaan">
-                                    {{-- <option value="">Semua Perusahaan</option>
+                                    <option value="">Semua Perusahaan</option>
                                     @foreach($perusahaan as $key => $row)
                                     <option value="{{$row->id}}"{{ $selectedperusahaan == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}</option>
-                                    @endforeach --}}
+                                    @endforeach
                                 </select>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="form-group row">
                             <div class="col-sm-1 error-text">
                                 <button class="btn btn-success" id="cariData" type="button"><span class="fa fa-search"></span>&nbsp; Cari Data</button>
@@ -188,5 +188,46 @@
 
            }
        });
+
+       $('#cariData').on('click', function() {
+            if($('#tgl_start').val()==''){
+                Swal.fire('Ups','Silahkan Pilih Tanggal terlebih dahulu','info');
+                return false;
+            }else if($('#tgl_end').val()==''){
+                Swal.fire('Ups','Silahkan Pilih Tanggal terlebih dahulu','info');
+                return false;
+            }else{
+                $.ajax({
+                    type: 'POST',
+                    url: '{{route('reportpembelian.cekdata')}}',
+                    data: {
+                        _token: '{{csrf_token()}}',
+                        // filter_tgl    : $('#filter_tgl').val(),
+                        tgl_start    : $('#tgl_start').val(),
+                        tgl_end    : $('#tgl_end').val(),
+                    },
+                    dataType: "json",
+                    success: function(result){
+                        if (result) {
+                           console.log("sukses");
+                        }else {
+                            Swal.fire('Ups',result.message,'info');
+                            return false;
+                        }
+
+                    }
+                });
+            }
+
+        });
+
+       $('.formatTgl').datepicker({
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        calendarWeeks: true,
+        autoclose: true,
+        format: "dd-mm-yyyy"
+    });
 </script>
 @endpush
