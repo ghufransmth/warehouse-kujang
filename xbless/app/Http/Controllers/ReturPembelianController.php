@@ -123,7 +123,8 @@ class ReturPembelianController extends Controller
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         // return $dec_id;
         $pembelian = Pembelian::where('no_faktur',$dec_id)->first();
-        $pembelian_detail = PembelianDetail::where('pembelian_id',$pembelian->id)->where('notransaction',$pembelian->notransaction)->with(['getproduct'])->get();
+        $pembelian_detail = PembelianDetail::where('pembelian_id',$pembelian->id)->where('notransaction',$pembelian->no_faktur)->with(['getproduct'])->get();
+        // return $pembelian_detail;
 
         return view('backend/returpembelian/form_retur',compact('enc_id','pembelian','pembelian_detail'));
     }

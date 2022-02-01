@@ -1,24 +1,21 @@
 @extends('layouts.layout')
-@section('title', 'Pembelian')
+@section('title', 'Retur Pembelian')
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>{{ isset($pembelian) ? 'Edit' : 'Tambah' }} Pembelian Produk</h2>
+        <h2>Retur Pembelian Produk</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="">Pembelian Produk</a>
-            </li>
-            <li class="breadcrumb-item active">
-                <strong>{{isset($produk) ? 'Edit' : 'Tambah'}}</strong>
+                <a href="">Retur Pembelian Produk</a>
             </li>
         </ol>
     </div>
     <div class="col-lg-2">
         <br />
-        <a class="btn btn-white btn-sm" href="pembelian.index">Kembali</a>
+        <a class="btn btn-white btn-sm" href="{{ route('retur.index_retur') }}">Kembali</a>
     </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInRight">
@@ -40,10 +37,9 @@
                         <input type="hidden" name="enc_id" id="enc_id" value="{{isset($pembelian)? $enc_id : ''}}">
 
                         <div class="form-group row">
-                            <label for="" class="col-sm-2 col-form-label">No Faktur *</label>
+                            <label for="" class="col-sm-2 col-form-label">No. Faktur</label>
                             <div class="col-sm-4 error-text">
-                                <input type="text" class="form-control" id="nofaktur" name="nofaktur" autocomplete="off"
-                                    value="{{isset($pembelian)? $pembelian->no_faktur: ''}}">
+                                <input type="text" class="form-control" name="nofaktur" id="nofaktur" value="{{ isset($pembelian)? $pembelian->no_faktur: '' }}">
                             </div>
 
                             <label class="col-sm-2 col-form-label">Tanggal Faktur *</label>
@@ -76,7 +72,6 @@
                             <input type="hidden" name="total_harga_pembelian" id="total_harga_pembelian" value="0">
                         </div>
 
-
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Keterangan *</label>
                             <div class="col-sm-4 error-text">
@@ -95,15 +90,8 @@
                         </div>
 
                         <div class="hr-line-dashed"></div>
-                        <div class="col-lg-2">
-                            <input type="hidden" id="total_produk" class="mb-1 form-control" value="1">
-                            <a id="tambah_detail_product" onclick="tambahProduk()"
-                                class="text-white btn btn-success"><span class="fa fa-pencil-square-o"></span>Tambah</a>
-                        </div>
-
-                        <div class="hr-line-dashed"></div>
                         <div class="table-responsive">
-                            <table class="table display table table-hover p-0 table-striped" style="overflow-x: auto;" id="example">
+                            <table class="table display table table-hover p-0 table-striped" style="overflow-x: auto;" id="table1">
                                 <thead>
                                     <tr class="text-white text-center bg-primary">
                                         <th>Produk</th>
@@ -115,43 +103,56 @@
                                     </tr>
                                 </thead>
                                 <tbody id="detail_form">
+                                    @if(isset($pembelian))
+                                        <input type="hidden" name="totaldetail" id="jumlahdetail" value="{{ (count($pembelian_detail) > 0)? count($pembelian_detail) : '0' }}">
+                                        @foreach($pembelian_detail as $key => $item)
+                                            <tr class="bg-white" id="product_{{ $key }}">
+                                                <td>
+                                                    <select class="select2_produk_1" id="product_{{ $key }}" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%" disabled>
+                                                        <option value="{{ $item->getproduct->id }}">{{ $item->getproduct->nama }}</option>
+                                                    </select>
+                                                </td>
 
+                                                <td>
+                                                    <select name="tipesatuan[]"
+                                                        onchange="satuan(this.options[this.selectedIndex].value,{{ $key }})"
+                                                        id="tipe_satuan_{{ $key }}" class="select2_satuan_1">
+                                                        <option value="1">PCS</option>
+                                                    </select>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="harga_product[]"
+                                                        id="harga_product_{{ $key }}" value="{{ $item->product_price }}" readonly>
+                                                </td>
+
+                                                <td width="15%">
+                                                    <input type="text" class="form-control touchspin" id="qty_{{ $key }}" name="qty[]" value="{{ $item->qty }}" onkeyup="hitung_qty({{ $key }})" onchange="hitung_qty({{ $key }})">
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control total_harga" id="total_{{ $key }}"
+                                                        name="total[]" value="{{ $item->total }}" readonly>
+                                                </td>
+
+                                                <td>
+                                                    <a class="text-white btn btn-danger btn-hemisperich btn-xs"
+                                                        data-original-title='Hapus Data' id='deleteModal'><i
+                                                            class='fa fa-trash'></i></a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
-                        {{-- <input type="hidden" class="form-control mb-1" name="total_produk" id="total_produk" value="1"> --}}
-                        <div class="hr-line-dashed"></div>
-                        <table style="min-width: 100%">
-                            <tr>
-                                <td class="text-right">
-                                    <h3><b>Total Harga Pembelian<b></h3>
-                                </td>
-                                <td width="1%"></td>
-                                <td class="text-center" width="13%" id="harga_pembelian"><b> {{ isset($pembelian)? $pembelian->nominal : '' }}</b></td>
-                                <td width="5%"></td>
-                            </tr>
-                        </table>
-                        <!--<div class="form-group row">
-                            <div class="col-sm-4 col-sm-offset-2 float-right">
-                                <a class="btn btn-white btn-sm" href="{{route('pembelian.index')}}">Batal</a>
-                                <button class="btn btn-primary btn-sm" type="submit" id="simpan">Simpan</button>
-                                {{-- <button class="btn btn-success btn-sm" type="submit" id="simpanselesai">Selesai & Simpan</button> --}}
-                            </div>
-                        </div>-->
 
                         <div class="form-group row">
                             <div class="col-sm-6 col-sm-offset-2">
                                 <a class="btn btn-white btn-sm" href="{{route('pembelian.index')}}">Batal</a>
                                 <button class="btn btn-primary btn-sm" type="button" id="simpan">Selesai</button>
                             </div>
-                            @can('draftpurchaseorder.tambah')
-                            <div class="col-sm-6 text-right">
-
-                                {{-- <button class="btn btn-info btn-sm" type="button" id="draft">Simpan Draft</button> --}}
-                            </div>
-                            @endcan
                         </div>
-
                     </form>
                 </div>
             </div>
@@ -227,7 +228,7 @@ $("#simpan").on('click',function(){
                 });
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('pembelian.simpan') }}",
+                    url: "{{ route('retur_pembelian.simpan') }}",
                     headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                     data: dataFile,
                     processData: false,
@@ -240,12 +241,12 @@ $("#simpan").on('click',function(){
                     if(data.success){
                         Swal.fire('Yes',data.message,'info');
                         if(data.draft=='0'){
-                            window.location.replace('{{ route("pembelian.index") }}');
+                            window.location.replace('{{ route("retur.index_retur") }}');
                         }else{
                             window.location.replace('{{ route("pembelian.tambah") }}');
                         }
                     }else{
-                        Swal.fire('Ups',data.message,'info');
+                        Swal.fire('Perhatian',data.message,'info');
                     }
                 },
                 complete: function () {
@@ -437,10 +438,10 @@ $('.jatuh_tempo').datepicker({
         });
     }
     function satuan(value, num){
-        if($('#harga_product_'+num).val() == ""){
-            Swal.fire('Ups', 'Pilih product terlebih dahulu', 'info');
-            return false;
-        }
+        // if($('#harga_product_'+num).val() == ""){
+        //     Swal.fire('Ups', 'Pilih product terlebih dahulu', 'info');
+        //     return false;
+        // }
         $.ajax({
             type: 'POST',
             data: {
@@ -552,11 +553,7 @@ $('.jatuh_tempo').datepicker({
     }
 
     function hitung_qty(num){
-        // console.log($('#product_'+num+' option:selected').val());
-        if($('#product_'+num).val() == 0){
-            Swal.fire('Ups', 'Pilih product terlebih dahulu');
-            return false;
-        }else if($('#tipe_satuan_'+num).val() == "null"){
+        if($('#tipe_satuan_'+num).val() == "null"){
             Swal.fire('Ups', 'Pilih satuan terlebih dahulu');
             return false;
         }else{
