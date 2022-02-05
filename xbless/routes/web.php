@@ -37,6 +37,8 @@ use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\ReportStokController;
 use App\Http\Controllers\StokMutasiController;
 use App\Http\Controllers\KategoriTokoController;
+use App\Http\Controllers\KomponenController;
+use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\StokMutasiHistoryController;
 use App\Http\Controllers\StokOpnameController;
 use App\Http\Controllers\TypeChannelController;
@@ -465,6 +467,16 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::delete('/hapus/{id?}', [KategoriController::class, 'delete'])->name('delete');
         });
 
+        // KOMPONEN
+        Route::group(['prefix' => 'komponen', 'as' => 'komponen.'], function () {
+            Route::get('/', [KomponenController::class, 'index'])->name('index');
+            Route::get('/tambah', [KomponenController::class, 'tambah'])->name('tambah');
+            Route::get('/ubah/{id}', [KomponenController::class, 'ubah'])->name('ubah');
+            Route::post('/getData', [KomponenController::class, 'getdata'])->name('getdata');
+            Route::post('/simpan', [KomponenController::class, 'simpan'])->name('simpan');
+            Route::delete('/hapus/{id?}', [KomponenController::class, 'delete'])->name('delete');
+        });
+
         // SATUAN
         Route::group(['prefix' => 'satuan', 'as' => 'satuan.'], function () {
             Route::get('/', [SatuanController::class, 'index'])->name('index');
@@ -652,6 +664,15 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::group(['prefix' => 'keuangan', 'as' => 'keuangan.'], function () {
                 Route::get('/', [ReportTransaksiController::class, 'index'])->name('index');
                 Route::post('/getdata', [ReportTransaksiController::class, 'getData'])->name('getdata');
+            });
+
+            Route::group(['prefix' => 'finance', 'as' => 'finance.'], function(){
+                Route::get('/',[FinanceController::class, 'index'])->name('index');
+                Route::post('/getdata',[FinanceController::class, 'getData'])->name('getdata');
+                Route::post('/simpan',[FinanceController::class, 'simpan'])->name('simpan');
+                Route::get('/tambah', [FinanceController::class, 'tambah'])->name('tambah');
+                Route::get('/edit/{id}', [FinanceController::class, 'ubah'])->name('edit');
+                Route::delete('/delete/{id?}',[FinanceController::class,'hapus'])->name('delete');
             });
         });
 

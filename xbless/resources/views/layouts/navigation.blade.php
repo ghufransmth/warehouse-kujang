@@ -38,6 +38,7 @@
                     <li class=""><a href="{{ route('payment.index') }}">Master Jenis Bayar</a></li>
                     <li class=""><a href="{{ route('toko.jenis.index') }}">Master Jenis Toko</a></li>
                     <li class=""><a href="{{ route('toko.kategori.index') }}">Master Kategori Toko</a></li>
+                    <li class=""><a href="{{ route('komponen.index') }}">Komponen</a></li>
                 </ul>
             </li>
             @endcan
@@ -107,7 +108,8 @@
             <a href="#"><i class="fa fa-dollar"></i> <span class="nav-label"> Keuangan</span><span
                     class="fa arrow"></span></a>
             <ul class="nav nav-second-level collapse">
-                <li><a href="{{ route('pembayaran.index') }}">Transaksi Pembayaran</a></li>
+                <li><a href="{{ route('transaksi.finance.index') }}">List Biaya</a></li>
+                <li><a href="#">Transaksi Pembayaran</a></li>
                 <li><a href="{{ route('transaksi.keuangan.index') }}">Transaksi Keuangan</a></li>
             </ul>
         </li>
