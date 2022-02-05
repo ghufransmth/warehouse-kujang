@@ -90,11 +90,11 @@
                         </div>
 
                         <div class="hr-line-dashed"></div>
-                        <div class="col-lg-2">
+                        {{-- <div class="col-lg-2">
                             <input type="hidden" id="total_produk" class="mb-1 form-control" value="1">
                             <a id="tambah_detail_product" onclick="tambahProduk()"
                                 class="text-white btn btn-success"><span class="fa fa-pencil-square-o"></span>Tambah</a>
-                        </div>
+                        </div> --}}
 
                         <div class="table-responsive">
                             <table class="table display table table-hover p-0 table-striped" style="overflow-x: auto;" id="table1">
@@ -110,13 +110,15 @@
                                 </thead>
                                 <tbody id="detail_form">
                                     @if(isset($pembelian))
-                                        <input type="hidden" name="total_produk" id="jumlahdetail" value="{{ (count($pembelian_detail) > 0)? count($pembelian_detail) : '0' }}">
+                                        <input type="hidden" name="total_produk" id="total_produk" value="{{ (count($pembelian_detail) > 0)? count($pembelian_detail) : '0' }}">
                                         @foreach($pembelian_detail as $key => $item)
                                             <tr class="bg-white" id="product_{{ $key }}">
                                                 <td>
-                                                    <select class="select2_produk_1" id="product_{{ $key }}" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%" disabled>
+                                                    {{-- <select class="select2_produk_1" id="product_{{ $key }}" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%" readonly>
                                                         <option value="{{ $item->getproduct->id }}">{{ $item->getproduct->nama }}</option>
-                                                    </select>
+                                                    </select> --}}
+                                                    <input type="hidden" class="form-control" id="product_{{ $key }}" name="produk[]" width="100%" readonly value="{{ $item->getproduct->id }}">
+                                                    <input type="text" class="form-control" id="product_{{ $key }}" width="100%" readonly value="{{ $item->getproduct->nama }}">
                                                 </td>
 
                                                 <td>
@@ -244,6 +246,7 @@ $("#simpan").on('click',function(){
                         Swal.showLoading();
                     },
                     success: function(data){
+                        console.log(data);
                     if(data.success){
                         Swal.fire('Yes',data.message,'info');
                         if(data.draft=='0'){
