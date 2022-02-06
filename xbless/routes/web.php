@@ -564,6 +564,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::get('/penjualan', [ReturController::class, 'retur_penjualan'])->name('returpenjualan');
             Route::get('/list_transaksi',[ReturController::class, 'list_transaksi'])->name('list_transaksi');
             Route::get('/penjualan/{nofaktur?}', [ReturPenjualanController::class, 'form_retur'])->name('retur_penjualan');
+            Route::post('/simpan', [ReturPenjualanController::class, 'simpan'])->name('simpan');
         });
         // REQUEST PURCHASE ORDER
         Route::group(['prefix' => 'requestpurchaseorder', 'as' => 'requestpurchaseorder.'], function () {

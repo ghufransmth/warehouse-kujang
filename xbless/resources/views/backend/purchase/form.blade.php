@@ -263,6 +263,7 @@
                 select_satuan(i);
                 select_product(i);
             }
+            total_penjualan();
         @endif
         select_satuan(1);
         select_product(1);

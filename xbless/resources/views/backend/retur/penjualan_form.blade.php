@@ -3,7 +3,7 @@
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>{{isset($purchaseorder) ? 'Edit' : 'Tambah'}} Purchase Order</h2>
+        <h2>Retur Purchase Order</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
@@ -12,7 +12,7 @@
                 <a href="{{route('purchaseorder.index')}}">Purchase Order</a>
             </li>
             <li class="breadcrumb-item active">
-                <strong>{{isset($purchaseorder) ? 'Edit' : 'Tambah'}}</strong>
+                <strong>Retur</strong>
             </li>
         </ol>
     </div>
@@ -147,9 +147,11 @@
                     <tbody id="ajax_produk" class="bg-white">
                         @if(isset($penjualan))
                         <input type="hidden" name="jumlahdetail" value="{{ (count($detail_penjualan) > 0)? count($detail_penjualan) : '0'  }}" id="jumlahdetail">
+
                             @foreach($detail_penjualan as $key => $detail)
                             <tr class="bg-white" id='dataajaxproduk_{{ $key }}'>
                                 <td>
+                                    <input type="hidden" name="produk[]" value="{{ $detail->getproduct->id }}">
                                     <select class="select2_produk_{{ $key }}" id="product_{{ $key }}" name="produk[]"
                                         onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%" disabled>
                                         <option value="{{ $detail->getproduct->id }}">{{ $detail->getproduct->nama }}</option>
@@ -263,6 +265,7 @@
                 select_satuan(i);
                 select_product(i);
             }
+            total_penjualan();
         @endif
         select_satuan(1);
         select_product(1);
@@ -326,7 +329,8 @@
             // }
         });
         function SimpanData(draft){
-
+            // var inps = document.getElementsByName('produk[]');
+            // inps.removeAttr("disabled");
             $('#simpan').addClass("disabled");
                 var form = $('#submitData').serializeArray()
                 var dataFile = new FormData()
@@ -340,7 +344,7 @@
             })
             $.ajax({
                 type: 'POST',
-                url : "{{route('purchaseorder.simpan')}}",
+                url : "{{route('retur.simpan')}}",
                 headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                 data:dataFile,
                 processData: false,
@@ -353,10 +357,10 @@
                     if (data.success) {
                         Swal.fire('Yes',data.message,'info');
                         if(data.draft=='0'){
-                            window.location.replace('{{route("requestpurchaseorder.index")}}');
+                            window.location.replace('{{route("retur.index_retur")}}');
                         }else{
                             //ke draft
-                            window.location.replace('{{route("purchaseorder.tambah")}}');
+                            window.location.replace('{{route("retur.index_retur")}}');
                         }
 
                     } else {
@@ -714,7 +718,7 @@ function select_satuan(num){
         buttondown_class: 'btn btn-white',
         buttonup_class: 'btn btn-white'
     });
-
+    // $('.bootstrap-touchspin-up').prop('disabled', true);
     function deleteProduk(id){
         Swal.fire({
             title: 'Apakah anda yakin?',
