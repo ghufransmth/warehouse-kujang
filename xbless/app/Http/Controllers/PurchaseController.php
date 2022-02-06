@@ -972,6 +972,7 @@ class PurchaseController extends Controller
         $array_total_harga      = $req->total;
         $total_product          = $req->total_produk;
         $total_harga_penjualan  = $req->total_harga_penjualan;
+        // return $req->all();
         //VALIDASI
         // return $req->all();
             if($no_transaksi == null){
@@ -1077,6 +1078,7 @@ class PurchaseController extends Controller
                             continue;
                         }
                     }
+
                     return response()->json([
                         'success' => TRUE,
                         'message' => 'Data penjualan berhasil disimpan'
@@ -1138,6 +1140,7 @@ class PurchaseController extends Controller
                     $transaksi_stock->no_transaksi  = $penjualan->no_faktur;
                     $transaksi_stock->tgl_transaksi = $tgl_transaksi;
                     $transaksi_stock->flag_transaksi = 3;
+
                     $transaksi_stock->created_by = auth()->user()->username;
                     $transaksi_stock->note = '-';
                     if($transaksi_stock->save()){
