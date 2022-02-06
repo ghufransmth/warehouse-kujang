@@ -378,56 +378,21 @@ class PembelianController extends Controller
     // }
     public function ubah($enc_id){
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
-        if($dec_id){
-            $pembelian = Pembelian::find($dec_id);
+        $pembelian = Pembelian::find($dec_id);
+        if(isset($pembelian)){
+            $pembelian_detail = PembelianDetail::where('pembelian_id',$pembelian->id)->where('notransaction',$pembelian->no_faktur)->with(['getproduct'])->get();
+            $selectedProduct = "";
 
-            return view('backend/pembelian/form',compact('enc_id','pembelian'));
+            return view('backend/pembelian/form',compact('enc_id','pembelian','pembelian_detail'));
         }else{
             return view('errors/noaccess');
         }
+        return $pembelian;
     }
 
     public function hapus($enc_id){}
     public function import(){
         return view('backend/pembelian/import');
     }
-
-    // public function simpan_lagi(Request $req){
-
-    //     try{
-    //         $pembelian = new Pembelian();
-    //         $pembelian->no_faktur         = $req->nofaktur;
-    //         $pembelian->tgl_faktur        = $req->faktur_date;
-    //         $pembelian->nominal           = $req->nominal;
-    //         $pembelian->tgl_jatuh_tempo   = date('Y-m-d',strtotime($req->jatuh_tempo));
-    //         $pembelian->keterangan        = $req->ket;
-    //         $pembelian->status_pembelian  = 1;
-    //         $pembelian->approve_pembelian = 1;
-    //         $pembelian->approved_by       = auth()->user()->username;
-    //         $pembelian->created_user      = auth()->user()->username;
-    //         $pembelian->save();
-    //         if($pembelian){
-    //             foreach($req->)
-    //         }
-
-    //     }catch(Throwable $tr){
-
-    //     }
-
-
-    //         // if($enc_id){
-    //         //     $pembelian = Pembelian::find($dec_id);
-    //         //     $pembelian->no_faktur         = $req->nofaktur;
-    //         //     $pembelian->tgl_faktur        = $req->faktur_date;
-    //         //     $pembelian->nominal           = $req->nominal;
-    //         //     $pembelian->tgl_jatuh_tempo   = date('Y-m-d',strtotime($req->jatuh_tempo));
-    //         //     $pembelian->keterangan        = $req->ket;
-    //         //     $pembelian->status_pembelian  = 1;
-    //         //     $pembelian->approve_pembelian = 1;
-    //         //     $pembelian->approved_by       = auth()->user()->username;
-    //         //     $pembelian->created_user      = auth()->user()->username;
-    //         //     $pembelian->save();
-    //         // }
-    // }
 
 }

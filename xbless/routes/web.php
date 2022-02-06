@@ -58,9 +58,11 @@ use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PenjualanImportController;
 use App\Http\Controllers\ProdukImportController;
 use App\Http\Controllers\ReportBarangKeluarController;
+use App\Http\Controllers\ReportPembelianController;
 use App\Http\Controllers\TokoController;
 use App\Http\Controllers\KunjunganSalesController;
 use App\Http\Controllers\ReportRekapInvoiceController;
+use App\Http\Controllers\ReturPembelianController;
 use App\Http\Controllers\ReturController;
 use App\Http\Controllers\ReturPenjualanController;
 
@@ -281,6 +283,11 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('manage/reportpenjualan/print', [ReportPenjualanController::class, 'print'])->name('reportpenjualan.print');
     Route::get('manage/reportpenjualan/pdf', [ReportPenjualanController::class, 'pdf'])->name('reportpenjualan.pdf');
     Route::get('manage/reportpenjualan/excel', [ReportPenjualanController::class, 'excel'])->name('reportpenjualan.excel');
+
+    // REPORT PEMBELIAN
+    Route::get('manage/reportpembelian', [ReportPembelianController::class, 'index'])->name('reportpembelian.index');
+    Route::post('manage/reportpembelian/getdata', [ReportPembelianController::class, 'getData'])->name('reportpembelian.getdata');
+    Route::post('manage/reportpembelian/cekdata', [ReportPembelianController::class, 'cekData'])->name('reportpembelian.cekdata');
 
     //REPORT STOK
     Route::get('manage/reportstok', [ReportStokController::class, 'index'])->name('reportstok.index');
@@ -701,5 +708,13 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::get('/importbatal', [ImportPembelianController::class, 'importbatal'])->name('importbatal');
         Route::post('/uploadimport', [ImportPembelianController::class, 'import'])->name('uploadimport');
         Route::post('/deleteimport', [ImportPembelianController::class, 'hapus'])->name('deleteimport');
+     });
+
+     Route::group(['prefix' => 'retur_pembelian', 'as' => 'retur_pembelian.'],function(){
+        Route::get('/', [ReturPembelianController::class, 'index'])->name('index');
+        Route::post('/getdata', [ReturPembelianController::class, 'getData'])->name('getdata');
+        Route::get('/form-retur/{id?}', [ReturPembelianController::class, 'tambah'])->name('form-retur');
+        // Route::get('/detail_retur/{id}', [ReturPembelianController::class, 'detail_retur'])->name('detail_retur');
+        Route::post('/simpan', [ReturPembelianController::class, 'simpan'])->name('simpan');
      });
 });

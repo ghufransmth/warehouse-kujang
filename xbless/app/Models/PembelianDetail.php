@@ -9,4 +9,9 @@ class PembelianDetail extends Model
 {
     use HasFactory;
     protected $table = 'pembelian_detail';
+
+    public function getProduct()
+    {
+       return $this->hasOne(Product::class,'id','product_id');
+    }
 }

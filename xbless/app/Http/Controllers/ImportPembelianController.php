@@ -111,12 +111,14 @@ class ImportPembelianController extends Controller
         foreach($data_import as $key =>$import){
             $cek_pembelian = Pembelian::where('no_faktur', $import->no_faktur)->first();
             $satuan = Satuan::find($import->satuan_id);
+            $total_per_faktur = ImportPembelian::where('no_faktur', $import->no_faktur)->sum('total_harga');
             if(!isset($cek_pembelian)){
                 $pembelian = new Pembelian;
                 $pembelian->no_faktur = $import->no_faktur;
                 $pembelian->tgl_transaksi = date('Y-m-d',strtotime($tgl_transaksi));
                 $pembelian->tgl_faktur = date('Y-m-d',strtotime($tgl_transaksi));
-                $pembelian->nominal = $data_import->sum('total_harga');
+                // $pembelian->nominal = $data_import->sum('total_harga');
+                $pembelian->nominal = $total_per_faktur;
                 $pembelian->keterangan = '-';
                 $pembelian->status_pembelian = 1;
                 $pembelian->approve_pembelian = 0;
