@@ -35,52 +35,7 @@ class ReportPenjualanController extends Controller
 
     public function index()
     {
-        $kategori     = Kategori::all();
-        $perusahaan     = Perusahaan::all();
-        $gudang     = Gudang::all();
-        $product      = Product::select('id', 'product_code', 'product_name')
-            ->offset(0)
-            ->limit(10)
-            ->get();
-
-        if (session('filter_kategori') == "") {
-            $selectedkategori = [];
-        } else {
-            $selectedkategori = session('filter_kategori');
-        }
-
-        if (session('filter_perusahaan') == "") {
-            $selectedperusahaan = '';
-        } else {
-            $selectedperusahaan = session('filter_perusahaan');
-        }
-
-        if (session('filter_gudang') == "") {
-            $selectedgudang = '';
-        } else {
-            $selectedgudang = session('filter_gudang');
-        }
-
-
-        if (session('filter_keyword') == "") {
-            $selectedfilterkeyword = '';
-        } else {
-            $selectedfilterkeyword = session('filter_keyword');
-        }
-
-
-        if (session('filter_tgl_start') == "") {
-            $tgl_start = date('d-m-Y', strtotime(' - 30 days'));
-        } else {
-            $tgl_start = session('filter_tgl_start');
-        }
-
-        if (session('filter_tgl_end') == "") {
-            $tgl_end = date('d-m-Y');
-        } else {
-            $tgl_end = session('filter_tgl_end');
-        }
-        return view('backend/report/penjualan/index_penjualan', compact('selectedfilterkeyword', 'kategori', 'selectedkategori', 'perusahaan', 'selectedperusahaan', 'gudang', 'selectedgudang', 'tgl_start', 'tgl_end', 'product'));
+        return view('backend/report/penjualan/index_penjualan');
     }
     public function getData(Request $request)
     {
