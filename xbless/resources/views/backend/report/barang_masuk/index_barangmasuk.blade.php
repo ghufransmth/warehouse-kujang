@@ -64,36 +64,16 @@
                             <thead>
                                 <tr class="text-white text-center bg-primary">
                                     <th width="5%">No</th>
-                                    <th>Code Product</th>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Description</th>
+                                    <th>Tanggal Faktur</th>
+                                    <th>Nomor Faktur</th>
+                                    <th>Total Pembelian</th>
+                                    <th>Status Bayar</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>A12</td>
-                                    <td>Sabun</td>
-                                    <td>311</td>
-                                    <td>KADASSDDAds</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>A12</td>
-                                    <td>Sabun</td>
-                                    <td>311</td>
-                                    <td>KADASSDDAds</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>A12</td>
-                                    <td>Sabun</td>
-                                    <td>311</td>
-                                    <td>KADASSDDAds</td>
-                                </tr>
+
                             </tbody>
-                            <tfoot>
+                            {{-- <tfoot>
                                 <tr class="text-white text-center bg-primary">
                                     <th></th>
                                     <th></th>
@@ -101,7 +81,7 @@
                                     <th></th>
                                     <th></th>
                                 </tr>
-                            </tfoot>
+                            </tfoot> --}}
                         </table>
                     </div>
 
@@ -113,29 +93,87 @@
 @endsection
 @push('scripts')
 <script>
-    $('#table1').DataTable({
-        pageLength: 10,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        language: {
-            search: "_INPUT_",
-            searchPlaceholder: "Cari data",
-            emptyTable: "Belum ada data",
-            info: "Menampilkan data _START_ sampai _END_ dari _MAX_ data.",
-            infoEmpty: "Menampilkan 0 sampai 0 dari 0 data.",
-            lengthMenu: "Tampilkan _MENU_ data per halaman",
-            loadingRecords: "Loading...",
-            processing: "Mencari...",
-            paginate: {
-            "first": "Pertama",
-            "last": "Terakhir",
-            "next": "Sesudah",
-            "previous": "Sebelum"
-            },
-        },
-        buttons: [
-        ],
+    var table,tabledata,table_index,tableproduct;
+
+    $(document).ready(function(){
+        $.ajaxSetup({
+            headers:{ "X-CSRF-Token": $("meta[name=csrf-token]").attr("content") }
         });
+        table = $('#table1').DataTable({
+            processing: true,
+            serverSide: true,
+            pageLength: 10,
+            ordering: true,
+            select: true,
+            "ajax":{
+                "url": "{{ route("reportbarangmasuk.getdata") }}",
+                "dataType": "json",
+                "type": "POST",
+                data: function( d ){
+                    d._token= "{{ csrf_token() }}";
+                    }
+                },
+                "columns":[
+                    {
+                        "data": 'nomor',
+                        "orderable": false,
+                    },
+                    {
+                        "data": "tgl_faktur",
+                        "orderable": false,
+                    },
+                    {
+                        "data": "no_faktur",
+                        "orderable": false,
+                    },
+                    {
+                        "data": 'total_pembelian',
+                        "orderable": false,
+                    },
+                    {
+                        "data": 'status_bayar',
+                        "orderable": false,
+                    },
+                ],
+                responsive: true,
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Cari data",
+                    emptyTable: "Belum ada data",
+                    info: "Menampilkan data _START_ sampai _END_ dari _MAX_ data.",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 data.",
+                    lengthMenu: "Tampilkan _MENU_ data per halaman",
+                    loadingRecords: "Loading...",
+                    processing: "Mencari...",
+                    paginate: {
+                        "first": "Pertama",
+                        "last": "Terakhir",
+                        "next": "Sesudah",
+                        "previous": "Sebelum"
+                    },
+                }
+            });
+    })
+
+    $(document.body).on("keydown", function(e){
+         ele = document.activeElement;
+           if(e.keyCode==38){
+             table.row(table_index).deselect();
+             table.row(table_index-1).select();
+           }
+           else if(e.keyCode==40){
+
+             table.row(table_index).deselect();
+             table.rows(parseInt(table_index)+1).select();
+             console.log(parseInt(table_index)+1);
+
+           }
+           else if(e.keyCode==13){
+
+           }
+       });
+
+
     $('#date1 .input-daterange').datepicker({
         keyboardNavigation: false,
         forceParse: false,
