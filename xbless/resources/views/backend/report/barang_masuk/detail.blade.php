@@ -1,5 +1,5 @@
 @extends('layouts.layout')
-@section('title', 'LAPORAN BARANG MASUK')
+@section('title', 'LAPORAN PENJUALAN')
 @section('content')
 <style>
     .swal2-container {
@@ -8,13 +8,13 @@
 </style>
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>LAPORAN BARANG MASUK</h2>
+        <h2>DETAIL BARANG MASUK</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item active">
-                <a>LAPORAN BARANG MASUK</a>
+                <a>DETAIL BARANG MASUK</a>
             </li>
         </ol>
     </div>
@@ -31,7 +31,8 @@
                             <div class="d-flex flex-row-reverse row">
                                 <div class="col-xs-3">
                                     <button class="btn btn-danger" type="button" id="ExportPdf"><span
-                                            class="fa fa-file-pdf-o"></span> Export PDF</button>&nbsp;
+                                            class="fa fa-file-pdf-o"></span>
+                                        Export PDF</button>&nbsp;
                                 </div>
                                 <div class="col-xs-3">
                                     <button class="btn btn-primary" type="button" id="ExportExcel"><span
@@ -39,36 +40,24 @@
                                 </div>
                                 <div class="col-xs-3">
                                     <button class="btn btn-secondary" type="button" id="Print"><span
-                                            class="fa fa-print"></span> Print</button>&nbsp;
+                                            class="fa fa-print"></span>
+                                        Print</button>&nbsp;
                                 </div>
                             </div>
                         </div>
                     </form>
-                    <div class="d-flex pl-4 pt-4">
-                        {{-- <label class="font-normal">Range Tanggal</label> --}}
-                        <div class="form-group" id="date1">
-                            <div class="input-daterange input-group" id="datepicker">
-                                <span class="input-group-addon bg-primary">
-                                    <i class="fa fa-calendar m-auto px-2"></i>
-                                </span>
-                                <input type="text" class="form-control-sm form-control" name="start"
-                                    value="01-01-2022" />
-                                <span class="input-group-addon bg-primary px-2">to </span>
-                                <input type="text" class="form-control-sm form-control" name="end" value="01-02-2022" />
-                            </div>
-                        </div>
-                    </div>
+
                     <div class="hr-line-dashed"></div>
                     <div class="table-responsive">
                         <table id="table1" class="table p-0 table-hover table-striped" style="overflow-x: auto;">
                             <thead>
                                 <tr class="text-white text-center bg-primary">
                                     <th width="5%">No</th>
-                                    <th>Tanggal Faktur</th>
-                                    <th>Nomor Faktur</th>
-                                    <th>Total Pembelian</th>
+                                    <th>Kode Product</th>
+                                    <th>Tgl Faktur</th>
+                                    <th>Nama Product</th>
+                                    <th>Total Harga</th>
                                     <th>Status Bayar</th>
-                                    <th>#</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -76,6 +65,8 @@
                             </tbody>
                             {{-- <tfoot>
                                 <tr class="text-white text-center bg-primary">
+                                    <th></th>
+                                    <th></th>
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -91,7 +82,6 @@
         </div>
     </div>
 </div>
-
 @endsection
 @push('scripts')
 <script>
@@ -121,6 +111,10 @@
                         "orderable": false,
                     },
                     {
+                        "data": "kode_product",
+                        "orderable": false,
+                    },
+                    {
                         "data": "tgl_faktur",
                         "orderable": false,
                     },
@@ -136,10 +130,10 @@
                         "data": 'status_bayar',
                         "orderable": false,
                     },
-                    {
-                        "data": "action",
-                        "orderable": false,
-                    },
+                    // {
+                    //     "data": "action",
+                    //     "orderable": false,
+                    // },
                 ],
                 responsive: true,
                 language: {
@@ -187,5 +181,4 @@
         format: "dd-mm-yyyy"
     });
 </script>
-
 @endpush

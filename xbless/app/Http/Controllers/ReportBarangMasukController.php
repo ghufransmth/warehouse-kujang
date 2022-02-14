@@ -59,12 +59,15 @@ class ReportBarangMasukController extends Controller
         $page  = $start + 1;
         $search = $request->search['value'];
 
-    //    $dataquery = PembelianDetail::select('pembelian_detail.id','tbl_product.kode_product','pembelian_detail.qty','tbl_product.nama','pembelian.status_pembelian');
+    //    $dataquery = PembelianDetail::select('pembelian_detail.id','tbl_product.kode_product','pembelian_detail.qty','tbl_product.nama','pembelian.status_pembelian','pembelian.no_faktur','pembelian.tgl_faktur','pembelian.nominal');
     //    $dataquery->join('pembelian','pembelian.id','pembelian_detail.pembelian_id');
     //    $dataquery->join('tbl_product','tbl_product.id','pembelian_detail.product_id');
-    //    $dataquery->where('status_pembelian',1);
+    //    $dataquery->where('pembelian.status_pembelian',1);
 
-        $dataquery = Pembelian::select('pembelian.id','pembelian.no_faktur','pembelian.tgl_faktur','pembelian.nominal','pembelian.status_pembelian')->where('status_pembelian',1);
+        $dataquery = Pembelian::select('pembelian.id','pembelian.no_faktur','pembelian.tgl_faktur','pembelian.nominal','pembelian.status_pembelian','tbl_product.kode_product','pembelian_detail.qty','tbl_product.nama','tbl_product.kode_product');
+        $dataquery->join('pembelian_detail','pembelian_detail.pembelian_id','pembelian.id');
+        $dataquery->join('tbl_product','tbl_product.id','pembelian_detail.product_id');
+        $dataquery->where('status_pembelian',1);
 
        if(array_key_exists($request->order[0]['column'], $this->original_column)){
         $dataquery->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
@@ -88,6 +91,12 @@ class ReportBarangMasukController extends Controller
 
       foreach($data as $key=> $value){
         $enc_id = $this->safe_encode(Crypt::encryptString($value->id));
+        $action = "";
+        $action.="";
+
+        $action.='<div>';
+        $action.='<a href="'.route('reportbarangmasuk.detail',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-eye"></i></a>&nbsp;';
+        $action.="</div>";
 
         $value->nomor = $key+$page;
         $value->id = $value->id;
@@ -99,6 +108,7 @@ class ReportBarangMasukController extends Controller
         }else{
             $value->status_bayar = "Belum Lunas";
         }
+        $value->action = $action;
       }
 
       $json_data = array(
@@ -109,5 +119,25 @@ class ReportBarangMasukController extends Controller
       );
 
       return response()->json($json_data);
+    }
+
+    public function detail($enc_id){
+
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        $pembelian = Pembelian::find($dec_id);
+        if(isset($pembelian)){
+            $pembelian_detail = PembelianDetail::where('pembelian_id',$pembelian->id)->where('notransaction',$pembelian->no_faktur)->with(['getproduct'])->get();
+            $selectedProduct = "";
+
+            return view('backend/report/barang_masuk/detail',compact('enc_id','pembelian','pembelian_detail'));
+        }else{
+            return view('errors/noaccess');
+        }
+        return $pembelian;
+    }
+
+    public function pdf(Request $request)
+    {
+
     }
 }
