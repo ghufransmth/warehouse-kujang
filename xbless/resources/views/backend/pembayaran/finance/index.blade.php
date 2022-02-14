@@ -17,7 +17,7 @@
         <br />
         <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
             title="Refresh Data"><span class="fa fa-refresh"></span></button>
-        <a href="{{ route('komponen.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top"
+        <a href="{{ route('transaksi.finance.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top"
             title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
     </div>
 </div>
@@ -32,8 +32,8 @@
                             <thead>
                                 <tr class=" text-white text-center bg-primary">
                                     <th width="5%">No</th>
-                                    <th>Name</th>
                                     <th>Komponen</th>
+                                    <th>Tanggal Transaksi</th>
                                     <th>Kategori</th>
                                     <th>Total</th>
                                     <th class="text-center">Aksi</th>
@@ -45,8 +45,8 @@
                             <tfoot>
                                 <tr class=" text-white text-center bg-primary">
                                     <th width="5%">No</th>
-                                    <th>Name</th>
                                     <th>Komponen</th>
+                                    <th>Tanggal Transaksi</th>
                                     <th>Kategori</th>
                                     <th>Total</th>
                                     <th class="text-center">Aksi</th>
@@ -69,7 +69,7 @@
            $.ajaxSetup({
                headers: { "X-CSRF-Token" : $("meta[name=csrf-token]").attr("content") }
            });
-           table= $('#table1').DataTable({
+           table = $('#table1').DataTable({
            "processing": true,
            "serverSide": true,
            "pageLength": 25,
@@ -78,7 +78,7 @@
            "dom": '<"html5">lftip',
            "stateSave"  : true,
            "ajax":{
-                    "url": "{{ route("komponen.getdata") }}",
+                    "url": "{{ route("transaksi.finance.getdata") }}",
                     "dataType": "json",
                     "type": "POST",
                     data: function ( d ) {
@@ -88,10 +88,10 @@
             "columns": [
                 {"data":"no"},
                 {"data":"name"},
-                {"data":"name"},
-                {"data":"name"},
-                {"data":"jenis",
-                    "orderable" : false,
+                {"data":"tgl_transaksi"},
+                {"data":"kategori"},
+                {"data":"total",
+                    "className" : "text-right"
                 },
                 { "data" : "action",
                     "orderable" : false,
@@ -159,15 +159,14 @@
                 });
                 $.ajax({
                     type: 'delete',
-                    url: '{{route("komponen.delete",[null])}}/' + enc_id,
+                    url: '{{route("transaksi.finance.delete",[null])}}/' + enc_id,
                     headers: {'X-CSRF-TOKEN': token},
                     success: function(response){
-                    // console.log(response)
-                    if (response.code == 202) {
-                        Swal.fire('Yes',response.detail.message,'success');
+                    if (response.data.code == 202) {
+                        Swal.fire('Yes',response.data.detail.message,'success');
                         table.ajax.reload(null, true);
                     }else{
-                        Swal.fire('Ups',response.detail.message,'info');
+                        Swal.fire('Ups',response.data.detail.message,'info');
                     }
                 },
                 error: function(response){

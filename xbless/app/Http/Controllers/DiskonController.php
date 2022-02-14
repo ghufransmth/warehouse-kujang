@@ -105,11 +105,9 @@ class DiskonController extends Controller
         $page  = $start +1;
         $search = $request->search['value'];
         
-        $query = DiskonDetail::select('diskon_detail.*','diskon.name','diskon.parent_id as parent','tbl_product.nama as name_product', 'tbl_satuan.nama as satuan_name');
-        $query->leftJoin('diskon','diskon.id','diskon_detail.diskon_id');
+        $query = DiskonDetail::select('diskon_detail.*','tbl_product.nama as name_product', 'tbl_satuan.nama as satuan_name');
         $query->leftJoin('tbl_product', 'tbl_product.id', 'diskon_detail.produk');
         $query->leftJoin('tbl_satuan','tbl_satuan.id','diskon_detail.satuan');
-        $query->whereNotNull('diskon.parent_id');
         if(array_key_exists($request->order[0]['column'], $this->original_column)){
            $query->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
         }
@@ -118,7 +116,7 @@ class DiskonController extends Controller
         }
          if($search) {
           $query->where(function ($query) use ($search) {
-                  $query->orWhere('diskon.name','LIKE',"%{$search}%");
+                  $query->orWhere('diskon_detail.name','LIKE',"%{$search}%");
           });
         }
         $totalData = $query->get()->count();
@@ -139,12 +137,18 @@ class DiskonController extends Controller
             $action.='<a href="#" onclick="deleteNegara(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
             $action.="</div>";
 
-            $result->no             = $key+$page;
-            $result->category       = $this->check_diskon($result->parent)->name;
+            if($result->flag_diskon == 0){
+                $flag = 'Distributor';
+            }else if($result->flag_diskon == 1){
+                $flag = 'Principal';
+            }
 
-            if(strtolower($result->category) == 'distributor'){
+            $result->no             = $key+$page;
+            $result->category       = $flag;
+
+            if(strtolower($result->flag_diskon) == 0){
                 $keterangan = 'Minimal Pembelian '.'Rp. '.number_format($result->min_beli,0,",",".").' - '.'Rp. '.number_format($result->max_beli,0,",",".").' ( sebelum PPN ) Mendapatkan diskon sebesar '.($result->nilai_diskon).' %';
-            }else if(strtolower($result->category) == 'principal'){
+            }else if(strtolower($result->flag_diskon) == 1){
                 if($result->kelipatan == 0){
                     $kelipatan = ' Dengan Kelipatan ';
                 }else{
@@ -204,26 +208,23 @@ class DiskonController extends Controller
             );
         }else {
             if($enc_id){
-                $result = Diskon::find($dec_id);
-                $result->name        = $req->name;
-                $result->parent_id   = $req->parent;
-                $result->save();
-
-                if($result){
-                    $detail     = DiskonDetail::where('diskon_id', $dec_id)->first();
-                    $detail->diskon_id  = $result->id;
-                    $detail->min_beli   = isset($req->min_beli)? $req->min_beli : null;
-                    $detail->max_beli   = isset($req->max_beli)? $req->max_beli : null;
-                    $detail->nilai_diskon   = isset($req->nilai_diskon)? $req->nilai_diskon : null;
-                    $detail->jenis_diskon   = isset($req->jenis_diskon)? $req->jenis_diskon : null;
-                    $detail->kelipatan  = isset($req->kelipatan)? $req->kelipatan : null;
-                    $detail->produk = isset($req->produk)? $req->produk : null;
-                    $detail->jml_produk = isset($req->jml_produk)? $req->jml_produk : null;
-                    $detail->satuan = isset($req->satuan)? $req->satuan : null;
-                    $detail->bonus_produk   = isset($req->bonus_produk)? $req->bonus_produk : null;
-                    $detail->jml_bonus  = isset($req->jml_bonus)? $req->jml_bonus : null;
-                    $detail->satuan_bonus = isset($req->satuan_bonus)? $req->satuan_bonus : null;
-                    $detail->save();
+                
+                $detail     = DiskonDetail::where('diskon_id', $dec_id)->first();
+                $detail->name  = $req->name;
+                $detail->flag_diskon    = $req->parent;
+                $detail->min_beli   = isset($req->min_beli)? $req->min_beli : null;
+                $detail->max_beli   = isset($req->max_beli)? $req->max_beli : null;
+                $detail->nilai_diskon   = isset($req->nilai_diskon)? $req->nilai_diskon : null;
+                $detail->jenis_diskon   = isset($req->jenis_diskon)? $req->jenis_diskon : null;
+                $detail->kelipatan  = isset($req->kelipatan)? $req->kelipatan : null;
+                $detail->produk = isset($req->produk)? $req->produk : null;
+                $detail->jml_produk = isset($req->jml_produk)? $req->jml_produk : null;
+                $detail->satuan = isset($req->satuan)? $req->satuan : null;
+                $detail->bonus_produk   = isset($req->bonus_produk)? $req->bonus_produk : null;
+                $detail->jml_bonus  = isset($req->jml_bonus)? $req->jml_bonus : null;
+                $detail->satuan_bonus = isset($req->satuan_bonus)? $req->satuan_bonus : null;
+                $detail->save();
+                if($detail){
 
                     $json_data = array(
                         "success"         => TRUE,
@@ -237,27 +238,24 @@ class DiskonController extends Controller
                     ); 
                 }
             }else{
-                $result              = new Diskon;
-                $result->name        = $req->name;
-                $result->parent_id   = $req->parent;
-                $result->save();
+                $detail     = new DiskonDetail;
+                $detail->name  = $req->name;
+                $detail->flag_diskon    = $req->parent;
+                $detail->min_beli   = isset($req->min_beli)? $req->min_beli : null;
+                $detail->max_beli   = isset($req->max_beli)? $req->max_beli : null;
+                $detail->nilai_diskon   = isset($req->nilai_diskon)? $req->nilai_diskon : null;
+                $detail->jenis_diskon   = isset($req->jenis_diskon)? $req->jenis_diskon : null;
+                $detail->kelipatan  = isset($req->kelipatan)? $req->kelipatan : null;
+                $detail->produk = isset($req->produk)? $req->produk : null;
+                $detail->jml_produk = isset($req->jml_produk)? $req->jml_produk : null;
+                $detail->satuan = isset($req->satuan)? $req->satuan : null;
+                $detail->bonus_produk   = isset($req->bonus_produk)? $req->bonus_produk : null;
+                $detail->jml_bonus  = isset($req->jml_bonus)? $req->jml_bonus : null;
+                $detail->satuan_bonus = isset($req->satuan_bonus)? $req->satuan_bonus : null;
+                $detail->save();
 
-                if($result){
-                    $detail     = new DiskonDetail;
-                    $detail->diskon_id  = $result->id;
-                    $detail->min_beli   = isset($req->min_beli)? $req->min_beli : null;
-                    $detail->max_beli   = isset($req->max_beli)? $req->max_beli : null;
-                    $detail->nilai_diskon   = isset($req->nilai_diskon)? $req->nilai_diskon : null;
-                    $detail->jenis_diskon   = isset($req->jenis_diskon)? $req->jenis_diskon : null;
-                    $detail->kelipatan  = isset($req->kelipatan)? $req->kelipatan : null;
-                    $detail->produk = isset($req->produk)? $req->produk : null;
-                    $detail->jml_produk = isset($req->jml_produk)? $req->jml_produk : null;
-                    $detail->satuan = isset($req->satuan)? $req->satuan : null;
-                    $detail->bonus_produk   = isset($req->bonus_produk)? $req->bonus_produk : null;
-                    $detail->jml_bonus  = isset($req->jml_bonus)? $req->jml_bonus : null;
-                    $detail->satuan_bonus = isset($req->satuan_bonus)? $req->satuan_bonus : null;
-                    $detail->save();
-
+                if($detail){
+                    
                     $json_data = array(
                         "success"         => TRUE,
                         "message"         => 'Data berhasil ditambahkan.'
@@ -278,16 +276,18 @@ class DiskonController extends Controller
     public function ubah($enc_id){
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
 
-        $data = DiskonDetail::select('diskon_detail.*','diskon.*','tbl_product.nama as nama_product')->leftJoin('tbl_product','tbl_product.id','diskon_detail.produk')->leftJoin('diskon','diskon.id','diskon_detail.diskon_id')->where('diskon_detail.id',$dec_id)->first();
+        $data = DiskonDetail::select('diskon_detail.*','tbl_product.nama as nama_product')->leftJoin('tbl_product','tbl_product.id','diskon_detail.produk')->where('diskon_detail.id',$dec_id)->first();
         $bonus = Product::find($data->bonus_produk);
-        $data->produk_bonus = $bonus->nama;
+        if($data->bonus_produk){
+            $data->produk_bonus = $bonus->nama;
+        }
         // return response()->json(['data' => $data]);
-        $parent = Diskon::whereNull('parent_id')->get();
+        $parent = $this->flag_diskon();
         $jenis = $this->jenis_diskon();
         $kelipatan = $this->kelipatan();
         $satuan = Satuan::all();
 
-        $selectedParent = $data->parent_id;
+        $selectedParent = $data->flag_diskon;
         $selectedSatuan = $data->satuan;
         $selectedJenis = $data->jenis_diskon;
         $selectedKelipatan = $data->kelipatan;
