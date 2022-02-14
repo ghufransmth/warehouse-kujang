@@ -3,6 +3,6 @@
         CV KUJANG MARINAS UTAMA
     </div>
     <div>
-        <strong>Copyright</strong> Buruh Ketik &copy; 2021
+        <strong>Copyright</strong> Buruh Ketik &copy; 2022
     </div>
 </div>
