@@ -87,6 +87,8 @@ class ReturPenjualanController extends Controller
         $retur_transaksi->no_retur_faktur = $dec_id.'/retur';
         $retur_transaksi->jenis_transaksi = 0;
         $retur_transaksi->tgl_retur = $tgl_transaksi;
+        $retur_transaksi->id_sales = $id_sales;
+        $retur_transaksi->id_toko  = $id_toko;
         $retur_transaksi->total_harga = $total_harga_penjualan;
         $retur_transaksi->created_user = auth()->user()->username;
         if($retur_transaksi->save()){

@@ -122,9 +122,10 @@
                 <li class=""><a href="{{ route('retur.index_retur') }}">Form Retur Produk</a></li>
                 @endcan
                 {{-- @can('purchaseorder.tambah')
-                <li class=""><a href="{{ route('purchaseorder.import') }}">Retur Pembelian Produk</a></li>
-                @endcan --}}
-            </ul>
+                <li class=""><a href="{{ route('purchaseorder.import') }}">Retur Pembelian Produk</a>
+        </li>
+        @endcan --}}
+        </ul>
         </li>
         <li>
             <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Kunjungan Sales</span><span
@@ -168,7 +169,8 @@
         {{-- @endcan --}}
 
         {{-- <li>
-            <a href="{{ route('retur_pembelian.index') }}"><i class="fa fa-cart-plus"></i><span class="nav-label">Retur Pembelian</span><span class="fa arrow"></span></a>
+            <a href="{{ route('retur_pembelian.index') }}"><i class="fa fa-cart-plus"></i><span class="nav-label">Retur
+            Pembelian</span><span class="fa arrow"></span></a>
         </li> --}}
 
         {{-- @can('menuorder.index')
@@ -207,6 +209,9 @@
                 @can('reportbarangmasuk.index')
                 <li><a href="{{route('reportbarangmasuk.index')}}">Report Barang Masuk</a></li>
                 @endcan
+                {{-- @can('reportbarangmasuk.index') --}}
+                <li><a href="{{route('reportkeuangan.index')}}">Report Keuangan</a></li>
+                {{-- @endcan --}}
                 @can('reportbarangkeluar.index')
                 <li><a href="{{route('reportbarangkeluar.index')}}">Report Barang Keluar</a></li>
                 @endcan
