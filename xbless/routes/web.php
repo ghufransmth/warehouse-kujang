@@ -63,6 +63,7 @@ use App\Http\Controllers\ReportBarangKeluarController;
 use App\Http\Controllers\ReportPembelianController;
 use App\Http\Controllers\TokoController;
 use App\Http\Controllers\KunjunganSalesController;
+use App\Http\Controllers\ReportKeuanganController;
 use App\Http\Controllers\ReportRekapInvoiceController;
 use App\Http\Controllers\ReturPembelianController;
 use App\Http\Controllers\ReturController;
@@ -83,13 +84,13 @@ Route::get('/manage/login', [LoginController::class, 'index'])->name('manage.log
 Route::post('/manage/login', [LoginController::class, 'checkLogin'])->name('manage.checklogin');
 Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('/', [BerandaController::class, 'index'])->name('manage.beranda');
-    Route::group(['prefix' => 'beranda', 'as' => 'beranda.'], function(){
+    Route::group(['prefix' => 'beranda', 'as' => 'beranda.'], function () {
         Route::post('/getdata', [BerandaController::class, 'getData'])->name('getdata');
-        Route::group(['prefix' => 'unilever', 'as' => 'unilever.'], function(){
+        Route::group(['prefix' => 'unilever', 'as' => 'unilever.'], function () {
             Route::post('/getdataunlever', [BerandaController::class, 'getDataUnilever'])->name('getdata');
             Route::get('/getdata/{id}', [BerandaController::class, 'detailUnilever'])->name('detail');
         });
-        Route::group(['prefix' => 'penjualan', 'as' => 'penjualan.'], function(){
+        Route::group(['prefix' => 'penjualan', 'as' => 'penjualan.'], function () {
             Route::post('/getdatapenjualan', [BerandaController::class, 'getDataPenjualan'])->name('getdata');
             Route::get('/getdata/{id}', [BerandaController::class, 'detailPenjualan'])->name('detail');
         });
@@ -307,6 +308,13 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('manage/reportbarangmasuk/pdf', [ReportBarangMasukController::class, 'pdf'])->name('reportbarangmasuk.pdf');
     Route::get('manage/reportbarangmasuk/excel', [ReportBarangMasukController::class, 'excel'])->name('reportbarangmasuk.excel');
 
+    //REPORT KEUANGAN
+    Route::get('manage/reportkeuangan', [ReportKeuanganController::class, 'index'])->name('reportkeuangan.index');
+    Route::post('manage/reportkeuangan/getdata', [ReportKeuanganController::class, 'getData'])->name('reportkeuangan.getdata');
+    Route::get('manage/reportkeuangan/print', [ReportKeuanganController::class, 'print'])->name('reportkeuangan.print');
+    Route::get('manage/reportkeuangan/pdf', [ReportKeuanganController::class, 'pdf'])->name('reportkeuangan.pdf');
+    Route::get('manage/reportkeuangan/excel', [ReportKeuanganController::class, 'excel'])->name('reportkeuangan.excel');
+
     //REPORT BARANG KELUAR
     Route::get('manage/reportbarangkeluar', [ReportBarangKeluarController::class, 'index'])->name('reportbarangkeluar.index');
     Route::post('manage/reportbarangkeluar/getdata', [ReportBarangKeluarController::class, 'getData'])->name('reportbarangkeluar.getdata');
@@ -381,7 +389,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
 
     Route::group(['prefix' => '/manage'], function () {
         // TYPE CHANNEL
-        Route::group(['prefix' => 'type_channel', 'as' => 'type_channel.'], function(){
+        Route::group(['prefix' => 'type_channel', 'as' => 'type_channel.'], function () {
             Route::get('manage/type_channel', [TypeChannelController::class, 'index'])->name('index');
             Route::post('manage/type_channel/getdata', [TypeChannelController::class, 'getData'])->name('getdata');
             Route::get('manage/type_channel/tambah', [TypeChannelController::class, 'tambah'])->name('tambah');
@@ -581,7 +589,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/getData', [ReturController::class, 'getdata'])->name('getdata');
             Route::post('/getDataRetur', [ReturController::class, 'getdata_retur'])->name('getdata_retur');
             Route::get('/penjualan', [ReturController::class, 'retur_penjualan'])->name('returpenjualan');
-            Route::get('/list_transaksi',[ReturController::class, 'list_transaksi'])->name('list_transaksi');
+            Route::get('/list_transaksi', [ReturController::class, 'list_transaksi'])->name('list_transaksi');
             Route::get('/penjualan/{nofaktur?}', [ReturPenjualanController::class, 'form_retur'])->name('retur_penjualan');
             Route::post('/simpan', [ReturPenjualanController::class, 'simpan'])->name('simpan');
         });
@@ -596,7 +604,6 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/process', [RequestPurchaseController::class, 'process'])->name('process');
             Route::post('/perusahaan', [RequestPurchaseController::class, 'perusahaan'])->name('perusahaan');
             Route::post('/cancel', [RequestPurchaseController::class, 'cancel'])->name('cancel');
-
         });
 
         // PURCHASE ORDER BATAL
@@ -663,7 +670,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/proses_tanda_terima', [TandaTerimaController::class, 'process_tanda_terima'])->name('proses_tanda_terima');
         });
 
-        Route::group(['prefix' => 'transaksi', 'as' => 'transaksi.'], function(){
+        Route::group(['prefix' => 'transaksi', 'as' => 'transaksi.'], function () {
             Route::group(['prefix' => 'pembayaran', 'as' => 'pembayaran.'], function () {
                 Route::get('/', function () {
                     return view('backend/pembayaran/pembayaran/index');
@@ -674,68 +681,68 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
                 Route::post('/getdata', [ReportTransaksiController::class, 'getData'])->name('getdata');
             });
 
-            Route::group(['prefix' => 'finance', 'as' => 'finance.'], function(){
-                Route::get('/',[FinanceController::class, 'index'])->name('index');
-                Route::post('/getdata',[FinanceController::class, 'getData'])->name('getdata');
-                Route::post('/simpan',[FinanceController::class, 'simpan'])->name('simpan');
+            Route::group(['prefix' => 'finance', 'as' => 'finance.'], function () {
+                Route::get('/', [FinanceController::class, 'index'])->name('index');
+                Route::post('/getdata', [FinanceController::class, 'getData'])->name('getdata');
+                Route::post('/simpan', [FinanceController::class, 'simpan'])->name('simpan');
                 Route::get('/tambah', [FinanceController::class, 'tambah'])->name('tambah');
                 Route::get('/edit/{id}', [FinanceController::class, 'ubah'])->name('edit');
-                Route::delete('/delete/{id?}',[FinanceController::class,'hapus'])->name('delete');
+                Route::delete('/delete/{id?}', [FinanceController::class, 'hapus'])->name('delete');
             });
         });
 
-        Route::group(['prefix' => 'kunjungan', 'as' => 'kunjungan.'], function(){
-            Route::get('/',[KunjunganSalesController::class, 'index'])->name('index');
-            Route::post('/list_data',[KunjunganSalesController::class, 'list_data'])->name('list_data');
-            Route::post('/getdata',[KunjunganSalesController::class, 'getData'])->name('getdata');
-            Route::post('/simpan',[KunjunganSalesController::class, 'simpan'])->name('simpan');
+        Route::group(['prefix' => 'kunjungan', 'as' => 'kunjungan.'], function () {
+            Route::get('/', [KunjunganSalesController::class, 'index'])->name('index');
+            Route::post('/list_data', [KunjunganSalesController::class, 'list_data'])->name('list_data');
+            Route::post('/getdata', [KunjunganSalesController::class, 'getData'])->name('getdata');
+            Route::post('/simpan', [KunjunganSalesController::class, 'simpan'])->name('simpan');
             Route::get('/tambah', [KunjunganSalesController::class, 'tambah'])->name('tambah');
             Route::get('/edit/{id}', [KunjunganSalesController::class, 'ubah'])->name('edit');
-            Route::delete('/delete/{id?}',[KunjunganSalesController::class,'hapus'])->name('delete');
+            Route::delete('/delete/{id?}', [KunjunganSalesController::class, 'hapus'])->name('delete');
         });
     });
 
-      // Toko
-    Route::group(['prefix' => 'toko', 'as' => 'toko.'], function(){
-       Route::get('/',[TokoController::class, 'index'])->name('index');
-       Route::get('/gettoko',[TokoController::class, 'getToko'])->name('gettoko');
-       Route::post('/getdata',[TokoController::class, 'getData'])->name('getdata');
-       Route::post('/simpan',[TokoController::class, 'simpan'])->name('simpan');
-       Route::get('/tambah', [TokoController::class, 'tambah'])->name('tambah');
-       Route::get('/edit/{id}', [TokoController::class, 'ubah'])->name('edit');
-       Route::delete('/delete/{id?}',[TokoController::class,'hapus'])->name('delete');
+    // Toko
+    Route::group(['prefix' => 'toko', 'as' => 'toko.'], function () {
+        Route::get('/', [TokoController::class, 'index'])->name('index');
+        Route::get('/gettoko', [TokoController::class, 'getToko'])->name('gettoko');
+        Route::post('/getdata', [TokoController::class, 'getData'])->name('getdata');
+        Route::post('/simpan', [TokoController::class, 'simpan'])->name('simpan');
+        Route::get('/tambah', [TokoController::class, 'tambah'])->name('tambah');
+        Route::get('/edit/{id}', [TokoController::class, 'ubah'])->name('edit');
+        Route::delete('/delete/{id?}', [TokoController::class, 'hapus'])->name('delete');
     });
 
-    Route::group(['prefix' => 'pembelian', 'as' => 'pembelian.'], function(){
+    Route::group(['prefix' => 'pembelian', 'as' => 'pembelian.'], function () {
 
-        Route::get('/',[PembelianController::class, 'index'])->name('index');
-        Route::post('/getdata',[PembelianController::class, 'getData'])->name('getdata');
-        Route::get('/tambah',[PembelianController::class, 'tambah'])->name('tambah');
+        Route::get('/', [PembelianController::class, 'index'])->name('index');
+        Route::post('/getdata', [PembelianController::class, 'getData'])->name('getdata');
+        Route::get('/tambah', [PembelianController::class, 'tambah'])->name('tambah');
         Route::get('/get_satuan', [PembelianController::class, 'get_satuan'])->name('get_satuan');
         Route::get('/ubah/{id}', [PembelianController::class, 'ubah'])->name('ubah');
         // Route::post('/simpan', [PembelianController::class, 'simpan'])->name('simpan');
         Route::post('/simpan', [PembelianController::class, 'coba_simpan'])->name('simpan');
-        Route::post('/tambah_product',[PembelianController::class, 'tambah_product'])->name('tambah_detail');
+        Route::post('/tambah_product', [PembelianController::class, 'tambah_product'])->name('tambah_detail');
         Route::get('/search_product', [PembelianController::class, 'search_product'])->name('search_product');
         Route::get('/search_satuan', [PembelianController::class, 'search_satuan'])->name('search_satuan');
         Route::delete('/delete/{id?}', [PembelianController::class, 'hapus'])->name('hapus');
         Route::post('/harga_product', [PembelianController::class, 'harga_product'])->name('harga_product');
     });
 
-     //IMPORT PEMBELIAN
-     Route::group(['prefix' => 'pembelian_import', 'as' => 'pembelian_import.'], function(){
+    //IMPORT PEMBELIAN
+    Route::group(['prefix' => 'pembelian_import', 'as' => 'pembelian_import.'], function () {
         Route::get('/import', [ImportPembelianController::class, 'index'])->name('import');
         Route::post('/importsimpan', [ImportPembelianController::class, 'importsimpan'])->name('importsimpan');
         Route::get('/importbatal', [ImportPembelianController::class, 'importbatal'])->name('importbatal');
         Route::post('/uploadimport', [ImportPembelianController::class, 'import'])->name('uploadimport');
         Route::post('/deleteimport', [ImportPembelianController::class, 'hapus'])->name('deleteimport');
-     });
+    });
 
-     Route::group(['prefix' => 'retur_pembelian', 'as' => 'retur_pembelian.'],function(){
+    Route::group(['prefix' => 'retur_pembelian', 'as' => 'retur_pembelian.'], function () {
         Route::get('/', [ReturPembelianController::class, 'index'])->name('index');
         Route::post('/getdata', [ReturPembelianController::class, 'getData'])->name('getdata');
         Route::get('/form-retur/{id?}', [ReturPembelianController::class, 'tambah'])->name('form-retur');
         // Route::get('/detail_retur/{id}', [ReturPembelianController::class, 'detail_retur'])->name('detail_retur');
         Route::post('/simpan', [ReturPembelianController::class, 'simpan'])->name('simpan');
-     });
+    });
 });
