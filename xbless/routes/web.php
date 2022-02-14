@@ -305,6 +305,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     //REPORT BARANG MASUK
     Route::get('manage/reportbarangmasuk', [ReportBarangMasukController::class, 'index'])->name('reportbarangmasuk.index');
     Route::post('manage/reportbarangmasuk/getdata', [ReportBarangMasukController::class, 'getData'])->name('reportbarangmasuk.getdata');
+    Route::get('/detail/{id}', [ReportBarangMasukController::class, 'detail'])->name('reportbarangmasuk.detail');
     Route::get('manage/reportbarangmasuk/print', [ReportBarangMasukController::class, 'print'])->name('reportbarangmasuk.print');
     Route::get('manage/reportbarangmasuk/pdf', [ReportBarangMasukController::class, 'pdf'])->name('reportbarangmasuk.pdf');
     Route::get('manage/reportbarangmasuk/excel', [ReportBarangMasukController::class, 'excel'])->name('reportbarangmasuk.excel');

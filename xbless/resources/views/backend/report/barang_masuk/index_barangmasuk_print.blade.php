@@ -58,19 +58,19 @@
                             <tr class="two-strips-top">
                                 <th style="text-align : center; display: table-cell; vertical-align: middle;">No</th>
                                 <th style="text-align : center; display: table-cell; vertical-align: middle;">Tanggal
-                                    Masuk</th>
+                                    Faktur</th>
                                 <th style="text-align : center; display: table-cell; vertical-align: middle;">No.
-                                    Purchase Order</th>
-                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Nama
-                                    Supplier</th>
-                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Produk
+                                    Faktur</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Total
+                                    Pembelian</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Status Bayar
                                 </th>
-                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Gudang
+                                {{-- <th style="text-align : center; display: table-cell; vertical-align: middle;">Gudang
                                 </th>
                                 <th style="text-align : center; display: table-cell; vertical-align: middle;"
                                     colspan="2">Qty</th>
                                 <th style="text-align : center; display: table-cell; vertical-align: middle;">Keterangan
-                                </th>
+                                </th> --}}
                             </tr>
                         </thead>
                         <tbody>
