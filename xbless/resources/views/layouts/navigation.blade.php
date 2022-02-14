@@ -209,8 +209,11 @@
                 @can('reportbarangmasuk.index')
                 <li><a href="{{route('reportbarangmasuk.index')}}">Report Barang Masuk</a></li>
                 @endcan
-                {{-- @can('reportbarangmasuk.index') --}}
+                {{-- @can('reportkeuangan.index') --}}
                 <li><a href="{{route('reportkeuangan.index')}}">Report Keuangan</a></li>
+                {{-- @endcan --}}
+                {{-- @can('reportlabarugi.index') --}}
+                <li><a href="{{route('reportlabarugi.index')}}">Report Laba Rugi</a></li>
                 {{-- @endcan --}}
                 @can('reportbarangkeluar.index')
                 <li><a href="{{route('reportbarangkeluar.index')}}">Report Barang Keluar</a></li>

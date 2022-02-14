@@ -64,6 +64,7 @@ use App\Http\Controllers\ReportPembelianController;
 use App\Http\Controllers\TokoController;
 use App\Http\Controllers\KunjunganSalesController;
 use App\Http\Controllers\ReportKeuanganController;
+use App\Http\Controllers\ReportLabaRugiController;
 use App\Http\Controllers\ReportRekapInvoiceController;
 use App\Http\Controllers\ReturPembelianController;
 use App\Http\Controllers\ReturController;
@@ -314,6 +315,11 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('manage/reportkeuangan/print', [ReportKeuanganController::class, 'print'])->name('reportkeuangan.print');
     Route::get('manage/reportkeuangan/pdf', [ReportKeuanganController::class, 'pdf'])->name('reportkeuangan.pdf');
     Route::get('manage/reportkeuangan/excel', [ReportKeuanganController::class, 'excel'])->name('reportkeuangan.excel');
+
+    //REPORT LABA RUGI
+    Route::get('manage/reportlabarugi', [ReportLabaRugiController::class, 'index'])->name('reportlabarugi.index');
+    Route::get('manage/reportlabarugi/print', [ReportLabaRugiController::class, 'print'])->name('reportlabarugi.print');
+    Route::get('manage/reportlabarugi/excel', [ReportLabaRugiController::class, 'excel'])->name('reportlabarugi.excel');
 
     //REPORT BARANG KELUAR
     Route::get('manage/reportbarangkeluar', [ReportBarangKeluarController::class, 'index'])->name('reportbarangkeluar.index');
