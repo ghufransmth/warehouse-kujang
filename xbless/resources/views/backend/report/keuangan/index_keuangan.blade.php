@@ -19,33 +19,6 @@
         </ol>
     </div>
     <div class="col-lg-4">
-        <div class="title-action">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="form-group" id="date1">
-                        <div class="input-daterange input-group" id="datepicker">
-                            <span class="input-group-addon bg-primary">
-                                <i class="fa fa-calendar m-auto px-2"></i>
-                            </span>
-                            <input type="text" class="form-control-sm form-control" name="start" value="01-01-2022" />
-                            <span class="input-group-addon bg-primary px-2">to </span>
-                            <input type="text" class="form-control-sm form-control" name="end" value="01-02-2022" />
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="form-group">
-                        <div>
-                            <select class="select2_salesman form-control" id="sales">
-                                <option value="">Select Sales</option>
-
-                            </select>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
@@ -72,8 +45,26 @@
                         </div>
                     </form>
                     <div class="d-flex pl-4 pt-4">
+                        <div class="form-group" id="date1">
+                            <div class="input-daterange input-group" id="datepicker">
+                                <span class="input-group-addon bg-primary">
+                                    <i class="fa fa-calendar m-auto px-2"></i>
+                                </span>
+                                <input type="text" class="form-control-sm form-control" name="start"
+                                    value="01-01-2022" />
+                                <span class="input-group-addon bg-primary px-2">to </span>
+                                <input type="text" class="form-control-sm form-control" name="end" value="01-02-2022" />
+                            </div>
+                        </div>
                         {{-- <label class="font-normal">Range Tanggal</label> --}}
+                        {{-- <div class="form-group">
+                            <div>
+                                <select class="select2_salesman form-control" id="sales">
+                                    <option value="">Select Sales</option>
 
+                                </select>
+                            </div>
+                        </div> --}}
                     </div>
                     <div class="hr-line-dashed"></div>
                     <div class="table-responsive">
