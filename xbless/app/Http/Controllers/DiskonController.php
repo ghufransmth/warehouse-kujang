@@ -34,12 +34,21 @@ class DiskonController extends Controller
     }
 
     private function cekExist($column,$var,$id, $parent){
-      $cek = Diskon::where('id','!=',$id)->where($column,'=',$var)->where('parent_id', $parent)->first();
+      $cek = DiskonDetail::where('id','!=',$id)->where($column,'=',$var)->where('parent_id', $parent)->first();
       return (!empty($cek) ? false : true);
     }
 
+    private function flag_diskon(){
+        $result = array(
+            0 => 'Distributor',
+            1 => 'Principal'
+        );
+
+        return $result;
+    }
+
     public function tambah(){
-        $parent = Diskon::whereNull('parent_id')->get();
+        $parent = $this->flag_diskon();
         $jenis = $this->jenis_diskon();
         $kelipatan = $this->kelipatan();
         $satuan = Satuan::all();

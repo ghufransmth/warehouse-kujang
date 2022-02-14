@@ -44,7 +44,7 @@
                                     <select name="parent" class="form-control select2" id="parent">
                                         <option value="">Select Diskon ...</option>
                                             @foreach($parent as $key => $value)
-                                                <option value="{{ $value->id }}" name="{{ $value->name }}" {{ $selectedParent == $value->id? 'selected=""' : ''}}>{{ $value->name }}</option>
+                                                <option value="{{ $key }}" name="{{ $value }}" {{ $selectedParent == $key? 'selected=""' : ''}}>{{ $value }}</option>
                                             @endforeach
                                     </select> 
                                 </div>
