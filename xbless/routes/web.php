@@ -494,6 +494,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::get('/', [KomponenController::class, 'index'])->name('index');
             Route::get('/tambah', [KomponenController::class, 'tambah'])->name('tambah');
             Route::get('/ubah/{id}', [KomponenController::class, 'ubah'])->name('ubah');
+            Route::get('/get_komponen', [KomponenController::class, 'get_komponen'])->name('get_komponen');
             Route::post('/getData', [KomponenController::class, 'getdata'])->name('getdata');
             Route::post('/simpan', [KomponenController::class, 'simpan'])->name('simpan');
             Route::delete('/hapus/{id?}', [KomponenController::class, 'delete'])->name('delete');
@@ -693,8 +694,9 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
                 Route::post('/getdata', [FinanceController::class, 'getData'])->name('getdata');
                 Route::post('/simpan', [FinanceController::class, 'simpan'])->name('simpan');
                 Route::get('/tambah', [FinanceController::class, 'tambah'])->name('tambah');
-                Route::get('/edit/{id}', [FinanceController::class, 'ubah'])->name('edit');
+                Route::get('/edit/{id}', [FinanceController::class, 'ubah'])->name('ubah');
                 Route::delete('/delete/{id?}', [FinanceController::class, 'hapus'])->name('delete');
+                Route::post('/list_data', [FinanceController::class, 'list_data'])->name('list_data');
             });
         });
 
