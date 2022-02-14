@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pembelian;
 use App\Models\Penjualan;
+use App\Models\ReturTransaksi;
 use App\Models\Sales;
 use App\Models\Toko;
 use App\Models\TransaksiStock;
@@ -75,63 +76,75 @@ class ReturController extends Controller
         $request->session()->put('filter_toko', $request->filter_toko);
         $request->session()->put('filter_sales', $request->filter_sales);
         $request->session()->put('type', $request->type);
-        $penjualan = Penjualan::select('*');
-        $penjualan->whereHas('getsales');
+        $dataquery = ReturTransaksi::select('*');
+        // $dataquery->where('flag_transaksi',5);
+        // $dataquery->orwhere('flag_transaksi', 6);
 
-        $penjualan->orderBy('id', 'ASC');
-        if($filter_toko != null || $filter_toko != ""){
-            $penjualan->where('id_toko', $filter_toko);
-        }
-        if($filter_sales != null || $filter_sales != ""){
-            $penjualan->where('id_sales', $filter_sales);
-        }
-        if($type == 1){
-            $penjualan->where('status_lunas', 0);
-        }else if($type == 2){
-            $penjualan->where('status_lunas', 1);
-        }
+        $dataquery->orderBy('tgl_retur', 'DESC');
+        // if($filter_toko != null || $filter_toko != ""){
+        //     $penjualan->where('id_toko', $filter_toko);
+        // }
+        // if($filter_sales != null || $filter_sales != ""){
+        //     $penjualan->where('id_sales', $filter_sales);
+        // }
+        // if($type == 1){
+        //     $penjualan->where('status_lunas', 0);
+        // }else if($type == 2){
+        //     $penjualan->where('status_lunas', 1);
+        // }
 
         if(array_key_exists($request->order[0]['column'], $this->original_column)){
-            $penjualan->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
+            $dataquery->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
         }
 
         if($search) {
-            $penjualan->where(function ($query) use ($search) {
-                    $query->orWhere('no_nota','LIKE',"%{$search}%");
-                    $query->orWhere('kode_rpo','LIKE',"%{$search}%");
+            $dataquery->where(function ($query) use ($search) {
+                    $query->orWhere('no_retur_faktur','LIKE',"%{$search}%");
+                    // $query->orWhere('kode_rpo','LIKE',"%{$search}%");
             });
         }
-        $totalData = $penjualan->get()->count();
+        $totalData = $dataquery->get()->count();
 
-        $totalFiltered = $penjualan->get()->count();
-        $penjualan->limit($limit);
-        $penjualan->offset($start);
-        $data = $penjualan->get();
+        $totalFiltered = $dataquery->get()->count();
+        $dataquery->limit($limit);
+        $dataquery->offset($start);
+        $data = $dataquery->get();
+        // return $data;
 
         foreach($data as $key => $result){
             $aksi = "";
             $enc_id = $this->safe_encode(Crypt::encryptString($result->id));
             $result->id             = $result->id;
             $result->no             = $key+$page;
-            $result->no_faktur = $result->no_faktur;
-            $result->sales = $result->getsales->nama;
-            $result->toko = $result->gettoko->name;
-            $result->tgl_jatuh_tempo = $result->tgl_jatuh_tempo;
-            $result->tgl_transaksi = $result->tgl_faktur;
+            $result->no_faktur = $result->no_retur_faktur;
+            if($result->jenis_transaksi == 0){
+                $sales = $result->getsales->nama;
+                $toko = $result->gettoko->name;
+                $jenis_transaksi = '<span class="badge badge-danger">PENJUALAN</span>';
+            }else{
+                $sales = "-";
+                $toko = "-";
+                $jenis_transaksi = '<span class="badge badge-primary">PEMBELIAN</span>';
+            }
+            $result->sales = $sales;
+            $result->toko = $toko;
+
+            $result->tgl_transaksi = $result->tgl_retur;
             $result->total_harga = $result->total_harga;
-            $result->tgl_lunas = $result->tgl_lunas;
+            // $result->tgl_lunas = $result->tgl_lunas;
+            $result->jenis_transaksi = $jenis_transaksi;
             $aksi .= '<a href="#" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail </a>';
             $aksi .= '<a href="'.route('purchaseorder.edit', $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a> <br>';
 
-            if($result->status_lunas == 0){
-                $result->status_pembayaran = '<span class="badge badge-success">Belum Lunas</span>';
-                $aksi .= '<a href="#" onclick="approve(\''.$enc_id.'\')" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip" style="margin-top:5px">Aprrove</a> <a href="#" onclick="reject(\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" style="margin-top:5px">Reject</a>';
-            }else if($result->status_lunas == 2){
-                $result->status_pembayaran = '<span class="badge badge-danger">Ditolak</span>';
-            }else{
-                $result->status_pembayaran = '<span class="badge badge-primary">Lunas</span>';
-            }
-            $result->created_by = $result->created_by;
+            // if($result->status_lunas == 0){
+            //     $result->status_pembayaran = '<span class="badge badge-success">Belum Lunas</span>';
+            //     $aksi .= '<a href="#" onclick="approve(\''.$enc_id.'\')" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip" style="margin-top:5px">Aprrove</a> <a href="#" onclick="reject(\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" style="margin-top:5px">Reject</a>';
+            // }else if($result->status_lunas == 2){
+            //     $result->status_pembayaran = '<span class="badge badge-danger">Ditolak</span>';
+            // }else{
+            //     $result->status_pembayaran = '<span class="badge badge-primary">Lunas</span>';
+            // }
+            $result->created_by = $result->created_user;
             $result->aksi = $aksi;
         }
         if ($request->user()->can('purchaseorder.index')) {
