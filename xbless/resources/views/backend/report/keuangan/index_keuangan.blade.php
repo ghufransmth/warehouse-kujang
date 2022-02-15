@@ -19,33 +19,6 @@
         </ol>
     </div>
     <div class="col-lg-4">
-        <div class="title-action">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="form-group" id="date1">
-                        <div class="input-daterange input-group" id="datepicker">
-                            <span class="input-group-addon bg-primary">
-                                <i class="fa fa-calendar m-auto px-2"></i>
-                            </span>
-                            <input type="text" class="form-control-sm form-control" name="start" value="01-01-2022" />
-                            <span class="input-group-addon bg-primary px-2">to </span>
-                            <input type="text" class="form-control-sm form-control" name="end" value="01-02-2022" />
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="form-group">
-                        <div>
-                            <select class="select2_salesman form-control" id="sales">
-                                <option value="">Select Sales</option>
-
-                            </select>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
@@ -72,8 +45,26 @@
                         </div>
                     </form>
                     <div class="d-flex pl-4 pt-4">
+                        <div class="form-group" id="date1">
+                            <div class="input-daterange input-group" id="datepicker">
+                                <span class="input-group-addon bg-primary">
+                                    <i class="fa fa-calendar m-auto px-2"></i>
+                                </span>
+                                <input type="text" class="form-control-sm form-control" name="start"
+                                    value="01-01-2022" />
+                                <span class="input-group-addon bg-primary px-2">to </span>
+                                <input type="text" class="form-control-sm form-control" name="end" value="01-02-2022" />
+                            </div>
+                        </div>
                         {{-- <label class="font-normal">Range Tanggal</label> --}}
+                        {{-- <div class="form-group">
+                            <div>
+                                <select class="select2_salesman form-control" id="sales">
+                                    <option value="">Select Sales</option>
 
+                                </select>
+                            </div>
+                        </div> --}}
                     </div>
                     <div class="hr-line-dashed"></div>
                     <div class="table-responsive">
@@ -93,55 +84,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>01-02-2022</td>
-                                    <td>A11</td>
-                                    <td>01-02-2022</td>
-                                    <td>Jaya Abadi</td>
-                                    <td>Yanto</td>
-                                    <td>-</td>
-                                    <td>Lunas</td>
-                                    <td>kontan</td>
-                                    <td>-</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>01-02-2022</td>
-                                    <td>A11</td>
-                                    <td>01-02-2022</td>
-                                    <td>Jaya Abadi</td>
-                                    <td>Yanto</td>
-                                    <td>-</td>
-                                    <td>Lunas</td>
-                                    <td>kontan</td>
-                                    <td>-</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>01-02-2022</td>
-                                    <td>A11</td>
-                                    <td>01-02-2022</td>
-                                    <td>Jaya Abadi</td>
-                                    <td>Yanto</td>
-                                    <td>-</td>
-                                    <td>Lunas</td>
-                                    <td>kontan</td>
-                                    <td>-</td>
-                                </tr>
+                                
                             </tbody>
                             <tfoot>
                                 <tr class="text-white text-center bg-primary">
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
+                                    <th>#</th>
+                                    <th>Tanggal Faktur</th>
+                                    <th>Nomor Faktur</th>
+                                    <th>Tanggal Kirim</th>
+                                    <th>Toko</th>
+                                    <th>Salesman</th>
+                                    <th>Jatuh Tempo</th>
+                                    <th>Status Bayar</th>
+                                    <th>Cara Bayar</th>
+                                    <th>Option</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -156,6 +112,37 @@
 @push('scripts')
 <script>
     $('#table1').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "pageLength": 25,
+        "select" : true,
+        "responsive": true,
+        "stateSave"  : true,
+        "dom": '<"html5">lftip',
+        "ajax":{
+                    "url": "{{ route("beranda.penjualan.getdata") }}",
+                    "dataType": "json",
+                    "type": "POST",
+                    data: function ( d ) {
+                        d._token= "{{csrf_token()}}";
+                        d.periode_start = $('#start').val()
+                        d.periode_end = $('#end').val()
+                    }
+                },
+        "columns": [
+            { "data": "faktur"},
+            { "data": "faktur"},
+            { "data": "faktur"},
+            { "data": "faktur"},
+            { "data": "faktur"},
+            { "data": "faktur"},
+            { "data": "faktur"},
+            { "data": "faktur"},
+            { "data": "faktur"},
+            { "data": "faktur"},
+        ],
+        buttons: [
+        ],
         pageLength: 10,
         responsive: true,
         dom: '<"html5buttons"B>lTfgitp',
@@ -169,15 +156,13 @@
             loadingRecords: "Loading...",
             processing: "Mencari...",
             paginate: {
-            "first": "Pertama",
-            "last": "Terakhir",
-            "next": "Sesudah",
-            "previous": "Sebelum"
+                "first": "Pertama",
+                "last": "Terakhir",
+                "next": "Sesudah",
+                "previous": "Sebelum"
             },
         },
-        buttons: [
-        ],
-        });
+    });
     $('#date1 .input-daterange').datepicker({
         keyboardNavigation: false,
         forceParse: false,

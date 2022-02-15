@@ -112,7 +112,7 @@
                             <div class="hr-line-dashed"></div>
                             <div class="form-group row">
                                 <div class="col-sm-4 col-sm-offset-2">
-                                    <a class="btn btn-white btn-sm" href="{{route('sales.index')}}">Batal</a>
+                                    <a class="btn btn-white btn-sm" href="{{route('kunjungan.index')}}">Batal</a>
                                     <button class="btn btn-primary btn-sm" type="submit" id="simpan">Simpan</button>
                                 </div>
                             </div>

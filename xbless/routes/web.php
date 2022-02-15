@@ -64,6 +64,7 @@ use App\Http\Controllers\ReportPembelianController;
 use App\Http\Controllers\TokoController;
 use App\Http\Controllers\KunjunganSalesController;
 use App\Http\Controllers\ReportKeuanganController;
+use App\Http\Controllers\ReportLabaRugiController;
 use App\Http\Controllers\ReportRekapInvoiceController;
 use App\Http\Controllers\ReturPembelianController;
 use App\Http\Controllers\ReturController;
@@ -304,6 +305,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     //REPORT BARANG MASUK
     Route::get('manage/reportbarangmasuk', [ReportBarangMasukController::class, 'index'])->name('reportbarangmasuk.index');
     Route::post('manage/reportbarangmasuk/getdata', [ReportBarangMasukController::class, 'getData'])->name('reportbarangmasuk.getdata');
+    Route::get('/detail/{id}', [ReportBarangMasukController::class, 'detail'])->name('reportbarangmasuk.detail');
     Route::get('manage/reportbarangmasuk/print', [ReportBarangMasukController::class, 'print'])->name('reportbarangmasuk.print');
     Route::get('manage/reportbarangmasuk/pdf', [ReportBarangMasukController::class, 'pdf'])->name('reportbarangmasuk.pdf');
     Route::get('manage/reportbarangmasuk/excel', [ReportBarangMasukController::class, 'excel'])->name('reportbarangmasuk.excel');
@@ -314,6 +316,11 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('manage/reportkeuangan/print', [ReportKeuanganController::class, 'print'])->name('reportkeuangan.print');
     Route::get('manage/reportkeuangan/pdf', [ReportKeuanganController::class, 'pdf'])->name('reportkeuangan.pdf');
     Route::get('manage/reportkeuangan/excel', [ReportKeuanganController::class, 'excel'])->name('reportkeuangan.excel');
+
+    //REPORT LABA RUGI
+    Route::get('manage/reportlabarugi', [ReportLabaRugiController::class, 'index'])->name('reportlabarugi.index');
+    Route::get('manage/reportlabarugi/print', [ReportLabaRugiController::class, 'print'])->name('reportlabarugi.print');
+    Route::get('manage/reportlabarugi/excel', [ReportLabaRugiController::class, 'excel'])->name('reportlabarugi.excel');
 
     //REPORT BARANG KELUAR
     Route::get('manage/reportbarangkeluar', [ReportBarangKeluarController::class, 'index'])->name('reportbarangkeluar.index');
@@ -489,6 +496,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::get('/', [KomponenController::class, 'index'])->name('index');
             Route::get('/tambah', [KomponenController::class, 'tambah'])->name('tambah');
             Route::get('/ubah/{id}', [KomponenController::class, 'ubah'])->name('ubah');
+            Route::get('/get_komponen', [KomponenController::class, 'get_komponen'])->name('get_komponen');
             Route::post('/getData', [KomponenController::class, 'getdata'])->name('getdata');
             Route::post('/simpan', [KomponenController::class, 'simpan'])->name('simpan');
             Route::delete('/hapus/{id?}', [KomponenController::class, 'delete'])->name('delete');
@@ -688,8 +696,9 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
                 Route::post('/getdata', [FinanceController::class, 'getData'])->name('getdata');
                 Route::post('/simpan', [FinanceController::class, 'simpan'])->name('simpan');
                 Route::get('/tambah', [FinanceController::class, 'tambah'])->name('tambah');
-                Route::get('/edit/{id}', [FinanceController::class, 'ubah'])->name('edit');
+                Route::get('/edit/{id}', [FinanceController::class, 'ubah'])->name('ubah');
                 Route::delete('/delete/{id?}', [FinanceController::class, 'hapus'])->name('delete');
+                Route::post('/list_data', [FinanceController::class, 'list_data'])->name('list_data');
             });
         });
 
