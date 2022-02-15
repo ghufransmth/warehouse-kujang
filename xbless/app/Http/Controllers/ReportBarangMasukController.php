@@ -127,39 +127,13 @@ class ReportBarangMasukController extends Controller
       return response()->json($json_data);
     }
 
-    // public function detail($enc_id){
-
-    //     // return "oke";
-
-    //     $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
-    //     // $pembelian = Pembelian::find($dec_id);
-    //     $pembelian = Pembelian::select('pembelian.id','pembelian.no_faktur','pembelian.tgl_faktur','pembelian_detail.total','pembelian.status_pembelian','tbl_product.kode_product','pembelian_detail.qty','tbl_product.nama as nama_product','tbl_product.kode_product','pembelian_detail.total as total_product','tbl_satuan.nama as satuan_name');
-    //     $pembelian->join('pembelian_detail','pembelian_detail.pembelian_id','pembelian.id');
-    //     $pembelian->join('tbl_product','tbl_product.id','pembelian_detail.product_id');
-    //     $pembelian->join('tbl_satuan','tbl_satuan.id','tbl_product.id_satuan');
-    //     $pembelian->where('status_pembelian',1);
-    //     $pembelian->where('approve_pembelian',0);
-    //     $beli = $pembelian->get();
-    //     // return response()->json($beli);
-
-    //     if(isset($beli)){
-    //         $pembelian_detail = PembelianDetail::where('pembelian_id',$beli->id)->where('notransaction',$beli->no_faktur)->with(['getproduct'])->get();
-    //         $selectedProduct = "";
-
-    //         return view('backend/report/barang_masuk/detail',compact('enc_id','pembelian','pembelian_detail','beli'));
-    //     }else{
-    //         return view('errors/noaccess');
-    //     }
-    //     return $pembelian;
-    // }
-
     public function pdf(Request $req)
     {
         $start = $req->start;
         $page  = $start + 1;
         // $page  = 1;
 
-        $dataquery = Pembelian::select('pembelian.id','pembelian.no_faktur','pembelian.tgl_faktur','pembelian.nominal','pembelian.status_pembelian','tbl_product.kode_product','pembelian_detail.qty','tbl_product.nama as nama_product','tbl_product.kode_product','pembelian_detail.total as total_product','tbl_satuan.nama as satuan_name');
+        $dataquery = Pembelian::select('pembelian.id','pembelian.no_faktur','pembelian.tgl_faktur','pembelian.aokwokawoknominal','pembelian.status_pembelian','tbl_product.kode_product','pembelian_detail.qty','tbl_product.nama as nama_product','tbl_product.kode_product','pembelian_detail.total as total_product','tbl_satuan.nama as satuan_name');
         $dataquery->join('pembelian_detail','pembelian_detail.pembelian_id','pembelian.id');
         $dataquery->join('tbl_product','tbl_product.id','pembelian_detail.product_id');
         $dataquery->join('tbl_satuan','tbl_satuan.id','tbl_product.id_satuan');
