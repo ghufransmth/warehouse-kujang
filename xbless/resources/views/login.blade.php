@@ -32,51 +32,57 @@
             width: 500px;
         }
 
-        /* body {
-            background-image: url("{{ asset('assets/background/body_bg.jpg')}}") !important;
+        .bg_body {
+            background-image: url("{{ asset('assets/background/0201.jpg')}}") !important;
             background-repeat: no-repeat;
-            background-size: 50%;
-        } */
+            background-size: 100%;
+        }
     </style>
 
 </head>
 
-<body class="white-bg">
-    <div class="container animated fadeInDownm-auto">
-        <div class="row text-center">
-            <div class="col-md-6">
-                <img src="{{ asset('assets/background/bg6.jpg')}}" alt="" style="width: 100%">
-            </div>
-            <div class="col-md-6 ">
-                <div class="thebox">
-                    <h2 class="m-3 ">Kujang Marinas</h2>
-                    <h3 class="">ADMIN PANEL</h3>
-                    @if(session('message'))
-                    <div class="alert alert-{{session('message')['status']}}">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        {{ session('message')['desc'] }}
+<body class="bg_body bg-white">
+    <div class="loginColumns animated fadeInDown">
+        <div class="row bg-white" style="margin-left:-250px  ">
+            <div class="col-md-6 my-5 bg-white" style="background: ">
+                <div class="d-flex justify-content-between">
+                    <div class="">
+                        <img src="{{ asset('assets/logo/kujang.png')}}" class="m-auto" alt="" width="100" height="50">
                     </div>
-                    @endif
-                    <form class="m-t" role="form" action="{{route('manage.checklogin')}}" method="post">
-                        {{ csrf_field() }}
-                        <div class="form-group">
-                            <input type="text" name="akun" class="form-control" placeholder="Username" required="">
-                        </div>
-                        <div class="form-group">
-                            <input type="password" name="password" class="form-control" placeholder="Password"
-                                required="">
-                        </div>
-                        <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
-
-                        <!-- <a href="#"><small>Forgot password?</small></a> -->
-                    </form>
                     <div class="text-right">
-                        <small>
-                            <strong style="color: #1ab394">Copyright</strong> Buruh Ketik &copy; 2022
-                        </small>
+                        <h3 class="m-auto">Kujang Marinas Utama</h3>
+                        <h4 class="m-auto py-2">ADMIN PANEL</h4>
                     </div>
                 </div>
+                @if(session('message'))
+                <div class="alert alert-{{session('message')['status']}}">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    {{ session('message')['desc'] }}
+                </div>
+                @endif
+                <form class="m-t" role="form" action="{{route('manage.checklogin')}}" method="post">
+                    {{ csrf_field() }}
+                    <div class="form-group">
+                        <input type="text" name="akun" class="form-control rounded" style="border-radius: 50%"
+                            placeholder="Username" required="">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" class="form-control rounded" placeholder="Password"
+                            required="">
+                    </div>
+                    <button type="submit" class="btn btn-success btn-rounded block full-width m-b">Login</button>
+
+                    <!-- <a href="#"><small>Forgot password?</small></a> -->
+                </form>
+                <div class="text-right">
+                    <small>
+                        <strong style="color: #1ab394">Copyright</strong> Buruh Ketik &copy; 2022
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-6" style="margin-top: -100px">
+                <img src="{{ asset('assets/background/395.jpg')}}" alt="" style="width: 100%">
             </div>
         </div>
     </div>
