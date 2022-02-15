@@ -191,21 +191,21 @@
             <a href="#"><i class="fa fa-paste"></i> <span class="nav-label">Report</span><span
                     class="fa arrow"></span></a>
             <ul class="nav nav-second-level collapse">
-                @can('reportso.index')
+                <!-- @can('reportso.index')
                 <li><a href="{{route('reportso.index')}}">Report SO</a></li>
-                @endcan
-                @can('reportpo.index')
+                @endcan -->
+                <!-- @can('reportpo.index')
                 <li><a href="{{route('reportpo.index')}}">Report PO</a></li>
-                @endcan
-                @can('reportreturrevisi.index')
+                @endcan -->
+                <!-- @can('reportreturrevisi.index')
                 <li><a href="{{route('reportreturrevisi.index')}}">Report Retur Revisi</a></li>
-                @endcan
-                @can('reportinvoice.index')
+                @endcan -->
+                <!-- @can('reportinvoice.index')
                 <li><a href="{{route('reportinvoice.index')}}">Report Rekap Invoice</a></li>
-                @endcan
-                @can('reporttandaterima.index')
+                @endcan -->
+                <!-- @can('reporttandaterima.index')
                 <li><a href="{{route('reporttandaterima.index')}}">Report Tanda Terima</a></li>
-                @endcan
+                @endcan -->
                 @can('reportbarangmasuk.index')
                 <li><a href="{{route('reportbarangmasuk.index')}}">Report Barang Masuk</a></li>
                 @endcan
@@ -215,27 +215,27 @@
                 {{-- @can('reportlabarugi.index') --}}
                 <li><a href="{{route('reportlabarugi.index')}}">Report Laba Rugi</a></li>
                 {{-- @endcan --}}
-                @can('reportbarangkeluar.index')
+                <!-- @can('reportbarangkeluar.index')
                 <li><a href="{{route('reportbarangkeluar.index')}}">Report Barang Keluar</a></li>
-                @endcan
-                @can('reportsisahutang.index')
+                @endcan -->
+                <!-- @can('reportsisahutang.index')
                 <li><a href="{{route('reportsisahutang.index')}}">Report Sisa Hutang</a></li>
-                @endcan
-                @can('reportbo.index')
+                @endcan -->
+                <!-- @can('reportbo.index')
                 <li><a href="{{route('reportbo.index')}}">Report Back Order</a></li>
-                @endcan
-                @can('reportboqty.index')
+                @endcan -->
+                <!-- @can('reportboqty.index')
                 <li><a href="{{route('reportboqty.index')}}">Report Qty Back Order</a></li>
-                @endcan
+                @endcan -->
                 @can('reportpenjualan.index')
                 <li><a href="{{route('reportpenjualan.index')}}">Report Penjualan</a></li>
                 @endcan
                 {{-- @can('reportpembelian.index') --}}
                 {{-- <li><a href="{{route('reportpembelian.index')}}">Report Pembelian</a></li> --}}
                 {{-- @endcan --}}
-                @can('reportstok.index')
+                <!-- @can('reportstok.index')
                 <li><a href="{{route('reportstok.index')}}">Report Stok</a></li>
-                @endcan
+                @endcan -->
             </ul>
         </li>
         @endcan
