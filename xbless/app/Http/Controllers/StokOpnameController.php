@@ -603,6 +603,16 @@ class StokOpnameController extends Controller
                         'message' => 'Asal atau tujuan gudang salah'
                     ]);
                 }
+
+                if($stock->save()){
+                    continue;
+                }else{
+                    return response()->json([
+                        'success' => FALSE,
+                        'message' => 'Gagal menyimpan data stockopname'
+                    ]);
+                    break;
+                }
             }
         }
         $transaksi_stock = new TransaksiStock;
