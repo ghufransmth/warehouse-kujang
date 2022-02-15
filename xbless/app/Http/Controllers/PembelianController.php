@@ -215,7 +215,7 @@ class PembelianController extends Controller
         $nominal = $req->nominal;
         $keterangan = $req->ket;
         $status_pembelian = 1;
-        $approve_pembelian =  1;
+        $approve_pembelian =  0;
         $array_harga_product = $req->harga_product;
         $array_product = $req->produk;
         $array_qty = $req->qty;

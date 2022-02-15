@@ -231,7 +231,7 @@
                 <li><a href="{{route('reportpenjualan.index')}}">Report Penjualan</a></li>
                 @endcan
                 {{-- @can('reportpembelian.index') --}}
-                <li><a href="{{route('reportpembelian.index')}}">Report Pembelian</a></li>
+                {{-- <li><a href="{{route('reportpembelian.index')}}">Report Pembelian</a></li> --}}
                 {{-- @endcan --}}
                 <!-- @can('reportstok.index')
                 <li><a href="{{route('reportstok.index')}}">Report Stok</a></li>

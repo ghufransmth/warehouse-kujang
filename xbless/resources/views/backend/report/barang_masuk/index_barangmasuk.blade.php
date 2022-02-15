@@ -38,8 +38,9 @@
                                             class="fa fa-file-excel-o"></span> Export Excel </button>&nbsp;
                                 </div>
                                 <div class="col-xs-3">
-                                    <button class="btn btn-secondary" type="button" id="Print"><span
-                                            class="fa fa-print"></span> Print</button>&nbsp;
+                                    <div class="col-xs-3">
+                                        <button class="btn btn-secondary" type="button" id="Print"><span class="fa fa-print"></span> Print</button>&nbsp;
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -104,7 +105,7 @@
         table = $('#table1').DataTable({
             processing: true,
             serverSide: true,
-            pageLength: 10,
+            pageLength: 25,
             ordering: true,
             select: true,
             "ajax":{
@@ -187,5 +188,9 @@
         format: "dd-mm-yyyy"
     });
 </script>
-
+<script>
+    function print(){
+        console.log("oke");
+    }
+</script>
 @endpush

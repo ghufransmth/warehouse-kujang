@@ -20,10 +20,11 @@ use App\Models\StockMutasi;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use App\Exports\ReportBarangKeluarExports;
+use App\Models\Penjualan;
 use App\Models\PurchaseOrderDetail;
 use Auth;
 use PDF;
-use Excel;
+use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use DB;
 
@@ -36,13 +37,9 @@ class ReportBarangKeluarController extends Controller
     public function index()
     {
         // $produk     = Product::all();
-        $perusahaan = Perusahaan::all();
-        $gudang     = Gudang::all();
-        $produk      = Product::select('id', 'product_code', 'product_name')
-            ->offset(0)
-            ->limit(10)
-            ->get();
-
+        $perusahaan = [];
+        $gudang     = [];
+        $produk      = [];
         if (session('filter_produk') == "") {
             $selectedproduk = '';
         } else {
@@ -77,49 +74,15 @@ class ReportBarangKeluarController extends Controller
     public function getData(Request $request)
     {
 
-
+        // return $request->all();
         $limit = $request->length;
         $start = $request->start;
         $page  = $start + 1;
         $search = $request->search['value'];
-        $masuk = "Keluar";
 
-        $request->session()->put('filter_produk', $request->filter_produk);
-        $request->session()->put('filter_perusahaan', $request->filter_perusahaan);
-        $request->session()->put('filter_gudang', $request->filter_gudang);
-        $request->session()->put('filter_tgl_start', $request->filter_tgl_start);
-        $request->session()->put('filter_tgl_end', $request->filter_tgl_end);
 
-        $querydb =  ReportStock::whereHas('transaction_order_bm_bl', function ($q) {
-            $q->where('flag_status', 0);
-        })->with(['getperusahaan', 'getinvoice', 'produk_beli', 'getproduct' => function ($query) {
-            $query->with('getsatuan');
-        }, 'getgudang', 'transaction_detail', 'transaction_order_bm_bl' => function ($query) {
-            $query->with('getmember');
-        }]);
-
-        $querydb->where('note', 'like', '%' . $request->ket . '%');
-
-        if (array_key_exists($request->order[0]['column'], $this->original_column)) {
-            $querydb->orderByRaw($this->original_column[$request->order[0]['column']] . ' ' . $request->order[0]['dir']);
-        } else {
-            $querydb->orderBy('report_stok_bm_bl.id', 'DESC');
-        }
-
-        if ($request->filter_produk != "") {
-            $querydb->where('product_id', $request->filter_produk);
-        }
-
-        if ($request->filter_tgl_start != "" && $request->filter_tgl_end != "") {
-            $querydb->whereDate('updated_at', '>=', date('Y-m-d', strtotime($request->filter_tgl_start)));
-            $querydb->whereDate('updated_at', '<=', date('Y-m-d', strtotime($request->filter_tgl_end)));
-        }
-        if ($request->filter_perusahaan != "") {
-            $querydb->where('perusahaan_id', $request->filter_perusahaan);
-        }
-        if ($request->filter_gudang != "") {
-            $querydb->whereIn('gudang_id', $request->filter_gudang);
-        }
+        $querydb = Penjualan::select('*');
+        $querydb->whereHas('getdetailpenjualan');
 
         if ($search) {
             $querydb->where(function ($query) use ($search) {
@@ -132,45 +95,28 @@ class ReportBarangKeluarController extends Controller
         $totalFiltered = $querydb->get()->count();
 
         $data = $querydb->get();
+        // return $data;
 
-        $temp = 0;
+        // $temp = 0;
         foreach ($data as $key => $value) {
             $enc_id = $this->safe_encode(Crypt::encryptString($value->id));
             $action = "";
 
             $value->no                = $key + $page;
             $value->id                = $value->id;
-            if ($value->note != "Adjusment" || $value->note != "adjusment") {
-                $temp = $temp + $value->stock_input;
+
+            // $value->no              = $value->product_code;
+            $value->no_faktur       = $value->no_faktur;
+            $value->tgl_transaksi           = $value->tgl_faktur;
+            $value->total_harga               = $value->total_harga;
+            if($value->status_lunas == 1){
+                $status_lunas = "Lunas";
+            }else{
+                $status_lunas = "Belum Lunas";
             }
-
-
-            $nonota = $value->getinvoice != null ? $value->getinvoice->no_nota : '-';
-            $nama_member = $value->transaction_order_bm_bl != null ? ($value->transaction_order_bm_bl->getmember != null ? $value->transaction_order_bm_bl->getmember->name : '-') : '-';
-            $kota = $value->transaction_order_bm_bl != null ?  ($value->transaction_order_bm_bl->getmember != null ? $value->transaction_order_bm_bl->getmember->city : '-') : '-';
-            $gudang = $value->getgudang != null ? $value->getgudang->name : '-';
-            $nama_produk = $value->getproduct != null ? $value->getproduct->product_name : '-';
-            $satuan = $value->getproduct != null ? ($value->getproduct->getsatuan != null ? $value->getproduct->getsatuan->name : '-') : '-';
-            $harga = $value->transaction_detail != null ? $value->transaction_detail->price - ($value->transaction_detail->price * ($value->transaction_detail->discount / 100)) : 0;
-            $no_purchase = $value->transaction_order_bm_bl != null ? $value->transaction_order_bm_bl->no_nota : '-';
-
-
-            $value->no_purchase       = $no_purchase;
-            $value->nonota            = $nonota;
-            $value->nama_member       = $nama_member . ' - ' . $kota;
-
-            $value->nama_gudang       = $gudang;
-            $value->nama_produk       = $nama_produk;
-
-            $value->stockinput        = $value->stock_input != null || $value->stock_input != '' ? number_format($value->stock_input, 0, ',', '.') : '-';
-
-            $value->namasatuan        = $satuan;
-            $value->catatan           = $value->note;
-
-            $value->harga             = number_format(round($harga), 0, ',', '.');
-
-            $value->tgl               = date('d/m/Y', strtotime($value->updated_at));
-            $value->conv_tgl          = date('Y-m-d', strtotime($value->updated_at));
+            $aksi = '<a href="'.route("reportbarangkeluar.detail", $enc_id).'" class="btn btn-success"><i class="fa fa-eye"></i> </a>';
+            $value->status_lunas    = $status_lunas;
+            $value->aksi = $aksi;
         }
 
         if ($request->user()->can('reportbarangkeluar.index')) {
@@ -179,7 +125,7 @@ class ReportBarangKeluarController extends Controller
                 "recordsTotal"    => intval($totalData),
                 "recordsFiltered" => intval($totalFiltered),
                 "data"            => $data->sortByDesc('conv_tgl')->values(),
-                "sum_qty"         => $temp,
+                // "sum_qty"         => $temp,
             );
         } else {
             $json_data = array(
@@ -187,11 +133,33 @@ class ReportBarangKeluarController extends Controller
                 "recordsTotal"    => 0,
                 "recordsFiltered" => 0,
                 "data"            => [],
-                "sum_qty"         => 0,
+                // "sum_qty"         => 0,
             );
         }
 
         return json_encode($json_data);
+    }
+    public function detail($id){
+        $dec_id = $this->safe_decode(Crypt::decryptString($id));
+        // return $dec_id;
+        $penjualan = Penjualan::find($dec_id);
+        // return $penjualan->getdetailpenjualan;
+        return view('backend/report/barang_keluar/index_barangkeluar_detail',[
+            'penjualan' => $penjualan,
+            'detail_penjualan' => $penjualan->getdetailpenjualan,
+            'enc_id' => $id
+        ]);
+    }
+    public function print($id){
+        $dec_id = $this->safe_decode(Crypt::decryptString($id));
+        // return $dec_id;
+        $penjualan = Penjualan::find($dec_id);
+        // return $penjualan;
+        return view('backend/report/barang_keluar/index_barangkeluar_print',[
+            'penjualan' => $penjualan,
+            'detail_penjualan' => $penjualan->getdetailpenjualan,
+            'enc_id' => $id
+        ]);
     }
 
     function safe_encode($string)
@@ -204,172 +172,8 @@ class ReportBarangKeluarController extends Controller
         $data = str_replace(array('_'), array('/'), $string);
         return $data;
     }
-    public function print(Request $request)
+    public function pdf($enc_id)
     {
-
-
-        $filter_produk          = session('filter_produk');
-        $filter_perusahaan      = session('filter_perusahaan');
-        $filter_gudang          = session('filter_gudang');
-        $filter_tgl_start       = session('filter_tgl_start');
-        $filter_tgl_end         = session('filter_tgl_end');
-
-        $masuk = "Keluar";
-        $perusahaan = Perusahaan::find($filter_perusahaan);
-
-        $querydb =  ReportStock::whereHas('transaction_order_bm_bl', function ($q) {
-            $q->where('flag_status', 0);
-        })->with(['getperusahaan', 'getinvoice', 'produk_beli', 'getproduct' => function ($query) {
-            $query->with('getsatuan');
-        }, 'getgudang', 'transaction_detail', 'transaction_order_bm_bl' => function ($query) {
-            $query->with('getmember');
-        }]);
-
-        $querydb->where('note', 'like', '%' . $masuk . '%');
-
-        if ($filter_produk != "") {
-            $querydb->where('product_id', $filter_produk);
-        }
-
-        if ($filter_tgl_start != "" && $filter_tgl_end != "") {
-            $querydb->whereDate('updated_at', '>=', date('Y-m-d', strtotime($filter_tgl_start)));
-            $querydb->whereDate('updated_at', '<=', date('Y-m-d', strtotime($filter_tgl_end)));
-        }
-        if ($filter_perusahaan != "") {
-            $querydb->where('perusahaan_id', $filter_perusahaan);
-        }
-        if ($filter_gudang != "") {
-            $querydb->whereIn('gudang_id', $filter_gudang);
-        }
-
-
-
-        $data = $querydb->get();
-
-
-        foreach ($data as $key => $value) {
-            $enc_id = $this->safe_encode(Crypt::encryptString($value->id));
-            $action = "";
-
-            $value->no                = $key + 1;
-            $value->id                = $value->id;
-
-            $nonota = $value->getinvoice != null ? $value->getinvoice->no_nota : '-';
-            $nama_member = $value->transaction_order_bm_bl != null ? ($value->transaction_order_bm_bl->getmember != null ? $value->transaction_order_bm_bl->getmember->name : '-') : '-';
-            $kota = $value->transaction_order_bm_bl != null ?  ($value->transaction_order_bm_bl->getmember != null ? $value->transaction_order_bm_bl->getmember->city : '-') : '-';
-            $gudang = $value->getgudang != null ? $value->getgudang->name : '-';
-            $nama_produk = $value->getproduct != null ? $value->getproduct->product_name : '-';
-            $satuan = $value->getproduct != null ? ($value->getproduct->getsatuan != null ? $value->getproduct->getsatuan->name : '-') : '-';
-            $harga = $value->transaction_detail != null ? $value->transaction_detail->price - ($value->transaction_detail->price * ($value->transaction_detail->discount / 100)) : 0;
-            $no_purchase = $value->transaction_order_bm_bl != null ? $value->transaction_order_bm_bl->no_nota : '-';
-
-
-            $value->no_purchase       = $no_purchase;
-            $value->nonota            = $nonota;
-            $value->nama_member       = $nama_member;
-            $value->kota              = $kota;
-
-
-            $value->nama_gudang       = $gudang;
-            $value->nama_produk       = $nama_produk;
-
-            $value->stockinput        = $value->stock_input != null || $value->stock_input != '' ? number_format($value->stock_input, 0, ',', '.') : '-';
-
-            $value->namasatuan        = $satuan;
-            $value->catatan           = $value->note;
-
-            $value->harga             = number_format(round($harga), 0, ',', '.');
-
-            $value->tgl               = date('d/m/Y', strtotime($value->updated_at));
-
-            $value->conv_tgl          = date('Y-m-d', strtotime($value->updated_at));
-        }
-
-        $data = $data->sortByDesc('conv_tgl')->values();
-
-        return view('backend/report/barang_keluar/index_barangkeluar_print', compact('data', 'perusahaan', 'filter_perusahaan', 'filter_gudang', 'filter_produk', 'filter_tgl_start', 'filter_tgl_end'));
-    }
-    public function pdf(Request $request)
-    {
-        $filter_produk          = session('filter_produk');
-        $filter_perusahaan      = session('filter_perusahaan');
-        $filter_gudang          = session('filter_gudang');
-        $filter_tgl_start       = session('filter_tgl_start');
-        $filter_tgl_end         = session('filter_tgl_end');
-        $masuk = "keluar";
-
-
-        $perusahaan = Perusahaan::find($filter_perusahaan);
-
-        $querydb =  ReportStock::whereHas('transaction_order_bm_bl', function ($q) {
-            $q->where('flag_status', 0);
-        })->with(['getperusahaan', 'getinvoice', 'produk_beli', 'getproduct' => function ($query) {
-            $query->with('getsatuan');
-        }, 'getgudang', 'transaction_detail', 'transaction_order_bm_bl' => function ($query) {
-            $query->with('getmember');
-        }]);
-
-        $querydb->where('note', 'like', '%' . $masuk . '%');
-
-        if ($filter_produk != "") {
-            $querydb->where('product_id', $filter_produk);
-        }
-
-        if ($filter_tgl_start != "" && $filter_tgl_end != "") {
-            $querydb->whereDate('updated_at', '>=', date('Y-m-d', strtotime($filter_tgl_start)));
-            $querydb->whereDate('updated_at', '<=', date('Y-m-d', strtotime($filter_tgl_end)));
-        }
-        if ($filter_perusahaan != "") {
-            $querydb->where('perusahaan_id', $filter_perusahaan);
-        }
-        if ($filter_gudang != "") {
-            $querydb->whereIn('gudang_id', $filter_gudang);
-        }
-
-
-
-        $data = $querydb->get();
-
-
-        foreach ($data as $key => $value) {
-            $enc_id = $this->safe_encode(Crypt::encryptString($value->id));
-            $action = "";
-
-            $value->no                = $key + 1;
-            $value->id                = $value->id;
-
-            $nonota = $value->getinvoice != null ? $value->getinvoice->no_nota : '-';
-            $nama_member = $value->transaction_order_bm_bl != null ? ($value->transaction_order_bm_bl->getmember != null ? $value->transaction_order_bm_bl->getmember->name : '-') : '-';
-            $kota = $value->transaction_order_bm_bl != null ?  ($value->transaction_order_bm_bl->getmember != null ? $value->transaction_order_bm_bl->getmember->city : '-') : '-';
-            $gudang = $value->getgudang != null ? $value->getgudang->name : '-';
-            $nama_produk = $value->getproduct != null ? $value->getproduct->product_name : '-';
-            $satuan = $value->getproduct != null ? ($value->getproduct->getsatuan != null ? $value->getproduct->getsatuan->name : '-') : '-';
-            $harga = $value->transaction_detail != null ? $value->transaction_detail->price - ($value->transaction_detail->price * ($value->transaction_detail->discount / 100)) : 0;
-            $no_purchase = $value->transaction_order_bm_bl != null ? $value->transaction_order_bm_bl->no_nota : '-';
-
-
-            $value->no_purchase       = $no_purchase;
-            $value->nonota            = $nonota;
-            $value->nama_member       = $nama_member;
-            $value->kota              = $kota;
-
-
-            $value->nama_gudang       = $gudang;
-            $value->nama_produk       = $nama_produk;
-
-            $value->stockinput        = $value->stock_input != null || $value->stock_input != '' ? number_format($value->stock_input, 0, ',', '.') : '-';
-
-            $value->namasatuan        = $satuan;
-            $value->catatan           = $value->note;
-
-            $value->harga             = number_format(round($harga), 0, ',', '.');
-
-            $value->tgl               = date('d/m/Y', strtotime($value->updated_at));
-
-            $value->conv_tgl          = date('Y-m-d', strtotime($value->updated_at));
-        }
-
-        $data = $data->sortByDesc('conv_tgl')->values();
         $config = [
             'mode'                  => '',
             'format'                => 'A4',
@@ -391,20 +195,36 @@ class ReportBarangKeluarController extends Controller
             'watermark_font'        => 'sans-serif',
             'display_mode'          => 'default',
         ];
-        $pdf = PDF::loadView('backend/report/barang_keluar/index_barangkeluar_pdf', ['data' => $data, 'perusahaan' => $perusahaan, 'filter_perusahaan' => $filter_perusahaan, 'filter_gudang' => $filter_gudang, 'filter_perusahaan' => $filter_perusahaan, 'filter_tgl_start'   => $filter_tgl_start, 'filter_tgl_end'   => $filter_tgl_end], [], $config);
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        // return $dec_id;
+        $penjualan = Penjualan::find($dec_id);
+        // return $penjualan;
+        // return view('backend/report/barang_keluar/index_barangkeluar_print',[
+        //     'penjualan' => $penjualan,
+        //     'detail_penjualan' => $penjualan->getdetailpenjualan,
+        //     'enc_id' => $id
+        // ]);
+        $pdf = PDF::loadView('backend/report/barang_keluar/index_barangkeluar_pdf', ['penjualan' => $penjualan, 'detail_penjualan' => $penjualan->getdetailpenjualan], [], $config);
         ob_get_clean();
         return $pdf->stream('Report Barang Keluar"' . date('d_m_Y H_i_s') . '".pdf');
     }
-    public function excel(Request $request)
+    public function excel($enc_id)
     {
-        $filter_produk          = session('filter_produk');
-        $filter_perusahaan      = session('filter_perusahaan');
-        $filter_gudang          = session('filter_gudang');
-        $filter_tgl_start       = session('filter_tgl_start');
-        $filter_tgl_end         = session('filter_tgl_end');
-        $masuk = "Keluar";
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
 
-        return Excel::download(new ReportBarangKeluarExports($filter_produk, $filter_perusahaan, $filter_gudang, $filter_tgl_start, $filter_tgl_end, $masuk), 'Report Barang Keluar.xlsx');
+        $penjualan = Penjualan::find($dec_id);
+        // $filter_produk          = session('filter_produk');
+        // $filter_perusahaan      = session('filter_perusahaan');
+        // $filter_gudang          = session('filter_gudang');
+        // $filter_tgl_start       = session('filter_tgl_start');
+        // $filter_tgl_end         = session('filter_tgl_end');
+        // $masuk = "Keluar";
+        $view = 'backend/report/barang_keluar/index_barangkeluar_excel';
+        $data = $penjualan;
+        $detail_penjualan = $penjualan->getdetailpenjualan;
+
+
+        return Excel::download(new ReportBarangKeluarExports($view, $data, $detail_penjualan), 'Report Barang Keluar.xlsx');
     }
 
     public function getDataBackup(Request $request)

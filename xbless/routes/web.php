@@ -324,10 +324,12 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
 
     //REPORT BARANG KELUAR
     Route::get('manage/reportbarangkeluar', [ReportBarangKeluarController::class, 'index'])->name('reportbarangkeluar.index');
+    Route::get('manage/reportbarangkeluar/{id?}', [ReportBarangKeluarController::class, 'detail'])->name('reportbarangkeluar.detail');
+    Route::get('manage/reportbarangkeluar/print/{id?}', [ReportBarangKeluarController::class, 'print'])->name('reportbarangkeluar.print');
     Route::post('manage/reportbarangkeluar/getdata', [ReportBarangKeluarController::class, 'getData'])->name('reportbarangkeluar.getdata');
-    Route::get('manage/reportbarangkeluar/print', [ReportBarangKeluarController::class, 'print'])->name('reportbarangkeluar.print');
-    Route::get('manage/reportbarangkeluar/pdf', [ReportBarangKeluarController::class, 'pdf'])->name('reportbarangkeluar.pdf');
-    Route::get('manage/reportbarangkeluar/excel', [ReportBarangKeluarController::class, 'excel'])->name('reportbarangkeluar.excel');
+    // Route::get('manage/reportbarangkeluar/print', [ReportBarangKeluarController::class, 'print'])->name('reportbarangkeluar.print');
+    Route::get('manage/reportbarangkeluar/pdf/{id?}', [ReportBarangKeluarController::class, 'pdf'])->name('reportbarangkeluar.pdf');
+    Route::get('manage/reportbarangkeluar/excel/{id?}', [ReportBarangKeluarController::class, 'excel'])->name('reportbarangkeluar.excel');
 
     //REPORT INVOICE
     Route::get('manage/reportinvoice', [ReportRekapInvoiceController::class, 'index'])->name('reportinvoice.index');

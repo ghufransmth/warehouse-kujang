@@ -41,8 +41,8 @@
                 <div class="col-md-12">
                     <h3 style="margin-top:3mm;text-align:center; vertical-align: middle"> <br>
                         <h3 style="margin-top:3mm;text-align:center; vertical-align: middle"> <br>
-                            {{-- <b>LAPORAN BARANG MASUK {{!empty($perusahaan) ? strtoupper($perusahaan->name) : 'Keseluruhan'}}</b>
-                        </h3> --}}
+                            <b>LAPORAN BARANG MASUK </b>
+                        </h3>
                         <h4 style="margin-top:-4mm;text-align:center; vertical-align: middle"> <br>
                             {{-- <b>DARI TANGGAL {{strtoupper(date('d M Y',strtotime($filter_tgl_start)))}} -
                             {{strtoupper(date('d M Y',strtotime($filter_tgl_end)))}}</b> </h4> --}}
@@ -65,26 +65,18 @@
                                     Pembelian</th>
                                 <th style="text-align : center; display: table-cell; vertical-align: middle;">Status Bayar
                                 </th>
-                                {{-- <th style="text-align : center; display: table-cell; vertical-align: middle;">Gudang
-                                </th>
-                                <th style="text-align : center; display: table-cell; vertical-align: middle;"
-                                    colspan="2">Qty</th>
-                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Keterangan
-                                </th> --}}
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="two-strips-bottom">
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
+                            @foreach ($data as $key => $value)
+                                <tr class="two-strips-bottom">
+                                    <td>{{ $value->no }}</td>
+                                    <td class="text-center">{{ $value->tgl_faktur }}</td>
+                                    <td class="text-center">{{ $value->no_faktur }}</td>
+                                    <td class="text-right">{{ $value->total_pembelian }}</td>
+                                    <td class="text-center">{{ $value->status_bayar }}</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
