@@ -57,24 +57,27 @@
                         <thead>
                             <tr class="two-strips-top">
                                 <th style="text-align : center; display: table-cell; vertical-align: middle;">No</th>
-                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Tanggal
-                                    Faktur</th>
-                                <th style="text-align : center; display: table-cell; vertical-align: middle;">No.
-                                    Faktur</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Kode Product</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Tanggal Faktur</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Nama Product</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Qty (PCS)</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Harga Product</th>
                                 <th style="text-align : center; display: table-cell; vertical-align: middle;">Total
                                     Pembelian</th>
-                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Status Bayar
-                                </th>
+                                {{-- <th style="text-align : center; display: table-cell; vertical-align: middle;">Status Bayar
+                                </th> --}}
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($data as $key => $value)
+                            @foreach ($detail_pembelian as $key => $value)
                                 <tr class="two-strips-bottom">
-                                    <td>{{ $value->no }}</td>
-                                    <td class="text-center">{{ $value->tgl_faktur }}</td>
-                                    <td class="text-center">{{ $value->no_faktur }}</td>
-                                    <td class="text-right">{{ $value->total_pembelian }}</td>
-                                    <td class="text-center">{{ $value->status_bayar }}</td>
+                                    <td>{{ $key+1 }}</td>
+                                    <td class="text-center">{{ $value->product_id }}</td>
+                                    <td class="text-center">{{ date('d-M-Y',strtotime($pembelian->tgl_faktur)) }}</td>
+                                    <td class="text-center">{{ $value->getproduct->nama }}</td>
+                                    <td class="text-center">{{ $value->qty }}</td>
+                                    <td class="text-right">{{ $value->product_price }}</td>
+                                    <td class="text-right">{{ $value->total }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
