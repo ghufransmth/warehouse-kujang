@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Perusahaan;
+use App\Models\Toko;
 use App\Models\Gudang;
 use App\Models\PerusahaanGudang;
 use App\Models\Product;
@@ -28,7 +28,7 @@ class ReportSoController extends Controller
 
     public function index()
     {
-        $perusahaan = Perusahaan::all();
+        $perusahaan = Toko::all();
         return view('backend/report/so/index_so', compact('perusahaan'));
     }
     public function cekData(Request $req)
@@ -69,7 +69,7 @@ class ReportSoController extends Controller
     public function print(Request $request, $perusahaan_id, $tgl_input)
     {
         $tgl           = date('Y-m-d', strtotime($tgl_input));
-        $perusahaan    = Perusahaan::find($perusahaan_id);
+        $perusahaan    = Toko::find($perusahaan_id);
         $query = PurchaseOrder::select('*');
         $query->where('perusahaan_id', $perusahaan_id);
         $query->whereDate('dataorder', $tgl);
@@ -107,7 +107,7 @@ class ReportSoController extends Controller
     public function pdf(Request $request, $perusahaan_id, $tgl_input)
     {
         $tgl           = date('Y-m-d', strtotime($tgl_input));
-        $perusahaan    = Perusahaan::find($perusahaan_id);
+        $perusahaan    = Toko::find($perusahaan_id);
         $query = PurchaseOrder::select('*');
         $query->where('perusahaan_id', $perusahaan_id);
         $query->whereDate('dataorder', $tgl);
