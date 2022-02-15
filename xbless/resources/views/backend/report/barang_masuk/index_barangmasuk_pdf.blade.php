@@ -1,78 +1,92 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>CETAK BARANG MASUK</title>
-        <style type="text/css">
 
-        .text-center {
-            text-align: center
+<head>
+    <meta charset="UTF-8">
+    <link href="{{ asset('assets/css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('assets/css/style-print.css')}}" rel="stylesheet">
+    <title>Print Barang Masuk</title>
+    <style type="text/css" media="print">
+        /* @page { size: landscape; } */
+
+        /* @page { size: landscape; } */
+        @page {
+
+            size: auto;
+
+            margin: 0;
+
+            margin-left: 0.1cm;
+            margin-top: 1cm;
+
         }
-        .text-right {
-            text-align: right
+
+        body {
+
+            padding-left: 1.0cm !important;
+
+            padding-right: 0.7cm !important;
+
+            padding-top: 1.1cm !important;
+
         }
+    </style>
 
-        .title {
-            page-break-after: always !important;
-        }
+</head>
 
-        </style>
-
-    </head>
-    <body>
-        <htmlpageheader name="MyHeader1">
-        <br/>
-        <div class="title">
-            <h3 style="margin-top: 10px;text-align: center;"> LAPORAN BARANG MASUK</h3>
-            <h4 style="margin-bottom: 0;text-align: center;"> DARI TANGGAL {{strtoupper(date('d M Y',strtotime($filter_tgl_start)))}} - {{strtoupper(date('d M Y',strtotime($filter_tgl_end)))}}</h4>
-        </div>
-
-        </htmlpageheader>
-        <sethtmlpageheader name="MyHeader1" value="on" show-this-page="1"/>
-        <div>
-            <table width="100%" cellspacing="0" cellpadding="3" class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th width="6%" style="border: 1px solid #000;">No</th>
-                        <th style="text-align: left; border: 1px solid #000;">Tanggal Faktur</th>
-                        <th style="text-align: left;border: 1px solid #000;">No. Faktur</th>
-                        <th style="text-align: left;border: 1px solid #000;">Total Pembelian</th>
-                        <th style="text-align: left;border: 1px solid #000;">Status Bayar</th>
-                        {{-- <th style="text-align: left;border: 1px solid #000;">Gudang</th>
-                        <th style="text-align: center;border: 1px solid #000;" colspan="2">Qty</th>
-                        <th style="text-align: left;border: 1px solid #000;">Keterangan</th> --}}
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($data->sortByDesc('conv_tgl')->values() as $no => $value)
-                        <tr>
-                            <td width="6%" style="border: 1px solid #000;text-align: center;" valign="top" >{{$no + 1}}</td>
-                            <td style="border: 1px solid #000;text-align: left;">{!! $value->tgl_faktur !!}</td>
-                            <td style='border: 1px solid #000;text-align:left;'>{{$value->no_faktur}}</td>
-                            <td style='border: 1px solid #000;text-align:left;'>{{$value->nominal}}</td>
-                            <td style='border: 1px solid #000;text-align:left;'>{{$value->status_pembelian}}</td>
-                            {{-- <td style='border: 1px solid #000;text-align:left;'>{{$value->nama_gudang}}</td> --}}
-                            {{-- <td style='border: 1px solid #000;text-align:center;'>{{$value->stockinput}}</td>
-                            <td style='border: 1px solid #000;text-align:left;'>{{$value->namasatuan}}</td>
-                            <td style='border: 1px solid #000;text-align:left;'>{{$value->catatan}}</td> --}}
-                        </tr>
-                    @endforeach
-                    @for($i=1;$i<2;$i++)
-                        <tr>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            {{-- <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td> --}}
-
-                        </tr>
-                    @endfor
-                </tbody>
-            </table>
+<body onload="window.print();">
+    <div class="wrapper">
+        <section class="section_print">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 style="margin-top:3mm;text-align:center; vertical-align: middle"> <br>
+                        <h3 style="margin-top:3mm;text-align:center; vertical-align: middle"> <br>
+                            <b>LAPORAN BARANG MASUK </b>
+                        </h3>
+                        <h4 style="margin-top:-4mm;text-align:center; vertical-align: middle"> <br>
+                            {{-- <b>DARI TANGGAL {{strtoupper(date('d M Y',strtotime($filter_tgl_start)))}} -
+                            {{strtoupper(date('d M Y',strtotime($filter_tgl_end)))}}</b> </h4> --}}
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-print" style="font-size: 15px !important" width="100%" cellspacing='0'
+                        border="1">
+                        {{-- <table border='1' width='100%' cellspacing='0'> --}}
+                        <thead>
+                            <tr class="two-strips-top">
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;  border: 1px solid #000;">No</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;  border: 1px solid #000;">Kode Product</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;  border: 1px solid #000;">Tanggal Faktur</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;  border: 1px solid #000;">Nama Product</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;  border: 1px solid #000;">Qty (PCS)</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;  border: 1px solid #000;">Harga Product</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;  border: 1px solid #000;">Total
+                                    Pembelian</th>
+                                {{-- <th style="text-align : center; display: table-cell; vertical-align: middle;">Status Bayar
+                                </th> --}}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($detail_pembelian as $key => $value)
+                                <tr class="two-strips-bottom">
+                                    <td>{{ $key+1 }}</td>
+                                    <td class="text-center">{{ $value->product_id }}</td>
+                                    <td class="text-center">{{ date('d-M-Y',strtotime($pembelian->tgl_faktur)) }}</td>
+                                    <td class="text-center">{{ $value->getproduct->nama }}</td>
+                                    <td class="text-center">{{ $value->qty }}</td>
+                                    <td class="text-right">{{ $value->product_price }}</td>
+                                    <td class="text-right">{{ $value->total }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <i>Printed date : <?php echo date("d M Y") ?> </i>
-        </div>
-    </body>
+        </section>
+    </div>
+</body>
+
 </html>

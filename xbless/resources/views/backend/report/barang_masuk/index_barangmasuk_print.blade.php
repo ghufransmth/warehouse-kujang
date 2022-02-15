@@ -41,8 +41,8 @@
                 <div class="col-md-12">
                     <h3 style="margin-top:3mm;text-align:center; vertical-align: middle"> <br>
                         <h3 style="margin-top:3mm;text-align:center; vertical-align: middle"> <br>
-                            {{-- <b>LAPORAN BARANG MASUK {{!empty($perusahaan) ? strtoupper($perusahaan->name) : 'Keseluruhan'}}</b>
-                        </h3> --}}
+                            <b>LAPORAN BARANG MASUK </b>
+                        </h3>
                         <h4 style="margin-top:-4mm;text-align:center; vertical-align: middle"> <br>
                             {{-- <b>DARI TANGGAL {{strtoupper(date('d M Y',strtotime($filter_tgl_start)))}} -
                             {{strtoupper(date('d M Y',strtotime($filter_tgl_end)))}}</b> </h4> --}}
@@ -57,34 +57,29 @@
                         <thead>
                             <tr class="two-strips-top">
                                 <th style="text-align : center; display: table-cell; vertical-align: middle;">No</th>
-                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Tanggal
-                                    Faktur</th>
-                                <th style="text-align : center; display: table-cell; vertical-align: middle;">No.
-                                    Faktur</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Kode Product</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Tanggal Faktur</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Nama Product</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Qty (PCS)</th>
+                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Harga Product</th>
                                 <th style="text-align : center; display: table-cell; vertical-align: middle;">Total
                                     Pembelian</th>
-                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Status Bayar
-                                </th>
-                                {{-- <th style="text-align : center; display: table-cell; vertical-align: middle;">Gudang
-                                </th>
-                                <th style="text-align : center; display: table-cell; vertical-align: middle;"
-                                    colspan="2">Qty</th>
-                                <th style="text-align : center; display: table-cell; vertical-align: middle;">Keterangan
+                                {{-- <th style="text-align : center; display: table-cell; vertical-align: middle;">Status Bayar
                                 </th> --}}
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="two-strips-bottom">
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
+                            @foreach ($detail_pembelian as $key => $value)
+                                <tr class="two-strips-bottom">
+                                    <td>{{ $key+1 }}</td>
+                                    <td class="text-center">{{ $value->product_id }}</td>
+                                    <td class="text-center">{{ date('d-M-Y',strtotime($pembelian->tgl_faktur)) }}</td>
+                                    <td class="text-center">{{ $value->getproduct->nama }}</td>
+                                    <td class="text-center">{{ $value->qty }}</td>
+                                    <td class="text-right">{{ $value->product_price }}</td>
+                                    <td class="text-right">{{ $value->total }}</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
