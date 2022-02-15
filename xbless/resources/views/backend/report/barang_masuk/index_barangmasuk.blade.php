@@ -26,25 +26,6 @@
         <div class="col-lg-12">
             <div class="ibox">
                 <div class="ibox-content">
-                    <form id="submitData" name="submitData" class="text-right">
-                        <div class="pr-4">
-                            <div class="d-flex flex-row-reverse row">
-                                <div class="col-xs-3">
-                                    <button class="btn btn-danger" type="button" id="ExportPdf"><span
-                                            class="fa fa-file-pdf-o"></span> Export PDF</button>&nbsp;
-                                </div>
-                                <div class="col-xs-3">
-                                    <button class="btn btn-primary" type="button" id="ExportExcel"><span
-                                            class="fa fa-file-excel-o"></span> Export Excel </button>&nbsp;
-                                </div>
-                                <div class="col-xs-3">
-                                    <div class="col-xs-3">
-                                        <button class="btn btn-secondary" type="button" id="Print"><span class="fa fa-print"></span> Print</button>&nbsp;
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
                     <div class="d-flex pl-4 pt-4">
                         {{-- <label class="font-normal">Range Tanggal</label> --}}
                         <div class="form-group" id="date1">
