@@ -64,6 +64,7 @@ use App\Http\Controllers\ReportPembelianController;
 use App\Http\Controllers\TokoController;
 use App\Http\Controllers\KunjunganSalesController;
 use App\Http\Controllers\ReportKeuanganController;
+use App\Http\Controllers\ReportLabaRugiController;
 use App\Http\Controllers\ReportRekapInvoiceController;
 use App\Http\Controllers\ReturPembelianController;
 use App\Http\Controllers\ReturController;
@@ -316,12 +317,19 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('manage/reportkeuangan/pdf', [ReportKeuanganController::class, 'pdf'])->name('reportkeuangan.pdf');
     Route::get('manage/reportkeuangan/excel', [ReportKeuanganController::class, 'excel'])->name('reportkeuangan.excel');
 
+    //REPORT LABA RUGI
+    Route::get('manage/reportlabarugi', [ReportLabaRugiController::class, 'index'])->name('reportlabarugi.index');
+    Route::get('manage/reportlabarugi/print', [ReportLabaRugiController::class, 'print'])->name('reportlabarugi.print');
+    Route::get('manage/reportlabarugi/excel', [ReportLabaRugiController::class, 'excel'])->name('reportlabarugi.excel');
+
     //REPORT BARANG KELUAR
     Route::get('manage/reportbarangkeluar', [ReportBarangKeluarController::class, 'index'])->name('reportbarangkeluar.index');
+    Route::get('manage/reportbarangkeluar/{id?}', [ReportBarangKeluarController::class, 'detail'])->name('reportbarangkeluar.detail');
+    Route::get('manage/reportbarangkeluar/print/{id?}', [ReportBarangKeluarController::class, 'print'])->name('reportbarangkeluar.print');
     Route::post('manage/reportbarangkeluar/getdata', [ReportBarangKeluarController::class, 'getData'])->name('reportbarangkeluar.getdata');
-    Route::get('manage/reportbarangkeluar/print', [ReportBarangKeluarController::class, 'print'])->name('reportbarangkeluar.print');
-    Route::get('manage/reportbarangkeluar/pdf', [ReportBarangKeluarController::class, 'pdf'])->name('reportbarangkeluar.pdf');
-    Route::get('manage/reportbarangkeluar/excel', [ReportBarangKeluarController::class, 'excel'])->name('reportbarangkeluar.excel');
+    // Route::get('manage/reportbarangkeluar/print', [ReportBarangKeluarController::class, 'print'])->name('reportbarangkeluar.print');
+    Route::get('manage/reportbarangkeluar/pdf/{id?}', [ReportBarangKeluarController::class, 'pdf'])->name('reportbarangkeluar.pdf');
+    Route::get('manage/reportbarangkeluar/excel/{id?}', [ReportBarangKeluarController::class, 'excel'])->name('reportbarangkeluar.excel');
 
     //REPORT INVOICE
     Route::get('manage/reportinvoice', [ReportRekapInvoiceController::class, 'index'])->name('reportinvoice.index');
@@ -488,6 +496,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::get('/', [KomponenController::class, 'index'])->name('index');
             Route::get('/tambah', [KomponenController::class, 'tambah'])->name('tambah');
             Route::get('/ubah/{id}', [KomponenController::class, 'ubah'])->name('ubah');
+            Route::get('/get_komponen', [KomponenController::class, 'get_komponen'])->name('get_komponen');
             Route::post('/getData', [KomponenController::class, 'getdata'])->name('getdata');
             Route::post('/simpan', [KomponenController::class, 'simpan'])->name('simpan');
             Route::delete('/hapus/{id?}', [KomponenController::class, 'delete'])->name('delete');
@@ -687,8 +696,9 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
                 Route::post('/getdata', [FinanceController::class, 'getData'])->name('getdata');
                 Route::post('/simpan', [FinanceController::class, 'simpan'])->name('simpan');
                 Route::get('/tambah', [FinanceController::class, 'tambah'])->name('tambah');
-                Route::get('/edit/{id}', [FinanceController::class, 'ubah'])->name('edit');
+                Route::get('/edit/{id}', [FinanceController::class, 'ubah'])->name('ubah');
                 Route::delete('/delete/{id?}', [FinanceController::class, 'hapus'])->name('delete');
+                Route::post('/list_data', [FinanceController::class, 'list_data'])->name('list_data');
             });
         });
 

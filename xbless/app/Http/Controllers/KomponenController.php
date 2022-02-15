@@ -220,4 +220,15 @@ class KomponenController extends Controller
             ]);
         }
     }
+
+    public function get_komponen(Request $request){
+        $query = KomponenBiaya::select('*')
+            ->orWhere('code', 'LIKE', "%{$request->search}%")
+            ->orWhere('name', 'LIKE', "%{$request->search}%")
+            ->limit(10);
+
+        $result = $query->get();
+
+        return json_encode($result);
+    }
 }
