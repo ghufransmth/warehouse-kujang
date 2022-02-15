@@ -59,11 +59,6 @@ class ReportBarangMasukController extends Controller
         $page  = $start + 1;
         $search = $request->search['value'];
 
-    //    $dataquery = PembelianDetail::select('pembelian_detail.id','tbl_product.kode_product','pembelian_detail.qty','tbl_product.nama','pembelian.status_pembelian','pembelian.no_faktur','pembelian.tgl_faktur','pembelian.nominal');
-    //    $dataquery->join('pembelian','pembelian.id','pembelian_detail.pembelian_id');
-    //    $dataquery->join('tbl_product','tbl_product.id','pembelian_detail.product_id');
-    //    $dataquery->where('pembelian.status_pembelian',1);
-
         $dataquery = Pembelian::select('pembelian.id','pembelian.no_faktur','pembelian.tgl_faktur','pembelian.nominal','pembelian.status_pembelian','tbl_product.kode_product','pembelian_detail.qty','tbl_product.nama as nama_product','tbl_product.kode_product','pembelian_detail.total as total_product');
         $dataquery->join('pembelian_detail','pembelian_detail.pembelian_id','pembelian.id');
         $dataquery->join('tbl_product','tbl_product.id','pembelian_detail.product_id');
@@ -127,71 +122,22 @@ class ReportBarangMasukController extends Controller
       return response()->json($json_data);
     }
 
-    // public function detail($enc_id){
+    public function detail($enc_id){
 
-    //     // return "oke";
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        // return $dec_id;
+        $pembelian = Pembelian::find($dec_id);
+        // return $penjualan->getdetailpenjualan;
+        return view('backend/report/barang_masuk/detail',[
+            'pembelian' => $pembelian,
+            'detail_pembelian' => $pembelian->getdetailpembelian,
+            'enc_id' => $enc_id
+        ]);
+    }
 
-    //     $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
-    //     // $pembelian = Pembelian::find($dec_id);
-    //     $pembelian = Pembelian::select('pembelian.id','pembelian.no_faktur','pembelian.tgl_faktur','pembelian_detail.total','pembelian.status_pembelian','tbl_product.kode_product','pembelian_detail.qty','tbl_product.nama as nama_product','tbl_product.kode_product','pembelian_detail.total as total_product','tbl_satuan.nama as satuan_name');
-    //     $pembelian->join('pembelian_detail','pembelian_detail.pembelian_id','pembelian.id');
-    //     $pembelian->join('tbl_product','tbl_product.id','pembelian_detail.product_id');
-    //     $pembelian->join('tbl_satuan','tbl_satuan.id','tbl_product.id_satuan');
-    //     $pembelian->where('status_pembelian',1);
-    //     $pembelian->where('approve_pembelian',0);
-    //     $beli = $pembelian->get();
-    //     // return response()->json($beli);
 
-    //     if(isset($beli)){
-    //         $pembelian_detail = PembelianDetail::where('pembelian_id',$beli->id)->where('notransaction',$beli->no_faktur)->with(['getproduct'])->get();
-    //         $selectedProduct = "";
-
-    //         return view('backend/report/barang_masuk/detail',compact('enc_id','pembelian','pembelian_detail','beli'));
-    //     }else{
-    //         return view('errors/noaccess');
-    //     }
-    //     return $pembelian;
-    // }
-
-    public function pdf(Request $req)
+    public function pdf($enc_id)
     {
-        $start = $req->start;
-        $page  = $start + 1;
-        // $page  = 1;
-
-        $dataquery = Pembelian::select('pembelian.id','pembelian.no_faktur','pembelian.tgl_faktur','pembelian.nominal','pembelian.status_pembelian','tbl_product.kode_product','pembelian_detail.qty','tbl_product.nama as nama_product','tbl_product.kode_product','pembelian_detail.total as total_product','tbl_satuan.nama as satuan_name');
-        $dataquery->join('pembelian_detail','pembelian_detail.pembelian_id','pembelian.id');
-        $dataquery->join('tbl_product','tbl_product.id','pembelian_detail.product_id');
-        $dataquery->join('tbl_satuan','tbl_satuan.id','tbl_product.id_satuan');
-        $dataquery->where('status_pembelian',1);
-        $dataquery->where('approve_pembelian',0);
-        // $cek = $dataquery->get();
-        // return $cek;
-
-        $data = $dataquery->get();
-        // return $data;
-        foreach($data as $key => $value){
-            $enc_id = $this->safe_encode(Crypt::encryptString($value->id));
-            $value->no = $key+$page;
-            // $value->no = $page++;
-            $value->id = $value->id;
-            $value->tgl_faktur = date('d-M-Y',strtotime($value->tgl_faktur));
-            $value->no_faktur = $value->no_faktur;
-            $value->kode_product = $value->kode_product;
-            $value->nama_product = $value->nama_product;
-            $value->satuan_name = $value->satuan_name;
-            $value->total_pembelian = number_format($value->total_product,2,',','.');
-            if($value->status_pembelian == 1){
-
-                $value->status_bayar = "Lunas";
-
-            }elseif($value->status_pembelian == 0){
-
-                $value->status_bayar = "Belum Lunas";
-            }
-
-        }
-
         $config = [
             'mode'                  => '',
             'format'                => 'A4',
@@ -213,50 +159,41 @@ class ReportBarangMasukController extends Controller
             'watermark_font'        => 'sans-serif',
             'display_mode'          => 'default',
         ];
-        $pdf = PDF::loadView('backend/report/barang_masuk/index_barangmasuk_pdf', ['data' => $data],[], $config);
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+
+        $pembelian = Pembelian::find($dec_id);
+
+        $pdf = PDF::loadView('backend/report/barang_masuk/index_barangmasuk_pdf', ['pembelian' => $pembelian, 'detail_pembelian' => $pembelian->getdetailpembelian], [], $config);
         ob_get_clean();
+
         return $pdf->stream('Report Barang Masuk"' . date('d_m_Y H_i_s') . '".pdf');
-
-        // return view('backend/report/barang_masuk/index_barangmasuk_pdf');
     }
 
-    public function print(Request $req)
-    {
-        $start = $req->start;
-        $page  = $start + 1;
-        // $page  = 1;
 
-        $dataquery = Pembelian::select('pembelian.id','pembelian.no_faktur','pembelian.tgl_faktur','pembelian.nominal','pembelian.status_pembelian','tbl_product.kode_product','pembelian_detail.qty','tbl_product.nama','tbl_product.kode_product');
-        $dataquery->join('pembelian_detail','pembelian_detail.pembelian_id','pembelian.id');
-        $dataquery->join('tbl_product','tbl_product.id','pembelian_detail.product_id');
-        $dataquery->where('status_pembelian',1);
 
-        $data = $dataquery->get();
-        foreach($data as $key => $value){
-            $enc_id = $this->safe_encode(Crypt::encryptString($value->id));
-            $value->no = $key+$page;
-            // $value->no = $page++;
-            $value->id = $value->id;
-            $value->tgl_faktur = $value->tgl_faktur;
-            $value->no_faktur = $value->no_faktur;
-            $value->total_pembelian = number_format($value->nominal,2,',','.');
-            if($value->status_pembelian == 1){
-
-                $value->status_bayar = "Lunas";
-
-            }elseif($value->status_pembelian == 0){
-
-                $value->status_bayar = "Belum Lunas";
-            }
-
-        }
-
-        return view('backend/report/barang_masuk/index_barangmasuk_print',compact('data'));
+    public function print($enc_id){
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        // return $dec_id;
+        $pembelian = Pembelian::find($dec_id);
+        // return $penjualan;
+        return view('backend/report/barang_masuk/index_barangmasuk_print',[
+            'pembelian' => $pembelian,
+            'detail_pembelian' => $pembelian->getdetailpembelian,
+            'enc_id' => $enc_id
+        ]);
     }
 
-    public function excel(Request $req)
+    public function excel($enc_id)
     {
-        // $masuk = "Masuk";
-        // return Excel::download(new ReportBarangMasukExports($masuk), 'Report Barang Masuk.xlsx');
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+
+        $pembelian = Pembelian::find($dec_id);
+
+        $view = 'backend/report/barang_masuk/index_barangmasuk_excel';
+        $data = $pembelian;
+        $detail_pembelian = $pembelian->getdetailpembelian;
+
+
+        return Excel::download(new ReportBarangMasukExports($view, $data, $detail_pembelian), 'Report Barang Masuk.xlsx');
     }
 }
