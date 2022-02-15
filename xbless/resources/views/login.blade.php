@@ -73,7 +73,7 @@
                     </form>
                     <div class="text-right">
                         <small>
-                            <strong style="color: #1ab394">Copyright</strong> Buruh Ketik &copy; 2021
+                            <strong style="color: #1ab394">Copyright</strong> Buruh Ketik &copy; 2022
                         </small>
                     </div>
                 </div>

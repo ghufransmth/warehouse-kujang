@@ -20,6 +20,7 @@ use App\Models\StockMutasi;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use App\Exports\ReportPenjualanExports;
+use App\Models\Penjualan;
 use App\Models\PurchaseOrderDetail;
 use Auth;
 use PDF;
@@ -40,65 +41,27 @@ class ReportPenjualanController extends Controller
     public function getData(Request $request)
     {
 
-
+        $periode_start = $request->tgl_start;
+        $periode_end   = $request->tgl_end;
         $limit = $request->length;
         $start = $request->start;
         $page  = $start + 1;
         $search = $request->search['value'];
 
-        $request->session()->put('filter_kategori', $request->filter_kategori);
-        $request->session()->put('filter_perusahaan', $request->filter_perusahaan);
-        $request->session()->put('filter_gudang', $request->filter_gudang);
-        $request->session()->put('filter_keyword', $request->filter_keyword);
-        $request->session()->put('filter_tgl_start', $request->filter_tgl_start);
-        $request->session()->put('filter_tgl_end', $request->filter_tgl_end);
 
-        $querydb = Invoice::select('invoice_detail.*', 'invoice.dateorder', 'invoice.perusahaan_id', 'product.product_name', 'product.category_id', 'product.product_code', 'product.part_no', 'category_product.cat_name as nama_kategori', DB::raw('SUM(invoice_detail.qty_kirim) as qtykirim'));
-        $querydb->join('invoice_detail', 'invoice.id', 'invoice_detail.invoice_id');
-        // $querydb->join('product','product.id','invoice_detail.product_id');
-        $querydb->join('product', 'product.product_code', 'invoice_detail.product_code');
-        $querydb->join('category_product', 'category_product.id', 'product.category_id');
-
-        if (array_key_exists($request->order[0]['column'], $this->original_column)) {
-            $querydb->orderByRaw($this->original_column[$request->order[0]['column']] . ' ' . $request->order[0]['dir']);
-        } else {
-            $querydb->orderBy('id', 'DESC');
+        $querydb = Penjualan::select('*');
+        $querydb->orderBy('id', 'DESC');
+        if($periode_start){
+            $querydb->whereDate('tgl_faktur', '>=', date('Y-m-d', strtotime($periode_start)));
         }
-
-        if ($request->filter_keyword != 0) {
-            $filter = $request->filter_keyword;
-            // $querydb->where(function ($query) use ($filter) {
-            //     $query->orWhere('product.product_name', 'LIKE', "%{$filter}%");
-            //     $query->orWhere('product.product_code', 'LIKE', "%{$filter}%");
-            // });
-            $querydb->where('product.id', $filter);
+        if($periode_end){
+            $querydb->whereDate('tgl_faktur', '<=', date('Y-m-d', strtotime($periode_end)));
         }
-
-        if ($request->filter_kategori != "") {
-
-            $querydb->whereIn('category_id', $request->filter_kategori);
-        }
-
-        if ($request->filter_tgl_start != "" && $request->filter_tgl_end != "") {
-            $querydb->whereDate('invoice.dateorder', '>=', date('Y-m-d', strtotime($request->filter_tgl_start)));
-            $querydb->whereDate('invoice.dateorder', '<=', date('Y-m-d', strtotime($request->filter_tgl_end)));
-        }
-        if ($request->filter_perusahaan != "") {
-
-            $querydb->where('invoice.perusahaan_id', $request->filter_perusahaan);
-        }
-        if ($request->filter_gudang != "") {
-
-            $querydb->whereIn('invoice_detail.gudang_id', $request->filter_gudang);
-        }
-
-        $querydb->groupBy('invoice_detail.product_code');
-
         if ($search) {
             $querydb->where(function ($query) use ($search) {
-                $query->orWhere('product_name', 'LIKE', "%{$fiter}%");
+                // $query->orWhere('product_name', 'LIKE', "%{$fiter}%");
                 $query->orWhere('product_code', 'LIKE', "%{$search}%");
-                $query->orWhere('category_product.cat_name', 'LIKE', "%{$fiter}%");
+                // $query->orWhere('category_product.cat_name', 'LIKE', "%{$fiter}%");
             });
         }
         $totalData = $querydb->get()->count();
@@ -108,6 +71,7 @@ class ReportPenjualanController extends Controller
         $querydb->limit($limit);
         $querydb->offset($start);
         $data = $querydb->get();
+        // return $data;
 
 
         foreach ($data as $key => $value) {
@@ -117,10 +81,16 @@ class ReportPenjualanController extends Controller
             $value->no                = $key + $page;
             $value->id                = $value->id;
 
-            $value->code              = $value->product_code;
-            $value->nama_kategori     = $value->nama_kategori;
-            $value->part_no           = $value->part_no ?? '-';
-            $value->qty               = $value->qtykirim . ' ' . $value->satuan;
+            // $value->no              = $value->product_code;
+            $value->no_faktur       = $value->no_faktur;
+            $value->tgl_transaksi           = $value->tgl_faktur;
+            $value->total_harga               = $value->total_harga;
+            if($value->status_lunas == 1){
+                $status_lunas = "Lunas";
+            }else{
+                $status_lunas = "Belum Lunas";
+            }
+            $value->status_lunas    = $status_lunas;
         }
         if ($request->user()->can('reportpenjualan.index')) {
             $json_data = array(
