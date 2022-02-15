@@ -189,6 +189,7 @@ class ReturController extends Controller
             $collect_penjualan->push($colect_jualan);
         }
         $pembelian = Pembelian::select('*')->whereHas('getdetailpembelian')->whereHas('gettransaksi')->get();
+        return response()->json($pembelian);
         $collect_pembelian = collect([]);
         foreach($pembelian as $belian){
             $colect_belian = collect([
