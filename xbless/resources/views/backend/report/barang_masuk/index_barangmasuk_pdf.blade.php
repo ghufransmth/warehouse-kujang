@@ -23,7 +23,7 @@
         <br/>
         <div class="title">
             <h3 style="margin-top: 10px;text-align: center;"> LAPORAN BARANG MASUK</h3>
-            <h4 style="margin-bottom: 0;text-align: center;"> DARI TANGGAL {{strtoupper(date('d M Y',strtotime($filter_tgl_start)))}} - {{strtoupper(date('d M Y',strtotime($filter_tgl_end)))}}</h4>
+            {{-- <h4 style="margin-bottom: 0;text-align: center;"> DARI TANGGAL {{strtoupper(date('d M Y',strtotime($filter_tgl_start)))}} - {{strtoupper(date('d M Y',strtotime($filter_tgl_end)))}}</h4> --}}
         </div>
 
         </htmlpageheader>
@@ -33,27 +33,28 @@
                 <thead>
                     <tr>
                         <th width="6%" style="border: 1px solid #000;">No</th>
-                        <th style="text-align: left; border: 1px solid #000;">Tanggal Faktur</th>
-                        <th style="text-align: left;border: 1px solid #000;">No. Faktur</th>
-                        <th style="text-align: left;border: 1px solid #000;">Total Pembelian</th>
-                        <th style="text-align: left;border: 1px solid #000;">Status Bayar</th>
+                        <th style="text-align: center; border: 1px solid #000;">Tanggal Faktur</th>
+                        <th style="text-align: center;border: 1px solid #000;">No. Faktur</th>
+                        <th style="text-align: center;border: 1px solid #000;">Kode Produk</th>
+                        <th style="text-align: center;border: 1px solid #000;">Nama Produk</th>
+                        <th style="text-align: center;border: 1px solid #000;">Total Pembelian</th>
+                        <th style="text-align: center;border: 1px solid #000;">Status Bayar</th>
                         {{-- <th style="text-align: left;border: 1px solid #000;">Gudang</th>
                         <th style="text-align: center;border: 1px solid #000;" colspan="2">Qty</th>
                         <th style="text-align: left;border: 1px solid #000;">Keterangan</th> --}}
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($data->sortByDesc('conv_tgl')->values() as $no => $value)
+                    @foreach ($data as $no => $value)
                         <tr>
-                            <td width="6%" style="border: 1px solid #000;text-align: center;" valign="top" >{{$no + 1}}</td>
+                            <td width="6%" style="border: 1px solid #000;text-align: center;" valign="top" >{{$value->no}}</td>
                             <td style="border: 1px solid #000;text-align: left;">{!! $value->tgl_faktur !!}</td>
                             <td style='border: 1px solid #000;text-align:left;'>{{$value->no_faktur}}</td>
-                            <td style='border: 1px solid #000;text-align:left;'>{{$value->nominal}}</td>
-                            <td style='border: 1px solid #000;text-align:left;'>{{$value->status_pembelian}}</td>
-                            {{-- <td style='border: 1px solid #000;text-align:left;'>{{$value->nama_gudang}}</td> --}}
-                            {{-- <td style='border: 1px solid #000;text-align:center;'>{{$value->stockinput}}</td>
-                            <td style='border: 1px solid #000;text-align:left;'>{{$value->namasatuan}}</td>
-                            <td style='border: 1px solid #000;text-align:left;'>{{$value->catatan}}</td> --}}
+                            <td style="border: 1px solid #000;text-align: center;">{!! $value->kode_product !!}</td>
+                            <td style="border: 1px solid #000;text-align: center;">{!! $value->nama_product !!}</td>
+                            <td style='border: 1px solid #000;text-align:right;'>{{$value->total_pembelian}}</td>
+                            <td style='border: 1px solid #000;text-align:center;'>{{$value->status_bayar}}</td>
+
                         </tr>
                     @endforeach
                     @for($i=1;$i<2;$i++)
@@ -63,11 +64,6 @@
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
-                            {{-- <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td> --}}
-
                         </tr>
                     @endfor
                 </tbody>

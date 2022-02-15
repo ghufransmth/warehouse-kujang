@@ -56,6 +56,7 @@
                                     <th>Kode Product</th>
                                     <th>Tgl Faktur</th>
                                     <th>Nama Product</th>
+                                    <th>Satuan</th>
                                     <th>Total Harga</th>
                                     <th>Status Bayar</th>
                                 </tr>
@@ -119,7 +120,11 @@
                         "orderable": false,
                     },
                     {
-                        "data": "no_faktur",
+                        "data": "nama_product",
+                        "orderable": false,
+                    },
+                    {
+                        "data": "satuan_name",
                         "orderable": false,
                     },
                     {
@@ -154,6 +159,50 @@
                 }
             });
     })
+
+    $('#Print').on('click', function() {
+            var jumlahdata = table.rows().count();
+            if(jumlahdata > 0){
+                @cannot('reportbarangmasuk.print')
+                    Swal.fire('Ups!', "Anda tidak memiliki HAK AKSES! Hubungi ADMIN Anda.",'error'); return false;
+                @else
+                    window.open('{{route('reportbarangmasuk.print')}}', '_blank');
+                @endcannot
+            }else{
+                Swal.fire('Ups','Tidak ada data','info');
+                return false;
+            }
+        });
+
+        $('#ExportPdf').on('click', function() {
+            var jumlahdata = table.rows().count();
+
+            if(jumlahdata > 0){
+                @cannot('reportbarangmasuk.pdf')
+                    Swal.fire('Ups!', "Anda tidak memiliki HAK AKSES! Hubungi ADMIN Anda.",'error'); return false;
+                @else
+                    window.open('{{route('reportbarangmasuk.pdf')}}', '_blank');
+                @endcannot
+            }else{
+                Swal.fire('Ups','Tidak ada data','info');
+                return false;
+            }
+        });
+
+        $('#ExportExcel').on('click', function() {
+
+           var jumlahdata = table.rows().count();
+           if(jumlahdata > 0){
+               @cannot('reportbarangmasuk.excel')
+                   Swal.fire('Ups!', "Anda tidak memiliki HAK AKSES! Hubungi ADMIN Anda.",'error'); return false;
+               @else
+                   window.open('{{route('reportbarangmasuk.excel')}}', '_blank');
+               @endcannot
+           }else{
+               Swal.fire('Ups','Tidak ada data','info');
+               return false;
+           }
+       });
 
     $(document.body).on("keydown", function(e){
          ele = document.activeElement;
