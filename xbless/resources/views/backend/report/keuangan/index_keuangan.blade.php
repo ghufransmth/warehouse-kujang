@@ -5,6 +5,9 @@
     .swal2-container {
         z-index: 99999 !important;
     }
+    .pagination{
+        display: none;
+    }
 </style>
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-8">
@@ -50,10 +53,10 @@
                                 <span class="input-group-addon bg-primary">
                                     <i class="fa fa-calendar m-auto px-2"></i>
                                 </span>
-                                <input type="text" class="form-control-sm form-control" name="start"
+                                <input type="text" class="form-control-sm form-control" name="start" id="start"
                                     value="01-01-2022" />
                                 <span class="input-group-addon bg-primary px-2">to </span>
-                                <input type="text" class="form-control-sm form-control" name="end" value="01-02-2022" />
+                                <input type="text" class="form-control-sm form-control" name="end" id="end" value="01-02-2022" />
                             </div>
                         </div>
                         {{-- <label class="font-normal">Range Tanggal</label> --}}
@@ -79,8 +82,8 @@
                                     <th>Salesman</th>
                                     <th>Jatuh Tempo</th>
                                     <th>Status Bayar</th>
-                                    <th>Cara Bayar</th>
-                                    <th>Option</th>
+                                    <th>Transaksi</th>
+                                    <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -96,8 +99,8 @@
                                     <th>Salesman</th>
                                     <th>Jatuh Tempo</th>
                                     <th>Status Bayar</th>
-                                    <th>Cara Bayar</th>
-                                    <th>Option</th>
+                                    <th>Transaksi</th>
+                                    <th>Total</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -120,47 +123,40 @@
         "stateSave"  : true,
         "dom": '<"html5">lftip',
         "ajax":{
-                    "url": "{{ route("beranda.penjualan.getdata") }}",
-                    "dataType": "json",
-                    "type": "POST",
-                    data: function ( d ) {
-                        d._token= "{{csrf_token()}}";
-                        d.periode_start = $('#start').val()
-                        d.periode_end = $('#end').val()
-                    }
-                },
+                "url": "{{ route("reportkeuangan.getdata") }}",
+                "dataType": "json",
+                "type": "POST",
+                data: function ( d ) {
+                    d._token= "{{csrf_token()}}";
+                    d.periode_start = $('#start').val()
+                    d.periode_end = $('#end').val()
+                }
+            },
         "columns": [
-            { "data": "faktur"},
-            { "data": "faktur"},
-            { "data": "faktur"},
-            { "data": "faktur"},
-            { "data": "faktur"},
-            { "data": "faktur"},
-            { "data": "faktur"},
-            { "data": "faktur"},
-            { "data": "faktur"},
-            { "data": "faktur"},
+            { "data": "no"},
+            { "data": "tgl_faktur"},
+            { "data": "no_faktur"},
+            { "data": "tgl_kirim"},
+            { "data": "toko"},
+            { "data": "sales"},
+            { "data": "jatuh_tempo"},
+            { "data": "lunas"},
+            { "data": "sumber"},
+            { "data": "total",
+                "className": "text-right"
+            },
         ],
         buttons: [
         ],
-        pageLength: 10,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
         language: {
             search: "_INPUT_",
             searchPlaceholder: "Cari data",
             emptyTable: "Belum ada data",
-            info: "Menampilkan data _START_ sampai _END_ dari _MAX_ data.",
+            info: "",
             infoEmpty: "Menampilkan 0 sampai 0 dari 0 data.",
             lengthMenu: "Tampilkan _MENU_ data per halaman",
             loadingRecords: "Loading...",
             processing: "Mencari...",
-            paginate: {
-                "first": "Pertama",
-                "last": "Terakhir",
-                "next": "Sesudah",
-                "previous": "Sebelum"
-            },
         },
     });
     $('#date1 .input-daterange').datepicker({
