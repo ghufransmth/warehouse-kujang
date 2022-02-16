@@ -9,6 +9,7 @@ class Sales extends Model
 {
     use HasFactory;
     protected $table    = 'tbl_sales';
+    protected $fillable = ['user_id', 'code', 'nama'];
 
-    
+
 }

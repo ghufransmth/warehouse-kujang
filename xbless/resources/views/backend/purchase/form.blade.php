@@ -357,7 +357,7 @@
                             window.location.replace('{{route("requestpurchaseorder.index")}}');
                         }else{
                             //ke draft
-                            window.location.replace('{{route("purchaseorder.tambah")}}');
+                            window.location.replace('{{route("purchaseorder.index")}}');
                         }
 
                     } else {

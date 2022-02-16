@@ -196,7 +196,8 @@ class PurchaseController extends Controller
         $request->session()->put('filter_sales', $request->filter_sales);
         $request->session()->put('type', $request->type);
         $penjualan = Penjualan::select('*');
-        $penjualan->whereHas('getsales');
+        $penjualan->whereHas('gettransaksi');
+        // return $penjualan->get();
 
         $penjualan->orderBy('id', 'ASC');
         if($filter_toko != null || $filter_toko != ""){
@@ -831,7 +832,7 @@ class PurchaseController extends Controller
         $tipeharga = array();
         $selectedtipeharga ="";
         $toko = Toko::all();
-
+        // return 'tes';
         return view('backend/purchase/form',compact('tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia',
                     'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko'));
     }
@@ -993,6 +994,12 @@ class PurchaseController extends Controller
                     'message' => 'Product harus diisi'
                 ]);
             }
+            if($id_toko == 0){
+                return response()->json([
+                    'success' => FALSE,
+                    'message' => 'Toko harus diisi'
+                ]);
+            }
 
             for($i=0;$i<$total_product;$i++){
                 if(isset($array_id_satuan[$i])){
@@ -1078,11 +1085,19 @@ class PurchaseController extends Controller
                             continue;
                         }
                     }
-
-                    return response()->json([
-                        'success' => TRUE,
-                        'message' => 'Data penjualan berhasil disimpan'
-                    ]);
+                    $transaksi_stock = TransaksiStock::where('no_transaksi', $penjualan->no_faktur)->first();
+                    $transaksi_stock->total_harga = $penjualan->total_harga;
+                    if($transaksi_stock->save()){
+                        return response()->json([
+                            'success' => TRUE,
+                            'message' => 'Data penjualan berhasil disimpan'
+                        ]);
+                    }else{
+                        return response()->json([
+                            'success' => FALSE,
+                            'message' => 'Gagal mengupdate total harga transaksi stock'
+                        ]);
+                    }
                 }else{
                     return response()->json([
                         'success' => FALSE,
@@ -1140,7 +1155,7 @@ class PurchaseController extends Controller
                     $transaksi_stock->no_transaksi  = $penjualan->no_faktur;
                     $transaksi_stock->tgl_transaksi = $tgl_transaksi;
                     $transaksi_stock->flag_transaksi = 3;
-
+                    $transaksi_stock->total_harga = $total_harga_penjualan;
                     $transaksi_stock->created_by = auth()->user()->username;
                     $transaksi_stock->note = '-';
                     if($transaksi_stock->save()){
