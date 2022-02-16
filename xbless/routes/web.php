@@ -69,6 +69,7 @@ use App\Http\Controllers\ReportRekapInvoiceController;
 use App\Http\Controllers\ReturPembelianController;
 use App\Http\Controllers\ReturController;
 use App\Http\Controllers\ReturPenjualanController;
+use App\Http\Controllers\SupplierController;
 
 /*
 |--------------------------------------------------------------------------
@@ -436,6 +437,16 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/getData', [GudangController::class, 'getData'])->name('getdata');
             Route::post('/simpan', [GudangController::class, 'simpan'])->name('simpan');
             Route::delete('/hapus/{id?}', [GudangController::class, 'delete'])->name('delete');
+        });
+
+        // SUPPLIER
+        Route::group(['prefix' => 'supplier', 'as' => 'supplier.'], function () {
+            Route::get('/', [SupplierController::class, 'index'])->name('index');
+            Route::get('/tambah', [SupplierController::class, 'tambah'])->name('tambah');
+            Route::get('/ubah/{id}', [SupplierController::class, 'ubah'])->name('ubah');
+            Route::post('/getData', [SupplierController::class, 'getData'])->name('getdata');
+            Route::post('/simpan', [SupplierController::class, 'simpan'])->name('simpan');
+            Route::delete('/hapus/{id?}', [SupplierController::class, 'delete'])->name('delete');
         });
 
         Route::group(['prefix' => 'diskon', 'as' => 'diskon.'], function () {
