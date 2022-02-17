@@ -69,6 +69,12 @@ use App\Http\Controllers\ReportRekapInvoiceController;
 use App\Http\Controllers\ReturPembelianController;
 use App\Http\Controllers\ReturController;
 use App\Http\Controllers\ReturPenjualanController;
+use App\Http\Controllers\DeliveryOrderController;
+use App\Http\Controllers\ReportDeliveryOrderController;
+use App\Http\Controllers\HistoryDeliveryOrderController;
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -200,6 +206,29 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('manage/kota/ubah/{id}', [KotaController::class, 'ubah'])->name('kota.ubah');
     Route::delete('manage/kota/hapus/{id?}', [KotaController::class, 'hapus'])->name('kota.hapus');
     Route::post('manage/kota/simpan', [KotaController::class, 'simpan'])->name('kota.simpan');
+
+
+    //DELIVERY ORDER
+    Route::get('manage/deliveryorder', [DeliveryOrderController::class, 'index'])->name('deliveryorder.index');
+    Route::post('manage/deliveryorder/getdata', [DeliveryOrderController::class, 'getData'])->name('deliveryorder.getdata');
+    Route::get('manage/deliveryorder/tambah', [DeliveryOrderController::class, 'tambah'])->name('deliveryorder.tambah');
+    Route::post('manage/deliveryorder/getdatapenjualan', [DeliveryOrderController::class, 'getDataPenjualan'])->name('deliveryorder.getdatapenjualan');
+    Route::post('manage/deliveryorder/simpan', [DeliveryOrderController::class, 'simpan'])->name('deliveryorder.simpan');
+    Route::post('manage/deliveryorder/updatedriver', [DeliveryOrderController::class, 'updateDriver'])->name('deliveryorder.updatedriver');
+    Route::post('manage/deliveryorder/pengiriman', [DeliveryOrderController::class, 'pengiriman'])->name('deliveryorder.pengiriman');
+
+
+    //DELIVERY ORDER
+    Route::get('manage/report/deliveryorder', [ReportDeliveryOrderController::class, 'index'])->name('reportdeliveryorder.index');
+    Route::post('manage/report/deliveryorder/getdata', [ReportDeliveryOrderController::class, 'getData'])->name('reportdeliveryorder.getdata');
+    Route::post('manage/report/deliveryorder/updatenote', [ReportDeliveryOrderController::class, 'updateNote'])->name('reportdeliveryorder.updatenote');
+    Route::get('manage/report/deliveryorder/print/{id}', [ReportDeliveryOrderController::class, 'print'])->name('reportdeliveryorder.print');
+
+    //HISTORY DELIVERY ORDER
+
+    Route::get('manage/historydeliveryorder', [HistoryDeliveryOrderController::class, 'index'])->name('historydeliveryorder.index');
+    Route::post('manage/historydeliveryorder/getdata', [HistoryDeliveryOrderController::class, 'getData'])->name('historydeliveryorder.getdata');
+    Route::get('manage/historydeliveryorder/print/{id?}', [HistoryDeliveryOrderController::class, 'print'])->name('historydeliveryorder.print');
 
 
     //Informasi Stok Admin
