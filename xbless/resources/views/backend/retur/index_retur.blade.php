@@ -73,7 +73,7 @@
                         </div>
                         <div class="hr-line-dashed"></div>
                     </form>
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    {{-- <ul class="nav nav-tabs" id="myTab" role="tablist">
                         @if(Gate::check('purchaseorder.liststatuspo') ||
                         Gate::check('purchaseorder.liststatusinvoiceawal') ||
                         Gate::check('purchaseorder.liststatusinvoice'))
@@ -96,7 +96,7 @@
                                 onclick="change_type(2)" data-toggle="tab" href="#listpovalidasi" role="tab"
                                 aria-controls="listpovalidasi" aria-selected="false">LIST TRANSAKSI PEMBELIAN</a>
                         </li>
-                        @endcan
+                        @endcan --}}
                         {{-- @can('purchaseorder.liststatusgudang')
                         @foreach ($gudang as $k=>$itemgudang)
                             <li class="nav-item">
@@ -108,10 +108,10 @@
                         </li>
                         @endforeach
                         @endcan --}}
-                    </ul>
+                    {{-- </ul> --}}
                     <input type="hidden" class="form-control" id="type" value="{{session('type')}}" />
                     <input type="hidden" class="form-control" id="type_gudang" value="{{session('type_gudang')}}" />
-                    <div class="hr-line-dashed"></div>
+                    {{-- <div class="hr-line-dashed"></div> --}}
                     <div class="table-responsive">
                         <table id="table1" class="table display table p-0 table-hover table-striped"
                             style="overflow-x: auto;">
@@ -189,6 +189,8 @@
                                 d.filter_toko = $('#toko').val();
                                 d.filter_sales     = $('#sales').val();
                                 d.type              = $('#type').val();
+                                d.jenis_transaksi = $('#jenis_transaksi').val();
+                                d.no_faktur       = $('#no_faktur').val();
 
                             }
                         },
@@ -258,34 +260,35 @@
         });
 
 
+
 </script>
 <script>
     $(document).ready(function(){
         $('#no_faktur').select2({allowClear: false,
-        ajax: {
-                url: '{{ route("retur.list_transaksi") }}',
-                dataType: 'JSON',
-                delay: 250,
-                data: function(params) {
-                    return {
-                    jenis_transaksi: $('#jenis_transaksi').val(),
-                    search: params.term
-                    }
-                },
-                processResults: function (data) {
-                var results = [];
-                $.each(data, function(index, item){
-                    results.push({
-                        id: item.no_faktur,
-                        text : item.no_faktur,
+            ajax: {
+                    url: '{{ route("retur.list_transaksi") }}',
+                    dataType: 'JSON',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                        jenis_transaksi: $('#jenis_transaksi').val(),
+                        search: params.term
+                        }
+                    },
+                    processResults: function (data) {
+                    var results = [];
+                    $.each(data, function(index, item){
+                        results.push({
+                            id: item.no_faktur,
+                            text : item.no_faktur,
+                        });
                     });
-                });
-                return{
-                    results: results
-                };
+                    return{
+                        results: results
+                    };
+                }
             }
-        }
-    });
+        });
     $('#jenis_transaksi').change(function(){
         $("#no_faktur").select2("val", "");
     });

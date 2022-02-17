@@ -22,7 +22,7 @@
             title="Tambah Data">Tambah &nbsp;<span class="fa fa-plus"></span></a>
         @endcan
         @can('produk.tambah')
-        <a href="{{ route('produk.tambah')}}" class="btn btn-warning" data-toggle="tooltip" data-placement="top"
+        <a href="{{ route('produk.import')}}" class="btn btn-warning" data-toggle="tooltip" data-placement="top"
             title="Import Data">Import &nbsp; <span class="fa fa-file-excel-o"></span></a>
         @endcan
 

@@ -83,7 +83,7 @@
             </li> --}}
             @endcan
             @can('adjstok.index')
-            <li><a href="{{route('adjstok.index')}}">Update Stok</a></li>
+            <li><a href="{{route('adjstok.index')}}">Info Stok</a></li>
             @endcan
             @can('stokmutasi.tambah')
             <li><a href="{{route('stokmutasi.tambah')}}">Mutasi Stok</a></li>
