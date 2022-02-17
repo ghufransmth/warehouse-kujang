@@ -18,7 +18,7 @@
     </div>
     <div class="col-lg-2">
         <br />
-        <a class="btn btn-white btn-sm" href="{{route('purchaseorder.index')}}">Batal</a>
+        <a class="btn btn-white btn-sm" href="{{route('retur.index_retur')}}">Batal</a>
     </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInRight">

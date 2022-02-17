@@ -25,7 +25,9 @@ class ReturPenjualanController extends Controller
         return $data;
     }
     public function form_retur($enc_id){
+        // return $enc_id;
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        // return $dec_id;
         $penjualan = Penjualan::where('no_faktur', $dec_id)->first();
         $detail_penjualan = DetailPenjualan::where('id_penjualan', $penjualan->id)->where('no_faktur', $penjualan->no_faktur)->with(['getproduct'])->get();
         $member = array();

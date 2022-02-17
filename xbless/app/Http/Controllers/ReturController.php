@@ -73,13 +73,30 @@ class ReturController extends Controller
         $type = $request->type;
         $filter_toko = $request->filter_toko;
         $filter_sales = $request->filter_sales;
+        $jenis_transaksi = $request->jenis_transaksi;
+        $no_faktur = $request->no_faktur;
         $request->session()->put('filter_toko', $request->filter_toko);
         $request->session()->put('filter_sales', $request->filter_sales);
         $request->session()->put('type', $request->type);
         $dataquery = ReturTransaksi::select('*');
         // $dataquery->where('flag_transaksi',5);
         // $dataquery->orwhere('flag_transaksi', 6);
-
+        if($jenis_transaksi != ""){
+            // return $jenis_transaksi;
+            $dataquery->where('jenis_transaksi', $jenis_transaksi);
+        }
+        if($no_faktur != ""){
+            $dataquery->where('no_retur_faktur', $no_faktur);
+        }
+        if($search){
+            $dataquery->orwhere('no_retur_faktur', 'LIKE', "{$search}%");
+            // $dataquery->with(['getsales' => function($query) use ($search) {
+            //         $query->orWhere('nama', 'LIKE', "{$search}%");
+            //     }]);
+            // $dataquery->whereHas('getsales', function($query) use ($search){
+            //     $query->orwhere('nama', 'LIKE', 'Adin%');
+            // });
+        }
         $dataquery->orderBy('tgl_retur', 'DESC');
         // if($filter_toko != null || $filter_toko != ""){
         //     $penjualan->where('id_toko', $filter_toko);
@@ -98,10 +115,11 @@ class ReturController extends Controller
         }
 
         if($search) {
-            $dataquery->where(function ($query) use ($search) {
-                    $query->orWhere('no_retur_faktur','LIKE',"%{$search}%");
-                    // $query->orWhere('kode_rpo','LIKE',"%{$search}%");
-            });
+           $dataquery->orwhere('no_retur_faktur', 'like', "{$search}%");
+           $sales = Sales::where('nama', 'like', "{$search}%")->pluck('id');
+           $toko = Toko::where('name', 'like', "{$search}%")->pluck('id');
+           $dataquery->orwhereIn('id_sales', $sales);
+           $dataquery->orwhereIn('id_toko', $toko);
         }
         $totalData = $dataquery->get()->count();
 
@@ -173,91 +191,58 @@ class ReturController extends Controller
         $type = $request->type;
         $filter_toko = $request->filter_toko;
         $filter_sales = $request->filter_sales;
+        $jenis_transaksi = $request->jenis_transaksi;
+        $no_faktur  = $request->no_faktur;
         $request->session()->put('filter_toko', $request->filter_toko);
         $request->session()->put('filter_sales', $request->filter_sales);
         $request->session()->put('type', $request->type);
-        $penjualan = Penjualan::select('*')->whereHas('getdetailpenjualan')->whereHas('gettransaksi')->get();
-        $collect_penjualan = collect([]);
-        foreach($penjualan as $jualan){
-            $colect_jualan = collect([
-                'no_faktur' => $jualan->no_faktur,
-                'total_harga' => $jualan->total_harga,
-                'flag_transaksi' => 3,
-                'tgl_transaksi' => $jualan->tgl_faktur,
-                'created_by' => $jualan->gettransaksi->created_by,
-            ]);
-            $collect_penjualan->push($colect_jualan);
-        }
-        $pembelian = Pembelian::select('*')->whereHas('getdetailpembelian')->whereHas('gettransaksi')->get();
-        return response()->json($pembelian);
-        $collect_pembelian = collect([]);
-        foreach($pembelian as $belian){
-            $colect_belian = collect([
-                'no_faktur' => $belian->no_faktur,
-                'total_harga' => $belian->nominal,
-                'flag_transaksi' => 4,
-                'tgl_transaksi' => $belian->tgl_faktur,
-                // 'created_by' => $belian->gettransaksi->created_by,
-            ]);
-            $collect_pembelian->push($colect_belian);
-        }
-        // return $collect_pembelian;
-        $alldata = $collect_penjualan->merge($collect_pembelian);
-        // return $alldata;
-        // $penjualan->orwhere('flag_transaksi',3);
-        // $penjualan->orwhere('flag_transaksi',4);
+        $dataquery = TransaksiStock::select('*');
+        $dataquery->orwhere('flag_transaksi', 3);
+        $dataquery->orwhere('flag_transaksi', 4);
 
-        // $penjualan->orderBy('id', 'ASC');
-        // if($filter_toko != null || $filter_toko != ""){
-        //     $penjualan->where('id_toko', $filter_toko);
-        // }
-        // if($filter_sales != null || $filter_sales != ""){
-        //     $penjualan->where('id_sales', $filter_sales);
-        // }
-        // if($type == 1){
-        //     $penjualan->where('status_lunas', 0);
-        // }else if($type == 2){
-        //     $penjualan->where('status_lunas', 1);
-        // }
 
         if(array_key_exists($request->order[0]['column'], $this->original_column)){
-            $penjualan->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
+            $dataquery->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
         }
 
         if($search) {
-            $penjualan->where(function ($query) use ($search) {
-                    $query->orWhere('no_nota','LIKE',"%{$search}%");
-                    $query->orWhere('kode_rpo','LIKE',"%{$search}%");
+            $dataquery->where(function ($query) use ($search) {
+                    $query->orWhere('no_transaksi','LIKE',"%{$search}%");
+                    $query->orWhere('created_by','LIKE',"%{$search}%");
             });
         }
-        $totalData = $alldata->count();
+        if($jenis_transaksi != ""){
+            $dataquery->where('flag_transaksi', $jenis_transaksi);
+        }
+        if($no_faktur != ""){
+            $dataquery->where('no_transaksi', 'LIKE', "%{$no_faktur}%");
+        }
+        $totalData = $dataquery->count();
 
-        $totalFiltered = $alldata->count();
-        $alldata->take($limit);
+        $totalFiltered = $dataquery->count();
+        $dataquery->limit($limit);
         // $alldata->offset($start);
-        // $data = $penjualan->get();
-        $data = [];
+        $data = $dataquery->get();
+        // $data = [];
         // return $data;
-        foreach($alldata as $key => $result){
-            $results = [];
-            // return $result['no_faktur'];
+        foreach($data as $key => $result){
 
-                $enc_id = $this->safe_encode(Crypt::encryptString($result['no_faktur']));
+                $enc_id = $this->safe_encode(Crypt::encryptString($result->no_transaksi));
                 // $result->id             = $result->id;
-                $results['no']             = $key+$page;
-                $results['no_faktur'] = $result['no_faktur'];
-                $results['tgl_transaksi'] = $result['tgl_transaksi'];
-                $results['total_harga'] = $result['total_harga'];
-                if($result['flag_transaksi'] == 3){
-                    $results['jenis_transaksi'] = "Penjualan";
-                    $aksi = '<a href="'.route('retur.retur_penjualan', $enc_id).'" class="btn btn-success"><i class="fa fa-trash"></i> Retur</a> ';
-                }elseif($result['flag_transaksi'] == 4){
-                    $results['jenis_transaksi'] = "Pembelian";
+                $result->no             = $key+$page;
+                $result->no_faktur = $result->no_transaksi;
+                $result->tgl_transaksi = $result->tgl_transaksi;
+                $result->total_harga = $result->total_harga;
+                if($result->flag_transaksi == 3){
+                    $result->jenis_transaksi = '<span class="badge badge-success">Penjualan</span>';
+                    $aksi = '<a href="'.route('retur.retur_penjualan', $enc_id).'" class="btn btn-success"><i class="fa fa-check"></i> Retur</a> ';
+                }elseif($result->flag_transaksi == 4){
+                    $result->jenis_transaksi = '<span class="badge badge-warning">Pembelian</span>';
                     $aksi = '<a href="'.route('retur_pembelian.form-retur', $enc_id).'" class="btn btn-success"><i class="fa fa-check"></i> Retur</a> ';
                 }
 
-                $results['aksi'] = $aksi;
-                $data[] = $results;
+                $result->aksi = $aksi;
+
                 // return $data;
 
         }
@@ -329,5 +314,14 @@ class ReturController extends Controller
         }
 
         return json_encode($transaksi);
+    }
+    public function list_transaksi_retur(Request $request){
+        if($request->jenis_transaksi != ""){
+            $transaksi = ReturTransaksi::where('jenis_transaksi', $request->jenis_transaksi)->limit(10)->orderBy('id', 'DESC')->get();
+        }else{
+            $transaksi = ReturTransaksi::limit(10)->orderBy('id', 'DESC')->get();
+        }
+        return json_encode($transaksi);
+
     }
 }

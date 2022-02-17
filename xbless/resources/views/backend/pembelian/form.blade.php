@@ -358,7 +358,7 @@ $("#simpan").on('click',function(){
             calendarWeeks: true,
             autoclose: true,
             format: "dd-mm-yyyy"
-        });
+            });
     });
     function total_pembelian(){
         var sum = 0;

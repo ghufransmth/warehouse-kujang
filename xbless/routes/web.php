@@ -203,6 +203,29 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::post('manage/kota/simpan', [KotaController::class, 'simpan'])->name('kota.simpan');
 
 
+    //DELIVERY ORDER
+    Route::get('manage/deliveryorder', [DeliveryOrderController::class, 'index'])->name('deliveryorder.index');
+    Route::post('manage/deliveryorder/getdata', [DeliveryOrderController::class, 'getData'])->name('deliveryorder.getdata');
+    Route::get('manage/deliveryorder/tambah', [DeliveryOrderController::class, 'tambah'])->name('deliveryorder.tambah');
+    Route::post('manage/deliveryorder/getdatapenjualan', [DeliveryOrderController::class, 'getDataPenjualan'])->name('deliveryorder.getdatapenjualan');
+    Route::post('manage/deliveryorder/simpan', [DeliveryOrderController::class, 'simpan'])->name('deliveryorder.simpan');
+    Route::post('manage/deliveryorder/updatedriver', [DeliveryOrderController::class, 'updateDriver'])->name('deliveryorder.updatedriver');
+    Route::post('manage/deliveryorder/pengiriman', [DeliveryOrderController::class, 'pengiriman'])->name('deliveryorder.pengiriman');
+
+
+    //DELIVERY ORDER
+    Route::get('manage/report/deliveryorder', [ReportDeliveryOrderController::class, 'index'])->name('reportdeliveryorder.index');
+    Route::post('manage/report/deliveryorder/getdata', [ReportDeliveryOrderController::class, 'getData'])->name('reportdeliveryorder.getdata');
+    Route::post('manage/report/deliveryorder/updatenote', [ReportDeliveryOrderController::class, 'updateNote'])->name('reportdeliveryorder.updatenote');
+    Route::get('manage/report/deliveryorder/print/{id}', [ReportDeliveryOrderController::class, 'print'])->name('reportdeliveryorder.print');
+
+    //HISTORY DELIVERY ORDER
+
+    Route::get('manage/historydeliveryorder', [HistoryDeliveryOrderController::class, 'index'])->name('historydeliveryorder.index');
+    Route::post('manage/historydeliveryorder/getdata', [HistoryDeliveryOrderController::class, 'getData'])->name('historydeliveryorder.getdata');
+    Route::get('manage/historydeliveryorder/print/{id?}', [HistoryDeliveryOrderController::class, 'print'])->name('historydeliveryorder.print');
+
+
     //Informasi Stok Admin
     Route::get('manage/stokadmin', [StokAdminController::class, 'index'])->name('stokadmin.index');
     Route::post('manage/stokadmin/getdata', [StokAdminController::class, 'getData'])->name('stokadmin.getdata');
@@ -611,6 +634,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/getDataRetur', [ReturController::class, 'getdata_retur'])->name('getdata_retur');
             Route::get('/penjualan', [ReturController::class, 'retur_penjualan'])->name('returpenjualan');
             Route::get('/list_transaksi', [ReturController::class, 'list_transaksi'])->name('list_transaksi');
+            Route::get('/list_transaksi_retur', [ReturController::class, 'list_transaksi_retur'])->name('list_transaksi_retur');
             Route::get('/penjualan/{nofaktur?}', [ReturPenjualanController::class, 'form_retur'])->name('retur_penjualan');
             Route::post('/simpan', [ReturPenjualanController::class, 'simpan'])->name('simpan');
         });

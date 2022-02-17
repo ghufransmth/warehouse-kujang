@@ -42,8 +42,8 @@
                             <div class="col-sm-4 error-text">
                                 <select class="form-control" id="jenis_transaksi" name="jenis_transaksi">
                                     <option value="">Semua Transaksi</option>
-                                    <option value="3">Penjualan</option>
-                                    <option value="4">Pembelian</option>
+                                    <option value="0">Penjualan</option>
+                                    <option value="1">Pembelian</option>
                                     {{-- @foreach($perusahaan as $key => $row)
                                     <option value="{{$row->id}}"
                                     {{ $selectedperusahaan == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}
@@ -188,6 +188,8 @@
                                 d.filter_toko = $('#toko').val();
                                 d.filter_sales     = $('#sales').val();
                                 d.type              = $('#type').val();
+                                d.jenis_transaksi = $('#jenis_transaksi').val();
+                                d.no_faktur = $('#no_faktur').val();
 
                             }
                         },
@@ -260,30 +262,33 @@
 <script>
     $(document).ready(function(){
         $('#no_faktur').select2({allowClear: false,
-        ajax: {
-                url: '{{ route("retur.list_transaksi") }}',
-                dataType: 'JSON',
-                delay: 250,
-                data: function(params) {
-                    return {
-                    jenis_transaksi: $('#jenis_transaksi').val(),
-                    search: params.term
-                    }
-                },
-                processResults: function (data) {
-                var results = [];
-                $.each(data, function(index, item){
-                    results.push({
-                        id: item.id,
-                        text : item.no_transaksi,
+            ajax: {
+                    url: '{{ route("retur.list_transaksi_retur") }}',
+                    dataType: 'JSON',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                        jenis_transaksi: $('#jenis_transaksi').val(),
+                        search: params.term
+                        }
+                    },
+                    processResults: function (data) {
+                    var results = [];
+                    $.each(data, function(index, item){
+                        results.push({
+                            id: item.no_retur_faktur,
+                            text : item.no_retur_faktur,
+                        });
                     });
-                });
-                return{
-                    results: results
-                };
+                    return{
+                        results: results
+                    };
+                }
             }
-        }
-    });
+        });
+        $('#jenis_transaksi').on('change',function(){
+            $("#no_faktur").select2("val", "");
+        })
     });
     function change_type(type){
         $('#type').val(type);
