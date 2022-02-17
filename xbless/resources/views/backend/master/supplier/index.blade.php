@@ -123,8 +123,9 @@
            table_index = indexes;
            var rowData = table.rows( indexes ).data().toArray();
         });
+});
 
-        function deleteData(e,enc_id){
+function deleteData(e,enc_id){
             var token = '{{ csrf_token() }}';
             Swal.fire({
                 title: "Apakah Anda yakin?",
@@ -162,7 +163,6 @@
                 }
             });
       }
-});
 
 $(document.body).on("keydown", function(e){
     ele = document.activeElement;
