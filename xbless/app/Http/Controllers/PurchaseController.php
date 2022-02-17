@@ -72,6 +72,7 @@ class PurchaseController extends Controller
     }
 
     public function index(){
+        // return "tes";
         // $member     = Member::all();
         // $perusahaan = Perusahaan::all();
         // $gudang     = Gudang::all();
@@ -92,6 +93,7 @@ class PurchaseController extends Controller
         $gudang = array();
         $toko = Toko::all();
         $sales = Sales::all();
+        // return "tes";
         return view('backend/purchase/index',compact('member','perusahaan','gudang','selectedmember','selectedperusahaan', 'sales', 'toko'));
     }
 
@@ -241,7 +243,7 @@ class PurchaseController extends Controller
             $result->tgl_transaksi = $result->tgl_faktur;
             $result->total_harga = $result->total_harga;
             $result->tgl_lunas = $result->tgl_lunas;
-            $aksi .= '<a href="#" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail </a>';
+            $aksi .= '<a href="'.route('purchaseorder.detail', $enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail </a>';
             $aksi .= '<a href="'.route('purchaseorder.edit', $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a> <br>';
 
             if($result->status_lunas == 0){
@@ -1499,8 +1501,26 @@ class PurchaseController extends Controller
         }
 
     }
+    public function detail($enc_id){
+        // return $req->all();
+        // return $enc_id;
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        $penjualan = Penjualan::where('id', $dec_id)->with(['getsales', 'gettoko', 'getdetailpenjualan'])->first();
+        $detail_penjualan = $penjualan->getdetailpenjualan;
+        // return $penjualan    ;
+        return view('backend/purchase/detail',
+        [
+            'enc_id' => $enc_id,
+            'penjualan' => $penjualan,
+            'detail_penjualan' => $detail_penjualan,
+        ]);
+        // return $penjualan;
+    }
+    public function cetak($enc_id){
+        return view('backend/purchase/cetak', ['enc_id' => $enc_id]);
+    }
 
-    public function detail(Request $request){
+    public function detail_(Request $request){
         $dec_id = $this->safe_decode(Crypt::decryptString($request->enc_id));
         $purchase = PurchaseOrder::find($dec_id);
 

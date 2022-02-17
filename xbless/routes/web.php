@@ -618,7 +618,8 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/status_invoice', [PurchaseController::class, 'status_invoice'])->name('status_invoice');
             Route::post('/status_invoice_awal', [PurchaseController::class, 'status_invoice_awal'])->name('status_invoice_awal');
 
-            Route::post('/detail', [PurchaseController::class, 'detail'])->name('detail');
+            Route::get('/detail/{id?}', [PurchaseController::class, 'detail'])->name('detail');
+            Route::get('/cetak/{id?}', [PurchaseController::class, 'cetak'])->name('cetak');
             Route::post('/getData', [PurchaseController::class, 'getdata'])->name('getdata');
             Route::post('/process_nota', [PurchaseController::class, 'process_nota'])->name('process_nota');
             Route::post('/cekstatusinvoice', [PurchaseController::class, 'cekInvoiceBelumLunas'])->name('cekstatusinvoice');

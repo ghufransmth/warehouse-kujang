@@ -145,7 +145,7 @@
     </div>
 
     <!-- Modal Detail PO -->
-    @include('backend.purchase.detail')
+    {{-- @include('backend.purchase.detail') --}}
 
 
 
