@@ -632,6 +632,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::get('/list_transaksi_retur', [ReturController::class, 'list_transaksi_retur'])->name('list_transaksi_retur');
             Route::get('/penjualan/{nofaktur?}', [ReturPenjualanController::class, 'form_retur'])->name('retur_penjualan');
             Route::post('/simpan', [ReturPenjualanController::class, 'simpan'])->name('simpan');
+            Route::post('/simpanretur', [ReturController::class, 'simpan'])->name('simpanretur');
             Route::get('/edit/{id?}', [ReturController::class, 'edit'])->name('edit');
         });
         // REQUEST PURCHASE ORDER

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailReturTransaksi;
 use App\Models\Pembelian;
 use App\Models\Penjualan;
 use App\Models\ReturTransaksi;
 use App\Models\Sales;
+use App\Models\StockAdj;
 use App\Models\Toko;
 use App\Models\TransaksiStock;
 use Illuminate\Http\Request;
@@ -67,8 +69,8 @@ class ReturController extends Controller
     }
     public function edit($enc_id){
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
-        $penjualan = ReturTransaksi::select('*','price as harga_product')->where('id',$dec_id)->with(['getdetailtransaksi', 'getdetailtransaksi.getproduct'])->first();
-        return $penjualan;
+        $penjualan = ReturTransaksi::select('*')->where('id',$dec_id)->with(['getdetailtransaksi', 'getdetailtransaksi.getproduct'])->first();
+        // return $penjualan;
         //VALIDASI
             if(!isset($dec_id)){
                 return response()->json([
@@ -82,6 +84,7 @@ class ReturController extends Controller
 
             if($penjualan->jenis_transaksi == 0){
                 $detail_penjualan = $penjualan->getdetailtransaksi;
+                // return $detail_penjualan;
                 // return $detail_penjualan;
                 $member = array();
                 $selectedmember ="";
@@ -104,9 +107,111 @@ class ReturController extends Controller
 
             }
 
-            return view('backend/retur/penjualan_form',compact('enc_id','tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia', 'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko', 'selectedtoko', 'selectedstatuslunas', 'penjualan', 'detail_penjualan'));
+            return view('backend/retur/penjualan_edit_form',compact('enc_id','tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia', 'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko', 'selectedtoko', 'selectedstatuslunas', 'penjualan', 'detail_penjualan'));
+    }
+    public function simpan(Request $req){
+        // return $req->all();
+        $dec_id = $this->safe_decode(Crypt::decryptString($req->enc_id));
+        $no_transaksi           = $req->no_transaksi;
+        // return $dec_id;
+        $array_harga_product    = $req->harga_product;
+        $array_product          = $req->produk;
+        $array_stock_product    = $req->stock_product;
+        $array_qty              = $req->qty;
+        $id_sales               = $req->sales;
+        $status_pembayaran      = $req->status_pembayaran; // 1 = lunas, 0 = belum lunas;
+        $tgl_jatuh_tempo        = date('Y-m-d',strtotime($req->tgl_jatuh_tempo));
+        $tgl_transaksi          = date('Y-m-d', strtotime($req->tgl_transaksi));
+        $array_id_satuan        = $req->tipesatuan;
+        $id_toko                = $req->toko;
+        $array_total_harga      = $req->total;
+        $total_product          = $req->total_produk;
+        $total_harga_penjualan  = $req->total_harga_penjualan;
+        $retur = ReturTransaksi::where('id', $dec_id)->first();
+        // return $
+        //VALIDASI
+            if(!isset($retur)){
+                return response()->json([
+                    'success' => FALSE,
+                    'message' => 'Data penjualan tidak ditemukan',
+                ]);
+            }
+            if($total_product < 1){
+                return response()->json([
+                    'success' => FALSE,
+                    'message' => 'Product harus lebih dari 1',
+                ]);
+            }
+        //END VALIDASI
+        $retur->no_retur_faktur = $no_transaksi;
+        $retur->tgl_retur      = $tgl_transaksi;
+        $retur->total_harga           = $total_harga_penjualan;
+        $detail_retur           = DetailReturTransaksi::where('retur_transaksi_id', $retur->id);
+        if($retur->save()){
+            foreach($detail_retur->get() as $detail){
+                $stockadj = StockAdj::where('id_product', $detail->product_id)->first();
+                $stockadj->stock_retur_penjualan -= $detail->qty;
+                $stockadj->stock_penjualan       += $detail->qty;
+                if(!$stockadj->save()){
+                    return response()->json([
+                        'success' => FALSE,
+                        'message' => 'Gagal mengupdate stock product'
+                    ]);
+                    break;
+                }
+            }
+            if($detail_retur->delete()){
+                for($i=0;$i<$total_product;$i++){
+                    if(isset($array_product[$i])){
+                        $detail_retur = new DetailReturTransaksi;
+                        $detail_retur->retur_transaksi_id = $retur->id;
+                        $detail_retur->product_id = $array_product[$i];
+                        $detail_retur->qty = $array_qty[$i];
+                        $detail_retur->price = $array_harga_product[$i];
+                        $detail_retur->total = $array_total_harga[$i];
+                        if($detail_retur->save()){
+                            $stockadj = StockAdj::where('id_product', $array_product[$i])->first();
+                            $stockadj->stock_retur_penjualan += $array_qty[$i];
+                            $stockadj->stock_penjualan       -= $array_qty[$i];
+                            if(!$stockadj->save()){
+                                return response()->json([
+                                    'success' => FALSE,
+                                    'message' => 'Gagal mengupdate stock product'
+                                ]);
+                                break;
+                            }
+                        }else{
+                            return response()->json([
+                                'success' => FALSE,
+                                'message' => 'Gagal menyimpan edit retur penjualan'
+                            ]);
+                        }
+                    }else{
+                        continue;
+                    }
+                }
+                $transaksi_stock = TransaksiStock::where('no_transaksi', $retur->no_retur_faktur)->first();
+                $transaksi_stock->total_harga = $retur->total_harga;
+                if($transaksi_stock->save()){
+                    return response()->json([
+                        'success' => TRUE,
+                        'message' => 'Data edit retur penjualan berhasil disimpan'
+                    ]);
+                }else{
+                    return response()->json([
+                        'success' => FALSE,
+                        'message' => 'Gagal mengupdate total harga transaksi stock'
+                    ]);
+                }
+            }else{
+                return response()->json([
+                    'success' => FALSE,
+                    'message' => 'Gagal menghapus detail retur transaksi'
+                ]);
+            }
+        }
+        return $retur;
 
-        return $retur_transaksi;
     }
     public function getData(Request $request){
         $limit = $request->length;

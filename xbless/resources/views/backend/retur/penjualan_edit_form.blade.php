@@ -46,12 +46,12 @@
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">No Transaksi </label>
                             <div class="col-sm-4 error-text">
-                                <input type="text" name="no_transaksi" value="{{ isset($penjualan)? $penjualan->no_faktur : '' }}" class="form-control" id="no_transaksi">
+                                <input type="text" name="no_transaksi" value="{{ isset($penjualan)? $penjualan->no_retur_faktur : '' }}" class="form-control" id="no_transaksi">
                             </div>
                             <label class="col-sm-2 col-form-label">Tgl Transaksi </label>
                             <div class="col-sm-4 error-text">
                                 <input type="text" class="form-control formatTgl" id="tgl_transaksi"
-                                    value="{{ isset($penjualan)? date('d-m-Y', strtotime($penjualan->tgl_faktur)) : date('d-m-Y') }}" name="tgl_transaksi" autocomplete="off">
+                                    value="{{ isset($penjualan)? date('d-m-Y', strtotime($penjualan->tgl_retur)) : date('d-m-Y') }}" name="tgl_transaksi" autocomplete="off">
 
                             </div>
                         </div>
@@ -116,9 +116,10 @@
                             <label class="col-sm-2 col-form-label">Tgl Jatuh Tempo </label>
                             <div class="col-sm-4 error-text">
                                 <input type="text" name="tgl_jatuh_tempo" class="form-control formatTgl"
-                                    id="tgl_jatuh_tempo" value="{{ isset($penjualan)? date('d-m-Y', strtotime($penjualan->tgl_jatuh_tempo)) : date('d-m-Y') }}" autocomplete="off">
-                                <input type="hidden" name="total_harga_penjualan" id="total_harga_penjualan" value="0">
+                                    id="tgl_jatuh_tempo" value="{{ isset($penjualan)? date('d-m-Y', strtotime($penjualan->tg)) : date('d-m-Y') }}" autocomplete="off">
+
                             </div> --}}
+                            <input type="hidden" name="total_harga_penjualan" id="total_harga_penjualan" value="0">
                         </div>
 
                         {{-- <div class="form-group row">
@@ -127,11 +128,11 @@
                                 <textarea class="form-control" id="note" name="note">{{isset($purchaseorder)? $purchaseorder->note : ''}}</textarea>
                 </div>
             </div> --}}
-            {{-- <div class="">
+            <div class="">
                 <a href="#!" onclick="tambahProduk()"
                     class="btn btn-success btn-sm icon-btn sm-btn-flat product-tooltip" title="Tambah Produk">Tambah
                     Produk</a>
-            </div> --}}
+            </div>
             <div class="hr-line-dashed"></div>
             <div class="table-responsive">
                 <table id="table1" class="table display table table-hover p-0 table-striped" style="overflow-x: auto;">
@@ -166,7 +167,7 @@
                                 </td>
                                 <td>
                                     <input type="text" class="form-control" id="harga_product_{{ $key }}" name="harga_product[]"
-                                        value="{{$detail->harga_product}}" readonly>
+                                        value="{{$detail->price}}" readonly>
                                 </td>
                                 <td>
                                     <select class="select2_satuan_{{ $key }}" id="tipe_satuan_{{ $key }}" name="tipesatuan[]"
@@ -179,7 +180,7 @@
                                         onkeyup="hitung_qty({{ $key }})" onchange="hitung_qty({{ $key }})">
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control total_harga" id="total_{{ $key }}" name="total[]" value="{{ $detail->total_harga }}"
+                                    <input type="text" class="form-control total_harga" id="total_{{ $key }}" name="total[]" value="{{ $detail->total }}"
                                         readonly>
                                 </td>
                                 {{-- <td>
@@ -346,7 +347,7 @@
             })
             $.ajax({
                 type: 'POST',
-                url : "{{route('retur.simpan')}}",
+                url : "{{route('retur.simpanretur')}}",
                 headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                 data:dataFile,
                 processData: false,
@@ -356,13 +357,14 @@
                 Swal.showLoading();
                 },
                 success: function(data){
+                    console.log(data);
                     if (data.success) {
                         Swal.fire('Yes',data.message,'info');
                         if(data.draft=='0'){
-                            window.location.replace('{{route("retur.index_retur")}}');
+                            window.location.replace('{{route("retur.index")}}');
                         }else{
                             //ke draft
-                            window.location.replace('{{route("retur.index_retur")}}');
+                            window.location.replace('{{route("retur.index")}}');
                         }
 
                     } else {

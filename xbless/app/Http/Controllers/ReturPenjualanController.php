@@ -100,7 +100,8 @@ class ReturPenjualanController extends Controller
                     $detail_retur->retur_transaksi_id = $retur_transaksi->id;
                     $detail_retur->product_id = $array_product[$i];
                     $detail_retur->qty = $array_qty[$i];
-                    $detail_retur->price = $array_total_harga[$i];
+                    $detail_retur->price = $array_harga_product[$i];
+                    $detail_retur->total = $array_total_harga[$i];
                     if(!$detail_retur->save()){
                         return response()->json([
                             'success' => FALSE,
