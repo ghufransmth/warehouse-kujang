@@ -1,5 +1,5 @@
 @extends('layouts.layout')
-@section('title', 'Manajemen Purchase Order ')
+@section('title', 'Manajemen Pembelian ')
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -46,9 +46,9 @@
 
                     </div>
                     <div class="ibox-content">
-                        {{-- <div class="alert alert-danger" id="showAlert" style="display: none">
+                        <div class="alert alert-danger" id="showAlert" style="display: none">
                             MEMBER INI BELUM MELAKUKAN PEMBAYARAN PADA INVOICE
-                          </div> --}}
+                          </div>
 
                     @if(isset($data) && count($data) > 0)
                     <div class="col">
@@ -64,9 +64,8 @@
                             </div>
                             </form>
                         </div>
-                    </div>
                     <br>
-                        < class="table-responsive">
+                        <div class="table-responsive">
                             <table id="table1" class="table display table-bordered">
                                 <thead>
                                     <tr>

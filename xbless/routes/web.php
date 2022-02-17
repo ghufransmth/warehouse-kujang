@@ -69,12 +69,7 @@ use App\Http\Controllers\ReportRekapInvoiceController;
 use App\Http\Controllers\ReturPembelianController;
 use App\Http\Controllers\ReturController;
 use App\Http\Controllers\ReturPenjualanController;
-use App\Http\Controllers\DeliveryOrderController;
-use App\Http\Controllers\ReportDeliveryOrderController;
-use App\Http\Controllers\HistoryDeliveryOrderController;
-
-
-
+use App\Http\Controllers\SupplierController;
 
 /*
 |--------------------------------------------------------------------------
@@ -467,6 +462,16 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::delete('/hapus/{id?}', [GudangController::class, 'delete'])->name('delete');
         });
 
+        // SUPPLIER
+        Route::group(['prefix' => 'supplier', 'as' => 'supplier.'], function () {
+            Route::get('/', [SupplierController::class, 'index'])->name('index');
+            Route::get('/tambah', [SupplierController::class, 'tambah'])->name('tambah');
+            Route::get('/ubah/{id}', [SupplierController::class, 'ubah'])->name('ubah');
+            Route::post('/getData', [SupplierController::class, 'getData'])->name('getdata');
+            Route::post('/simpan', [SupplierController::class, 'simpan'])->name('simpan');
+            Route::delete('/hapus/{id?}', [SupplierController::class, 'delete'])->name('delete');
+        });
+
         Route::group(['prefix' => 'diskon', 'as' => 'diskon.'], function () {
             Route::get('/', [DiskonController::class, 'index'])->name('index');
             Route::get('/tambah', [DiskonController::class, 'tambah'])->name('tambah');
@@ -770,6 +775,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::get('/search_satuan', [PembelianController::class, 'search_satuan'])->name('search_satuan');
         Route::delete('/delete/{id?}', [PembelianController::class, 'hapus'])->name('hapus');
         Route::post('/harga_product', [PembelianController::class, 'harga_product'])->name('harga_product');
+        Route::post('/total_harga', [PembelianController::class, 'total_harga'])->name('total_harga');
     });
 
     //IMPORT PEMBELIAN
