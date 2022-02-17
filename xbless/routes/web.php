@@ -749,6 +749,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::get('/search_satuan', [PembelianController::class, 'search_satuan'])->name('search_satuan');
         Route::delete('/delete/{id?}', [PembelianController::class, 'hapus'])->name('hapus');
         Route::post('/harga_product', [PembelianController::class, 'harga_product'])->name('harga_product');
+        Route::post('/total_harga', [PembelianController::class, 'total_harga'])->name('total_harga');
     });
 
     //IMPORT PEMBELIAN
