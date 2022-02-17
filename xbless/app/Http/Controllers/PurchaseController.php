@@ -1531,7 +1531,6 @@ class PurchaseController extends Controller
             $totaldiscount = ($value->discount/100)*($value->price * $value->qty);
             $unitdiskon    = round($value->price*($value->discount/100));
 
-
             $product = Product::find($value->product_id);
             $value->product_name = $product->product_name;
             $value->product_code = $product->product_code;

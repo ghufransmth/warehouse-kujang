@@ -319,6 +319,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
 
     //REPORT LABA RUGI
     Route::get('manage/reportlabarugi', [ReportLabaRugiController::class, 'index'])->name('reportlabarugi.index');
+    Route::post('manage/reportlabarugi/getdata', [ReportLabaRugiController::class, 'getDataFinance'])->name('reportlabarugi.getdata');
     Route::get('manage/reportlabarugi/print', [ReportLabaRugiController::class, 'print'])->name('reportlabarugi.print');
     Route::get('manage/reportlabarugi/excel', [ReportLabaRugiController::class, 'excel'])->name('reportlabarugi.excel');
 
