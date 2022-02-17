@@ -22,4 +22,7 @@ class Penjualan extends Model
     public function getdetailpenjualan(){
         return $this->hasMany(DetailPenjualan::class, 'no_faktur', 'no_faktur');
     }
+
+
+
 }
