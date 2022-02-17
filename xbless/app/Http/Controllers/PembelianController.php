@@ -10,6 +10,7 @@ use App\Models\Satuan;
 use App\Models\Pembelian;
 use App\Models\PembelianDetail;
 use App\Models\StockAdj;
+use App\Models\Supplier;
 use App\Models\TransaksiStock;
 use DB;
 use Illuminate\Support\Facades\Auth;
@@ -78,7 +79,7 @@ class PembelianController extends Controller
             if($result->flag_proses == 0){
                 $action.='<div>';
                 $action.='<a href="'.route('pembelian.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
-                $action.='<a href="#" onclick="deleteData(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-trash"></i> Hapus</a>&nbsp;';
+                // $action.='<a href="#" onclick="deleteData(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-trash"></i> Hapus</a>&nbsp;';
                 $action.="</div>";
             }else if($result->flag_proses == 1){
                 // $action.= '<span class="label label-danger">Data tidak bisa diedit kembali</span>&nbsp;';
@@ -122,7 +123,10 @@ class PembelianController extends Controller
 
     public function tambah(){
 
-        return view('backend/pembelian/form');
+        $supplier = Supplier::all();
+        $selectedsupplier ="";
+
+        return view('backend/pembelian/form',compact('supplier'));
     }
 
 
@@ -134,7 +138,7 @@ class PembelianController extends Controller
         <!-- <input type='hidden' id='detail_product' name='detail_product[]'> -->
             <td>
                 <select id='product_".$total."' name='produk[]' class='select2_produk_".$total." form-control' onchange='hitung(this.options[this.selectedIndex].value,".$total.")'>
-                    <option value='0' selected disabled>Pilih Product</option>
+                    <option value='0' selected>Pilih Product</option>
                 </select>
             </td>
             <td>
@@ -205,9 +209,17 @@ class PembelianController extends Controller
         ]);
     }
 
+    public function total_harga(Request $request){
+        $satuan = Satuan::find($request->satuan_id);
+        return response()->json([
+            'success' => TRUE,
+            'data'  => $satuan,
+        ]);
+    }
+
     public function coba_simpan(Request $req)
     {
-        // return $req->all();
+        $supplier = $req->supplier;
         $nofaktur = $req->nofaktur;
         $tgl_faktur = date('Y-m-d',strtotime($req->faktur_date));
         $tgl_jatuh_tempo = date('Y-m-d',strtotime($req->jatuh_tempo));
@@ -253,6 +265,7 @@ class PembelianController extends Controller
         // END VALIDASI
         if($total_product > 0){
             $pembelian                    = new Pembelian;
+            $pembelian->supplier_id       = $supplier;
             $pembelian->no_faktur         = $nofaktur;
             $pembelian->tgl_faktur        = $tgl_faktur;
             $pembelian->tgl_transaksi     = $tgl_transaksi;
@@ -333,6 +346,81 @@ class PembelianController extends Controller
         }
     }
 
+    // public function simpan_edit(Request $req)
+    // {
+    //     $enc_id                 = $req->enc_id;
+    //     if(isset($enc_id)){
+    //         $dec_id                 = $this->safe_decode(Crypt::decryptString($enc_id));
+
+    //     }
+
+    //     $supplier = $req->supplier;
+    //     $nofaktur = $req->nofaktur;
+    //     $tgl_faktur = date('Y-m-d',strtotime($req->faktur_date));
+    //     $tgl_jatuh_tempo = date('Y-m-d',strtotime($req->jatuh_tempo));
+    //     $tgl_transaksi = date('Y-m-d',strtotime($req->tgl_transaksi));
+    //     $nominal = $req->nominal;
+    //     $keterangan = $req->ket;
+    //     $status_pembelian = 1;
+    //     $approve_pembelian =  0;
+    //     $array_harga_product = $req->harga_product;
+    //     $array_product = $req->produk;
+    //     $array_qty = $req->qty;
+    //     $array_id_satuan = $req->tipesatuan;
+    //     $array_total_harga = $req->total;
+    //     $total_product = $req->total_produk;
+    //     $total_harga_pembelian = $req->total_harga_pembelian;
+    //     // return $array_product;
+    //     // VALIDASI
+    //     if($nofaktur == null || $nofaktur == ''){
+    //         return response()->json([
+    //             'success' => FALSE,
+    //             'message' => 'Nomor faktur harus diisi'
+    //         ]);
+    //     }
+    //     if(count($array_total_harga) < 1){
+    //         return response()->json([
+    //             'success' => FALSE,
+    //             'message' => 'Product harus diisi'
+    //         ]);
+    //     }
+
+    //     if($enc_id != null || isset($enc_id)){
+    //         $pembelian = Pembelian::find($dec_id);
+    //         $pembelian_detail = PembelianDetail::where('pembelian_id',$pembelian->id)->where('no_faktur',$pembelian->no_faktur);
+    //         $pembelian->supplier_id       = $supplier;
+    //         $pembelian->no_faktur         = $nofaktur;
+    //         $pembelian->tgl_faktur        = $tgl_faktur;
+    //         $pembelian->tgl_transaksi     = $tgl_transaksi;
+    //         $pembelian->nominal           = $nominal;
+    //         $pembelian->tgl_jatuh_tempo   = $tgl_jatuh_tempo;
+    //         $pembelian->keterangan        = $keterangan;
+    //         $pembelian->status_pembelian  = $status_pembelian;
+    //         $pembelian->approve_pembelian = $approve_pembelian;
+    //         $pembelian->approved_by       = auth()->user()->username;
+    //         $pembelian->created_user      = auth()->user()->username;
+    //         if($pembelian->save()){
+    //             foreach($pembelian_detail->get() as $detail){
+    //                 if($pembelian->status_pembelian == 1){
+    //                     $stockadj = StockAdj::where('id_product',$detail->id_product)->first();
+    //                     $stockadj->stock_pembelian += $detail->qty;
+    //                     if(!$stockadj->save()){
+    //                         return response()->json([
+    //                             'success' => FALSE,
+    //                             'message' => 'Gagal mengupdate stock product'
+    //                         ]);
+    //                         break;
+    //                     }
+    //                 }
+    //                 if($pembelian_detail->delete()){
+
+    //                 }
+    //             }
+    //         }
+
+    //     }
+    // }
+
 
     public function search_product(Request $request){
         $product = Product::select('tbl_product.id','tbl_product.nama','tbl_product.kode_product','tbl_product.id_satuan', 'tbl_satuan.nama as satuan_product')
@@ -357,33 +445,19 @@ class PembelianController extends Controller
         return json_encode($satuan);
       }
 
-    //   public function ubah($enc_id){
-    //     $dec_id   = $this->safe_decode(Crypt::decryptString($enc_id));
-    //     $product_beli = Pembelian::select('pembelian.*')->where('pembelian.id', $dec_id)->first();
-    //     // $product_beli->transaction = date('d-m-Y', strtotime($product_beli->tgl_pembelian));
-
-    //     $query = PembelianDetail::select('pembelian_detail.id','pembelian_detail.qty','pembelian_detail.product_id','tbl_product.kode_product as product_code','tbl_product.nama as product_name');
-    //     $query->leftJoin('tbl_product','tbl_product.id','pembelian_detail.product_id');
-    //     $query->where('pembelian_detail.pembelian_id', $dec_id);
-    //     $total_beli_detail = $query->count();
-    //     $product_beli_detail = $query->get();
-    //     foreach ($product_beli_detail as $key => $value) {
-    //         $get_satuan_id  = Satuan::where('nama','LIKE',"%{$value->satuan}%")->first();
-
-    //         // $value->expired = date('d-m-Y', strtotime($value->tgl_expired));
-    //         $value->satuan_id = $get_satuan_id->id;
-    //     }
-
-    //     return view('backend/pembelian/form', compact('enc_id','product_beli','product_beli_detail', 'total_beli_detail'));
-    // }
     public function ubah($enc_id){
+
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+
         $pembelian = Pembelian::find($dec_id);
+
         if(isset($pembelian)){
             $pembelian_detail = PembelianDetail::where('pembelian_id',$pembelian->id)->where('notransaction',$pembelian->no_faktur)->with(['getproduct'])->get();
+            $supplier = Supplier::all();
             $selectedProduct = "";
+            $selectedsupplier ="";
 
-            return view('backend/pembelian/form',compact('enc_id','pembelian','pembelian_detail'));
+            return view('backend/pembelian/form',compact('enc_id','pembelian','pembelian_detail','supplier','selectedsupplier'));
         }else{
             return view('errors/noaccess');
         }

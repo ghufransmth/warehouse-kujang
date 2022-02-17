@@ -33,6 +33,7 @@
                     <li class=""><a href="{{route('expedisi.index')}}">Master Expedisi</a></li>
                     <li class=""><a href="{{route('type_channel.index')}}">Master Tipe Channel</a></li>
                     <li class=""><a href="{{ route('gudang.index') }}">Master Gudang</a></li>
+                    <li class=""><a href="{{ route('supplier.index') }}">Master Supplier</a></li>
                     <li class=""><a href="{{ route('diskon.index') }}">Master Diskon</a></li>
                     <li class=""><a href="{{ route('distrik.index') }}">Master Distrik</a></li>
                     <li class=""><a href="{{ route('payment.index') }}">Master Jenis Bayar</a></li>
