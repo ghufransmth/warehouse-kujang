@@ -65,6 +65,49 @@ class ReturController extends Controller
         // return $transaksi->gettransaksi(2);
         return view('backend/retur/index_retur',compact('member','perusahaan','gudang','selectedmember','selectedperusahaan', 'sales', 'toko'));
     }
+    public function edit($enc_id){
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        $penjualan = ReturTransaksi::select('*','price as harga_product')->where('id',$dec_id)->with(['getdetailtransaksi', 'getdetailtransaksi.getproduct'])->first();
+        return $penjualan;
+        //VALIDASI
+            if(!isset($dec_id)){
+                return response()->json([
+                    'success' => false,
+                    'code' => 404,
+                    'message' => 'Nomor retur tidak ditemukan'
+                ]);
+            }
+        //END VALIDASI
+        // return $retur_transaksi->getdetailtransaksi;
+
+            if($penjualan->jenis_transaksi == 0){
+                $detail_penjualan = $penjualan->getdetailtransaksi;
+                // return $detail_penjualan;
+                $member = array();
+                $selectedmember ="";
+                $sales = Sales::all();
+                // $sales = array();
+                $selectedsales = $penjualan->id_sales;
+                // $expedisi = Expedisi::all();
+                $expedisi = array();
+                $selectedexpedisi ="";
+                // $expedisivia = ExpedisiVia::all();
+                $expedisivia = array();
+                $selectedexpedisivia ="";
+                $selectedproduct ="";
+                // $tipeharga = $this->jenisharga();
+                $tipeharga = array();
+                $selectedtipeharga ="";
+                $toko = Toko::all();
+                $selectedtoko = $penjualan->id_toko;
+                $selectedstatuslunas = "";
+
+            }
+
+            return view('backend/retur/penjualan_form',compact('enc_id','tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia', 'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko', 'selectedtoko', 'selectedstatuslunas', 'penjualan', 'detail_penjualan'));
+
+        return $retur_transaksi;
+    }
     public function getData(Request $request){
         $limit = $request->length;
         $start = $request->start;
@@ -138,11 +181,11 @@ class ReturController extends Controller
             if($result->jenis_transaksi == 0){
                 $sales = $result->getsales->nama;
                 $toko = $result->gettoko->name;
-                $jenis_transaksi = '<span class="badge badge-danger">PENJUALAN</span>';
+                $jenis_transaksi = '<span class="badge badge-success">PENJUALAN</span>';
             }else{
                 $sales = "-";
                 $toko = "-";
-                $jenis_transaksi = '<span class="badge badge-primary">PEMBELIAN</span>';
+                $jenis_transaksi = '<span class="badge badge-warning">PEMBELIAN</span>';
             }
             $result->sales = $sales;
             $result->toko = $toko;
@@ -152,7 +195,7 @@ class ReturController extends Controller
             // $result->tgl_lunas = $result->tgl_lunas;
             $result->jenis_transaksi = $jenis_transaksi;
             $aksi .= '<a href="#" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail </a>';
-            $aksi .= '<a href="'.route('purchaseorder.edit', $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a> <br>';
+            $aksi .= '<a href="'.route('retur.edit', $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a> <br>';
 
             // if($result->status_lunas == 0){
             //     $result->status_pembayaran = '<span class="badge badge-success">Belum Lunas</span>';
@@ -197,6 +240,7 @@ class ReturController extends Controller
         $request->session()->put('filter_sales', $request->filter_sales);
         $request->session()->put('type', $request->type);
         $dataquery = TransaksiStock::select('*');
+        $all_retur = ReturTransaksi::all();
         $dataquery->orwhere('flag_transaksi', 3);
         $dataquery->orwhere('flag_transaksi', 4);
 
@@ -233,12 +277,24 @@ class ReturController extends Controller
                 $result->no_faktur = $result->no_transaksi;
                 $result->tgl_transaksi = $result->tgl_transaksi;
                 $result->total_harga = $result->total_harga;
-                if($result->flag_transaksi == 3){
-                    $result->jenis_transaksi = '<span class="badge badge-success">Penjualan</span>';
-                    $aksi = '<a href="'.route('retur.retur_penjualan', $enc_id).'" class="btn btn-success"><i class="fa fa-check"></i> Retur</a> ';
-                }elseif($result->flag_transaksi == 4){
-                    $result->jenis_transaksi = '<span class="badge badge-warning">Pembelian</span>';
-                    $aksi = '<a href="'.route('retur_pembelian.form-retur', $enc_id).'" class="btn btn-success"><i class="fa fa-check"></i> Retur</a> ';
+                $cek_retur = collect($all_retur)->where('no_faktur', $result->no_transaksi)->first();
+                $aksi = '';
+                if(!isset($cek_retur)){
+                    if($result->flag_transaksi == 3){
+                        $result->jenis_transaksi = '<span class="badge badge-success">Penjualan</span>';
+                        $aksi .= '<a href="'.route('retur.retur_penjualan', $enc_id).'" class="btn btn-success"><i class="fa fa-check"></i> Retur</a> ';
+                    }elseif($result->flag_transaksi == 4){
+                        $result->jenis_transaksi = '<span class="badge badge-warning">Pembelian</span>';
+                        $aksi .= '<a href="'.route('retur_pembelian.form-retur', $enc_id).'" class="btn btn-success"><i class="fa fa-check"></i> Retur</a> ';
+                    }
+                }else{
+                    if($result->flag_transaksi == 3){
+                        $result->jenis_transaksi = '<span class="badge badge-success">Penjualan</span>';
+
+                    }elseif($result->flag_transaksi == 4){
+                        $result->jenis_transaksi = '<span class="badge badge-warning">Pembelian</span>';
+
+                    }
                 }
 
                 $result->aksi = $aksi;

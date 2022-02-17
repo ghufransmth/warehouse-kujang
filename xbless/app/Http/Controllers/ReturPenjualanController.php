@@ -126,6 +126,7 @@ class ReturPenjualanController extends Controller
             $transaksi_stok->no_transaksi = $retur_transaksi->no_retur_faktur;
             $transaksi_stok->tgl_transaksi = $retur_transaksi->tgl_retur;
             $transaksi_stok->flag_transaksi = 5;
+            $transaksi_stok->total_harga = $total_harga_penjualan;
             $transaksi_stok->created_by = $retur_transaksi->created_user;
             if($transaksi_stok->save()){
                 return response()->json([

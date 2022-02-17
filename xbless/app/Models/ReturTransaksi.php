@@ -23,4 +23,7 @@ class ReturTransaksi extends Model
     public function gettoko(){
         return $this->hasOne(Toko::class, 'id', 'id_toko');
     }
+    public function getdetailtransaksi(){
+        return $this->hasMany(DetailReturTransaksi::class, 'retur_transaksi_id', 'id');
+    }
 }
