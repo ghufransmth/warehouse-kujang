@@ -71,6 +71,15 @@
 
                                     </select>
                                 </div> --}}
+                <label class="col-sm-2 col-form-label">Suplier * </label>
+                <div class="col-sm-10 error-text">
+                    <select class="form-control select2" id="gudang_to" name="gudang_to">
+                        <option value="0">Pilih Suplier</option>
+                        @foreach($suplier as $key => $value)
+                            <option value="{{ $value->id }}">{{ $value->nama }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <label class="col-sm-2 col-form-label">Tujuan Gudang * </label>
                 <div class="col-sm-10 error-text">
                     <select class="form-control select2" id="gudang_to" name="gudang_to">

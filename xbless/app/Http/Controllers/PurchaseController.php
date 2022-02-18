@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\DetailPenjualan;
+use App\Models\DiskonDetail;
+use App\Models\DiskonPenjualan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -175,8 +177,9 @@ class PurchaseController extends Controller
             $toko = Toko::all();
             $selectedtoko = $penjualan->id_toko;
             $selectedstatuslunas = $penjualan->status_lunas;
+            $selectedjenispembayaran = $penjualan->jenis_pembayaran;
 
-            return view('backend/purchase/form',compact('enc_id','tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia', 'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko', 'selectedtoko', 'selectedstatuslunas', 'penjualan', 'detail_penjualan'));
+            return view('backend/purchase/form',compact('enc_id','tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia', 'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko', 'selectedtoko', 'selectedstatuslunas', 'penjualan', 'detail_penjualan', 'selectedjenispembayaran'));
         }else{
             // return response()->json([
             //     'success' => false,
@@ -241,7 +244,8 @@ class PurchaseController extends Controller
             $result->toko = $result->gettoko->name;
             $result->tgl_jatuh_tempo = $result->tgl_jatuh_tempo;
             $result->tgl_transaksi = $result->tgl_faktur;
-            $result->total_harga = $result->total_harga;
+            $result->total_harga = format_uang($result->total_harga);
+            $result->total_diskon = format_uang($result->total_diskon);
             $result->tgl_lunas = $result->tgl_lunas;
             $aksi .= '<a href="'.route('purchaseorder.detail', $enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail </a>';
             $aksi .= '<a href="'.route('purchaseorder.edit', $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a> <br>';
@@ -311,509 +315,6 @@ class PurchaseController extends Controller
                 'message' => 'Status gagal diubah'
             ]);
         }
-    }
-    public function getData_(Request $request){
-        $limit = $request->length;
-        $start = $request->start;
-        $page  = $start +1;
-        $search = $request->search['value'];
-
-        $request->session()->put('filter_perusahaan', $request->filter_perusahaan);
-        $request->session()->put('filter_member', $request->filter_member);
-        $request->session()->put('type', $request->type);
-        $request->session()->put('type_gudang', $request->type_gudang);
-
-        if($request->user()->can('purchaseorder.liststatuspo')){
-            $purchase = PurchaseOrder::select('transaction_purchase.id','transaction_purchase.dataorder','no_nota','kode_rpo','note','createdon','total', 'count_cetak','transaction_purchase.perusahaan_id','transaction_purchase.created_at',
-                                'transaction_purchase.updated_at','member_id','sales_id','expedisi','expedisi_via','transaction_purchase.status', 'status_po', 'status_gudang','status_invoice','gudang_id','gudang.name as gudangnama','transaction_purchase_detail.transaction_purchase_id',
-                                DB::raw('(CASE
-                                    WHEN transaction_purchase.status = 0 THEN 1
-                                    WHEN transaction_purchase.status = 1 THEN 2
-                                    WHEN transaction_purchase.status = 2 THEN 4
-                                    WHEN transaction_purchase.status = 3 THEN 3
-                                    ELSE 5 END ) AS ord'));
-            $purchase->join('transaction_purchase_detail','transaction_purchase_detail.transaction_purchase_id','transaction_purchase.id');
-            $purchase->join('gudang','transaction_purchase_detail.gudang_id','gudang.id');
-            $purchase->where('flag_status', 0);
-            // if($request->user()->can('purchaseorder.liststatuspobyuser')){
-            //     $purchase->where('createdon', auth()->user()->username);
-            // }
-            // if(session('type') ==''){
-            //     $purchase->where('transaction_purchase.type','!=',2);
-            // }
-            $purchase->groupBy('transaction_purchase_detail.transaction_purchase_id');
-            $purchase->orderBy('ord', 'ASC');
-            $purchase->orderBy('status_gudang', 'ASC');
-            $purchase->orderBy('transaction_purchase.updated_at','DESC');
-
-        }else if($request->user()->can('purchaseorder.liststatusgudang')){
-            $purchase = PurchaseOrder::select('transaction_purchase.id','transaction_purchase.dataorder', 'no_nota','kode_rpo','note','createdon','total','count_cetak','transaction_purchase.perusahaan_id','transaction_purchase.created_at',
-                                'transaction_purchase.updated_at','member_id','sales_id','expedisi','expedisi_via','transaction_purchase.status', 'status_po', 'status_gudang','status_invoice','gudang_id','gudang.name as gudangnama','transaction_purchase_detail.transaction_purchase_id',
-                                DB::raw('(CASE
-                                    WHEN transaction_purchase.status = 1 AND status_gudang = 0 THEN 1
-                                    WHEN status_gudang = 1 AND transaction_purchase.status <> 3 THEN 2
-                                    WHEN transaction_purchase.status = 3 THEN 3
-                                    WHEN transaction_purchase.status = 2 THEN 4
-                                    ELSE 5 END ) AS ord'));
-            $purchase->join('transaction_purchase_detail','transaction_purchase_detail.transaction_purchase_id','transaction_purchase.id');
-            $purchase->join('gudang','transaction_purchase_detail.gudang_id','gudang.id');
-            $purchase->where('flag_status', 0);
-            $purchase->groupBy('transaction_purchase_detail.transaction_purchase_id');
-            $purchase->orderBy('ord','ASC');
-            $purchase->orderBy('transaction_purchase.updated_at', 'DESC');
-
-        }else if($request->user()->can('purchaseorder.liststatusinvoice')){
-            $purchase = PurchaseOrder::select('transaction_purchase.id', 'transaction_purchase.dataorder','no_nota','kode_rpo','note','createdon','total', 'count_cetak','transaction_purchase.perusahaan_id','transaction_purchase.created_at',
-                                'transaction_purchase.updated_at','member_id','sales_id','expedisi','expedisi_via','transaction_purchase.status', 'status_po', 'status_gudang','status_invoice','gudang_id','gudang.name as gudangnama','transaction_purchase_detail.transaction_purchase_id',
-                                DB::raw('(CASE
-                                    WHEN transaction_purchase.status = 1 AND status_gudang = 0 THEN 2
-                                    WHEN status_gudang = 1 AND transaction_purchase.status <> 3 THEN 1
-                                    WHEN transaction_purchase.status = 3 THEN 3
-                                    WHEN transaction_purchase.status = 2 THEN 4
-                                    ELSE 5 END ) AS ord'));
-            $purchase->join('transaction_purchase_detail','transaction_purchase_detail.transaction_purchase_id','transaction_purchase.id');
-            $purchase->join('gudang','transaction_purchase_detail.gudang_id','gudang.id');
-            $purchase->where('flag_status', 0);
-            if(session('type') ==''){
-                $purchase->whereIn('transaction_purchase.status_invoice',[1,2]);
-            }
-            // $purchase->where('transaction_purchase.status_invoice','!=',0);
-            $purchase->groupBy('transaction_purchase_detail.transaction_purchase_id');
-            $purchase->orderBy('ord','ASC');
-            $purchase->orderBy('transaction_purchase.updated_at', 'DESC');
-
-        }else{
-            $purchase = PurchaseOrder::select('transaction_purchase.id','transaction_purchase.dataorder', 'no_nota','kode_rpo','note','createdon','total','count_cetak','transaction_purchase.perusahaan_id','transaction_purchase.created_at',
-                                'transaction_purchase.updated_at','member_id','sales_id','expedisi','expedisi_via','transaction_purchase.status', 'status_po', 'status_gudang','status_invoice','gudang_id','gudang.name as gudangnama','transaction_purchase_detail.transaction_purchase_id',);
-            $purchase->join('transaction_purchase_detail','transaction_purchase_detail.transaction_purchase_id','transaction_purchase.id');
-            $purchase->join('gudang','transaction_purchase_detail.gudang_id','gudang.id');
-            $purchase->where('flag_status', 0);
-            $purchase->groupBy('transaction_purchase_detail.transaction_purchase_id');
-            $purchase->orderBy('transaction_purchase.status', 'ASC');
-            $purchase->orderBy('status_gudang', 'ASC');
-            $purchase->orderBy('transaction_purchase.updated_at','DESC');
-
-        }
-        if(array_key_exists($request->order[0]['column'], $this->original_column)){
-            $purchase->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
-        }
-
-
-        if($request->filter_perusahaan != ""){
-            $purchase->where('transaction_purchase.perusahaan_id', $request->filter_perusahaan);
-        }
-
-        if($request->filter_member != ""){
-            $purchase->where('transaction_purchase.member_id', $request->filter_member);
-        }
-        if($request->type != ""){
-            if($request->type =='0'){
-                if($request->user()->can('purchaseorder.liststatuspo')){
-                    $purchase->where('transaction_purchase.flag_status', 0);
-                }else if($request->user()->can('purchaseorder.liststatusinvoiceawal')){
-                    $purchase->whereIn('transaction_purchase.status_invoice',[1,2]);
-                    $purchase->where('transaction_purchase.flag_status', 0);
-                }
-            }
-            //LIST PO TOLAK : HARGA BISA DIUBAH
-            if($request->type =='1'){
-                $purchase->where('transaction_purchase.status_invoice', 2);
-                $purchase->where('transaction_purchase.status_gudang', 2);
-                $purchase->where('transaction_purchase.flag_status', 0);
-                $purchase->where('transaction_purchase.type', 2);
-            }
-            //VALIDASI HARGA
-            if($request->type =='2'){
-                $purchase->where('transaction_purchase.status_invoice', 0);
-                $purchase->where('transaction_purchase.status_gudang', 0);
-                $purchase->where('transaction_purchase.flag_status', 0);
-                $purchase->where('transaction_purchase.status', 1);
-            }
-            //UNTUK GUDANG
-            if($request->type =='3'){
-                $purchase->where('transaction_purchase.flag_status', 0);
-                $purchase->where('gudang_id', $request->type_gudang);
-            }
-        }
-        if($search) {
-          $purchase->where(function ($query) use ($search) {
-                  $query->orWhere('no_nota','LIKE',"%{$search}%");
-                  $query->orWhere('kode_rpo','LIKE',"%{$search}%");
-          });
-        }
-        $totalData = $purchase->get()->count();
-
-        $totalFiltered = $purchase->get()->count();
-
-        $purchase->limit($limit);
-        $purchase->offset($start);
-        $data = $purchase->get();
-        foreach ($data as $key => $result){
-            $enc_id = $this->safe_encode(Crypt::encryptString($result->id));
-            $inv = Invoice::select('no_nota','pay_status')->where('purchase_no',$result->no_nota)->first();
-            $rpo = "";
-            $rpo.="";
-            $rpo.='<h5 class="no-margin"># <b>'.$result->no_nota.'</b></h5>';
-            if($inv) {
-                $rpo.='<h5 class="no-margin" style="width:300px;">No. INV : <b>'.$inv->no_nota.'</b></h5>';
-            }
-
-            $action = "";
-            $action.="";
-            $action.="<div class='btn-group'>";
-            if($request->user()->can('purchaseorder.detail')){
-                $action.='<a href="#modal_image_produk" id="detail_po" role="button" data-id="'.$enc_id.'" data-toggle="modal" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip"><i class="fa fa-eye"></i></a>&nbsp';
-            }
-            $action.="</div>";
-
-            $rpo.='<div>';
-            $rpo.='<div class="row">';
-                $rpo.='<div class="col-6" style="margin-bottom:10px;">';
-                        $getBO = $this->cut_text($result->kode_rpo);
-                        if($getBO=='BO-'){
-                            $type = 'BO';
-                            $rpo_created = PurchaseOrderLog::where('purchase_id',$result->id)->where('keterangan', 'LIKE', '%PO ke Backorder%')->first();
-                        }else{
-                            $type = 'RPO';
-                            $rpo_created = PurchaseOrderLog::where('purchase_id',$result->id)->where('keterangan', 'LIKE', '%DIPROSES ke RPO%')->first();
-                        }
-                        if($rpo_created){
-                            $rpo.='<small class="display-block text-muted">'.$type.' - '.$rpo_created->create_user.'</small><br><small style="color:#1c84c6;margin-left:20px;font-size:10px;letter-spacing: -1px;">'
-                            .date("d M Y H:i:s",strtotime($rpo_created->create_date)).'</small><br>';
-                        }
-                $rpo.='</div>';
-                $rpo.='<div class="col-6" style="margin-bottom:10px;">';
-                        $po_created = PurchaseOrderLog::where('purchase_id',$result->id)->where('keterangan', 'LIKE', '%PO untuk di proses INVOICE%')->get();
-                        $i_po = 0;
-                        foreach($po_created as $kpo => $nilaipo){
-                            if($kpo==0){
-                                $rpo.='<small class="display-block text-muted">PO - '.$nilaipo->create_user.'<br></small>';
-                            }
-                            if(++$i_po === count($po_created)){
-                                $style = 'style="color:#1c84c6;margin-left:20px;font-size:10px;letter-spacing: -1px;"';
-                            }
-                            else{
-                                $style = 'style="margin-left:20px;font-size:10px;letter-spacing: -1px;"';
-                            }
-                            $rpo.='<small '.$style.'>'.date("d M Y H:i:s",strtotime($nilaipo->create_date)).'</small><br>';
-                        }
-                $rpo.='</div>';
-            $rpo.='</div>';
-            $rpo.='<div class="row">';
-                $rpo.='<div class="col-6" style="margin-bottom:10px;">';
-                        $po_inv_created = PurchaseOrderLog::where('purchase_id',$result->id)->where('keterangan', 'LIKE', '%PO untuk diproses GUDANG%')->get();
-                        $i_kpoinv = 0;
-                        foreach($po_inv_created as $kpoinv => $nilaipoinv){
-                            if($kpoinv==0){
-                                $rpo.='<small class="display-block text-muted">INV - Cek Harga - '.$nilaipoinv->create_user.'<br></small>';
-                            }
-                            if(++$kpoinv === count($po_inv_created)){
-                                $style = 'style="color:#1c84c6;margin-left:20px;font-size:10px;letter-spacing: -1px;"';
-                            }
-                            else{
-                                $style = 'style="margin-left:20px;font-size:10px;letter-spacing: -1px;"';
-                            }
-                            $rpo.='<small '.$style.'>'.date("d M Y H:i:s",strtotime($nilaipoinv->create_date)).'</small><br>';
-                        }
-                $rpo.='</div>';
-                $rpo.='<div class="col-6" style="margin-bottom:10px;">';
-                        $po_print_po = PurchaseOrderLog::where('purchase_id',$result->id)->where('keterangan', 'LIKE', '%print pada PO%')->get();
-                        $i_poprintpo = 0;
-                        foreach($po_print_po as $poprintpo => $nilaipoprintpo){
-                            if($poprintpo==0){
-                                $rpo.='<small class="display-block text-muted">GDG - Cetak PO - '.$nilaipoprintpo->create_user.'<br></small>';
-                            }
-                            if(++$poprintpo === count($po_print_po)){
-                                $style = 'style="color:#1c84c6;margin-left:20px;font-size:10px;letter-spacing: -1px;"';
-                            }
-                            else{
-                                $style = 'style="margin-left:20px;font-size:10px;letter-spacing: -1px;"';
-                            }
-                            $rpo.='<small '.$style.'>'.date("d M Y H:i:s",strtotime($nilaipoprintpo->create_date)).'</small><br>';
-                        }
-                $rpo.='</div>';
-            $rpo.='</div>';
-            $rpo.='<div class="row">';
-                $rpo.='<div class="col-6" style="margin-bottom:10px;">';
-                        $nota = PurchaseOrderLog::where('purchase_id',$result->id)->where('keterangan', 'LIKE', '%ke pembuatan NOTA%')->get();
-                        $i_not = 0;
-                        foreach($nota as $not => $nilainota){
-                            if($not==0){
-                                $rpo.='<small class="display-block text-muted">INV - Invoice - '.$nilainota->create_user.'<br></small>';
-                            }
-                            if(++$i_not === count($nota)){
-                                $style = 'style="color:#1c84c6;margin-left:20px;font-size:10px;letter-spacing: -1px;"';
-                            }
-                            else{
-                                $style = 'style="margin-left:20px;font-size:10px;letter-spacing: -1px;"';
-                            }
-                            $rpo.='<small '.$style.'>'.date("d M Y H:i:s",strtotime($nilainota->create_date)).'</small><br>';
-                        }
-                $rpo.='</div>';
-                $rpo.='<div class="col-6" style="margin-bottom:10px;">';
-                        $po_gdg_created = PurchaseOrderLog::where('purchase_id',$result->id)->where('keterangan', 'LIKE', '%PO untuk diproses INVOICE AKHIR%')->get();
-                        $i_kpogdg = 0;
-                        foreach($po_gdg_created as $kpogdg => $nilaipogdg){
-                            if($kpogdg==0){
-                                $rpo.='<small class="display-block text-muted">GDG - Closing PO - '.$nilaipogdg->create_user.'<br></small>';
-                            }
-                            if(++$i_kpogdg === count($po_gdg_created)){
-                                $style = 'style="color:#1c84c6;margin-left:20px;font-size:10px;letter-spacing: -1px;"';
-                            }
-                            else{
-                                $style = 'style="margin-left:20px;font-size:10px;letter-spacing: -1px;"';
-                            }
-                            $rpo.='<small '.$style.'>'.date("d M Y H:i:s",strtotime($nilaipogdg->create_date)).'</small><br>';
-                        }
-                $rpo.='</div>';
-            $rpo.='</div>';
-            $rpo.='<div class="row">';
-                $po_tolak = PurchaseOrderLog::where('purchase_id',$result->id)->where('keterangan', 'LIKE', '%Menolak PO%')->get();
-                $rpo.='<div class="col-6" style="margin-bottom:10px;">';
-                $i_kpotolak = 0;
-                foreach($po_tolak as $kpotolak => $nilaipotolak){
-                    if($kpotolak==0){
-                        $rpo.='<small class="display-block text-muted">Ditolak -  '.$nilaipotolak->create_user.'<br></small>';
-                    }
-                    if(++$i_kpotolak === count($po_tolak)){
-                        $style = 'style="color:#1c84c6;margin-left:20px;font-size:10px;letter-spacing: -1px;"';
-                    }
-                    else{
-                        $style = 'style="margin-left:20px;font-size:10px;letter-spacing: -1px;"';
-                    }
-                    $rpo.='<small '.$style.'>'.date("d M Y H:i:s",strtotime($nilaipotolak->create_date)).'</small><br>';
-                }
-                $rpo.='</div>';
-
-            $rpo.='</div>';
-
-            if($result->count_cetak > 0){
-                $rpo.='<br/><small class="display-block" style="color:red"><i class="fa fa-print"></i>&nbsp&nbspSudah diprint sebanyak '.$result->count_cetak.'x<br>';
-            }
-
-            $polog     = PurchaseOrderLog::where('purchase_id', $result->id)->orderBy('id','desc')->first();
-            if($request->user()->can('purchaseorder.liststatuspo')){
-                if ($result->status=='0' &&  $result->status_invoice==0) {
-                    $status = '<span class="label label-primary">Baru</span><br>
-                    <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small>';
-                }else if($result->status=='1'){
-                    $status = '<span class="label label-warning">Diproses</span><br>
-                    <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small>';
-                }else if($result->status=='2' || $result->status_invoice==2){
-                    $status = '<span class="label label-danger">Ditolak</span><br>
-                    <small class="display-block text-muted">Ditolak Oleh : '.$polog->create_user.'</small>';
-                }else if($result->status=='3'){
-                    $status = '<span class="label label-success">Selesai</span><br>
-                    <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small>';
-                }
-            }
-            else if($request->user()->can('purchaseorder.liststatusinvoiceawal')){
-
-                if($result->status == 0){
-                    $status = '<span class="label label-default">BELUM DIPROSES ADMIN</span><br>
-                    <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small><br>';
-                }else{
-                    if($result->status_invoice == '0'){
-                        $status = '<span class="label label-warning">DIPROSES</span><br>
-                            <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small><br>
-                            <small class="display-block text-muted">DIPROSES INVOICE</small>';
-                    }else if($result->status_invoice == 1 && $result->status_po == 2 && $result->status == 3){
-                        $status = '<span class="label label-success">Selesai</span><br>
-                            <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small><br>
-                            <small class="display-block text-muted">SUKSES MEMBUAT NOTA</small>';
-                    }else if($result->status_invoice == '1'){
-                        $status = '<span class="label label-success">SELESAI</span><br>
-                            <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small><br>
-                            <small class="display-block text-muted">SELESAI PROSES INVOICE</small>';
-                    }else if($result->status_invoice == '2'){
-                        $status = '<span class="label label-danger">DITOLAK</span><br>
-                            <small class="display-block text-muted">Ditolak Oleh : '.$polog->create_user.'</small><br>
-                            <small class="display-block text-muted">DITOLAK INVOICE</small>';
-                    }
-                }
-            }else if($request->user()->can('purchaseorder.liststatusgudang')){
-                if($result->status == 0){
-                    $status = '<span class="label label-default">BELUM DIPROSES ADMIN</span><br>
-                    <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small><br>';
-                }if($result->status_invoice == 0){
-                    $status = '<span class="label label-default">BELUM DIPROSES ADMIN INVOICE</span><br>
-                    <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small><br>';
-                }else{
-                    if($result->status_gudang == '0'){
-                        $status = '<span class="label label-warning">DIPROSES</span><br>
-                            <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small><br>
-                            <small class="display-block text-muted">DIPROSES GUDANG</small>';
-                    }else if($result->status_gudang == 1 && $result->status_po == 2 && $result->status == 3){
-                        $status = '<span class="label label-success">Selesai</span><br>
-                            <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small><br>
-                            <small class="display-block text-muted">SUKSES MEMBUAT NOTA</small>';
-                    }else if($result->status_gudang == '1'){
-                        $status = '<span class="label label-success">SELESAI</span><br>
-                            <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small><br>
-                            <small class="display-block text-muted">SELESAI PROSES GUDANG</small>';
-                    }else if($result->status_gudang == '2'){
-                        $status = '<span class="label label-danger">DITOLAK</span><br>
-                            <small class="display-block text-muted">Ditolak Oleh : '.$polog->create_user.'</small><br>
-                            <small class="display-block text-muted">DITOLAK GUDANG</small>';
-                    }
-                }
-            }else if($request->user()->can('purchaseorder.liststatusinvoice')){
-
-                if($result->status == '0'){
-                    $status = '<span class="label label-default">BELUM DIPROSES ADMIN</span><br>
-                        <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small><br>';
-                }else{
-                    if($result->status_gudang == '0' && $result->status_po == '0' && $result->status != 3){
-                        $status = '<span class="label label-warning">DIPROSES</span><br>
-                        <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small><br>
-                        <small class="display-block text-muted">SELESAI PROSES GUDANG</small>';
-                    }else if($result->status_gudang == '1' && $result->status_po == '2' && $result->status != 3){
-                        $status = '<span class="label label-success">Selesai</span><br>
-                            <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small><br>
-                            <small class="display-block text-muted">SELESAI PROSES GUDANG</small>';
-                    }else if($result->status_gudang == '2'){
-                        $status = '<span class="label label-danger">DITOLAK</span><br>
-                            <small class="display-block text-muted">Ditolak Oleh : '.$polog->create_user.'</small><br>
-                            <small class="display-block text-muted">DITOLAK GUDANG</small>';
-                    }else if($result->status_gudang == 1 && $result->status_po == 1 && $result->status == 3){
-                        $status = '<span class="label label-success">Selesai</span><br>
-                            <small class="display-block text-muted">Dibuat Oleh : '.$result->createdon.'</small><br>
-                            <small class="display-block text-muted">SUKSES MEMBUAT NOTA</small>';
-                    }
-                }
-            }
-
-            $statuslist = $this->actionstatus();
-            $statusinvo = $this->statuspo();
-            $statusgudang = $this->statusgudang();
-            $statusinvoiceawal = $this->statusinvoiceawal();
-
-            $selectedstatus = $result->status;
-            $selectedgudang = $result->status_gudang;
-            $selectedpo = $result->status_po;
-
-
-            // Change Status Action List
-            $actionstatus = '';
-
-            if($result->status == 0 && $result->status != 3){
-                if($request->user()->can('purchaseorder.liststatuspo')){
-                    if($result->status_invoice == 2 &&  $result->status_gudang == 2 && $request->type =='0'){
-
-                    }else{
-                        $actionstatus.= '<select class="status form-control" id="status" onchange="change_status(this.options[this.selectedIndex].value,'.$result->id.')">';
-                        foreach ($statuslist as $kunci => $value) {
-                            if($kunci == $selectedstatus){
-                                $selecteddetail = 'selected';
-                            }else{
-                                $selecteddetail = '';
-                            }
-
-                            $actionstatus.='<option value="'.$kunci.'"'.$selecteddetail.'>'.ucfirst($value).'</option>';
-                        }
-                        $actionstatus.= '</select>';
-                    }
-
-                }
-            }else if($result->status == 1 && $result->status_invoice == 0 && $result->status != 3){
-                if($request->user()->can('purchaseorder.liststatusinvoiceawal')){
-                    $actionstatus.= '<select class="status form-control" id="status_invoice_awal" onchange="change_status_invoice_awal(this.options[this.selectedIndex].value,'.$result->id.')">';
-                    foreach ($statusinvoiceawal as $kunci => $value) {
-                        if($kunci == $statusinvoiceawal){
-                            $selecteddetail = 'selected';
-                        }else{
-                            $selecteddetail = '';
-                        }
-                        $actionstatus.='<option value="'.$kunci.'"'.$selecteddetail.'>'.ucfirst($value).'</option>';
-                    }
-                    $actionstatus.= '</select>';
-                }
-            }else if($result->status == 1 && $result->status_invoice == 1 && $result->status_gudang == 0 && $result->status != 3){
-                if($request->user()->can('purchaseorder.liststatusgudang')){
-                    $actionstatus.= '<select class="status form-control" id="status_gudang" onchange="change_status_gudang(this.options[this.selectedIndex].value,'.$result->id.')">';
-                    foreach ($statusgudang as $kunci => $value) {
-                        if($kunci == $selectedgudang){
-                            $selecteddetail = 'selected';
-                        }else{
-                            $selecteddetail = '';
-                        }
-                        $actionstatus.='<option value="'.$kunci.'"'.$selecteddetail.'>'.ucfirst($value).'</option>';
-                    }
-                    $actionstatus.= '</select>';
-                }
-            }else if($result->status_gudang == 1 && $result->status_po == 2 && $result->status != 3){
-
-                if($request->user()->can('purchaseorder.liststatusinvoice')){
-                    $actionstatus.= '<select class="status form-control" id="status_invoice" onchange="process_invoice(this.options[this.selectedIndex].value,'.$result->id.')">';
-                    $actionstatus.= '<option value="">Pilih Action</option>';
-                    foreach ($statusinvo as $kunci => $value) {
-                        $actionstatus.='<option value="'.$kunci.'">'.ucfirst($value).'</option>';
-                    }
-                    $actionstatus.= '</select>';
-                }
-            }
-
-            $customer               = Member::find($result->member_id);
-            $expedisi               = Expedisi::find($result->expedisi);
-            $expedisi_via           = ExpedisiVia::find($result->expedisi_via);
-            $sales                  = Sales::find($result->sales_id);
-            // $jumlahharitempo        = date('Y-m-d', strtotime($result->dataorder . " +120 days"));
-            $jumlahharitempo        = date('Y-m-d', strtotime($result->dataorder . " +2 days"));
-            $result->enc_id         = $enc_id;
-            $result->id             = $result->id;
-            $result->no             = $key+$page;
-            $result->rpo            = $rpo;
-            if($inv) {
-                if($inv->pay_status==1){
-                    $result->customer       = $customer->name .' - '.$customer->city.'<br/><br/><span class="badge badge-primary text-left">LUNAS</span><br/><small class="display-block text-muted"> Catatan : <b>'.$result->note.'</b></small>';
-                }else{
-                    if(date('Y-m-d') >= $jumlahharitempo ) {
-                        $result->customer       = $customer->name .' - '.$customer->city.'<br/><br/><span class="badge badge-danger text-left">PURCHASE ORDER <br/>SUDAH 4 BULAN / LEBIH</span><br/><small class="display-block text-muted"> Catatan : <b>'.$result->note.'</b></small>';
-                    }else{
-                        $result->customer       = $customer->name .' - '.$customer->city.'<br/><small class="display-block text-muted"> Catatan : <b>'.$result->note.'</b></small>';
-                    }
-                }
-            }else{
-                 if(date('Y-m-d') >= $jumlahharitempo ) {
-                    $result->customer       = $customer->name .' - '.$customer->city.'<br/><br/><span class="badge badge-danger text-left">PURCHASE ORDER <br/>SUDAH 4 BULAN / LEBIH</span><br/><small class="display-block text-muted"> Catatan : <b>'.$result->note.'</b></small>';
-                }else{
-                    $result->customer       = $customer->name .' - '.$customer->city.'<br/><small class="display-block text-muted"> Catatan : <b>'.$result->note.'</b></small>';
-                }
-            }
-            $result->tgl_po         = date("d M Y",strtotime($result->updated_at)).'<br>'.'<small>('.Carbon::parse($result->updated_at)->diffForHumans().')</small>';
-            $result->action_status  = $actionstatus;
-            $result->status         = $status;
-            $result->expedisi       = $expedisi->name;
-            $result->sales          = $sales->name;
-            if($request->user()->can('purchaseorder.liststatusgudang') && $request->user()->can('purchaseorder.liststatusinvoice')){
-                $result->total      = number_format($result->total,2,',','.');
-            }else if($request->user()->can('purchaseorder.liststatusgudang')){
-                $result->total      = '';
-            }else{
-                $result->total      = number_format($result->total,2,',','.');
-            }
-            $result->namagudang     = $result->gudangnama;
-
-            $result->action         = $action;
-        }
-
-        if ($request->user()->can('purchaseorder.index')) {
-            $json_data = array(
-                "draw"            => intval($request->input('draw')),
-                "recordsTotal"    => intval($totalData),
-                "recordsFiltered" => intval($totalFiltered),
-                "data"            => $data
-            );
-        }else{
-            $json_data = array(
-                "draw"            => intval($request->input('draw')),
-                "recordsTotal"    => 0,
-                "recordsFiltered" => 0,
-                "data"            => []
-            );
-        }
-
-        return json_encode($json_data);
     }
 
     public function tambah(){
@@ -955,7 +456,7 @@ class PurchaseController extends Controller
             return date('dmy').$salescode.$next_no;
     }
     public function simpan(Request $req){
-
+        // return $req->all();
         $enc_id                 = $req->enc_id;
         if(isset($enc_id)){
             $dec_id                 = $this->safe_decode(Crypt::decryptString($enc_id));
@@ -975,6 +476,10 @@ class PurchaseController extends Controller
         $array_total_harga      = $req->total;
         $total_product          = $req->total_produk;
         $total_harga_penjualan  = $req->total_harga_penjualan;
+        $nilai_diskon           = $req->nilai_diskon;
+        $diskon_penjualan       = $req->total_diskon;
+        $jenis_pembayaran       = $req->jenis_pembayaran;
+        $jumlah_penjualan       = $req->jumlah_penjualan;
         // return $req->all();
         //VALIDASI
         // return $req->all();
@@ -982,6 +487,12 @@ class PurchaseController extends Controller
                 return response()->json([
                     'success' => FALSE,
                     'message' => 'Nomor transaksi harus diisi'
+                ]);
+            }
+            if($jenis_pembayaran == 0){
+                return response()->json([
+                    'success' => FALSE,
+                    'message' => 'Jenis pembayaran harus diisi'
                 ]);
             }
             if($status_pembayaran == null){
@@ -1030,8 +541,21 @@ class PurchaseController extends Controller
             $penjualan->tgl_faktur  = $tgl_transaksi;
             $penjualan->total_harga = $total_harga_penjualan;
             $penjualan->status_lunas = $status_pembayaran;
+            $penjualan->total_diskon = $diskon_penjualan;
+            $penjualan->jenis_pembayaran = $jenis_pembayaran;
             $penjualan->created_by  = auth()->user()->username;
             if($penjualan->save()){
+                $diskon = DiskonPenjualan::where('id_penjualan', $penjualan->id)->first();
+                $diskon->tipe_diskon = 0;
+                $diskon->jenis_diskon = 0;
+                $diskon->nilai_diskon = $nilai_diskon;
+                $diskon->jumlah_diskon = $diskon_penjualan;
+                if(!$diskon->save()){
+                    return response()->json([
+                        'success' => FALSE,
+                        'message' => 'Gagal memasukkan ke table diskon'
+                    ]);
+                }
                 foreach($detail_penjualan->get() as $detail){
                     if($penjualan->status_lunas == 0){
                         $stockadj = StockAdj::where('id_product', $detail->id_product)->first();
@@ -1119,8 +643,23 @@ class PurchaseController extends Controller
                 $penjualan->tgl_faktur  = $tgl_transaksi;
                 $penjualan->total_harga = $total_harga_penjualan;
                 $penjualan->status_lunas = $status_pembayaran;
+                $penjualan->total_diskon = $diskon_penjualan;
+                $penjualan->jenis_pembayaran = $jenis_pembayaran;
                 $penjualan->created_by  = auth()->user()->username;
+                // return $penjualan;
                 if($penjualan->save()){
+                    $diskon = new DiskonPenjualan;
+                    $diskon->id_penjualan = $penjualan->id;
+                    $diskon->tipe_diskon = 0;
+                    $diskon->jenis_diskon = 0;
+                    $diskon->nilai_diskon = $nilai_diskon;
+                    $diskon->jumlah_diskon = $diskon_penjualan;
+                    if(!$diskon->save()){
+                        return response()->json([
+                            'success' => FALSE,
+                            'message' => 'Gagal memasukkan ke table diskon'
+                        ]);
+                    }
                     for($i=0;$i<$total_product;$i++){
                         $satuan = Satuan::find($array_id_satuan[$i]);
                         $detail_penjualan = new DetailPenjualan;
@@ -1157,7 +696,7 @@ class PurchaseController extends Controller
                     $transaksi_stock->no_transaksi  = $penjualan->no_faktur;
                     $transaksi_stock->tgl_transaksi = $tgl_transaksi;
                     $transaksi_stock->flag_transaksi = 3;
-                    $transaksi_stock->total_harga = $total_harga_penjualan;
+                    $transaksi_stock->total_harga = $penjualan->total_harga;
                     $transaksi_stock->created_by = auth()->user()->username;
                     $transaksi_stock->note = '-';
                     if($transaksi_stock->save()){
@@ -1273,18 +812,41 @@ class PurchaseController extends Controller
         // $memberplus      = Member::select('member.id','type_price.name')->join('type_price','type_price.id','member.operation_price')->where('member.id',$request->member)->first();
         // $tambahan = $memberplus?$memberplus->name:0;
         $product = Product::where('id', $request->produk_id)->with(['getstock'])->first();
-
+        // $diskon  = DiskonDetail::where('produk', $product->id)->where('flag_diskon', 0)->first();
         return response()->json([
             'success' => TRUE,
             'data' => $product,
         ]);
     }
     public function total_harga(Request $request){
+        // return $request->all();
+
         $satuan = Satuan::find($request->satuan_id);
+
         return response()->json([
             'success' => TRUE,
             'data'  => $satuan,
+
         ]);
+    }
+    public function total_diskon(Request $request){
+        $harga_penjualan = $request->harga_penjualan;
+        $diskon = DiskonDetail::where('flag_diskon', 0)->where('min_beli', '<=', $harga_penjualan)->where('max_beli', '>=', $harga_penjualan)->first();
+        if(isset($diskon)){
+            $total_diskon = ($harga_penjualan * $diskon->nilai_diskon)/100;
+            $nilai_diskon = $diskon->nilai_diskon;
+        }else{
+            $total_diskon = 0;
+            $nilai_diskon = 0;
+        }
+        return response()->json([
+            'success' => true,
+            'total_diskon' => $total_diskon,
+            'jumlah_total' => $harga_penjualan - $total_diskon,
+            'nilai_diskon' => $nilai_diskon
+        ]);
+        // return $total_diskon;
+
     }
     public function expedisi(Request $request){
         $expedisi = Expedisi::select('id', 'name')->where('status', 1)->get();
@@ -1507,17 +1069,42 @@ class PurchaseController extends Controller
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         $penjualan = Penjualan::where('id', $dec_id)->with(['getsales', 'gettoko', 'getdetailpenjualan'])->first();
         $detail_penjualan = $penjualan->getdetailpenjualan;
-        // return $penjualan    ;
+        if($penjualan->jenis_pembayaran == 1){
+            $jenis_pembayaran = "Cash";
+        }else if($penjualan->jenis_pembayaran == 2){
+            $jenis_pembayaran = "Cek / Giro";
+        }else{
+            $jenis_pembayaran = "Transfer";
+        }
+        // return $penjualan;
         return view('backend/purchase/detail',
         [
             'enc_id' => $enc_id,
             'penjualan' => $penjualan,
             'detail_penjualan' => $detail_penjualan,
+            'jenis_pembayaran' => $jenis_pembayaran
         ]);
         // return $penjualan;
     }
     public function cetak($enc_id){
-        return view('backend/purchase/cetak', ['enc_id' => $enc_id]);
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        $penjualan = Penjualan::where('id', $dec_id)->with(['getsales', 'gettoko', 'getdetailpenjualan'])->first();
+        $detail_penjualan = $penjualan->getdetailpenjualan;
+        if($penjualan->jenis_pembayaran == 1){
+            $jenis_pembayaran = "Cash";
+        }else if($penjualan->jenis_pembayaran == 2){
+            $jenis_pembayaran = "Cek / Giro";
+        }else{
+            $jenis_pembayaran = "Transfer";
+        }
+        // return $penjualan;
+        return view('backend/purchase/cetak',
+        [
+            'enc_id' => $enc_id,
+            'penjualan' => $penjualan,
+            'detail_penjualan' => $detail_penjualan,
+            'jenis_pembayaran' => $jenis_pembayaran
+        ]);
     }
 
     public function detail_(Request $request){
