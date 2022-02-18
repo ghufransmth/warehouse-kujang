@@ -142,6 +142,37 @@
 <script src="{{ asset('assets/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js')}}"></script>
 @stack('scripts')
 <script>
+    var CURRENT_URL = window.location.href.split('#')[0].split('?')[0],
+    $SIDEBAR_MENU = $('#sidebar-menu');
+
+    // Sidebar
+    $(document).ready(function() {
+        // TODO: This is some kind of easy fix, maybe we can improve this
+        // check active menu
+        var segments = CURRENT_URL.split( '/' );
+        // console.log(segments[3]);
+        var iniurl = window.location.origin;
+        var tamp = ''+iniurl;
+
+        for(var i=0; i<segments.length; i++){
+            if(i>=3){
+                tamp += '/'+segments[i];
+            }
+
+
+        }
+        // console.log(tamp);
+        // var potongurl= iniurl+'/'+segments[3]+'/'+segments[4]+'/'+segments[5]+'/'+segments[6];
+        var potongurl= tamp;
+        // console.log(potongurl);
+        $SIDEBAR_MENU.find('ul a[href="' + potongurl + '"]').parents('li').addClass('active');
+        $SIDEBAR_MENU.find('ul a[href="' + potongurl + '"]').parents('ul').addClass('in');
+        // console.log($SIDEBAR_MENU);
+        $SIDEBAR_MENU.find('a').filter(function () {
+            return this.href == potongurl;
+        }).addClass('active').parents('li').slideDown(function() {
+        });
+    });
     $(function () {
         toastr.options = {
                 "closeButton": true,

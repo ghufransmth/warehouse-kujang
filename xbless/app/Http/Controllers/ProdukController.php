@@ -16,6 +16,7 @@ use App\Models\InvoiceDetail;
 use App\Models\Pembelian;
 use App\Models\PembelianDetail;
 use App\Models\PurchaseOrderDetail;
+use App\Models\StockAdj;
 use DB;
 use Auth;
 use QrCode;
@@ -250,6 +251,12 @@ class ProdukController extends Controller
                 }
                 //END VALIDASI
                 if($product->save()){
+                    $cek_stock = StockAdj::where('id_product', $product->id)->first();
+                    if(!isset($cek_stock)){
+                        $stock = new StockAdj;
+                        $stock->id_product = $product->id;
+                        $stock->save();
+                    }
                     return response()->json([
                         "success"         => TRUE,
                         "message"         => 'Data berhasil ditambahkan.'

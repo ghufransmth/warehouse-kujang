@@ -33,6 +33,7 @@
                     <li class=""><a href="{{route('expedisi.index')}}">Master Expedisi</a></li>
                     <li class=""><a href="{{route('type_channel.index')}}">Master Tipe Channel</a></li>
                     <li class=""><a href="{{ route('gudang.index') }}">Master Gudang</a></li>
+                    <li class=""><a href="{{ route('supplier.index') }}">Master Supplier</a></li>
                     <li class=""><a href="{{ route('diskon.index') }}">Master Diskon</a></li>
                     <li class=""><a href="{{ route('distrik.index') }}">Master Distrik</a></li>
                     <li class=""><a href="{{ route('payment.index') }}">Master Jenis Bayar</a></li>
@@ -83,7 +84,7 @@
             </li> --}}
             @endcan
             @can('adjstok.index')
-            <li><a href="{{route('adjstok.index')}}">Update Stok</a></li>
+            <li><a href="{{route('adjstok.index')}}">Info Stok</a></li>
             @endcan
             @can('stokmutasi.tambah')
             <li><a href="{{route('stokmutasi.tambah')}}">Mutasi Stok</a></li>
@@ -167,7 +168,20 @@
             </ul>
         </li>
         {{-- @endcan --}}
-
+        {{-- @can('security.index') --}}
+        <li>
+            <a href="#"><i class="fa fa-car"></i> <span class="nav-label">Pengiriman</span><span
+                    class="fa arrow"></span></a>
+            <ul class="nav nav-second-level collapse">
+                {{-- @can('permission.index') --}}
+                <li class=""><a href="{{route('deliveryorder.index')}}">Delivery Order</a></li>
+                {{-- @endcan --}}
+                {{-- @can('role.index') --}}
+                <li class=""><a href="{{route('historydeliveryorder.index')}}">History DO</a></li>
+                {{-- @endcan --}}
+            </ul>
+        </li>
+        {{-- @endcan --}}
         {{-- <li>
             <a href="{{ route('retur_pembelian.index') }}"><i class="fa fa-cart-plus"></i><span class="nav-label">Retur
             Pembelian</span><span class="fa arrow"></span></a>
@@ -236,6 +250,8 @@
                 <!-- @can('reportstok.index')
                 <li><a href="{{route('reportstok.index')}}">Report Stok</a></li>
                 @endcan -->
+                <li><a href="{{route('reportdeliveryorder.index')}}">Report Delivery Order</a></li>
+
             </ul>
         </li>
         @endcan

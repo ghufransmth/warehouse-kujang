@@ -84,13 +84,31 @@
                             </div>
 
                             {{-- <div class="form-group row"> --}}
-                            <label class="col-sm-2 col-form-label">Tanggal Transaksi *</label>
+                            {{-- <label class="col-sm-2 col-form-label">Tanggal Transaksi *</label>
                             <div class="col-sm-3 error-text">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" class="form-control jatuh_tempo" id="tgl_transaksi"
                                         name="tgl_transaksi" placeholder="dd-mm-yyyy" value="{{ isset($pembelian)? date('d-m-Y', strtotime($pembelian->tgl_transaksi)) : date('d-m-Y') }}" autocomplete="off">
                                 </div>
+                            </div> --}}
+                            <label class="col-sm-2 col-form-label">Supplier </label>
+                            <div class="col-sm-4 error-text">
+                                <select class="form-control select2" id="supplier" name="supplier">
+                                    <option value="0">Pilih Supplier</option>
+                                    @foreach($supplier as $key => $value)
+                                    <option value="{{ $value->id }}"
+                                        @if(isset($selectedsupplier))
+                                            @if($value->id == $selectedsupplier)
+                                                selected
+                                            @endif
+                                        @endif
+                                    >{{ $value->nama }}</option>
+                                    @endforeach
+
+
+
+                                </select>
                             </div>
                         </div>
 
@@ -114,13 +132,13 @@
                                         <th>#</th>
                                     </tr>
                                 </thead>
-                                <tbody id="detail_form">
-                                    @if (isset($pembelian))
-                                        <input type="hidden" name="totaldetail" value"{{ (count($pembelian_detail) > 0)? count($pembelian_detail) : '0' }}" id="jumlahdetail">
+                                <tbody id="detail_form" class="bg-white">
+                                    @if(isset($pembelian))
+                                        <input type="hidden" name="totaldetail" value="{{ (count($pembelian_detail) > 0)? count($pembelian_detail) : '0' }}" id="jumlahdetail">
                                          @foreach ($pembelian_detail as $key=> $item)
                                             <tr class="bg-white" id='product_{{ $key }}'>
                                                 <td>
-                                                    <select class="select2_produk_1" id="product_{{ $key }}" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%" disabled>
+                                                    <select class="select2_produk_1" id="product_{{ $key }}" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%">
                                                         <option value="{{ $item->getproduct->id }}">{{ $item->getproduct->nama }}</option>
                                                     </select>
                                                 </td>
@@ -340,7 +358,7 @@ $("#simpan").on('click',function(){
             calendarWeeks: true,
             autoclose: true,
             format: "dd-mm-yyyy"
-        });
+            });
     });
     function total_pembelian(){
         var sum = 0;
@@ -522,7 +540,7 @@ $('.jatuh_tempo').datepicker({
                 'satuan_id': value,
                 'urut' : num
             },
-            url: '{{route("purchaseorder.total_harga")}}',
+            url: '{{route("pembelian.total_harga")}}',
             headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
             success: function(response) {
                 console.log(response)

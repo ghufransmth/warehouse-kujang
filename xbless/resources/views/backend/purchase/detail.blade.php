@@ -1,286 +1,151 @@
-<!-- Modal -->
-<div class="modal fade" id="modal_image_produk" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<input type="hidden" value="" id="id_purchase">
-    <div class="modal-dialog modal-lg" style="max-width:95%;" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span id="title_modal"></span>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="image_produk">
-                <div class="row">
-                    <div class="col-md-8 content-group">
-                        <h5 class="text-uppercase text-semibold" id="nama_perusahaan"></h5>
-                        <h5 class="text-uppercase text-semibold" id="alamat_perusahaan"></h5>
-                        <h5 class="text-uppercase text-semibold" id="kota_perusahaan"></h5>
-                        <h5 class="text-uppercase text-semibold" id="telp_perusahaan"></h5>
-                        <ul class="list-condensed list-unstyled">
-                            <li><h6 text-muted>Pemesanan Kepada :  </h6></li>
-                            <li><h5><span id="member_tujuan"></span></h5></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-4 content-group">
-                        <h5 class="text-uppercase text-semibold" id="nota">
-                        </h5>
-                        <h5 class="text-uppercase text-semibold">Date : <span id="tanggal_pesan"></span></h5>
-                        <ul class="list-condensed list-unstyled">
-                            <li><h6 text-muted>Detail Pembayaran : </h6></li>
-                        </ul>
-                        @if( Gate::check('purchaseorder.liststatuspo') && Gate::check('purchaseorder.liststatusgudang') && Gate::check('purchaseorder.liststatusinvoice') )
-                        <ul class="list-condensed list-unstyled">
-                            <h4>Total Due : <span class="text-right" id="total_price"></span></h4>
-                        </ul>
-                        @elseif( Gate::check('purchaseorder.liststatuspo') && Gate::check('purchaseorder.liststatusgudang'))
-                        <ul class="list-condensed list-unstyled">
-                            <h4>Total Due : <span class="text-right" id="total_price"></span></h4>
-                        </ul>
-                        @elseif( Gate::check('purchaseorder.liststatuspo') && Gate::check('purchaseorder.liststatusinvoice') )
-                        <ul class="list-condensed list-unstyled">
-                            <h4>Total Due : <span class="text-right" id="total_price"></span></h4>
-                        </ul>
-                        @elseif( Gate::check('purchaseorder.liststatusgudang') && Gate::check('purchaseorder.liststatusinvoice') )
-                        <ul class="list-condensed list-unstyled">
-                            <h4>Total Due : <span class="text-right" id="total_price"></span></h4>
-                        </ul>
-                        @elseif( Gate::check('purchaseorder.liststatusgudang'))
-                        @can('purchaseorder.liststatusgudang')
-                        <ul class="list-condensed list-unstyled">
-                            <h4>Total Due : </h4>
-                        </ul>
-                        @endcan
-                        @elseif( Gate::check('purchaseorder.liststatuspo'))
-                        @can('purchaseorder.liststatuspo')
-                        <ul class="list-condensed list-unstyled">
-                            <h4>Total Due : <span class="text-right" id="total_price"></span></h4>
-                        </ul>
-                        @endcan
-                        @elseif( Gate::check('purchaseorder.liststatusgudang'))
-                        @can('purchaseorder.liststatusinvoice')
-                        <ul class="list-condensed list-unstyled">
-                            <h4>Total Due : <span class="text-right" id="total_price"></span></h4>
-                        </ul>
-                        @endcan
-                        @endif
+@extends('layouts.layout')
 
+@section('title', 'Purchase Order')
 
-
-                    </div>
-                </div>
-                @can('purchaseorder.liststatusgudang')
-                <hr/>
-                <div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control mt-3 product-barcode" id="scan_barcode" placeholder="Input kode barcode" autofocus/>
-                    </div>
-                </div>
-                <hr/>
-                @endcan
-                <div class="table-responsive">
-                    <table id="table1" class="table" >
-                        <thead id="header-table">
-                        </thead>
-                        <tbody id="list_produk">
-                        </tbody>
-                    </table>
-                </div>
-                <div class="hr-line-dashed"></div>
-                <div class="row">
-                    @if( Gate::check('purchaseorder.liststatuspo') && Gate::check('purchaseorder.liststatusgudang') && Gate::check('purchaseorder.liststatusinvoice') )
-                    @can('purchaseorder.liststatusinvoice')
-                    <div class="col-sm-7 content-group">
-                        <ul class="list-condensed list-unstyled">
-                            <li><h5 class="text-semibold">Informasi Tambahan</h5></li>
-                            <li><h5 class="text-semibold">Catatan : </h5><h6>* edit catatan</h6></li>
-                            <li><textarea name="note" id="note" cols="50" rows="2" value=""></textarea></li>
-                            <li><a class="btn btn-primary btn-sm text-white simpancatatan" type="submit" id="simpan">Simpan</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-sm-5">
-                        <span>Total Due</span>
-                        <div class="table-responsive no-border">
-                            <table class="table">
-                                <tbody>
-                                    <tr>
-                                        <th>Subtotal : </th>
-                                        <td id="subTotal" class="text-right"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total : </th>
-                                        <td id="total" class="text-right"></td>
-                                    </tr>
-                                    <tr>
-                                        <th> </th>
-                                        <td><a id="print" target="_blank" class="btn btn-default btn-lg icon-btn md-btn-flat product-tooltip" title="Print"><i class="fa fa-print"></i> Print</a></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+@section('content')
+<style>
+    .swal2-container {
+        z-index: 100000 !important;
+    }
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        #section-to-print, #section-to-print * {
+            visibility: visible;
+        }
+        #section-to-print {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    }
+</style>
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Nota Penjualan</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{route('manage.beranda')}}">Beranda</a>
+            </li>
+            <li class="breadcrumb-item active">
+                <a>Nota Penjualan </a>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+        <br />
+        {{-- <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+            title="Refresh Data"><span class="fa fa-refresh"></span></button> --}}
+        @can('purchaseorder.tambah')
+        <a href="{{ route('purchaseorder.cetak', $enc_id) }}" class="btn btn-success" data-toggle="tooltip" data-placement="top"
+            title="Print"><span class="fa fa-pencil-square-o"></span>&nbsp; Print</a>
+            {{-- <button onclick="cetak()" class="btn btn-success"> Print</button> --}}
+        @endcan
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight ecommerce">
+    {{-- <input type="hidden" name="_token" value="{{ csrf_token() }}"> --}}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <div class="card p-5" style="font-family: 'Cutive Mono', monospace;" id="section-to-print">
+                        <p class="font-weight-bold" style="font-size: medium;"> CV KUJANG MARINAS UTAMA</p>
+                        <div>
+                            <p>KP. CIKAROYA RT 010 RW 003 KECAMATAN CISAAT SUKABUMI DC. GUNUNG JAYA, KEC
+                                CISAAT, KAB SUKABUMI <br> No. Telepon : &nbsp; &nbsp;&nbsp; 0266216166</P>
                         </div>
-                    </div>
-                    @endcan
-                    @elseif( Gate::check('purchaseorder.liststatuspo') && Gate::check('purchaseorder.liststatusgudang'))
-                    @can('purchaseorder.liststatuspo')
-                    <div class="col-sm-7 content-group">
-                        <ul class="list-condensed list-unstyled">
-                            <li><h5 class="text-semibold">Informasi Tambahan</h5></li>
-                            <li><h5 class="text-semibold">Catatan : </h5><h6>* edit catatan</h6></li>
-                            <li><textarea name="note" id="note" cols="50" rows="2" value=""></textarea></li>
-                            <li><a class="btn btn-primary btn-sm text-white simpancatatan" type="submit" id="simpan">Simpan</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-sm-5">
-                        <span>Total Due</span>
-                        <div class="table-responsive no-border">
-                            <table class="table">
-                                <tbody>
-                                    <tr>
-                                        <th>Subtotal : </th>
-                                        <td id="subTotal" class="text-right"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total : </th>
-                                        <td id="total" class="text-right"></td>
-                                    </tr>
-                                    <tr>
-                                        <th> </th>
-                                        <td><a id="print" target="_blank" class="btn btn-default btn-lg icon-btn md-btn-flat product-tooltip" title="Print"><i class="fa fa-print"></i> Print</a></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="row">
+                            <div class="col-sm-4 m-auto">
+                                <p>Salesman : {{ $penjualan->getsales->code }}-{{ $penjualan->getsales->nama }} <br>
+                                    Drive :
+                                </p>
+                            </div>
+                            <div class="col-sm-4 m-auto">
+                                <p>Kepada YTH. <br>
+                                    {{ $penjualan->gettoko->code }}/{{ $penjualan->name }} <br>
+                                    {{ $penjualan->gettoko->alamat }}
+                                </p>
+                            </div>
+                            <div class="col-sm-4 m-auto">
+                                <p> No. Faktur : {{ $penjualan->no_faktur }} <br>
+                                    Tgl. Faktur : {{ date('d/m/Y', strtotime($penjualan->tgl_faktur)) }} <br>
+                                    Tgl. JTempo : {{ date('d/m/Y', strtotime($penjualan->tgl_jatuh_tempo)) }} <br>
+                                    Jenis Bayar : $0
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    @endcan
-                    @elseif( Gate::check('purchaseorder.liststatuspo') && Gate::check('purchaseorder.liststatusinvoice'))
-                    @can('purchaseorder.liststatusinvoice')
-                    <div class="col-sm-7 content-group">
-                        <ul class="list-condensed list-unstyled">
-                            <li><h5 class="text-semibold">Informasi Tambahan</h5></li>
-                            <li><h5 class="text-semibold">Catatan : </h5><h6>* edit catatan</h6></li>
-                            <li><textarea name="note" id="note" cols="50" rows="2" value=""></textarea></li>
-                            <li><a class="btn btn-primary btn-sm text-white simpancatatan" type="submit" id="simpan">Simpan</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-sm-5">
-                        <span>Total Due</span>
-                        <div class="table-responsive no-border">
-                            <table class="table">
-                                <tbody>
+                        <table class="table">
+                            <thead class="thead-white border">
+                                <tr class="text-center">
+                                    <th class="border">PCODE</th>
+                                    <th class="border">Nama Barang</th>
+                                    <th class="border">Harga Barang</th>
+                                    <th class="border">Qty (PCS)</th>
+                                    <th class="border">Jumlah Rp</th>
+                                    <th class="border">Ket.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($detail_penjualan as $key => $value)
                                     <tr>
-                                        <th>Subtotal : </th>
-                                        <td id="subTotal" class="text-right"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total : </th>
-                                        <td id="total" class="text-right"></td>
-                                    </tr>
-                                    <tr>
-                                        <th> </th>
-                                        <td><a id="print" target="_blank" class="btn btn-default btn-lg icon-btn md-btn-flat product-tooltip" title="Print"><i class="fa fa-print"></i> Print</a></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    @endcan
-                    @elseif(Gate::check('purchaseorder.liststatusgudang'))
-                    @can('purchaseorder.liststatusgudang')
-                    <div class="col-sm-7 content-group">
-                        <ul class="list-condensed list-unstyled">
-                            <li><h5 class="text-semibold">Informasi Tambahan</h5></li>
-                            <li><h5 class="text-semibold">Catatan : </h5></li>
-                            <li><h5 id="note_gudang"></h5></li>
-                        </ul>
-                    </div>
-                    <div class="col-sm-5">
-                        <span>Total Due</span>
-                        <div class="table-responsive no-border">
-                            <table class="table">
-                                <tbody>
-                                    <tr>
-                                        <th>Subtotal : </th>
+                                        <td>{{ $value->getproduct->kode_product }}</td>
+                                        <td>{{ $value->getproduct->nama }}</td>
+                                        <td class="text-right">{{ $value->harga_product }}</td>
+                                        <td class="text-right">{{ $value->qty }}</td>
+                                        <td class="text-right">{{ $value->total_harga }}</td>
                                         <td></td>
                                     </tr>
-                                    <tr>
-                                        <th>Total : </th>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th> </th>
-                                        <td><a id="print" target="_blank" class="btn btn-default btn-lg icon-btn md-btn-flat product-tooltip" title="Print"><i class="fa fa-print"></i> Print</a></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                @endforeach
+
+                            </tbody>
+                            <tfoot>
+                                <tr class="m-auto">
+                                    <td colspan="3" class="py-3 ">Total Barang : {{ count($detail_penjualan) }}</td>
+                                    <td class="text-right py-3">Jumlah Rp</td>
+                                    <td class="text-right py-3">
+                                        {{ $penjualan->total_harga }}
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr class="m-auto">
+                                    <td colspan="3"></td>
+                                    <td class="text-right">Discount Rp <br> Nilai Faktur Rp</td>
+                                    <td class="text-right">0 <br> 20.000</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <p class="font-weight-bold" style="font-size: medium;"> TERBILANG : DUA PULUH RIBU
+                            RUPIAH</p>
+                        <div>
+                            <p>* Ket satu dua tiga <br>
+                                Aut adipisci, saepe alias sequi consequunturdolores, <br>
+                                tempora doloribus molestiae sumque, error id aliquam harum sunt option
+                                officiis nobis quaerat asperiores possimus corrupti. Repellat.
+                            </P>
                         </div>
+
+
                     </div>
-                    @endcan
-                    @elseif(Gate::check('purchaseorder.liststatuspo'))
-                    @can('purchaseorder.liststatuspo')
-                    <div class="col-sm-7 content-group">
-                        <ul class="list-condensed list-unstyled">
-                            <li><h5 class="text-semibold">Informasi Tambahan</h5></li>
-                            <li><h5 class="text-semibold">Catatan : </h5><h6>* edit catatan</h6></li>
-                            <li><textarea name="note" id="note" cols="50" rows="2" value=""></textarea></li>
-                            <li><a class="btn btn-primary btn-sm text-white simpancatatan" type="submit" id="simpan">Simpan</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-sm-5">
-                        <span>Total Due</span>
-                        <div class="table-responsive no-border">
-                            <table class="table">
-                                <tbody>
-                                    <tr>
-                                        <th>Subtotal : </th>
-                                        <td id="subTotal" class="text-right"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total : </th>
-                                        <td id="total" class="text-right"></td>
-                                    </tr>
-                                    <tr>
-                                        <th> </th>
-                                        <td><a id="print" target="_blank" class="btn btn-default btn-lg icon-btn md-btn-flat product-tooltip" title="Print"><i class="fa fa-print"></i> Print</a></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    @endcan
-                    @elseif(Gate::check('purchaseorder.liststatusinvoice'))
-                    @can('purchaseorder.liststatusinvoice')
-                    <div class="col-sm-7 content-group">
-                        <ul class="list-condensed list-unstyled">
-                            <li><h5 class="text-semibold">Informasi Tambahan</h5></li>
-                            <li><h5 class="text-semibold">Catatan : </h5><h6>* edit catatan</h6></li>
-                            <li><textarea name="note" id="note" cols="50" rows="2" value=""></textarea></li>
-                            <li><a class="btn btn-primary btn-sm text-white simpancatatan" type="submit" id="simpan">Simpan</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-sm-5">
-                        <span>Total Due</span>
-                        <div class="table-responsive no-border">
-                            <table class="table">
-                                <tbody>
-                                    <tr>
-                                        <th>Subtotal : </th>
-                                        <td id="subTotal" class="text-right"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total : </th>
-                                        <td id="total" class="text-right"></td>
-                                    </tr>
-                                    <tr>
-                                        <th> </th>
-                                        <td><a id="print" target="_blank" class="btn btn-default btn-lg icon-btn md-btn-flat product-tooltip" title="Print"><i class="fa fa-print"></i> Print</a></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    @endcan
-                    @endif
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal Detail PO -->
+    {{-- @include('backend.purchase.detail') --}}
+
+
+
+
 </div>
+@endsection
+@push('scripts')
+<script>
+    function cetak(){
+        window.print();
+    }
+</script>
+@endpush

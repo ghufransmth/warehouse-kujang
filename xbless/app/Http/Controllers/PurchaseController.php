@@ -72,6 +72,7 @@ class PurchaseController extends Controller
     }
 
     public function index(){
+        // return "tes";
         // $member     = Member::all();
         // $perusahaan = Perusahaan::all();
         // $gudang     = Gudang::all();
@@ -92,6 +93,7 @@ class PurchaseController extends Controller
         $gudang = array();
         $toko = Toko::all();
         $sales = Sales::all();
+        // return "tes";
         return view('backend/purchase/index',compact('member','perusahaan','gudang','selectedmember','selectedperusahaan', 'sales', 'toko'));
     }
 
@@ -196,7 +198,8 @@ class PurchaseController extends Controller
         $request->session()->put('filter_sales', $request->filter_sales);
         $request->session()->put('type', $request->type);
         $penjualan = Penjualan::select('*');
-        $penjualan->whereHas('getsales');
+        $penjualan->whereHas('gettransaksi');
+        // return $penjualan->get();
 
         $penjualan->orderBy('id', 'ASC');
         if($filter_toko != null || $filter_toko != ""){
@@ -240,7 +243,7 @@ class PurchaseController extends Controller
             $result->tgl_transaksi = $result->tgl_faktur;
             $result->total_harga = $result->total_harga;
             $result->tgl_lunas = $result->tgl_lunas;
-            $aksi .= '<a href="#" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail </a>';
+            $aksi .= '<a href="'.route('purchaseorder.detail', $enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail </a>';
             $aksi .= '<a href="'.route('purchaseorder.edit', $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a> <br>';
 
             if($result->status_lunas == 0){
@@ -831,7 +834,7 @@ class PurchaseController extends Controller
         $tipeharga = array();
         $selectedtipeharga ="";
         $toko = Toko::all();
-
+        // return 'tes';
         return view('backend/purchase/form',compact('tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia',
                     'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko'));
     }
@@ -993,6 +996,12 @@ class PurchaseController extends Controller
                     'message' => 'Product harus diisi'
                 ]);
             }
+            if($id_toko == 0){
+                return response()->json([
+                    'success' => FALSE,
+                    'message' => 'Toko harus diisi'
+                ]);
+            }
 
             for($i=0;$i<$total_product;$i++){
                 if(isset($array_id_satuan[$i])){
@@ -1078,11 +1087,19 @@ class PurchaseController extends Controller
                             continue;
                         }
                     }
-
-                    return response()->json([
-                        'success' => TRUE,
-                        'message' => 'Data penjualan berhasil disimpan'
-                    ]);
+                    $transaksi_stock = TransaksiStock::where('no_transaksi', $penjualan->no_faktur)->first();
+                    $transaksi_stock->total_harga = $penjualan->total_harga;
+                    if($transaksi_stock->save()){
+                        return response()->json([
+                            'success' => TRUE,
+                            'message' => 'Data penjualan berhasil disimpan'
+                        ]);
+                    }else{
+                        return response()->json([
+                            'success' => FALSE,
+                            'message' => 'Gagal mengupdate total harga transaksi stock'
+                        ]);
+                    }
                 }else{
                     return response()->json([
                         'success' => FALSE,
@@ -1140,7 +1157,7 @@ class PurchaseController extends Controller
                     $transaksi_stock->no_transaksi  = $penjualan->no_faktur;
                     $transaksi_stock->tgl_transaksi = $tgl_transaksi;
                     $transaksi_stock->flag_transaksi = 3;
-
+                    $transaksi_stock->total_harga = $total_harga_penjualan;
                     $transaksi_stock->created_by = auth()->user()->username;
                     $transaksi_stock->note = '-';
                     if($transaksi_stock->save()){
@@ -1484,8 +1501,26 @@ class PurchaseController extends Controller
         }
 
     }
+    public function detail($enc_id){
+        // return $req->all();
+        // return $enc_id;
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        $penjualan = Penjualan::where('id', $dec_id)->with(['getsales', 'gettoko', 'getdetailpenjualan'])->first();
+        $detail_penjualan = $penjualan->getdetailpenjualan;
+        // return $penjualan    ;
+        return view('backend/purchase/detail',
+        [
+            'enc_id' => $enc_id,
+            'penjualan' => $penjualan,
+            'detail_penjualan' => $detail_penjualan,
+        ]);
+        // return $penjualan;
+    }
+    public function cetak($enc_id){
+        return view('backend/purchase/cetak', ['enc_id' => $enc_id]);
+    }
 
-    public function detail(Request $request){
+    public function detail_(Request $request){
         $dec_id = $this->safe_decode(Crypt::decryptString($request->enc_id));
         $purchase = PurchaseOrder::find($dec_id);
 

@@ -3,7 +3,7 @@
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>{{isset($purchaseorder) ? 'Edit' : 'Tambah'}} Purchase Order</h2>
+        <h2>Retur Purchase Order</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
@@ -12,13 +12,13 @@
                 <a href="{{route('purchaseorder.index')}}">Purchase Order</a>
             </li>
             <li class="breadcrumb-item active">
-                <strong>{{isset($purchaseorder) ? 'Edit' : 'Tambah'}}</strong>
+                <strong>Retur</strong>
             </li>
         </ol>
     </div>
     <div class="col-lg-2">
         <br />
-        <a class="btn btn-white btn-sm" href="{{route('purchaseorder.index')}}">Batal</a>
+        <a class="btn btn-white btn-sm" href="{{route('retur.index_retur')}}">Batal</a>
     </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInRight">
@@ -46,19 +46,20 @@
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">No Transaksi </label>
                             <div class="col-sm-4 error-text">
-                                <input type="text" name="no_transaksi" value="{{ isset($penjualan)? $penjualan->no_faktur : '' }}" class="form-control" id="no_transaksi">
+                                <input type="text" name="no_transaksi" value="{{ isset($penjualan)? $penjualan->no_retur_faktur : '' }}" class="form-control" id="no_transaksi">
                             </div>
                             <label class="col-sm-2 col-form-label">Tgl Transaksi </label>
                             <div class="col-sm-4 error-text">
                                 <input type="text" class="form-control formatTgl" id="tgl_transaksi"
-                                    value="{{ isset($penjualan)? date('d-m-Y', strtotime($penjualan->tgl_faktur)) : date('d-m-Y') }}" name="tgl_transaksi" autocomplete="off">
+                                    value="{{ isset($penjualan)? date('d-m-Y', strtotime($penjualan->tgl_retur)) : date('d-m-Y') }}" name="tgl_transaksi" autocomplete="off">
 
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Toko </label>
                             <div class="col-sm-4 error-text">
-                                <select class="form-control select2" id="toko" name="toko">
+                                <input type="hidden" name="toko" value="{{ $selectedtoko }}">
+                                <select class="form-control select2" id="toko" name="toko" disabled>
                                     <option value="0">Pilih Toko</option>
                                     @foreach($toko as $key => $value)
                                     <option value="{{ $value->id }}"
@@ -73,7 +74,8 @@
                             </div>
                             <label class="col-sm-2 col-form-label">Sales </label>
                             <div class="col-sm-4 error-text">
-                                <select class="form-control select2" id="sales" name="sales">
+                                <input type="hidden" name="sales" value="{{ $selectedsales }}">
+                                <select class="form-control select2" id="sales" name="sales" disabled>
                                     <option value="0">Pilih Sales</option>
                                     @foreach($sales as $key => $value)
                                     <option value="{{ $value->id }}"
@@ -91,7 +93,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Status Pembayaran </label>
+                            {{-- <label class="col-sm-2 col-form-label">Status Pembayaran </label>
                             <div class="col-sm-4 error-text">
                                 <select class="form-control select2" id="status_pembayaran" name="status_pembayaran">
                                     <option value="">Pilih Status Pembayaran</option>
@@ -114,9 +116,10 @@
                             <label class="col-sm-2 col-form-label">Tgl Jatuh Tempo </label>
                             <div class="col-sm-4 error-text">
                                 <input type="text" name="tgl_jatuh_tempo" class="form-control formatTgl"
-                                    id="tgl_jatuh_tempo" value="{{ isset($penjualan)? date('d-m-Y', strtotime($penjualan->tgl_jatuh_tempo)) : date('d-m-Y') }}" autocomplete="off">
-                                <input type="hidden" name="total_harga_penjualan" id="total_harga_penjualan" value="0">
-                            </div>
+                                    id="tgl_jatuh_tempo" value="{{ isset($penjualan)? date('d-m-Y', strtotime($penjualan->tg)) : date('d-m-Y') }}" autocomplete="off">
+
+                            </div> --}}
+                            <input type="hidden" name="total_harga_penjualan" id="total_harga_penjualan" value="0">
                         </div>
 
                         {{-- <div class="form-group row">
@@ -147,11 +150,13 @@
                     <tbody id="ajax_produk" class="bg-white">
                         @if(isset($penjualan))
                         <input type="hidden" name="jumlahdetail" value="{{ (count($detail_penjualan) > 0)? count($detail_penjualan) : '0'  }}" id="jumlahdetail">
+
                             @foreach($detail_penjualan as $key => $detail)
                             <tr class="bg-white" id='dataajaxproduk_{{ $key }}'>
                                 <td>
+                                    <input type="hidden" name="produk[]" value="{{ $detail->getproduct->id }}">
                                     <select class="select2_produk_{{ $key }}" id="product_{{ $key }}" name="produk[]"
-                                        onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%">
+                                        onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%" disabled>
                                         <option value="{{ $detail->getproduct->id }}">{{ $detail->getproduct->nama }}</option>
 
                                     </select>
@@ -162,11 +167,11 @@
                                 </td>
                                 <td>
                                     <input type="text" class="form-control" id="harga_product_{{ $key }}" name="harga_product[]"
-                                        value="{{$detail->harga_product}}" readonly>
+                                        value="{{$detail->price}}" readonly>
                                 </td>
                                 <td>
                                     <select class="select2_satuan_{{ $key }}" id="tipe_satuan_{{ $key }}" name="tipesatuan[]"
-                                        onchange="satuan(this.options[this.selectedIndex].value, {{ $key }})">
+                                        onchange="satuan(this.options[this.selectedIndex].value, {{ $key }})" disabled>
                                         <option value="1">PCS </option>
                                     </select>
                                 </td>
@@ -175,7 +180,7 @@
                                         onkeyup="hitung_qty({{ $key }})" onchange="hitung_qty({{ $key }})">
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control total_harga" id="total_{{ $key }}" name="total[]" value="{{ $detail->total_harga }}"
+                                    <input type="text" class="form-control total_harga" id="total_{{ $key }}" name="total[]" value="{{ $detail->total }}"
                                         readonly>
                                 </td>
                                 {{-- <td>
@@ -327,7 +332,8 @@
             // }
         });
         function SimpanData(draft){
-
+            // var inps = document.getElementsByName('produk[]');
+            // inps.removeAttr("disabled");
             $('#simpan').addClass("disabled");
                 var form = $('#submitData').serializeArray()
                 var dataFile = new FormData()
@@ -341,7 +347,7 @@
             })
             $.ajax({
                 type: 'POST',
-                url : "{{route('purchaseorder.simpan')}}",
+                url : "{{route('retur.simpanretur')}}",
                 headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                 data:dataFile,
                 processData: false,
@@ -351,13 +357,14 @@
                 Swal.showLoading();
                 },
                 success: function(data){
+                    console.log(data);
                     if (data.success) {
                         Swal.fire('Yes',data.message,'info');
                         if(data.draft=='0'){
-                            window.location.replace('{{route("requestpurchaseorder.index")}}');
+                            window.location.replace('{{route("retur.index")}}');
                         }else{
                             //ke draft
-                            window.location.replace('{{route("purchaseorder.index")}}');
+                            window.location.replace('{{route("retur.index")}}');
                         }
 
                     } else {
@@ -715,7 +722,7 @@ function select_satuan(num){
         buttondown_class: 'btn btn-white',
         buttonup_class: 'btn btn-white'
     });
-
+    // $('.bootstrap-touchspin-up').prop('disabled', true);
     function deleteProduk(id){
         Swal.fire({
             title: 'Apakah anda yakin?',

@@ -18,7 +18,7 @@
     </div>
     <div class="col-lg-2">
         <br />
-        <a class="btn btn-white btn-sm" href="{{route('purchaseorder.index')}}">Batal</a>
+        <a class="btn btn-white btn-sm" href="{{route('retur.index_retur')}}">Batal</a>
     </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInRight">
@@ -58,7 +58,8 @@
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Toko </label>
                             <div class="col-sm-4 error-text">
-                                <select class="form-control select2" id="toko" name="toko">
+                                <input type="hidden" name="toko" value="{{ $selectedtoko }}">
+                                <select class="form-control select2" id="toko" name="toko" disabled>
                                     <option value="0">Pilih Toko</option>
                                     @foreach($toko as $key => $value)
                                     <option value="{{ $value->id }}"
@@ -73,7 +74,8 @@
                             </div>
                             <label class="col-sm-2 col-form-label">Sales </label>
                             <div class="col-sm-4 error-text">
-                                <select class="form-control select2" id="sales" name="sales">
+                                <input type="hidden" name="sales" value="{{ $selectedsales }}">
+                                <select class="form-control select2" id="sales" name="sales" disabled>
                                     <option value="0">Pilih Sales</option>
                                     @foreach($sales as $key => $value)
                                     <option value="{{ $value->id }}"
@@ -91,7 +93,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Status Pembayaran </label>
+                            {{-- <label class="col-sm-2 col-form-label">Status Pembayaran </label>
                             <div class="col-sm-4 error-text">
                                 <select class="form-control select2" id="status_pembayaran" name="status_pembayaran">
                                     <option value="">Pilih Status Pembayaran</option>
@@ -116,7 +118,7 @@
                                 <input type="text" name="tgl_jatuh_tempo" class="form-control formatTgl"
                                     id="tgl_jatuh_tempo" value="{{ isset($penjualan)? date('d-m-Y', strtotime($penjualan->tgl_jatuh_tempo)) : date('d-m-Y') }}" autocomplete="off">
                                 <input type="hidden" name="total_harga_penjualan" id="total_harga_penjualan" value="0">
-                            </div>
+                            </div> --}}
                         </div>
 
                         {{-- <div class="form-group row">
@@ -125,11 +127,11 @@
                                 <textarea class="form-control" id="note" name="note">{{isset($purchaseorder)? $purchaseorder->note : ''}}</textarea>
                 </div>
             </div> --}}
-            <div class="">
+            {{-- <div class="">
                 <a href="#!" onclick="tambahProduk()"
                     class="btn btn-success btn-sm icon-btn sm-btn-flat product-tooltip" title="Tambah Produk">Tambah
                     Produk</a>
-            </div>
+            </div> --}}
             <div class="hr-line-dashed"></div>
             <div class="table-responsive">
                 <table id="table1" class="table display table table-hover p-0 table-striped" style="overflow-x: auto;">

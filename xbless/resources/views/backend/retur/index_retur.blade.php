@@ -144,7 +144,7 @@
     </div>
 
     <!-- Modal Detail PO -->
-    @include('backend.purchase.detail')
+    {{-- @include('backend.purchase.detail') --}}
 
 
 
@@ -189,6 +189,8 @@
                                 d.filter_toko = $('#toko').val();
                                 d.filter_sales     = $('#sales').val();
                                 d.type              = $('#type').val();
+                                d.jenis_transaksi = $('#jenis_transaksi').val();
+                                d.no_faktur       = $('#no_faktur').val();
 
                             }
                         },
@@ -258,34 +260,35 @@
         });
 
 
+
 </script>
 <script>
     $(document).ready(function(){
         $('#no_faktur').select2({allowClear: false,
-        ajax: {
-                url: '{{ route("retur.list_transaksi") }}',
-                dataType: 'JSON',
-                delay: 250,
-                data: function(params) {
-                    return {
-                    jenis_transaksi: $('#jenis_transaksi').val(),
-                    search: params.term
-                    }
-                },
-                processResults: function (data) {
-                var results = [];
-                $.each(data, function(index, item){
-                    results.push({
-                        id: item.no_faktur,
-                        text : item.no_faktur,
+            ajax: {
+                    url: '{{ route("retur.list_transaksi") }}',
+                    dataType: 'JSON',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                        jenis_transaksi: $('#jenis_transaksi').val(),
+                        search: params.term
+                        }
+                    },
+                    processResults: function (data) {
+                    var results = [];
+                    $.each(data, function(index, item){
+                        results.push({
+                            id: item.no_faktur,
+                            text : item.no_faktur,
+                        });
                     });
-                });
-                return{
-                    results: results
-                };
+                    return{
+                        results: results
+                    };
+                }
             }
-        }
-    });
+        });
     $('#jenis_transaksi').change(function(){
         $("#no_faktur").select2("val", "");
     });

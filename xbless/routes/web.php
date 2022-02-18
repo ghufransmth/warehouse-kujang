@@ -69,6 +69,12 @@ use App\Http\Controllers\ReportRekapInvoiceController;
 use App\Http\Controllers\ReturPembelianController;
 use App\Http\Controllers\ReturController;
 use App\Http\Controllers\ReturPenjualanController;
+use App\Http\Controllers\SupplierController;
+
+use App\Http\Controllers\DeliveryOrderController;
+use App\Http\Controllers\HistoryDeliveryOrderController;
+use App\Http\Controllers\ReportDeliveryOrderController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -200,6 +206,29 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('manage/kota/ubah/{id}', [KotaController::class, 'ubah'])->name('kota.ubah');
     Route::delete('manage/kota/hapus/{id?}', [KotaController::class, 'hapus'])->name('kota.hapus');
     Route::post('manage/kota/simpan', [KotaController::class, 'simpan'])->name('kota.simpan');
+
+
+    //DELIVERY ORDER
+    Route::get('manage/deliveryorder', [DeliveryOrderController::class, 'index'])->name('deliveryorder.index');
+    Route::post('manage/deliveryorder/getdata', [DeliveryOrderController::class, 'getData'])->name('deliveryorder.getdata');
+    Route::get('manage/deliveryorder/tambah', [DeliveryOrderController::class, 'tambah'])->name('deliveryorder.tambah');
+    Route::post('manage/deliveryorder/getdatapenjualan', [DeliveryOrderController::class, 'getDataPenjualan'])->name('deliveryorder.getdatapenjualan');
+    Route::post('manage/deliveryorder/simpan', [DeliveryOrderController::class, 'simpan'])->name('deliveryorder.simpan');
+    Route::post('manage/deliveryorder/updatedriver', [DeliveryOrderController::class, 'updateDriver'])->name('deliveryorder.updatedriver');
+    Route::post('manage/deliveryorder/pengiriman', [DeliveryOrderController::class, 'pengiriman'])->name('deliveryorder.pengiriman');
+
+
+    //DELIVERY ORDER
+    Route::get('manage/report/deliveryorder', [ReportDeliveryOrderController::class, 'index'])->name('reportdeliveryorder.index');
+    Route::post('manage/report/deliveryorder/getdata', [ReportDeliveryOrderController::class, 'getData'])->name('reportdeliveryorder.getdata');
+    Route::post('manage/report/deliveryorder/updatenote', [ReportDeliveryOrderController::class, 'updateNote'])->name('reportdeliveryorder.updatenote');
+    Route::get('manage/report/deliveryorder/print/{id}', [ReportDeliveryOrderController::class, 'print'])->name('reportdeliveryorder.print');
+
+    //HISTORY DELIVERY ORDER
+
+    Route::get('manage/historydeliveryorder', [HistoryDeliveryOrderController::class, 'index'])->name('historydeliveryorder.index');
+    Route::post('manage/historydeliveryorder/getdata', [HistoryDeliveryOrderController::class, 'getData'])->name('historydeliveryorder.getdata');
+    Route::get('manage/historydeliveryorder/print/{id?}', [HistoryDeliveryOrderController::class, 'print'])->name('historydeliveryorder.print');
 
 
     //Informasi Stok Admin
@@ -439,6 +468,16 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::delete('/hapus/{id?}', [GudangController::class, 'delete'])->name('delete');
         });
 
+        // SUPPLIER
+        Route::group(['prefix' => 'supplier', 'as' => 'supplier.'], function () {
+            Route::get('/', [SupplierController::class, 'index'])->name('index');
+            Route::get('/tambah', [SupplierController::class, 'tambah'])->name('tambah');
+            Route::get('/ubah/{id}', [SupplierController::class, 'ubah'])->name('ubah');
+            Route::post('/getData', [SupplierController::class, 'getData'])->name('getdata');
+            Route::post('/simpan', [SupplierController::class, 'simpan'])->name('simpan');
+            Route::delete('/hapus/{id?}', [SupplierController::class, 'delete'])->name('delete');
+        });
+
         Route::group(['prefix' => 'diskon', 'as' => 'diskon.'], function () {
             Route::get('/', [DiskonController::class, 'index'])->name('index');
             Route::get('/tambah', [DiskonController::class, 'tambah'])->name('tambah');
@@ -585,7 +624,8 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/status_invoice', [PurchaseController::class, 'status_invoice'])->name('status_invoice');
             Route::post('/status_invoice_awal', [PurchaseController::class, 'status_invoice_awal'])->name('status_invoice_awal');
 
-            Route::post('/detail', [PurchaseController::class, 'detail'])->name('detail');
+            Route::get('/detail/{id?}', [PurchaseController::class, 'detail'])->name('detail');
+            Route::get('/cetak/{id?}', [PurchaseController::class, 'cetak'])->name('cetak');
             Route::post('/getData', [PurchaseController::class, 'getdata'])->name('getdata');
             Route::post('/process_nota', [PurchaseController::class, 'process_nota'])->name('process_nota');
             Route::post('/cekstatusinvoice', [PurchaseController::class, 'cekInvoiceBelumLunas'])->name('cekstatusinvoice');
@@ -601,8 +641,11 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/getDataRetur', [ReturController::class, 'getdata_retur'])->name('getdata_retur');
             Route::get('/penjualan', [ReturController::class, 'retur_penjualan'])->name('returpenjualan');
             Route::get('/list_transaksi', [ReturController::class, 'list_transaksi'])->name('list_transaksi');
+            Route::get('/list_transaksi_retur', [ReturController::class, 'list_transaksi_retur'])->name('list_transaksi_retur');
             Route::get('/penjualan/{nofaktur?}', [ReturPenjualanController::class, 'form_retur'])->name('retur_penjualan');
             Route::post('/simpan', [ReturPenjualanController::class, 'simpan'])->name('simpan');
+            Route::post('/simpanretur', [ReturController::class, 'simpan'])->name('simpanretur');
+            Route::get('/edit/{id?}', [ReturController::class, 'edit'])->name('edit');
         });
         // REQUEST PURCHASE ORDER
         Route::group(['prefix' => 'requestpurchaseorder', 'as' => 'requestpurchaseorder.'], function () {
@@ -739,6 +782,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::get('/search_satuan', [PembelianController::class, 'search_satuan'])->name('search_satuan');
         Route::delete('/delete/{id?}', [PembelianController::class, 'hapus'])->name('hapus');
         Route::post('/harga_product', [PembelianController::class, 'harga_product'])->name('harga_product');
+        Route::post('/total_harga', [PembelianController::class, 'total_harga'])->name('total_harga');
     });
 
     //IMPORT PEMBELIAN

@@ -25,7 +25,9 @@ class ReturPenjualanController extends Controller
         return $data;
     }
     public function form_retur($enc_id){
+        // return $enc_id;
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        // return $dec_id;
         $penjualan = Penjualan::where('no_faktur', $dec_id)->first();
         $detail_penjualan = DetailPenjualan::where('id_penjualan', $penjualan->id)->where('no_faktur', $penjualan->no_faktur)->with(['getproduct'])->get();
         $member = array();
@@ -98,7 +100,8 @@ class ReturPenjualanController extends Controller
                     $detail_retur->retur_transaksi_id = $retur_transaksi->id;
                     $detail_retur->product_id = $array_product[$i];
                     $detail_retur->qty = $array_qty[$i];
-                    $detail_retur->price = $array_total_harga[$i];
+                    $detail_retur->price = $array_harga_product[$i];
+                    $detail_retur->total = $array_total_harga[$i];
                     if(!$detail_retur->save()){
                         return response()->json([
                             'success' => FALSE,
@@ -124,6 +127,7 @@ class ReturPenjualanController extends Controller
             $transaksi_stok->no_transaksi = $retur_transaksi->no_retur_faktur;
             $transaksi_stok->tgl_transaksi = $retur_transaksi->tgl_retur;
             $transaksi_stok->flag_transaksi = 5;
+            $transaksi_stok->total_harga = $total_harga_penjualan;
             $transaksi_stok->created_by = $retur_transaksi->created_user;
             if($transaksi_stok->save()){
                 return response()->json([
