@@ -71,6 +71,11 @@ use App\Http\Controllers\ReturController;
 use App\Http\Controllers\ReturPenjualanController;
 use App\Http\Controllers\SupplierController;
 
+use App\Http\Controllers\DeliveryOrderController;
+use App\Http\Controllers\HistoryDeliveryOrderController;
+use App\Http\Controllers\ReportDeliveryOrderController;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes

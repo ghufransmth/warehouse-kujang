@@ -81,11 +81,11 @@ class ReportDeliveryOrderController extends Controller
         $deliveryorder = DeliveryOrder::select('tbl_penjualan.*','tbl_delivery_order.driver_id','tbl_delivery_order.no_do','tbl_delivery_order.status_do','tbl_delivery_order.created_at as tgl_do','tbl_delivery_order.id as do_id','tbl_delivery_order.type_payment','tbl_delivery_order.titip_bayar','tbl_delivery_order.tgl_warkat','tbl_delivery_order.note')
                     ->join('tbl_penjualan','tbl_penjualan.id','tbl_delivery_order.faktur_id');
 
-        if(array_key_exists($request->order[0]['column'], $this->original_column)){
-           $deliveryorder->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
-        }else{
+        // if(array_key_exists($request->order[0]['column'], $this->original_column)){
+        //    $deliveryorder->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
+        // }else{
             $deliveryorder->orderBy('updated_at','DESC');
-        }
+        // }
         if($search) {
           $deliveryorder->where(function ($query) use ($search) {
                   $query->orWhere('no_faktur','LIKE',"%{$search}%");

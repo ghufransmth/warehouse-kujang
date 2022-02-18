@@ -12,7 +12,7 @@
 </style>
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Delivery Order</h2>
+        <h2>Report Delivery Order</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
@@ -182,15 +182,17 @@
                         "orderable" : false,
                     },
 
-                    { "data": "tgldo"},
-                    { "data": "no_do"},
-                    { "data": "namecode"},
-                    { "data": "driver" },
+                    { "data": "tgldo","orderable" : false,},
+                    { "data": "no_do","orderable" : false,},
+                    { "data": "namecode","orderable" : false,},
+                    { "data": "driver","orderable" : false,},
                     { "data" : "catatan",
                         "className" : "text-center",
+                        "orderable" : false,
                     },
                     { "data": "status",
                         "className" : "text-left",
+                        "orderable" : false,
                     },
                     { "data" : "action",
                         "orderable" : false,
