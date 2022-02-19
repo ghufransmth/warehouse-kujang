@@ -373,7 +373,7 @@ class ReturController extends Controller
         // $alldata->offset($start);
         $data = $dataquery->get();
         // $data = [];
-        // return $data;
+        return $jenis_transaksi;
         foreach($data as $key => $result){
 
                 $enc_id = $this->safe_encode(Crypt::encryptString($result->no_transaksi));
@@ -381,7 +381,7 @@ class ReturController extends Controller
                 $result->no             = $key+$page;
                 $result->no_faktur = $result->no_transaksi;
                 $result->tgl_transaksi = $result->tgl_transaksi;
-                $result->total_harga = $result->total_harga;
+                $result->total_harga = format_uang($result->total_harga);
                 $cek_retur = collect($all_retur)->where('no_faktur', $result->no_transaksi)->first();
                 $aksi = '';
                 if(!isset($cek_retur)){
@@ -395,10 +395,10 @@ class ReturController extends Controller
                 }else{
                     if($result->flag_transaksi == 3){
                         $result->jenis_transaksi = '<span class="badge badge-success">Penjualan</span>';
-
+                        $aksi .= '<a href="#" class="btn btn-secondary disabled">Barang pernah di retur</a> ';
                     }elseif($result->flag_transaksi == 4){
                         $result->jenis_transaksi = '<span class="badge badge-warning">Pembelian</span>';
-
+                        $aksi .= '<a href="#" class="btn btn-secondary disabled">Barang pernah di retur</a> ';
                     }
                 }
 

@@ -1,18 +1,18 @@
 @extends('layouts.layout')
-@section('title', 'Manajemen Purchase Order ')
+@section('title', 'Manajemen Penjualan ')
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>{{isset($purchaseorder) ? 'Edit' : 'Tambah'}} Purchase Order</h2>
+        <h2>{{isset($penjualan) ? 'Edit' : 'Tambah'}} Penjualan</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{route('purchaseorder.index')}}">Purchase Order</a>
+                <a href="{{route('purchaseorder.index')}}">Penjualan</a>
             </li>
             <li class="breadcrumb-item active">
-                <strong>{{isset($purchaseorder) ? 'Edit' : 'Tambah'}}</strong>
+                <strong>{{isset($penjualan) ? 'Edit' : 'Tambah'}}</strong>
             </li>
         </ol>
     </div>
@@ -285,19 +285,19 @@
             <table style="min-width: 100%">
                 <tr>
                     <td class="text-right">Total Harga</td>
-                    <td width="1%"></td>
+                    <td width="1%" class="text-right">&nbsp;&nbsp;Rp.</td>
                     <td class="text-center" width="13%" id="harga_penjualan"> {{ isset($penjualan)? $penjualan->total_harga : '' }}</td>
                     <td width="5%"></td>
                 </tr>
                 <tr>
                     <td class="text-right">Diskon</td>
-                    <td width="1%"></td>
+                    <td width="1%">&nbsp;&nbsp;Rp.</td>
                     <td class="text-center" width="13%" id="total_diskon"> {{ isset($penjualan)? $penjualan->total_harga : '' }}</td>
                     <td width="5%"></td>
                 </tr>
                 <tr>
                     <td class="text-right">Jumlah</td>
-                    <td width="1%"></td>
+                    <td width="1%">&nbsp;&nbsp;Rp.</td>
                     <td class="text-center" width="13%" id="jumlah_total"> {{ isset($penjualan)? $penjualan->total_harga : '' }}</td>
                     <td width="5%"></td>
                 </tr>
@@ -452,6 +452,22 @@
             format: "dd-mm-yyyy"
         });
 });
+function formatRupiah(angka, prefix){
+    var number_string = angka.replace(/[^,\d]/g, '').toString(),
+    split   		= number_string.split(','),
+    sisa     		= split[0].length % 3,
+    rupiah     		= split[0].substr(0, sisa),
+    ribuan     		= split[0].substr(sisa).match(/\d{3}/gi);
+
+    // tambahkan titik jika yang di input sudah menjadi angka ribuan
+    if(ribuan){
+        separator = sisa ? '.' : '';
+        rupiah += separator + ribuan.join('.');
+    }
+
+    rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+    return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
+}
 function total_penjualan(){
     var sum = 0;
     var tes = $('.total_harga');
@@ -459,7 +475,7 @@ function total_penjualan(){
     $('.total_harga').each(function(){
         sum += parseFloat($(this).val());  // Or this.innerHTML, this.innerText
     });
-    $('#harga_penjualan').text(sum);
+    $('#harga_penjualan').text(formatRupiah(sum));
     $('#total_harga_penjualan').val(sum);
 
     $.ajax({
@@ -473,9 +489,9 @@ function total_penjualan(){
             console.log(response)
             if(response.success == true){
                 $('#diskon_penjualan').val(response.total_diskon);
-                $('#total_diskon').text(response.total_diskon);
+                $('#total_diskon').text(formatRupiah(response.total_diskon));
                 $('#jumlah_penjualan').val(response.jumlah_total);
-                $('#jumlah_total').text(response.jumlah_total);
+                $('#jumlah_total').text(formatRupiah(response.jumlah_total));
                 $('#nilai_diskon').val(response.nilai_diskon);
             }else{
                 Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
@@ -764,7 +780,7 @@ function select_satuan(num){
 
     function hitung_qty(num){
         // console.log($('#product_'+num+' option:selected').val());
-        console.log($('#harga_product_'+num).val());
+        // console.log($('#harga_product_'+num).val());
         if($('#product_'+num).val() == 0){
             Swal.fire('Ups', 'Pilih product terlebih dahulu');
             return false;
