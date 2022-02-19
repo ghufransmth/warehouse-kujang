@@ -2,7 +2,7 @@
 @section('title','LAPORAN PEMBELIAN')
 @section('content')
 <style>
-    .swal2-container{
+    .swal2-container {
         z-index: 99999 !important;
     }
 </style>
@@ -24,95 +24,50 @@
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
     <div class="row">
         <div class="col-lg-12">
-            <div class="ibox-content">
-                <form id="submitData" name="submitData">
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <div class="hr-line-dashed"></div>
-                        {{-- <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Cari Kode / Nama Produk : </label>
-                            <div class="col-sm-8 error-text">
-                                <select class="form-control select2 selectProduct" id="filter_keyword" name="filter_keyword">
-                                    <option value="0"> Semua Produk</option>
-                                    @foreach($product as $key => $row)
-                                        <option value="{{$row->id}}" {{$selectedfilterkeyword == $row->id ? 'selected' : ''}}>{{strtoupper($row->product_code)}} | {{strtoupper($row->product_name)}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div> --}}
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Dari Tanggal : </label>
-                            <div class="col-sm-3 error-text">
-                            <input type="text" class="form-control formatTgl" id="tgl_start" name="tgl_start" value="{{ date('d-m-Y') }}">
-                            </div>
-                            <label class="col-sm-2 col-form-label">Sampai Tanggal : </label>
-                            <div class="col-sm-3 error-text">
-                                <input type="text" class="form-control formatTgl" id="tgl_end" name="tgl_end" value="{{ date('d-m-Y') }}">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <div class="d-flex pl-4 pt-4">
+                        {{-- <label class="font-normal">Range Tanggal</label> --}}
+                        <div class="form-group" id="date1">
+                            <div class="input-daterange input-group" id="datepicker">
+                                <span class="input-group-addon bg-primary">
+                                    <i class="fa fa-calendar m-auto px-2"></i>
+                                </span>
+                                <input type="text" class="form-control-sm form-control formatTgl" id="tgl_start" name="start"
+                                    value="{{ date('d-m-Y') }}" />
+                                <span class="input-group-addon bg-primary px-2">to </span>
+                                <input type="text" class="form-control-sm form-control formatTgl" id="tgl_end" name="end" value="{{ date('d-m-Y') }}" />
                             </div>
                         </div>
-                        {{-- <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Toko : </label>
-                            <div class="col-sm-3 error-text">
-                                <select class="form-control select2" id="perusahaan" name="perusahaan">
-                                    <option value="">Semua Perusahaan</option>
-                                    @foreach($perusahaan as $key => $row)
-                                    <option value="{{$row->id}}"{{ $selectedperusahaan == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div> --}}
-                        <div class="form-group row">
-                            <div class="col-sm-1 error-text">
-                                <button class="btn btn-success" id="cariData" type="button"><span class="fa fa-search"></span>&nbsp; Cari Data</button>
-                             </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        {{-- <div class="form-group row">
-                            @can('reportpenjualan.excel')
-                            <div class="col-xs-3">
-                            &nbsp;&nbsp;&nbsp;<button class="btn btn-primary" type="button" id="ExportExcel"><span class="fa fa-file-excel-o"></span> Export Excel </button>&nbsp;
-                            </div>
-                            @endcan
-                            @can('reportpenjualan.print')
-                            <div class="col-xs-3">
-                                <button class="btn btn-secondary" type="button" id="Print"><span class="fa fa-print"></span> Print</button>&nbsp;
-                            </div>
-                            @endcan
-                            @can('reportpenjualan.pdf')
-                            <div class="col-xs-3">
-                                <button class="btn btn-danger" type="button" id="ExportPdf"><span class="fa fa-file-pdf-o"></span> Export PDF</button>&nbsp;
-                            </div>
-                            @endcan
-                        </div> --}}
-                </form>
-                <div class="hr-line-dashed"></div>
-                <div class="table-responsive">
-                    <table id="example" class="table p-0 table-hover table-striped">
-                        <thead>
-                            <tr class="text-white text-center bg-primary">
-                                <th width="5%">No</th>
-                                <th>Tgl Faktur</th>
-                                <th>No Faktur</th>
-                                <th>Total Harga</th>
-                                <th>Status Pembayaran</th>
-                                {{-- <th>Catatan</th> --}}
-                            </tr>
-                        </thead>
-
-                        <tfoot>
-                            {{-- <tr class="text-white text-center bg-primary">
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                            </tr> --}}
-                        </tfoot>
-                    </table>
-                    <div>
-
                     </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="table-responsive">
+                        <table id="table1" class="table p-0 table-hover table-striped" style="overflow-x: auto;">
+                            <thead>
+                                <tr class="text-white text-center bg-primary">
+                                    <th width="5%">No</th>
+                                    <th>Tgl Faktur</th>
+                                    <th>No Faktur</th>
+                                    <th>Total Harga</th>
+                                    <th>Status Pembayaran</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                            {{-- <tfoot>
+                                <tr class="text-white text-center bg-primary">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot> --}}
+                        </table>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -126,7 +81,7 @@
             $.ajaxSetup({
                 headers:{ "X-CSRF-Token": $("meta[name=csrf-token]").attr("content") }
             });
-            table = $('#example').DataTable({
+            table = $('#table1').DataTable({
                 processing: true,
                 serverSide: true,
                 pageLength: 25,
@@ -134,7 +89,7 @@
                 select: true,
                 // "bFilter":false,
                 "ajax":{
-                    "url": "{{ route("reportpenjualan.getdata") }}",
+                    "url": "{{ route("reportbarangkeluar.getdata") }}",
                     "dataType": "json",
                     "type": "POST",
                     data: function( d ){
@@ -167,6 +122,10 @@
                         },
                         {
                             "data": 'status_lunas',
+                            "orderable": false,
+                        },
+                        {
+                            "data": 'aksi',
                             "orderable": false,
                         },
                     ],

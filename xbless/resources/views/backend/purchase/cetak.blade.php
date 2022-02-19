@@ -20,21 +20,21 @@
         </div>
         <div class="row">
             <div class="col-sm-4 m-auto">
-                <p>Salesman : 25-sales2 <br>
+                <p>Salesman : {{ $penjualan->getsales->code }}-{{ $penjualan->getsales->nama }} <br>
                     Drive :
                 </p>
             </div>
             <div class="col-sm-4 m-auto">
                 <p>Kepada YTH. <br>
-                    15163312320226001101083070/4 BERSAUDARA <br>
-                    CIUTARA
+                    {{ $penjualan->gettoko->code }}/{{ $penjualan->name }} <br>
+                    {{ $penjualan->gettoko->alamat }}
                 </p>
             </div>
             <div class="col-sm-4 m-auto">
-                <p> No. Faktur : 210000000934 <br>
-                    Tgl. Faktur : 27/12/2021 <br>
-                    Tgl. JTempo : 01/01/2021 <br>
-                    Jenis Bayar : $0
+                <p> No. Faktur : {{ $penjualan->no_faktur }} <br>
+                    Tgl. Faktur : {{ date('d/m/Y', strtotime($penjualan->tgl_faktur)) }} <br>
+                    Tgl. JTempo : {{ date('d/m/Y', strtotime($penjualan->tgl_jatuh_tempo)) }} <br>
+                    Jenis Bayar : {{ $jenis_pembayaran }}
                 </p>
             </div>
         </div>
@@ -43,57 +43,43 @@
                 <tr class="text-center">
                     <th class="border">PCODE</th>
                     <th class="border">Nama Barang</th>
-                    <th class="border">Harga/LSN</th>
-                    <th class="border">KRT.LSN.SAT</th>
+                    <th class="border">Harga Barang</th>
+                    <th class="border">Qty (PCS)</th>
                     <th class="border">Jumlah Rp</th>
                     <th class="border">Ket.</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>2345</td>
-                    <td>testingtesting</td>
-                    <td class="text-right">240.000</td>
-                    <td class="text-right">1.0.0</td>
-                    <td class="text-right">20.000</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>2345</td>
-                    <td>testingtesting</td>
-                    <td class="text-right">240.000</td>
-                    <td class="text-right">1.0.0</td>
-                    <td class="text-right">20.000</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>2345</td>
-                    <td>testingtesting</td>
-                    <td class="text-right">240.000</td>
-                    <td class="text-right">1.0.0</td>
-                    <td class="text-right">20.000</td>
-                    <td></td>
-                </tr>
+                @foreach($detail_penjualan as $key => $value)
+                    <tr>
+                        <td>{{ $value->getproduct->kode_product }}</td>
+                        <td>{{ $value->getproduct->nama }}</td>
+                        <td class="text-right">{{ format_uang($value->harga_product) }}</td>
+                        <td class="text-right">{{ $value->qty }}</td>
+                        <td class="text-right">{{ format_uang($value->total_harga) }}</td>
+                        <td></td>
+                    </tr>
+                @endforeach
+
             </tbody>
             <tfoot>
                 <tr class="m-auto">
-                    <td colspan="3" class="py-3 ">Total Karton Utuh : 1</td>
+                    <td colspan="3" class="py-3 ">Total Barang : {{ count($detail_penjualan) }}</td>
                     <td class="text-right py-3">Jumlah Rp</td>
                     <td class="text-right py-3">
-                        20.000
+                        {{ format_uang($penjualan->total_harga) }}
                     </td>
                     <td></td>
                 </tr>
                 <tr class="m-auto">
                     <td colspan="3"></td>
                     <td class="text-right">Discount Rp <br> Nilai Faktur Rp</td>
-                    <td class="text-right">0 <br> 20.000</td>
+                    <td class="text-right">{{ format_uang($penjualan->total_diskon) }} <br> {{ format_uang($penjualan->total_harga - $penjualan->total_diskon) }}</td>
                     <td></td>
                 </tr>
             </tfoot>
         </table>
-        <p class="font-weight-bold" style="font-size: medium;"> TERBILANG : DUA PULUH RIBU
-            RUPIAH</p>
+        <p class="" style="font-size: medium;"> TERBILANG :{{strtoupper(terbilang($penjualan->total_harga - $penjualan->total_diskon))}}</p>
         <div>
             <p>* Ket satu dua tiga <br>
                 Aut adipisci, saepe alias sequi consequunturdolores, <br>

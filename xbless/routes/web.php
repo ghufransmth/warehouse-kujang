@@ -616,6 +616,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/note', [PurchaseController::class, 'note'])->name('note');
             Route::post('/harga_product', [PurchaseController::class, 'harga_product'])->name('harga_product');
             Route::post('/total_harga', [PurchaseController::class, 'total_harga'])->name('total_harga');
+            Route::post('/total_diskon', [PurchaseController::class, 'total_diskon'])->name('total_diskon');
             Route::post('/status_po', [PurchaseController::class, 'status_po'])->name('status_po');
 
             Route::post('/scan_qty_kirim', [PurchaseController::class, 'scan_qty_kirim'])->name('scan_qty_kirim');
