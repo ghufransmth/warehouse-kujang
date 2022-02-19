@@ -241,7 +241,9 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
 
     //Adj Stock
     Route::get('manage/adjstok', [StokAdjController::class, 'index'])->name('adjstok.index');
+    Route::get('manage/adjstok_supplier', [StokAdjController::class, 'index_supplier'])->name('adjstok.index_supplier');
     Route::post('manage/adjstok/getdata', [StokAdjController::class, 'getData'])->name('adjstok.getdata');
+    Route::post('manage/adjstok/getdatasup', [StokAdjController::class, 'getDataSupplier'])->name('adjstok.getdatasup');
     Route::get('manage/adjstok/getdataproduct/{id?}', [StokAdjController::class, 'getDataProduct'])->name('adjstok.getdataproduct');
     Route::post('manage/adjstok/simpan', [StokAdjController::class, 'simpan'])->name('adjstok.simpan');
     Route::get('manage/adjstok/tambah', [StokAdjController::class, 'tambah'])->name('adjstok.tambah');
@@ -646,6 +648,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/simpan', [ReturPenjualanController::class, 'simpan'])->name('simpan');
             Route::post('/simpanretur', [ReturController::class, 'simpan'])->name('simpanretur');
             Route::get('/edit/{id?}', [ReturController::class, 'edit'])->name('edit');
+            Route::get('/hapus/{id?}', [ReturController::class, 'hapus'])->name('delete');
         });
         // REQUEST PURCHASE ORDER
         Route::group(['prefix' => 'requestpurchaseorder', 'as' => 'requestpurchaseorder.'], function () {

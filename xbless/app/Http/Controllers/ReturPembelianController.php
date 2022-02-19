@@ -154,7 +154,7 @@ class ReturPembelianController extends Controller
         if($total_product > 0){
             $retur = new ReturTransaksi;
             $retur->no_faktur = $nofaktur;
-            $retur->no_retur_faktur = 1111;
+            $retur->no_retur_faktur = $nofaktur.'/retur';
             $retur->catatan = $keterangan;
             $retur->jenis_transaksi = 1;
             $retur->total_harga = $total_harga_pembelian;
@@ -191,7 +191,7 @@ class ReturPembelianController extends Controller
                 }
             }
         $transaksi_stock = new TransaksiStock;
-        $transaksi_stock->no_transaksi = $retur->no_faktur;
+        $transaksi_stock->no_transaksi = $retur->no_retur_faktur;
         $transaksi_stock->tgl_transaksi = $retur->tgl_faktur;
         $transaksi_stock->flag_transaksi = 6;
         $transaksi_stock->created_by = auth()->user()->username;

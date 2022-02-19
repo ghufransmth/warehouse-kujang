@@ -61,11 +61,11 @@
                             <label for="" class="col-sm-2 col-form-label">Nominal Faktur *</label>
                             <div class="col-sm-4 error-text">
                                 <input type="text" class="form-control" id="nominal" name="nominal" autocomplete="off"
-                                    value="{{isset($pembelian)? $pembelian->nominal: ''}}">
+                                    value="{{isset($pembelian)? $pembelian->nominal: ''}}" placeholder="Auto Kalkulasi..." readonly>
                             </div>
 
                             <label class="col-sm-2 col-form-label">Tanggal Jatuh Tempo *</label>
-                            <div class="col-sm-3 error-text">
+                            <div class="col-sm-4 error-text">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" class="form-control jatuh_tempo" id="jatuh_tempo"
@@ -134,7 +134,7 @@
                                 </thead>
                                 <tbody id="detail_form" class="bg-white">
                                     @if(isset($pembelian))
-                                        <input type="hidden" name="totaldetail" value="{{ (count($pembelian_detail) > 0)? count($pembelian_detail) : '0' }}" id="jumlahdetail">
+                                        <input type="hidden" name="jumlahdetail" value="{{ (count($pembelian_detail) > 0)? count($pembelian_detail) : '0' }}" id="jumlahdetail">
                                          @foreach ($pembelian_detail as $key=> $item)
                                             <tr class="bg-white" id='product_{{ $key }}'>
                                                 <td>
@@ -191,7 +191,7 @@
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control" name="harga_product[]"
-                                                    id="harga_product_1">
+                                                    id="harga_product_1" value="PCS" readonly>
                                             </td>
                                             <td width="15%">
                                                 <input type="text" class="form-control touchspin" id="qty_1" name="qty[]"
@@ -256,10 +256,24 @@
 <script>
     $(document).ready(function(){
         $(".select2").select2({allowClear: true});
-
+        @if(isset($pembelian))
+            var jumlahdetail = $('#jumlahdetail').val();
+            for(var i=0;i<jumlahdetail;i++){
+                select_satuan(i);
+                select_product(i);
+            }
+            total_pembelian();
+        @endif
 select_satuan(1);
 select_product(1);
 $("#simpan").on('click',function(){
+        if($("#submitData").valid())
+        {
+            Swal.showLoading();
+            SimpanData(1);
+        }
+    });
+    $("#draft").on('click',function(){
         if($("#submitData").valid())
         {
             Swal.showLoading();
@@ -369,6 +383,7 @@ $("#simpan").on('click',function(){
         });
         $('#harga_pembelian').text(sum);
         $('#total_harga_pembelian').val(sum);
+        $('#nominal').val(sum);
     }
     function select_product(num){
     $('.select2_produk_'+num).select2({allowClear: false, width: '200px',
@@ -467,10 +482,20 @@ $('.jatuh_tempo').datepicker({
         $('#detail_form').html('');
     });
     function tambahProduk(){
+        @if(isset($pembelian))
+        // var total_produk = $('#total_produk').val();
+        var total_produk = $('#jumlahdetail').val();
+        var total = 1 + parseInt(total_produk);
+        $('#total_produk').val(total);
+        $('#jumlahdetail').val(total);
+        console.log(total)
+        @else
         var total_produk = $('#total_produk').val();
         var total = 1 + parseInt(total_produk);
         $('#total_produk').val(total);
         console.log(total)
+        @endif
+
         $.ajax({
             type: 'POST',
             data: 'total='+total,
@@ -522,7 +547,7 @@ $('.jatuh_tempo').datepicker({
                 console.log(response)
                 if(response.success){
                     $('#harga_product_'+num).val(response.data.harga_jual);
-                    $('#stock_product_'+num).val(response.data.getstock.stock_penjualan);
+                    $('#stock_product_'+num).val(response.data.getstock.stock_pembelian);
                 }else{
                     Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
                 }
@@ -645,6 +670,7 @@ $('.jatuh_tempo').datepicker({
     }
 
     function hitung_qty(num){
+        console.log($('#product_'+num).val());
         // console.log($('#product_'+num+' option:selected').val());
         if($('#product_'+num).val() == 0){
             Swal.fire('Ups', 'Pilih product terlebih dahulu');

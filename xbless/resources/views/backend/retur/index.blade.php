@@ -127,7 +127,7 @@
                                     <th>Jenis Transaksi</th>
                                     <th>Total Harga</th>
                                     <th>Created By</th>
-                                    <th class="text-center" width="11%">Aksi</th>
+                                    <th class="text-center" width="15%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -349,11 +349,6 @@ function reject(id){
         }
     });
 }
-
-
-
-
-
 
 </script>
 @endpush
