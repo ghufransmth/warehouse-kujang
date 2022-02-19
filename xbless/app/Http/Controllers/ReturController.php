@@ -387,8 +387,7 @@ class ReturController extends Controller
                 $result->no             = $key+$page;
                 $result->no_faktur = $result->no_transaksi;
                 $result->tgl_transaksi = $result->tgl_transaksi;
-                // $result->total_harga = format_uang($result->total_harga);
-                $result->total_harga = number_format($result->total_harga,0,'.',',');
+                $result->total_harga = format_uang($result->total_harga);
                 $cek_retur = collect($all_retur)->where('no_faktur', $result->no_transaksi)->first();
                 $aksi = '';
                 if(!isset($cek_retur)){
