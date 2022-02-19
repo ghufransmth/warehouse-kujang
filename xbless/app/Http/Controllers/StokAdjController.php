@@ -34,6 +34,12 @@ class StokAdjController extends Controller
     {
         return view('backend/stok/stokadj/index');
     }
+
+    public function index_supplier()
+    {
+        return view('backend/stok/stokadj/index_supplier');
+    }
+
     public function satuan($id_satuan){
         $satuan = Satuan::find($id_satuan);
         return $satuan->qty;
@@ -97,6 +103,25 @@ class StokAdjController extends Controller
         }
         return json_encode($json_data);
     }
+
+    // public function getDataSupplier(Request $request)
+    // {
+    //     $limit = $request->length;
+    //     $start = $request->start;
+    //     $page  = $start + 1;
+    //     $search = $request->search['value'];
+
+    //     $request->session()->put('filter_supplier_admin', $request->filter_supplier_admin);
+    //     $request->session()->put('filter_gudang_admin', $request->filter_gudang_admin);
+
+    //     $querydb = Product::select('product.*', 'satuan.name as satuan_name');
+    //     $querydb->join('product_perusahaan_gudang', 'product_perusahaan_gudang.product_id', 'product.id');
+    //     $querydb->join('satuan', 'product.satuan_id', 'satuan.id');
+    //     $querydb->join('category_product', 'category_product.id', 'product.category_id');
+    //     $querydb->where('product_perusahaan_gudang.perusahaan_gudang_id', $perusahaan_gudang_id);
+
+    // }
+
     public function getData_(Request $request)
     {
         $limit = $request->length;

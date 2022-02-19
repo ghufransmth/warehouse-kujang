@@ -348,7 +348,6 @@ class PembelianController extends Controller
 
     public function coba_simpan(Request $req)
     {
-
         $enc_id = $req->enc_id;
 
         if(isset($enc_id)){
@@ -503,7 +502,7 @@ class PembelianController extends Controller
                                         $stockadj = StockAdj::where('id_product',$array_product[$i])->first();
                                         if(isset($stockadj)){
                                             $stockadj->stock_pembelian += $detail_pembelian->qty;
-                                            $detail_pembelian->save();
+                                            $stockadj->save();
                                         }else{
                                             $stockbaru = new StockAdj;
                                             $stockbaru->id_product = $detail_pembelian->product_id;

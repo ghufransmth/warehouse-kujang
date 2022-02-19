@@ -86,6 +86,9 @@
             @can('adjstok.index')
             <li><a href="{{route('adjstok.index')}}">Info Stok</a></li>
             @endcan
+            @can('adjstok.index')
+            <li><a href="{{route('adjstok.index_supplier')}}">Stok Supplier</a></li>
+            @endcan
             @can('stokmutasi.tambah')
             <li><a href="{{route('stokmutasi.tambah')}}">Mutasi Stok</a></li>
             @endcan

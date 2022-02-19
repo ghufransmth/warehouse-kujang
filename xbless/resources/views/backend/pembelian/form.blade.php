@@ -61,11 +61,11 @@
                             <label for="" class="col-sm-2 col-form-label">Nominal Faktur *</label>
                             <div class="col-sm-4 error-text">
                                 <input type="text" class="form-control" id="nominal" name="nominal" autocomplete="off"
-                                    value="{{isset($pembelian)? $pembelian->nominal: ''}}">
+                                    value="{{isset($pembelian)? $pembelian->nominal: ''}}" placeholder="Auto Kalkulasi..." readonly>
                             </div>
 
                             <label class="col-sm-2 col-form-label">Tanggal Jatuh Tempo *</label>
-                            <div class="col-sm-3 error-text">
+                            <div class="col-sm-4 error-text">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" class="form-control jatuh_tempo" id="jatuh_tempo"
@@ -383,6 +383,7 @@ $("#simpan").on('click',function(){
         });
         $('#harga_pembelian').text(sum);
         $('#total_harga_pembelian').val(sum);
+        $('#nominal').val(sum);
     }
     function select_product(num){
     $('.select2_produk_'+num).select2({allowClear: false, width: '200px',
