@@ -43,8 +43,8 @@
                 <td>{{ $penjualan->tgl_faktur }}</td>
                 <td>{{ $value->getproduct->nama }}</td>
                 <td>{{ $value->qty }}</td>
-                <td>{{ $value->harga_product }}</td>
-                <td>{{ $value->total_harga }}</td>
+                <td>{{ format_uang($value->harga_product) }}</td>
+                <td>{{ format_uang($value->total_harga) }}</td>
                 {{-- <td>Status Bayar</td> --}}
             </tr>
             @endforeach

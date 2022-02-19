@@ -71,7 +71,6 @@ class ReportPenjualanController extends Controller
         $querydb->limit($limit);
         $querydb->offset($start);
         $data = $querydb->get();
-        // return $data;
 
 
         foreach ($data as $key => $value) {
@@ -81,7 +80,6 @@ class ReportPenjualanController extends Controller
             $value->no                = $key + $page;
             $value->id                = $value->id;
 
-            // $value->no              = $value->product_code;
             $value->no_faktur       = $value->no_faktur;
             $value->tgl_transaksi           = $value->tgl_faktur;
             $value->total_harga               = $value->total_harga;

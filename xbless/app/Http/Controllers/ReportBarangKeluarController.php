@@ -78,12 +78,20 @@ class ReportBarangKeluarController extends Controller
         $limit = $request->length;
         $start = $request->start;
         $page  = $start + 1;
+        $tgl_start = $request->tgl_start;
+        $tgl_end = $request->tgl_end;
+
         $search = $request->search['value'];
 
 
         $querydb = Penjualan::select('*');
         $querydb->whereHas('getdetailpenjualan');
-
+        if($tgl_start){
+            $querydb->whereDate('tgl_faktur', '>=', date('Y-m-d', strtotime($tgl_start)));
+        }
+        if($tgl_end){
+            $querydb->whereDate('tgl_faktur', '<=', date('Y-m-d', strtotime($tgl_end)));
+        }
         if ($search) {
             $querydb->where(function ($query) use ($search) {
                 $query->orWhere('product_name', 'LIKE', "%{$search}%");
@@ -108,13 +116,13 @@ class ReportBarangKeluarController extends Controller
             // $value->no              = $value->product_code;
             $value->no_faktur       = $value->no_faktur;
             $value->tgl_transaksi           = $value->tgl_faktur;
-            $value->total_harga               = $value->total_harga;
+            $value->total_harga               = format_uang($value->total_harga);
             if($value->status_lunas == 1){
                 $status_lunas = "Lunas";
             }else{
                 $status_lunas = "Belum Lunas";
             }
-            $aksi = '<a href="'.route("reportbarangkeluar.detail", $enc_id).'" class="btn btn-success"><i class="fa fa-eye"></i> </a>';
+            $aksi = '<a href="'.route("reportbarangkeluar.detail", $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip"><i class="fa fa-eye"></i> Preview </a>';
             $value->status_lunas    = $status_lunas;
             $value->aksi = $aksi;
         }

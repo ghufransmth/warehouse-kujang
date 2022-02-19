@@ -841,8 +841,8 @@ class PurchaseController extends Controller
         }
         return response()->json([
             'success' => true,
-            'total_diskon' => $total_diskon,
-            'jumlah_total' => $harga_penjualan - $total_diskon,
+            'total_diskon' => round($total_diskon),
+            'jumlah_total' => $harga_penjualan - round($total_diskon),
             'nilai_diskon' => $nilai_diskon
         ]);
         // return $total_diskon;
