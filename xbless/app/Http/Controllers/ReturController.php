@@ -346,8 +346,7 @@ class ReturController extends Controller
         $request->session()->put('type', $request->type);
         $dataquery = TransaksiStock::select('*');
         $all_retur = ReturTransaksi::all();
-        $dataquery->orwhere('flag_transaksi', 3);
-        $dataquery->orwhere('flag_transaksi', 4);
+
 
 
         if(array_key_exists($request->order[0]['column'], $this->original_column)){
@@ -362,6 +361,9 @@ class ReturController extends Controller
         }
         if($jenis_transaksi != ""){
             $dataquery->where('flag_transaksi', $jenis_transaksi);
+        }else{
+            $dataquery->orwhere('flag_transaksi', 3);
+            $dataquery->orwhere('flag_transaksi', 4);
         }
         if($no_faktur != ""){
             $dataquery->where('no_transaksi', 'LIKE', "%{$no_faktur}%");
@@ -373,7 +375,7 @@ class ReturController extends Controller
         // $alldata->offset($start);
         $data = $dataquery->get();
         // $data = [];
-        return $jenis_transaksi;
+        // return $data;
         foreach($data as $key => $result){
 
                 $enc_id = $this->safe_encode(Crypt::encryptString($result->no_transaksi));
