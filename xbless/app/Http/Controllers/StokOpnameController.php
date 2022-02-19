@@ -15,6 +15,7 @@ use App\Models\ReportStock;
 use App\Models\Satuan;
 use App\Models\StockAdj;
 use App\Models\StockMutasi;
+use App\Models\Supplier;
 use App\Models\TransaksiStock;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -241,7 +242,8 @@ class StokOpnameController extends Controller
         $selectedgudang = '';
         // $perusahaan = Perusahaan::all();
         $selectedperusahaan = '';
-        return view('backend/stok/stokopname/form', compact( 'selectedgudang', 'selectedperusahaan'));
+        $suplier = Supplier::all();
+        return view('backend/stok/stokopname/form', compact( 'selectedgudang', 'selectedperusahaan', 'suplier'));
     }
     public function detail($enc_id)
     {

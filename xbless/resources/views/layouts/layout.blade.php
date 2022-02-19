@@ -166,7 +166,7 @@
         var potongurl= tamp;
         // console.log(potongurl);
         $SIDEBAR_MENU.find('ul a[href="' + potongurl + '"]').parents('li').addClass('active');
-        // $SIDEBAR_MENU.find('ul a[href="' + potongurl + '"]').parents('ul').addClass('in');
+        $SIDEBAR_MENU.find('ul a[href="' + potongurl + '"]').parents('ul').addClass('in');
         // console.log($SIDEBAR_MENU);
         $SIDEBAR_MENU.find('a').filter(function () {
             return this.href == potongurl;

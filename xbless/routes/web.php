@@ -71,6 +71,11 @@ use App\Http\Controllers\ReturController;
 use App\Http\Controllers\ReturPenjualanController;
 use App\Http\Controllers\SupplierController;
 
+use App\Http\Controllers\DeliveryOrderController;
+use App\Http\Controllers\HistoryDeliveryOrderController;
+use App\Http\Controllers\ReportDeliveryOrderController;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -611,6 +616,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/note', [PurchaseController::class, 'note'])->name('note');
             Route::post('/harga_product', [PurchaseController::class, 'harga_product'])->name('harga_product');
             Route::post('/total_harga', [PurchaseController::class, 'total_harga'])->name('total_harga');
+            Route::post('/total_diskon', [PurchaseController::class, 'total_diskon'])->name('total_diskon');
             Route::post('/status_po', [PurchaseController::class, 'status_po'])->name('status_po');
 
             Route::post('/scan_qty_kirim', [PurchaseController::class, 'scan_qty_kirim'])->name('scan_qty_kirim');
@@ -618,7 +624,8 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/status_invoice', [PurchaseController::class, 'status_invoice'])->name('status_invoice');
             Route::post('/status_invoice_awal', [PurchaseController::class, 'status_invoice_awal'])->name('status_invoice_awal');
 
-            Route::post('/detail', [PurchaseController::class, 'detail'])->name('detail');
+            Route::get('/detail/{id?}', [PurchaseController::class, 'detail'])->name('detail');
+            Route::get('/cetak/{id?}', [PurchaseController::class, 'cetak'])->name('cetak');
             Route::post('/getData', [PurchaseController::class, 'getdata'])->name('getdata');
             Route::post('/process_nota', [PurchaseController::class, 'process_nota'])->name('process_nota');
             Route::post('/cekstatusinvoice', [PurchaseController::class, 'cekInvoiceBelumLunas'])->name('cekstatusinvoice');
