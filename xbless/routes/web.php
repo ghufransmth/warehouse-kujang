@@ -101,6 +101,14 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/getdatapenjualan', [BerandaController::class, 'getDataPenjualan'])->name('getdata');
             Route::get('/getdata/{id}', [BerandaController::class, 'detailPenjualan'])->name('detail');
         });
+        Route::group(['prefix' => 'piutang', 'as' => 'piutang.'], function () {
+            Route::post('/getdatapiutang', [BerandaController::class, 'getDataPiutang'])->name('getdata');
+            Route::get('/getdata/{id}', [BerandaController::class, 'detailPiutang'])->name('detail');
+        });
+        Route::group(['prefix' => 'tertagih', 'as' => 'tertagih.'], function () {
+            Route::post('/getdatatertagih', [BerandaController::class, 'getDataTertagih'])->name('getdata');
+            Route::get('/getdata/{id}', [BerandaController::class, 'detailTertagih'])->name('detail');
+        });
     });
 
     Route::get('/manage/logout', [LoginController::class, 'logout'])->name('manage.logout');
@@ -401,19 +409,19 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::post('manage/draftpurchaseorder/simpan', [DraftPurchaseController::class, 'simpan'])->name('draftpurchaseorder.simpan');
     Route::delete('manage/draftpurchaseorder/hapus/{id?}', [DraftPurchaseController::class, 'hapus'])->name('draftpurchaseorder.hapus');
 
-    Route::group(['prefix' => 'pembayaran', 'as' => 'pembayaran.'], function () {
-        Route::get('/', [PembayaranController::class, 'index'])->name('index');
-        Route::any('/search', [PembayaranController::class, 'search'])->name('search');
-        Route::get('/detail/{id}', [PembayaranController::class, 'detail'])->name('detail');
-        Route::post('/store', [PembayaranController::class, 'store'])->name('store');
-        Route::get('/edit/{id}', [PembayaranController::class, 'edit'])->name('edit');
-        Route::post('/update/{id}', [PembayaranController::class, 'update'])->name('update');
-        Route::get('/delete/{id}', [PembayaranController::class, 'delete'])->name('delete');
-        Route::post('/list_menu', [PembayaranController::class, 'menu_data_list'])->name('menu_data_list');
-        Route::get('/data_pembayaran/{menu?}/{id?}', [PembayaranController::class, 'data_pembayaran'])->name('data_pembayaran');
-        Route::post('/input_pengiriman', [PembayaranController::class, 'input_pengiriman'])->name('input_pengiriman');
-        Route::post('/simpan_pengiriman', [PembayaranController::class, 'simpan_pengiriman'])->name('simpan_pengiriman');
-    });
+    // Route::group(['prefix' => 'pembayaran', 'as' => 'pembayaran.'], function () {
+    //     Route::get('/', [PembayaranController::class, 'index'])->name('index');
+    //     Route::any('/search', [PembayaranController::class, 'search'])->name('search');
+    //     Route::get('/detail/{id}', [PembayaranController::class, 'detail'])->name('detail');
+    //     Route::post('/store', [PembayaranController::class, 'store'])->name('store');
+    //     Route::get('/edit/{id}', [PembayaranController::class, 'edit'])->name('edit');
+    //     Route::post('/update/{id}', [PembayaranController::class, 'update'])->name('update');
+    //     Route::get('/delete/{id}', [PembayaranController::class, 'delete'])->name('delete');
+    //     Route::post('/list_menu', [PembayaranController::class, 'menu_data_list'])->name('menu_data_list');
+    //     Route::get('/data_pembayaran/{menu?}/{id?}', [PembayaranController::class, 'data_pembayaran'])->name('data_pembayaran');
+    //     Route::post('/input_pengiriman', [PembayaranController::class, 'input_pengiriman'])->name('input_pengiriman');
+    //     Route::post('/simpan_pengiriman', [PembayaranController::class, 'simpan_pengiriman'])->name('simpan_pengiriman');
+    // });
 
     //retur revisi
     Route::group(['prefix' => 'retur-revisi', 'as' => 'returrevisi.'], function () {
@@ -729,9 +737,8 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
 
         Route::group(['prefix' => 'transaksi', 'as' => 'transaksi.'], function () {
             Route::group(['prefix' => 'pembayaran', 'as' => 'pembayaran.'], function () {
-                Route::get('/', function () {
-                    return view('backend/pembayaran/pembayaran/index');
-                })->name('index');
+                Route::get('/', [PembayaranController::class, 'index'])->name('index');
+                Route::post('/getdata', [PembayaranController::class, 'getData'])->name('getdata');
             });
             Route::group(['prefix' => 'keuangan', 'as' => 'keuangan.'], function () {
                 Route::get('/', [ReportTransaksiController::class, 'index'])->name('index');

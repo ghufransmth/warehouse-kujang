@@ -219,4 +219,146 @@ class BerandaController extends Controller
         );
         return json_encode($json_data);
     }
+
+    public function getDataPiutang(Request $request)
+    {
+        $limit = $request->length;
+        $start = $request->start;
+        $page  = $start + 1;
+        $search = $request->search['value'];
+
+        if ($request->periode_start != '' && $request->periode_end != '') {
+            $periode_start = $request->periode_start;
+            $periode_end = $request->periode_end;
+        } else {
+            $periode_start = date('Y-m-d', strtotime("-1 Month"));
+            $periode_end = date('Y-m-d');
+        }
+
+        $dataquery = DB::table('tbl_penjualan')->select('tbl_penjualan.*', 'tbl_sales.nama', 'toko.name','toko.code');
+        $dataquery->leftJoin('tbl_sales', 'tbl_sales.id', 'tbl_penjualan.id_sales');
+        $dataquery->leftJoin('toko', 'toko.id', 'tbl_penjualan.id_toko');
+        $dataquery->where('tbl_penjualan.status_lunas', 0);
+        $dataquery->orderBy('tbl_penjualan.id', 'DESC');
+        if ($search) {
+            $dataquery->where(function ($query) use ($search) {
+                $query->orWhere('sales.nama', 'LIKE', "%{$search}%");
+                $query->orWhere('toko.name', 'LIKE', "%{$search}%");
+                $query->orWhere('tbl_penjualan.no_faktur', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $dataquery->whereDate('tgl_faktur', '>=', date('Y-m-d', strtotime($periode_start)));
+        $dataquery->whereDate('tgl_faktur', '<=', date('Y-m-d', strtotime($periode_end)));
+
+        $totalData = $dataquery->get()->count();
+
+        $totalFiltered = $dataquery->get()->count();
+
+        $dataquery->limit($limit);
+        $dataquery->offset($start);
+        $data = $dataquery->get();
+        foreach ($data as $key => $result) {
+            $enc_id = $this->safe_encode(Crypt::encryptString($result->id));
+            $action = '';
+
+            $action .= '';
+            $action .= '<div class="btn-group">';
+            $action .= '<a href="' . route('beranda.unilever.detail', $enc_id) . '" class="btn btn-sm btn-primary rounded"><i class="fa fa-eye"></i>&nbsp; Detail</a>';
+            $action .= '</div>';
+
+            $total_harga     = 0;
+            $total_harga    += $result->total_harga + $result->total_diskon;
+            $result->total_harga = "Rp. " . number_format($total_harga, 0, '', '.');
+            $result->toko   = $result->name.' - '.$result->code;
+            $result->no             = $key + $page;
+            $result->faktur         = date('d F Y', strtotime($result->tgl_faktur));
+            $result->jatuh_tempo         = date('d F Y', strtotime($result->tgl_jatuh_tempo));
+            // $result->action         = $action;
+        }
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data
+        );
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data
+        );
+        return json_encode($json_data);
+    }
+
+    public function getDataTertagih(Request $request)
+    {
+        $limit = $request->length;
+        $start = $request->start;
+        $page  = $start + 1;
+        $search = $request->search['value'];
+
+        if ($request->periode_start != '' && $request->periode_end != '') {
+            $periode_start = $request->periode_start;
+            $periode_end = $request->periode_end;
+        } else {
+            $periode_start = date('Y-m-d', strtotime("-1 Month"));
+            $periode_end = date('Y-m-d');
+        }
+
+        $dataquery = DB::table('tbl_penjualan')->select('tbl_penjualan.*', 'tbl_sales.nama', 'toko.name','toko.code');
+        $dataquery->leftJoin('tbl_sales', 'tbl_sales.id', 'tbl_penjualan.id_sales');
+        $dataquery->leftJoin('toko', 'toko.id', 'tbl_penjualan.id_toko');
+        $dataquery->where('tbl_penjualan.status_lunas', 1);
+        $dataquery->orderBy('tbl_penjualan.id', 'DESC');
+        if ($search) {
+            $dataquery->where(function ($query) use ($search) {
+                $query->orWhere('sales.nama', 'LIKE', "%{$search}%");
+                $query->orWhere('toko.name', 'LIKE', "%{$search}%");
+                $query->orWhere('tbl_penjualan.no_faktur', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $dataquery->whereDate('tgl_faktur', '>=', date('Y-m-d', strtotime($periode_start)));
+        $dataquery->whereDate('tgl_faktur', '<=', date('Y-m-d', strtotime($periode_end)));
+
+        $totalData = $dataquery->get()->count();
+
+        $totalFiltered = $dataquery->get()->count();
+
+        $dataquery->limit($limit);
+        $dataquery->offset($start);
+        $data = $dataquery->get();
+        foreach ($data as $key => $result) {
+            $enc_id = $this->safe_encode(Crypt::encryptString($result->id));
+            $action = '';
+
+            $action .= '';
+            $action .= '<div class="btn-group">';
+            $action .= '<a href="' . route('beranda.unilever.detail', $enc_id) . '" class="btn btn-sm btn-primary rounded"><i class="fa fa-eye"></i>&nbsp; Detail</a>';
+            $action .= '</div>';
+
+            $total_harga     = 0;
+            $total_harga    += $result->total_harga + $result->total_diskon;
+            $result->total_harga = "Rp. " . number_format($total_harga, 0, '', '.');
+            $result->toko   = $result->name.' - '.$result->code;
+            $result->no             = $key + $page;
+            $result->faktur         = date('d F Y', strtotime($result->tgl_faktur));
+            $result->jatuh_tempo         = date('d F Y', strtotime($result->tgl_jatuh_tempo));
+            // $result->action         = $action;
+        }
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data
+        );
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data
+        );
+        return json_encode($json_data);
+    }
 }
