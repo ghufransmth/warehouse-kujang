@@ -105,12 +105,29 @@
                                         @endif
                                     >{{ $value->nama }}</option>
                                     @endforeach
-
-
-
                                 </select>
                             </div>
                         </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Gudang </label>
+                            <div class="col-sm-4 error-text">
+                                <select class="form-control select2" id="gudang" name="gudang">
+                                    <option value="0">Pilih Gudang</option>
+                                    @foreach($gudang as $key => $value)
+                                    <option value="{{ $value->id }}"
+                                        @if(isset($selectegudang))
+                                            @if($value->id == $selectedgudang)
+                                                selected
+                                            @endif
+                                        @endif
+                                    >{{ $value->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+
 
                         <div class="hr-line-dashed"></div>
                         <div class="col-lg-2">
@@ -138,7 +155,7 @@
                                          @foreach ($pembelian_detail as $key=> $item)
                                             <tr class="bg-white" id='product_{{ $key }}'>
                                                 <td>
-                                                    <select class="select2_produk_1" id="product_{{ $key }}" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%">
+                                                    <select class="select2_produk_1" id="product_{{ $item->getproduct->id }}" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%">
                                                         <option value="{{ $item->getproduct->id }}">{{ $item->getproduct->nama }}</option>
                                                     </select>
                                                 </td>
@@ -146,22 +163,22 @@
                                                 <td>
                                                     <select name="tipesatuan[]"
                                                         onchange="satuan(this.options[this.selectedIndex].value,{{ $key }})"
-                                                        id="tipe_satuan_{{ $key }}" class="select2_satuan_1">
+                                                        id="tipe_satuan_{{ $item->getproduct->id_satuan }}" class="select2_satuan_1">
                                                         <option value="1">PCS</option>
                                                     </select>
                                                 </td>
 
                                                 <td>
                                                     <input type="text" class="form-control" name="harga_product[]"
-                                                        id="harga_product_{{ $key }}" value="{{ $item->product_price }}" readonly>
+                                                        id="harga_product_{{ $item->getproduct->id }}" value="{{ $item->product_price }}" readonly>
                                                 </td>
 
                                                 <td width="15%">
-                                                    <input type="text" class="form-control touchspin" id="qty_{{ $key }}" name="qty[]" value="{{ $item->qty }}" onkeyup="hitung_qty({{ $key }})" onchange="hitung_qty({{ $key }})">
+                                                    <input type="text" class="form-control touchspin" id="qty_{{ $item->getproduct->id }}" name="qty[]" value="{{ $item->qty }}" onkeyup="hitung_qty({{ $item->getproduct->id }})" onchange="hitung_qty({{ $item->getproduct->id }}, {{ $item->getproduct->id_satuan }})">
                                                 </td>
 
                                                 <td>
-                                                    <input type="text" class="form-control total_harga" id="total_{{ $key }}"
+                                                    <input type="text" class="form-control total_harga" id="total_{{ $item->getproduct->id }}"
                                                         name="total[]" value="{{ $item->total }}" readonly>
                                                 </td>
 
@@ -669,34 +686,38 @@ $('.jatuh_tempo').datepicker({
         }
     }
 
-    function hitung_qty(num){
+    function hitung_qty(num, numSatuan){
+        console.log(num);
         console.log($('#product_'+num).val());
         // console.log($('#product_'+num+' option:selected').val());
         if($('#product_'+num).val() == 0){
             Swal.fire('Ups', 'Pilih product terlebih dahulu');
             return false;
-        }else if($('#tipe_satuan_'+num).val() == "null"){
+        }else if($('#tipe_satuan_'+numSatuan).val() == "null"){
             Swal.fire('Ups', 'Pilih satuan terlebih dahulu');
             return false;
         }else{
             $.ajax({
                 type: 'POST',
                 data: {
-                    'satuan_id': $('#tipe_satuan_'+num).val(),
+                    'satuan_id': $('#tipe_satuan_'+numSatuan).val(),
                     'urut' : num
                 },
                 url: '{{route("purchaseorder.total_harga")}}',
                 headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                 success: function(response) {
                     console.log(response)
+
                     if(response.success){
                         var total_qty = response.data.qty * $('#qty_'+num).val();
+                        // console.log(total_qty);
                         if($('#stock_product_'+num).val() < total_qty){
                             Swal.fire('Ups', 'Stock product tidak cukup', 'info');
                             return false;
                         }
                         var total = $('#harga_product_'+num).val() * total_qty;
                         $('#total_'+num).val(total);
+                        // console.log(total);
                         total_pembelian();
                     }else{
                         Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
