@@ -127,6 +127,11 @@ class FinanceController extends Controller
                 <td><div class='input-group'>
                     <span class='input-group-addon'>Rp.</span><input type='text' class='form-control nominal_akun' id='nominal_".$total."' name='nominal[]' value='' autocomplete='off'>
                 </div></td>
+                <td>
+                    <div class='input-group'>
+                        <span class='input-group-addon'><i class='fa fa-calendar' aria-hidden='true'></i></span><input type='text' class='form-control' id='tgl_transaksi_".$total."' name='tgl_transaksi[]' value='' autocomplete='off'>
+                    </div>
+                </td>
                 <td><input type='text' class='form-control' id='note_".$total."' name='note[]'></td>
                 <td class='text-center'><a href='#!' onclick='javascript:deleteProduk(".$total.")' class='btn btn-danger btn-sm icon-btn sm-btn-flat product-tooltip' title='Hapus'><i class='fa fa-trash'></i></a></td>
             </tr>
@@ -161,6 +166,9 @@ class FinanceController extends Controller
     }
 
     public function simpan(Request $request){
+        // return response()->json([
+        //     'data' => $request->all()
+        // ]);
       $enc_id     = $request->enc_id;
       if ($enc_id != null) {
           $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
@@ -175,7 +183,6 @@ class FinanceController extends Controller
         $result->komponen_biaya_id  = $request->komponen;
         $result->total      = str_replace(".","", $request->total_nominal);
         $result->kategori   = $komponen->kategori;
-        $result->tgl_transaksi = date('Y-m-d', strtotime($request->tgl_transaksi));
         $result->keterangan    = $request->keterangan;
         $result->save();
 
@@ -186,6 +193,7 @@ class FinanceController extends Controller
             $detail->finance_id = $result->id;
             $detail->name       = $request->name[$i];
             $detail->nominal    = str_replace(".","",$request->nominal[$i]);
+            $detail->tgl_transaksi = date('Y-m-d', strtotime($request->tgl_transaksi[$i]));
             $detail->keterangan = $request->note[$i];
             $detail->save();
           }
@@ -217,9 +225,8 @@ class FinanceController extends Controller
         $komponen = KomponenBiaya::find($request->komponen);
         $result = new Finance;
         $result->komponen_biaya_id  = $request->komponen;
-        $result->total      = $request->total_nominal;
+        $result->total      = str_replace(".","", $request->total_nominal);
         $result->kategori   = $komponen->kategori;
-        $result->tgl_transaksi = date('Y-m-d', strtotime($request->tgl_transaksi));
         $result->keterangan    = $request->keterangan;
         $result->save();
 
@@ -228,7 +235,8 @@ class FinanceController extends Controller
             $detail = new FinanceDetail;
             $detail->finance_id = $result->id;
             $detail->name       = $request->name[$i];
-            $detail->nominal    = $request->nominal[$i];
+            $detail->nominal    = str_replace(".","",$request->nominal[$i]);
+            $detail->tgl_transaksi = date('Y-m-d', strtotime($request->tgl_transaksi[$i]));
             $detail->keterangan = $request->note[$i];
             $detail->save();
           }

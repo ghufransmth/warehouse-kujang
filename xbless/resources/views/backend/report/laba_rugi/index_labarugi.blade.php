@@ -33,16 +33,16 @@
         <div class="col-lg-12">
             <div class="ibox">
                 <div class="ibox-content">
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="d-flex justify-content-between">
                         <div class="form-group" id="date1">
                             <div class="input-daterange input-group" id="datepicker">
                                 <span class="input-group-addon bg-primary">
                                     <i class="fa fa-calendar m-auto px-2"></i>
                                 </span>
-                                <input type="text" class="form-control-sm form-control" name="start"
-                                    value="01-01-2022" />
+                                <input type="text" class="form-control-sm form-control" id="start" name="start" value="{{ date('d-m-Y') }}" />
                                 <span class="input-group-addon bg-primary px-2">to </span>
-                                <input type="text" class="form-control-sm form-control" name="end" value="01-02-2022" />
+                                <input type="text" class="form-control-sm form-control" id="end" name="end" value="{{ date('d-m-Y') }}" />
                             </div>
                         </div>
                         <form id="submitData" name="submitData" class="text-right">
@@ -230,103 +230,9 @@
                                     <td></td>
                                     <td>Rp. -</td>
                                 </tr>
-                                <tr>
-                                    <td class="pt-5" style="text-decoration: underline;"><strong> Beban Biaya</strong>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>01</span> Biaya ProgramL Comp Baru </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>02</span> Operasional Kantor </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>03</span> Pembelian Head Printer + Rak Arsip </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>04</span> Pemeliharaan Armada </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>05</span> Uang Makan </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>06</span>Pajak Oktober'21+Denda 2017 </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>07</span> Listrik, Telp, Speedy. PDAM </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>08</span> Gaji dan Tunjangan </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>09</span> Kredit Investasi </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>10</span> Kredit Modal Kerja </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>11 </span> Lain-lain + Pelunasan Program </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>12 </span> Cicilan Armada Sukabumi PELUNASAN</td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>13 </span> BPJS KESEHATAN</td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>14 </span> BPJS KETENAGAKERJAAN</td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>15 </span>Pajak kendaraan AVANZA F 1057 SW</td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
+                                <div id="data">
+                                      
+                                </div>
                                 <tr>
                                     <td></td>
                                     <td></td>
@@ -385,25 +291,19 @@
 @endsection
 @push('scripts')
 <script>
+    $(document).ready(function(){
+        var start = $('#start').val()
+        var end = $('#end').val()
+
+        getData(start, end)
+    })
+
     $('#table1').DataTable({
         pageLength: 10,
         responsive: true,
         dom: '<"html5buttons"B>lTfgitp',
         language: {
-            search: "_INPUT_",
-            searchPlaceholder: "Cari data",
-            emptyTable: "Belum ada data",
-            info: "Menampilkan data _START_ sampai _END_ dari _MAX_ data.",
-            infoEmpty: "Menampilkan 0 sampai 0 dari 0 data.",
-            lengthMenu: "Tampilkan _MENU_ data per halaman",
-            loadingRecords: "Loading...",
-            processing: "Mencari...",
-            paginate: {
-            "first": "Pertama",
-            "last": "Terakhir",
-            "next": "Sesudah",
-            "previous": "Sebelum"
-            },
+            paginate: false
         },
         buttons: [
         ],
@@ -415,6 +315,28 @@
         format: "dd-mm-yyyy"
     });
 
+</script>
+<script>
+    function getData(start, end){
+        console.log(start)
+        $.ajax({
+            type: 'POST',
+            url: '{{route("reportlabarugi.getdata")}}',
+            headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+            data: {
+                'start': start,
+                'end'  : end
+            },
+            success: function(response) {
+                if(response.code == 200){
+                    console.log(response.data.detail.other[0].detail.parent)
+                    $('#data').append(response.data.detail.other[0].detail.parent)
+                }else{
+
+                }
+            }
+        })
+    }
 </script>
 
 @endpush
