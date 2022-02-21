@@ -144,7 +144,7 @@
                                                 </td>
 
                                                 <td>
-                                                    <a class="text-white btn btn-danger btn-hemisperich btn-xs"
+                                                    <a href="#"  onclick='deleteProduk({{ $key }})' class="text-white btn btn-danger btn-hemisperich btn-xs"
                                                         data-original-title='Hapus Data' id='deleteModal'><i
                                                             class='fa fa-trash'></i></a>
                                                 </td>
@@ -612,7 +612,7 @@ $('.jatuh_tempo').datepicker({
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                $('#detail_product_'+id).remove();
+                $('#product_'+id).remove();
                 var total_produk = $('#total_produk').val();
                 // console.log(total_produk)
                 var total = parseInt(total_produk) - 1;

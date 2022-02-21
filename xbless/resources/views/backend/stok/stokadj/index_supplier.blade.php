@@ -61,15 +61,13 @@
                                     <th width="5%" rowspan='2' >No</th>
                                     <th rowspan='2'>Kode</th>
                                     <th rowspan='2'>Nama</th>
-                                    <th rowspan='2'>Group</th>
                                     <th rowspan='2'>Satuan</th>
-                                    <th colspan='4' class="text-center">Stok</th>
+                                    <th colspan='5' class="text-center">Stok</th>
                                 </tr>
                                 <tr>
+                                    <th>Stock Opname</th>
+                                    <th>Stock Pembelian</th>
                                     <th>Stock Penjualan</th>
-                                    <th>Stock BS</th>
-                                    {{-- <th>Keluar</th>
-                                    <th>Akhir</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -116,11 +114,11 @@
                 {
                     "data": "kode_product"
                 },
-                {"data": "nama"},
-                {"data": "kategori"},
+                {"data": "nama_product"},
                 {"data": "satuan"},
+                { "data": "stock_opname"},
+                { "data": "stock_pembelian"},
                 { "data": "stock_penjualan"},
-                { "data": "stock_bs"},
            ],
            responsive: true,
            language: {
