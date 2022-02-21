@@ -299,33 +299,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="">
-                                    <td>1</td>
-                                    <td>2021-12-27</td>
-                                    <td>234000001237</td>
-                                    <td>Berkah Jaya</td>
-                                    <td>Abdullah Khifli</td>
-                                    <td>01/02/2021</td>
-                                    <td>50.000</td>
-                                </tr>
-                                <tr class="">
-                                    <td>2</td>
-                                    <td>2021-12-27</td>
-                                    <td>234000001237</td>
-                                    <td>Berkah Ghusti</td>
-                                    <td>Toriq</td>
-                                    <td>01/02/2021</td>
-                                    <td>50.000</td>
-                                </tr>
-                                <tr class="">
-                                    <td>3</td>
-                                    <td>2021-12-27</td>
-                                    <td>23400231237</td>
-                                    <td>Bersyukur</td>
-                                    <td>Dulha</td>
-                                    <td>01/02/2021</td>
-                                    <td>50.000</td>
-                                </tr>
                             </tbody>
                             <tfoot>
                                 <tr class="text-white text-center bg-primary">
@@ -423,7 +396,7 @@
 @endsection
 @push('scripts')
 <script>
-    var table_unilever, table_penjualan;
+    var table_unilever, table_penjualan, tbl_piutang, tbl_tertagih;
     $(document).ready(function () {
         getdata()
         $('#data_5 .input-daterange').datepicker({
@@ -536,6 +509,7 @@
             ]
         });
         $('#table_retur').DataTable({
+            
             pageLength: 10,
             responsive: true,
             dom: '<"html5buttons"B>lTfgitp',
@@ -560,7 +534,34 @@
                 }
             ]
         });
-        $('#table_faktur_piutang').DataTable({
+        tbl_piutang = $('#table_faktur_piutang').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "pageLength": 25,
+            "select" : true,
+            "responsive": true,
+            "stateSave"  : true,
+            "dom": '<"html5">lftip',
+            "ajax":{
+                        "url": "{{ route("beranda.piutang.getdata") }}",
+                        "dataType": "json",
+                        "type": "POST",
+                        data: function ( d ) {
+                        d._token= "{{csrf_token()}}";
+                        d.periode_start = $('#start').val()
+                        d.periode_end = $('#end').val()
+                        }
+                    },
+
+            "columns": [
+                { "data": "no"},
+                { "data": "faktur"},
+                { "data": "no_faktur" },
+                { "data": "toko" },
+                {"data": "nama"},
+                {"data": "jatuh_tempo"},
+                {"data": "total_harga"},
+            ],
             pageLength: 10,
             responsive: true,
             dom: '<"html5buttons"B>lTfgitp',
@@ -585,7 +586,34 @@
                 }
             ]
         });
-        $('#table_faktur_tertagih').DataTable({
+        tbl_tertagih = $('#table_faktur_tertagih').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "pageLength": 25,
+            "select" : true,
+            "responsive": true,
+            "stateSave"  : true,
+            "dom": '<"html5">lftip',
+            "ajax":{
+                        "url": "{{ route("beranda.tertagih.getdata") }}",
+                        "dataType": "json",
+                        "type": "POST",
+                        data: function ( d ) {
+                        d._token= "{{csrf_token()}}";
+                        d.periode_start = $('#start').val()
+                        d.periode_end = $('#end').val()
+                        }
+                    },
+
+            "columns": [
+                { "data": "no"},
+                { "data": "faktur"},
+                { "data": "no_faktur" },
+                { "data": "toko" },
+                {"data": "nama"},
+                {"data": "jatuh_tempo"},
+                {"data": "total_harga"},
+            ],
             pageLength: 10,
             responsive: true,
             dom: '<"html5buttons"B>lTfgitp',
@@ -632,7 +660,8 @@
     function refresh(){
         table_unilever.ajax.reload(null, true)
         table_penjualan.ajax.reload(null, true)
-
+        tbl_piutang.ajax.reload(null, true)
+        tbl_tertagih.ajax.reload(null, true)
     }
     function number_to_price(data){
         if(data==0){return '0';}

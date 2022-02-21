@@ -113,7 +113,7 @@
                     class="fa arrow"></span></a>
             <ul class="nav nav-second-level collapse">
                 <li><a href="{{ route('transaksi.finance.index') }}">List Biaya</a></li>
-                <li><a href="#">Transaksi Pembayaran</a></li>
+                <li><a href="{{ route('transaksi.pembayaran.index') }}">Transaksi Pembayaran</a></li>
                 <li><a href="{{ route('transaksi.keuangan.index') }}">Transaksi Keuangan</a></li>
             </ul>
         </li>
