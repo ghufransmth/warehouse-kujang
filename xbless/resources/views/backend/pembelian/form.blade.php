@@ -61,11 +61,11 @@
                             <label for="" class="col-sm-2 col-form-label">Nominal Faktur *</label>
                             <div class="col-sm-4 error-text">
                                 <input type="text" class="form-control" id="nominal" name="nominal" autocomplete="off"
-                                    value="{{isset($pembelian)? $pembelian->nominal: ''}}">
+                                    value="{{isset($pembelian)? $pembelian->nominal: ''}}" placeholder="Auto Kalkulasi..." readonly>
                             </div>
 
                             <label class="col-sm-2 col-form-label">Tanggal Jatuh Tempo *</label>
-                            <div class="col-sm-3 error-text">
+                            <div class="col-sm-4 error-text">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" class="form-control jatuh_tempo" id="jatuh_tempo"
@@ -105,12 +105,29 @@
                                         @endif
                                     >{{ $value->nama }}</option>
                                     @endforeach
-
-
-
                                 </select>
                             </div>
                         </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Gudang </label>
+                            <div class="col-sm-4 error-text">
+                                <select class="form-control select2" id="gudang" name="gudang">
+                                    <option value="0">Pilih Gudang</option>
+                                    @foreach($gudang as $key => $value)
+                                    <option value="{{ $value->id }}"
+                                        @if(isset($selectegudang))
+                                            @if($value->id == $selectedgudang)
+                                                selected
+                                            @endif
+                                        @endif
+                                    >{{ $value->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+
 
                         <div class="hr-line-dashed"></div>
                         <div class="col-lg-2">
@@ -134,11 +151,11 @@
                                 </thead>
                                 <tbody id="detail_form" class="bg-white">
                                     @if(isset($pembelian))
-                                        <input type="hidden" name="totaldetail" value="{{ (count($pembelian_detail) > 0)? count($pembelian_detail) : '0' }}" id="jumlahdetail">
+                                        <input type="hidden" name="jumlahdetail" value="{{ (count($pembelian_detail) > 0)? count($pembelian_detail) : '0' }}" id="jumlahdetail">
                                          @foreach ($pembelian_detail as $key=> $item)
                                             <tr class="bg-white" id='product_{{ $key }}'>
                                                 <td>
-                                                    <select class="select2_produk_1" id="product_{{ $key }}" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%">
+                                                    <select class="select2_produk_1" id="product_{{ $item->getproduct->id }}" name="produk[]" onchange="hitung(this.options[this.selectedIndex].value, {{ $key }})" width="100%">
                                                         <option value="{{ $item->getproduct->id }}">{{ $item->getproduct->nama }}</option>
                                                     </select>
                                                 </td>
@@ -146,22 +163,22 @@
                                                 <td>
                                                     <select name="tipesatuan[]"
                                                         onchange="satuan(this.options[this.selectedIndex].value,{{ $key }})"
-                                                        id="tipe_satuan_{{ $key }}" class="select2_satuan_1">
+                                                        id="tipe_satuan_{{ $item->getproduct->id_satuan }}" class="select2_satuan_1">
                                                         <option value="1">PCS</option>
                                                     </select>
                                                 </td>
 
                                                 <td>
                                                     <input type="text" class="form-control" name="harga_product[]"
-                                                        id="harga_product_{{ $key }}" value="{{ $item->product_price }}" readonly>
+                                                        id="harga_product_{{ $item->getproduct->id }}" value="{{ $item->product_price }}" readonly>
                                                 </td>
 
                                                 <td width="15%">
-                                                    <input type="text" class="form-control touchspin" id="qty_{{ $key }}" name="qty[]" value="{{ $item->qty }}" onkeyup="hitung_qty({{ $key }})" onchange="hitung_qty({{ $key }})">
+                                                    <input type="text" class="form-control touchspin" id="qty_{{ $item->getproduct->id }}" name="qty[]" value="{{ $item->qty }}" onkeyup="hitung_qty({{ $item->getproduct->id }})" onchange="hitung_qty({{ $item->getproduct->id }}, {{ $item->getproduct->id_satuan }})">
                                                 </td>
 
                                                 <td>
-                                                    <input type="text" class="form-control total_harga" id="total_{{ $key }}"
+                                                    <input type="text" class="form-control total_harga" id="total_{{ $item->getproduct->id }}"
                                                         name="total[]" value="{{ $item->total }}" readonly>
                                                 </td>
 
@@ -191,7 +208,7 @@
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control" name="harga_product[]"
-                                                    id="harga_product_1">
+                                                    id="harga_product_1" value="PCS" readonly>
                                             </td>
                                             <td width="15%">
                                                 <input type="text" class="form-control touchspin" id="qty_1" name="qty[]"
@@ -202,7 +219,7 @@
                                                     name="total[]" readonly>
                                             </td>
                                             <td>
-                                                <a class="text-white btn btn-danger btn-hemisperich btn-xs"
+                                                <a href="#"  onclick='deleteProduk({{ $key }})' class="text-white btn btn-danger btn-hemisperich btn-xs"
                                                     data-original-title='Hapus Data' id='deleteModal'><i
                                                         class='fa fa-trash'></i></a>
                                             </td>
@@ -256,10 +273,24 @@
 <script>
     $(document).ready(function(){
         $(".select2").select2({allowClear: true});
-
+        @if(isset($pembelian))
+            var jumlahdetail = $('#jumlahdetail').val();
+            for(var i=0;i<jumlahdetail;i++){
+                select_satuan(i);
+                select_product(i);
+            }
+            total_pembelian();
+        @endif
 select_satuan(1);
 select_product(1);
 $("#simpan").on('click',function(){
+        if($("#submitData").valid())
+        {
+            Swal.showLoading();
+            SimpanData(1);
+        }
+    });
+    $("#draft").on('click',function(){
         if($("#submitData").valid())
         {
             Swal.showLoading();
@@ -369,6 +400,7 @@ $("#simpan").on('click',function(){
         });
         $('#harga_pembelian').text(sum);
         $('#total_harga_pembelian').val(sum);
+        $('#nominal').val(sum);
     }
     function select_product(num){
     $('.select2_produk_'+num).select2({allowClear: false, width: '200px',
@@ -467,10 +499,20 @@ $('.jatuh_tempo').datepicker({
         $('#detail_form').html('');
     });
     function tambahProduk(){
+        @if(isset($pembelian))
+        // var total_produk = $('#total_produk').val();
+        var total_produk = $('#jumlahdetail').val();
+        var total = 1 + parseInt(total_produk);
+        $('#total_produk').val(total);
+        $('#jumlahdetail').val(total);
+        console.log(total)
+        @else
         var total_produk = $('#total_produk').val();
         var total = 1 + parseInt(total_produk);
         $('#total_produk').val(total);
         console.log(total)
+        @endif
+
         $.ajax({
             type: 'POST',
             data: 'total='+total,
@@ -522,7 +564,7 @@ $('.jatuh_tempo').datepicker({
                 console.log(response)
                 if(response.success){
                     $('#harga_product_'+num).val(response.data.harga_jual);
-                    $('#stock_product_'+num).val(response.data.getstock.stock_penjualan);
+                    $('#stock_product_'+num).val(response.data.getstock.stock_pembelian);
                 }else{
                     Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
                 }
@@ -644,33 +686,38 @@ $('.jatuh_tempo').datepicker({
         }
     }
 
-    function hitung_qty(num){
+    function hitung_qty(num, numSatuan){
+        console.log(num);
+        console.log($('#product_'+num).val());
         // console.log($('#product_'+num+' option:selected').val());
         if($('#product_'+num).val() == 0){
             Swal.fire('Ups', 'Pilih product terlebih dahulu');
             return false;
-        }else if($('#tipe_satuan_'+num).val() == "null"){
+        }else if($('#tipe_satuan_'+numSatuan).val() == "null"){
             Swal.fire('Ups', 'Pilih satuan terlebih dahulu');
             return false;
         }else{
             $.ajax({
                 type: 'POST',
                 data: {
-                    'satuan_id': $('#tipe_satuan_'+num).val(),
+                    'satuan_id': $('#tipe_satuan_'+numSatuan).val(),
                     'urut' : num
                 },
                 url: '{{route("purchaseorder.total_harga")}}',
                 headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                 success: function(response) {
                     console.log(response)
+
                     if(response.success){
                         var total_qty = response.data.qty * $('#qty_'+num).val();
+                        // console.log(total_qty);
                         if($('#stock_product_'+num).val() < total_qty){
                             Swal.fire('Ups', 'Stock product tidak cukup', 'info');
                             return false;
                         }
                         var total = $('#harga_product_'+num).val() * total_qty;
                         $('#total_'+num).val(total);
+                        // console.log(total);
                         total_pembelian();
                     }else{
                         Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
@@ -699,7 +746,7 @@ $('.jatuh_tempo').datepicker({
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                $('#detail_product_'+id).remove();
+                $('#product_'+id).remove();
                 var total_produk = $('#total_produk').val();
                 // console.log(total_produk)
                 var total = parseInt(total_produk) - 1;

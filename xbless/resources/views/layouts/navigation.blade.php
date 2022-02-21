@@ -86,6 +86,9 @@
             @can('adjstok.index')
             <li><a href="{{route('adjstok.index')}}">Info Stok</a></li>
             @endcan
+            @can('adjstok.index')
+            <li><a href="{{route('adjstok.index_supplier')}}">Stok Supplier</a></li>
+            @endcan
             @can('stokmutasi.tambah')
             <li><a href="{{route('stokmutasi.tambah')}}">Mutasi Stok</a></li>
             @endcan
@@ -229,9 +232,9 @@
                 {{-- @can('reportlabarugi.index') --}}
                 <li><a href="{{route('reportlabarugi.index')}}">Report Laba Rugi</a></li>
                 {{-- @endcan --}}
-                <!-- @can('reportbarangkeluar.index')
+                @can('reportbarangkeluar.index')
                 <li><a href="{{route('reportbarangkeluar.index')}}">Report Barang Keluar</a></li>
-                @endcan -->
+                @endcan
                 <!-- @can('reportsisahutang.index')
                 <li><a href="{{route('reportsisahutang.index')}}">Report Sisa Hutang</a></li>
                 @endcan -->

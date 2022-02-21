@@ -6,6 +6,7 @@ use App\Models\DetailReturTransaksi;
 use App\Models\Pembelian;
 use App\Models\Penjualan;
 use App\Models\ReturTransaksi;
+use App\Models\ReturTransaksiDetail;
 use App\Models\Sales;
 use App\Models\StockAdj;
 use App\Models\Toko;
@@ -299,8 +300,11 @@ class ReturController extends Controller
             $result->total_harga = $result->total_harga;
             // $result->tgl_lunas = $result->tgl_lunas;
             $result->jenis_transaksi = $jenis_transaksi;
+
             $aksi .= '<a href="#" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail </a>';
-            $aksi .= '<a href="'.route('retur.edit', $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a> <br>';
+            $aksi .= '<a href="'.route('retur.edit', $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a>';
+            $aksi .= '<a href="'.route('retur.delete', $enc_id).'" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Hapus </a> <br>';
+
 
             // if($result->status_lunas == 0){
             //     $result->status_pembayaran = '<span class="badge badge-success">Belum Lunas</span>';
@@ -346,8 +350,7 @@ class ReturController extends Controller
         $request->session()->put('type', $request->type);
         $dataquery = TransaksiStock::select('*');
         $all_retur = ReturTransaksi::all();
-        $dataquery->orwhere('flag_transaksi', 3);
-        $dataquery->orwhere('flag_transaksi', 4);
+
 
 
         if(array_key_exists($request->order[0]['column'], $this->original_column)){
@@ -362,6 +365,9 @@ class ReturController extends Controller
         }
         if($jenis_transaksi != ""){
             $dataquery->where('flag_transaksi', $jenis_transaksi);
+        }else{
+            $dataquery->orwhere('flag_transaksi', 3);
+            $dataquery->orwhere('flag_transaksi', 4);
         }
         if($no_faktur != ""){
             $dataquery->where('no_transaksi', 'LIKE', "%{$no_faktur}%");
@@ -381,7 +387,7 @@ class ReturController extends Controller
                 $result->no             = $key+$page;
                 $result->no_faktur = $result->no_transaksi;
                 $result->tgl_transaksi = $result->tgl_transaksi;
-                $result->total_harga = $result->total_harga;
+                $result->total_harga = format_uang($result->total_harga);
                 $cek_retur = collect($all_retur)->where('no_faktur', $result->no_transaksi)->first();
                 $aksi = '';
                 if(!isset($cek_retur)){
@@ -395,10 +401,10 @@ class ReturController extends Controller
                 }else{
                     if($result->flag_transaksi == 3){
                         $result->jenis_transaksi = '<span class="badge badge-success">Penjualan</span>';
-
+                        $aksi .= '<a href="#" class="btn btn-secondary disabled">Barang pernah di retur</a> ';
                     }elseif($result->flag_transaksi == 4){
                         $result->jenis_transaksi = '<span class="badge badge-warning">Pembelian</span>';
-
+                        $aksi .= '<a href="#" class="btn btn-secondary disabled">Barang pernah di retur</a> ';
                     }
                 }
 
@@ -484,5 +490,32 @@ class ReturController extends Controller
         }
         return json_encode($transaksi);
 
+    }
+
+    public function hapus($enc_id)
+    {
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        // $dataretur = ReturTransaksi::where('jenis_transaksi',1)->first();
+        $returback = ReturTransaksi::where('id',$dec_id)->first();
+        // return $returback;
+        $detail = ReturTransaksiDetail::where('retur_transaksi_id',$returback->id)->get();
+        // return $detail;
+
+        foreach($detail as $key=> $value){
+            // return $value->qty;
+            $stockadj = StockAdj::where('id_product',$value->product_id)->first();
+            if(isset($stockadj)){
+                $stockadj->stock_pembelian += $value->qty;
+                $stockadj->stock_retur_pembelian = 0;
+                if($stockadj->save()){
+                    $value->delete();
+                }
+            }
+        }
+        $transaksi_stock = TransaksiStock::where('no_transaksi',$returback->no_retur_faktur)->first();
+        $transaksi_stock->delete();
+        $returback->delete();
+
+        return "Berhasil";
     }
 }

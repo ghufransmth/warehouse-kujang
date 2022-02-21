@@ -38,7 +38,7 @@
         {{-- <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
             title="Refresh Data"><span class="fa fa-refresh"></span></button> --}}
         @can('purchaseorder.tambah')
-        <a href="{{ route('purchaseorder.cetak', $enc_id) }}" class="btn btn-success" data-toggle="tooltip" data-placement="top"
+        <a href="{{ route('purchaseorder.cetak', $enc_id) }}" target="__blank" class="btn btn-success" data-toggle="tooltip" data-placement="top"
             title="Print"><span class="fa fa-pencil-square-o"></span>&nbsp; Print</a>
             {{-- <button onclick="cetak()" class="btn btn-success"> Print</button> --}}
         @endcan
@@ -72,7 +72,7 @@
                                 <p> No. Faktur : {{ $penjualan->no_faktur }} <br>
                                     Tgl. Faktur : {{ date('d/m/Y', strtotime($penjualan->tgl_faktur)) }} <br>
                                     Tgl. JTempo : {{ date('d/m/Y', strtotime($penjualan->tgl_jatuh_tempo)) }} <br>
-                                    Jenis Bayar : $0
+                                    Jenis Bayar : {{ $jenis_pembayaran }}
                                 </p>
                             </div>
                         </div>
@@ -92,9 +92,9 @@
                                     <tr>
                                         <td>{{ $value->getproduct->kode_product }}</td>
                                         <td>{{ $value->getproduct->nama }}</td>
-                                        <td class="text-right">{{ $value->harga_product }}</td>
+                                        <td class="text-right">{{ format_uang($value->harga_product) }}</td>
                                         <td class="text-right">{{ $value->qty }}</td>
-                                        <td class="text-right">{{ $value->total_harga }}</td>
+                                        <td class="text-right">{{ format_uang($value->total_harga) }}</td>
                                         <td></td>
                                     </tr>
                                 @endforeach
@@ -105,20 +105,19 @@
                                     <td colspan="3" class="py-3 ">Total Barang : {{ count($detail_penjualan) }}</td>
                                     <td class="text-right py-3">Jumlah Rp</td>
                                     <td class="text-right py-3">
-                                        {{ $penjualan->total_harga }}
+                                        {{ format_uang($penjualan->total_harga) }}
                                     </td>
                                     <td></td>
                                 </tr>
                                 <tr class="m-auto">
                                     <td colspan="3"></td>
                                     <td class="text-right">Discount Rp <br> Nilai Faktur Rp</td>
-                                    <td class="text-right">0 <br> 20.000</td>
+                                    <td class="text-right">{{ format_uang($penjualan->total_diskon) }} <br> {{ format_uang($penjualan->total_harga - $penjualan->total_diskon) }}</td>
                                     <td></td>
                                 </tr>
                             </tfoot>
                         </table>
-                        <p class="font-weight-bold" style="font-size: medium;"> TERBILANG : DUA PULUH RIBU
-                            RUPIAH</p>
+                        <p class="" style="font-size: medium;"> TERBILANG :{{strtoupper(terbilang($penjualan->total_harga - $penjualan->total_diskon))}}</p>
                         <div>
                             <p>* Ket satu dua tiga <br>
                                 Aut adipisci, saepe alias sequi consequunturdolores, <br>

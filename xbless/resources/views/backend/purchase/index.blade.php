@@ -128,6 +128,7 @@
                                     <th>Tgl Lunas</th>
                                     <th>Status Pembayaran</th>
                                     <th>Total Harga</th>
+                                    <th>Total Diskon</th>
                                     <th>Created By</th>
                                     <th class="text-center" width="11%">Aksi</th>
                                 </tr>
@@ -208,6 +209,7 @@
                     { "data": "tgl_lunas", "orderable" : false, },
                     { "data": "status_pembayaran", "orderable" : false, },
                     { "data": "total_harga", "orderable" : false, },
+                    { "data": "total_diskon", "orderable" : false, },
                     { "data": "created_by", "orderable" : false, },
 
                     { "data" : "aksi",

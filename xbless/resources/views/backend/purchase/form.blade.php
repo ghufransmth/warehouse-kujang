@@ -1,18 +1,18 @@
 @extends('layouts.layout')
-@section('title', 'Manajemen Purchase Order ')
+@section('title', 'Manajemen Penjualan ')
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>{{isset($purchaseorder) ? 'Edit' : 'Tambah'}} Purchase Order</h2>
+        <h2>{{isset($penjualan) ? 'Edit' : 'Tambah'}} Penjualan</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{route('purchaseorder.index')}}">Purchase Order</a>
+                <a href="{{route('purchaseorder.index')}}">Penjualan</a>
             </li>
             <li class="breadcrumb-item active">
-                <strong>{{isset($purchaseorder) ? 'Edit' : 'Tambah'}}</strong>
+                <strong>{{isset($penjualan) ? 'Edit' : 'Tambah'}}</strong>
             </li>
         </ol>
     </div>
@@ -116,7 +116,63 @@
                                 <input type="text" name="tgl_jatuh_tempo" class="form-control formatTgl"
                                     id="tgl_jatuh_tempo" value="{{ isset($penjualan)? date('d-m-Y', strtotime($penjualan->tgl_jatuh_tempo)) : date('d-m-Y') }}" autocomplete="off">
                                 <input type="hidden" name="total_harga_penjualan" id="total_harga_penjualan" value="0">
+                                <input type="hidden" name="total_diskon" id="diskon_penjualan" value="0">
+                                <input type="hidden" name="jumlah_penjualan" id="jumlah_penjualan" value="0">
+                                <input type="hidden" name="nilai_diskon" id="nilai_diskon" value="0">
                             </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label"><a href="#!" onclick="tambahProduk()"
+                                class="btn btn-success btn-sm icon-btn sm-btn-flat product-tooltip" title="Tambah Produk">Tambah
+                                Produk</a></label>
+                            <div class="col-sm-4 error-text">
+                                {{-- <select class="form-control select2" id="status_pembayaran" name="status_pembayaran">
+                                    <option value="">Pilih Status Pembayaran</option>
+                                    <option value="1"
+                                        @if(isset($selectedstatuslunas))
+                                            @if($selectedstatuslunas == '1')
+                                                selected
+                                            @endif
+                                        @endif
+                                    >Lunas</option>
+                                    <option value="0"
+                                    @if(isset($selectedstatuslunas))
+                                        @if($selectedstatuslunas == 0)
+                                            selected
+                                        @endif
+                                    @endif
+                                    >Belum Lunas</option>
+                                </select> --}}
+                            </div>
+                            <label class="col-sm-2 col-form-label">Jenis Pembayaran</label>
+                            <div class="col-sm-4 error-text">
+                                <select class="form-control select2" id="jenis_pembayaran" name="jenis_pembayaran">
+                                    <option value="">Pilih Jenis Pembayaran</option>
+                                    <option value="1"
+                                        @if(isset($selectedjenispembayaran))
+                                            @if($selectedjenispembayaran == '1')
+                                                selected
+                                            @endif
+                                        @endif
+                                    >Cash</option>
+                                    <option value="2"
+                                    @if(isset($selectedjenispembayaran))
+                                        @if($selectedjenispembayaran == '2')
+                                            selected
+                                        @endif
+                                    @endif
+                                    >Cek/giro</option>
+                                    <option value="3"
+                                    @if(isset($selectedjenispembayaran))
+                                        @if($selectedjenispembayaran == 3)
+                                            selected
+                                        @endif
+                                    @endif
+                                    >Transfer</option>
+                                </select>
+                            </div>
+
                         </div>
 
                         {{-- <div class="form-group row">
@@ -126,9 +182,9 @@
                 </div>
             </div> --}}
             <div class="">
-                <a href="#!" onclick="tambahProduk()"
+                {{-- <a href="#!" onclick="tambahProduk()"
                     class="btn btn-success btn-sm icon-btn sm-btn-flat product-tooltip" title="Tambah Produk">Tambah
-                    Produk</a>
+                    Produk</a> --}}
             </div>
             <div class="hr-line-dashed"></div>
             <div class="table-responsive">
@@ -215,6 +271,7 @@
                                 <input type="text" class="form-control total_harga" id="total_1" name="total[]"
                                     readonly>
                             </td>
+                            {{-- <input type="hidden" name="" class="total_diskon" name="diskon[]" value=""> --}}
                             <td>
                                 -
                             </td>
@@ -227,9 +284,21 @@
             <div class="hr-line-dashed"></div>
             <table style="min-width: 100%">
                 <tr>
-                    <td class="text-right">Total Harga Penjualan</td>
-                    <td width="1%"></td>
+                    <td class="text-right">Total Harga</td>
+                    <td width="1%" class="text-right">&nbsp;&nbsp;Rp.</td>
                     <td class="text-center" width="13%" id="harga_penjualan"> {{ isset($penjualan)? $penjualan->total_harga : '' }}</td>
+                    <td width="5%"></td>
+                </tr>
+                <tr>
+                    <td class="text-right">Diskon</td>
+                    <td width="1%">&nbsp;&nbsp;Rp.</td>
+                    <td class="text-center" width="13%" id="total_diskon"> {{ isset($penjualan)? $penjualan->total_harga : '' }}</td>
+                    <td width="5%"></td>
+                </tr>
+                <tr>
+                    <td class="text-right">Jumlah</td>
+                    <td width="1%">&nbsp;&nbsp;Rp.</td>
+                    <td class="text-center" width="13%" id="jumlah_total"> {{ isset($penjualan)? $penjualan->total_harga : '' }}</td>
                     <td width="5%"></td>
                 </tr>
             </table>
@@ -383,6 +452,22 @@
             format: "dd-mm-yyyy"
         });
 });
+function formatRupiah(angka, prefix){
+    var number_string = angka.replace(/[^,\d]/g, '').toString(),
+    split   		= number_string.split(','),
+    sisa     		= split[0].length % 3,
+    rupiah     		= split[0].substr(0, sisa),
+    ribuan     		= split[0].substr(sisa).match(/\d{3}/gi);
+
+    // tambahkan titik jika yang di input sudah menjadi angka ribuan
+    if(ribuan){
+        separator = sisa ? '.' : '';
+        rupiah += separator + ribuan.join('.');
+    }
+
+    rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+    return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
+}
 function total_penjualan(){
     var sum = 0;
     var tes = $('.total_harga');
@@ -390,8 +475,29 @@ function total_penjualan(){
     $('.total_harga').each(function(){
         sum += parseFloat($(this).val());  // Or this.innerHTML, this.innerText
     });
-    $('#harga_penjualan').text(sum);
+    $('#harga_penjualan').text(formatRupiah(sum));
     $('#total_harga_penjualan').val(sum);
+
+    $.ajax({
+        type: 'POST',
+        data: {
+            'harga_penjualan': $('#total_harga_penjualan').val(),
+        },
+        url: '{{route("purchaseorder.total_diskon")}}',
+        headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+        success: function(response) {
+            console.log(response)
+            if(response.success == true){
+                $('#diskon_penjualan').val(response.total_diskon);
+                $('#total_diskon').text(formatRupiah(response.total_diskon));
+                $('#jumlah_penjualan').val(response.jumlah_total);
+                $('#jumlah_total').text(formatRupiah(response.jumlah_total));
+                $('#nilai_diskon').val(response.nilai_diskon);
+            }else{
+                Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
+            }
+        }
+    });
 }
 function select_product(num){
     console.log(num);
@@ -563,7 +669,7 @@ function select_satuan(num){
         $.ajax({
             type: 'POST',
             data: {
-                'satuan_id': value,
+                'satuan_id': $('#tipe_satuan_'+num).val(),
                 'urut' : num
             },
             url: '{{route("purchaseorder.total_harga")}}',
@@ -674,7 +780,7 @@ function select_satuan(num){
 
     function hitung_qty(num){
         // console.log($('#product_'+num+' option:selected').val());
-        console.log($('#product_'+num).val());
+        // console.log($('#harga_product_'+num).val());
         if($('#product_'+num).val() == 0){
             Swal.fire('Ups', 'Pilih product terlebih dahulu');
             return false;
@@ -686,6 +792,9 @@ function select_satuan(num){
                 type: 'POST',
                 data: {
                     'satuan_id': $('#tipe_satuan_'+num).val(),
+                    'qty': $('#qty_'+num).val(),
+                    'harga_product': $('#harga_product_'+num).val(),
+                    'harga_penjualan': $('#total_harga_penjualan').val(),
                     'urut' : num
                 },
                 url: '{{route("purchaseorder.total_harga")}}',

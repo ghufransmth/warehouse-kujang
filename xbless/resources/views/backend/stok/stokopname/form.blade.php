@@ -76,6 +76,15 @@
                                 <div class="col-sm-4 error-text">
                                     <input type="text" class="form-control" value="{{isset($stokopname)? $stokopname->pic : auth()->user()->username}}" id="pic" name="pic" {{isset($stokopname)? ($stokopname->flag_proses=='1'?'readonly':'') : ''}}>
                                 </div>
+                                <label class="col-sm-2 col-form-label">Suplier * : </label>
+                                <div class="col-sm-4 error-text">
+                                    <select class="form-control select2" id="gudang_to" name="gudang_to">
+                                        <option value="0">Pilih Suplier</option>
+                                        @foreach($suplier as $key => $value)
+                                            <option value="{{ $value->id }}">{{ $value->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Catatan : </label>

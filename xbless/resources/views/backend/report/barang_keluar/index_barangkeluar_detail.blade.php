@@ -8,13 +8,13 @@
 </style>
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>DETAIL BARANG KELUAR</h2>
+        <h2>DETAIL PENJUALAN</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item active">
-                <a>DETAIL BARANG KELUAR</a>
+                <a>DETAIL PENJUALAN</a>
             </li>
         </ol>
     </div>
@@ -70,8 +70,8 @@
                                     <td>{{ $penjualan->tgl_faktur }}</td>
                                     <td>{{ $value->getproduct->nama }}</td>
                                     <td>{{ $value->qty }}</td>
-                                    <td>{{ $value->harga_product }}</td>
-                                    <td>{{ $value->total_harga }}</td>
+                                    <td>{{ format_uang($value->harga_product) }}</td>
+                                    <td>{{ format_uang($value->total_harga) }}</td>
                                     {{-- <td>Status Bayar</td> --}}
                                 </tr>
                                 @endforeach
