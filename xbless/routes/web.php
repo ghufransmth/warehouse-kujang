@@ -109,6 +109,10 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/getdatatertagih', [BerandaController::class, 'getDataTertagih'])->name('getdata');
             Route::get('/getdata/{id}', [BerandaController::class, 'detailTertagih'])->name('detail');
         });
+        Route::group(['prefix' => 'retur', 'as' => 'retur.'], function () {
+            Route::post('/getdataretur', [BerandaController::class, 'getDataRetur'])->name('getdata');
+            Route::get('/getdata/{id}', [BerandaController::class, 'detailRetur'])->name('detail');
+        });
     });
 
     Route::get('/manage/logout', [LoginController::class, 'logout'])->name('manage.logout');

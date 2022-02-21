@@ -396,7 +396,7 @@
 @endsection
 @push('scripts')
 <script>
-    var table_unilever, table_penjualan, tbl_piutang, tbl_tertagih;
+    var table_unilever, table_penjualan, tbl_piutang, tbl_tertagih, tbl_retur;
     $(document).ready(function () {
         getdata()
         $('#data_5 .input-daterange').datepicker({
@@ -508,8 +508,33 @@
                 }
             ]
         });
-        $('#table_retur').DataTable({
-            
+        tbl_retur = $('#table_retur').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "pageLength": 25,
+            "select" : true,
+            "responsive": true,
+            "stateSave"  : true,
+            "dom": '<"html5">lftip',
+            "ajax":{
+                        "url": "{{ route("beranda.retur.getdata") }}",
+                        "dataType": "json",
+                        "type": "POST",
+                        data: function ( d ) {
+                        d._token= "{{csrf_token()}}";
+                        d.periode_start = $('#start').val()
+                        d.periode_end = $('#end').val()
+                        }
+                    },
+            "columns": [
+                { "data": "no"},
+                { "data": "nama"},
+                { "data": "no_retur_faktur" },
+                { "data": "faktur" },
+                {"data": "catatan"},
+                {"data": "product"},
+                {"data": "jumlah"},
+            ],            
             pageLength: 10,
             responsive: true,
             dom: '<"html5buttons"B>lTfgitp',
