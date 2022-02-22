@@ -15,8 +15,12 @@ use App\Models\Brand;
 use App\Models\InvoiceDetail;
 use App\Models\Pembelian;
 use App\Models\PembelianDetail;
+use App\Models\ProductDetail;
 use App\Models\PurchaseOrderDetail;
+use App\Models\Sales;
 use App\Models\StockAdj;
+use App\Models\Supplier;
+use App\Models\Toko;
 use DB;
 use Auth;
 use QrCode;
@@ -128,6 +132,7 @@ class ProdukController extends Controller
             // if ($request->user()->can('produk.detail')) {
             //     $action .= '<a href="' . route('produk.detail', $enc_id) . '" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Detail"><i class="fa fa-eye"></i></a>&nbsp;';
             // }
+            $action .= '<a href="' . route('produk.detail_ubah', $enc_id) . '" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip" title="Detail"><i class="fa fa-eye"></i> Ubah Detail Product</a>&nbsp;';
             if ($request->user()->can('produk.ubah')) {
                 $action .= '<a href="' . route('produk.ubah', $enc_id) . '" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
             }
@@ -175,7 +180,59 @@ class ProdukController extends Controller
         return json_encode($json_data);
     }
 
+    public function detail_ubah($enc_id){
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        $produk = Product::find($dec_id);
+        // return $product->getdetailproduct;
+       // $member = Member::all();
+       $member = array();
+       $selectedmember ="";
+       $sales = Sales::all();
+       // $sales = array();
+       $selectedsales ="";
+       // $expedisi = Expedisi::all();
+       $expedisi = array();
+       $selectedexpedisi ="";
+       // $expedisivia = ExpedisiVia::all();
+       $expedisivia = array();
+       $selectedexpedisivia ="";
+       $selectedproduct ="";
+       // $tipeharga = $this->jenisharga();
+       $tipeharga = array();
+       $selectedtipeharga ="";
+       $toko = Toko::all();
+       $kategori = Kategori::all();
+       $selectedkategori = $produk->id_kategori;
+       // return 'tes';
+       return view('backend/menuproduk/produk/form_detail',compact('tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia',
+                   'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko', 'kategori', 'selectedkategori', 'produk','enc_id'));
 
+    }
+    public function supplier(Request $req){
+        $supplier = Supplier::select('*');
+        if($req->search != ''){
+            $supplier->orwhere('nama', 'LIKE', "%{$req->search}%");
+            $supplier->orwhere('id', 'LIKE', "%{$req->search}%");
+        }
+        return $supplier->get();
+    }
+    public function addsupplier(Request $req){
+        // return $req->all();
+        $total = $req->total;
+        echo "<tr class='bg-white' id='dataajaxproduk_".$total."'>
+        <td>
+            <select class='select2_supplier_".$total."' id='supplier_".$total."' name='supplier[]' width='100%'>
+                <option value=''>Pilih Supplier</option>
+
+            </select>
+        </td>
+        <td>
+            <input type='text' class='form-control' id='harga_pembelian_".$total."' name='harga_pembelian[]'
+                value='0'>
+        </td>
+        <td><a href='#!' onclick='javascript:deleteProduk(".$total.")' class='btn btn-danger btn-sm icon-btn sm-btn-flat product-tooltip' title='Hapus'><i class='fa fa-trash'></i></a></td>
+    </tr>";
+    }
     public function simpan(Request $req){
         $enc_id     = $req->enc_id;
         if ($enc_id != null) {
@@ -298,6 +355,61 @@ class ProdukController extends Controller
         }
     }
 
+    public function detail_simpan(Request $req){
+        // return $req->all();
+        $enc_id = $req->enc_id;
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        $jumlah_detail = $req->jumlahdetail;
+        $array_supplier = $req->supplier;
+        $array_harga_pembelian = $req->harga_pembelian;
+        $harga_jual = str_replace('.','', $req->harga_jual);
+        $kategori   = $req->kategori;
+        $kode_product = $req->kode_product;
+        $nama_product = $req->nama_product;
+
+        $product = Product::find($dec_id);
+        $product->harga_jual = $harga_jual;
+        $product->nama = $nama_product;
+        $product->id_kategori = $kategori;
+        $product->kode_product = $kode_product;
+        if($product->save()){
+            $product_detail = ProductDetail::where('id_product', $product->id);
+            if($product_detail->delete()){
+                for($i= 0 ; $i<$jumlah_detail; $i++){
+                    if(isset($array_supplier[$i])){
+                        $detail = new ProductDetail;
+                        $detail->id_product = $product->id;
+                        $detail->id_supplier = $array_supplier[$i];
+                        $detail->harga_pembelian = $array_harga_pembelian[$i];
+                        if(!$detail->save()){
+                            return response()->json([
+                                'success' => false,
+                                'message' => 'Gagal menyimpan detail produk'
+                            ]);
+                            break;
+                        }
+                    }
+                }
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Berhasil menyimpan detail produk'
+                ]);
+            }else{
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menghapus detail produk lama'
+                ]);
+
+            }
+
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan produk'
+            ]);
+        }
+        // return $harga_jual;
+    }
     public function detail($enc_id)
     {
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));

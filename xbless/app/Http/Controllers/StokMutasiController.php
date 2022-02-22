@@ -227,12 +227,13 @@ class StokMutasiController extends Controller
         // $cekperusahaangudang = PerusahaanGudang::where('perusahaan_id', $perusahaan_id)->where('gudang_id', $gudang_id)->first();
 
         // $query = Product::select('product.id', 'product.product_code', 'product.product_name')->join('product_perusahaan_gudang', 'product.id', 'product_perusahaan_gudang.product_id')->where('product_perusahaan_gudang.perusahaan_gudang_id', $cekperusahaangudang->id)->take(20);
-        $query = StockAdj::where($gudang_id, '>', 0)->with(['getproduct']);
+        $query = StockAdj::where($gudang_id, '>', 0)->with(['getproduct'])->whereHas('getproduct');
         if ($term) {
             $query->where('getproduct.nama', 'LIKE', "%{$term}%");
             $query->orWhere('getproduct.kode_product', 'LIKE', "%{$term}%");
         }
         $produks = $query->get();
+        // return $produks;
         $out = [
             'results' => [],
             'pagination' => [
@@ -241,7 +242,7 @@ class StokMutasiController extends Controller
         ];
         foreach ($produks as $value) {
             array_push($out['results'], [
-                'id'   => $value->id,
+                'id'   => $value->getproduct->id,
                 'text' => $value->getproduct->kode_product . '-' . $value->getproduct->nama
             ]);
         }
@@ -440,6 +441,7 @@ class StokMutasiController extends Controller
         // }
         // $stok   = $this->cekStokAkhir($id, $perusahaan_id, $gudang_id);
         $stok = StockAdj::where('id_product', $id)->first();
+        // return $id;
         if($gudang_id == 1){
             $stok = $stok->stock_bs;
         }else if($gudang_id == 2){

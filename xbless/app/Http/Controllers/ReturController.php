@@ -69,9 +69,10 @@ class ReturController extends Controller
         return view('backend/retur/index_retur',compact('member','perusahaan','gudang','selectedmember','selectedperusahaan', 'sales', 'toko'));
     }
     public function edit($enc_id){
+        // return $enc_id;
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         $penjualan = ReturTransaksi::select('*')->where('id',$dec_id)->with(['getdetailtransaksi', 'getdetailtransaksi.getproduct'])->first();
-        // return $penjualan;
+        return $penjualan;
         //VALIDASI
             if(!isset($dec_id)){
                 return response()->json([
@@ -106,9 +107,11 @@ class ReturController extends Controller
                 $selectedtoko = $penjualan->id_toko;
                 $selectedstatuslunas = "";
 
+                return view('backend/retur/penjualan_edit_form',compact('enc_id','tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia', 'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko', 'selectedtoko', 'selectedstatuslunas', 'penjualan', 'detail_penjualan'));
+            }elseif($penjualan->jenis_transaksi == 1){
+
             }
 
-            return view('backend/retur/penjualan_edit_form',compact('enc_id','tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia', 'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko', 'selectedtoko', 'selectedstatuslunas', 'penjualan', 'detail_penjualan'));
     }
     public function simpan(Request $req){
         // return $req->all();
