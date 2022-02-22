@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Gudang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -124,9 +125,11 @@ class PembelianController extends Controller
     public function tambah(){
 
         $supplier = Supplier::all();
+        $gudang = Gudang::all();
         $selectedsupplier ="";
+        $selectedgudang ="";
 
-        return view('backend/pembelian/form',compact('supplier'));
+        return view('backend/pembelian/form',compact('supplier','gudang','selectedsupplier','selectedgudang'));
     }
 
 
@@ -464,6 +467,7 @@ class PembelianController extends Controller
         }
 
         $supplier = $req->supplier;
+        $gudang = $req->gudang;
         $nofaktur = $req->nofaktur;
         $tgl_faktur = date('Y-m-d',strtotime($req->faktur_date));
         $tgl_jatuh_tempo = date('Y-m-d',strtotime($req->jatuh_tempo));
@@ -498,6 +502,7 @@ class PembelianController extends Controller
             $pembelian = Pembelian::find($dec_id);
             $pembelian_detail = PembelianDetail::where('pembelian_id',$pembelian->id)->where('notransaction',$pembelian->no_faktur)->first();
             $pembelian->supplier_id       = $supplier;
+            $pembelian->id_gudang         = $gudang;
             $pembelian->no_faktur         = $nofaktur;
             $pembelian->tgl_faktur        = $tgl_faktur;
             $pembelian->tgl_transaksi     = $tgl_transaksi;
@@ -582,7 +587,8 @@ class PembelianController extends Controller
                 // return $req->all();
                 if($total_product > 0){
                     $pembelian                    = new Pembelian;
-                    $pembelian->supplier_id       = $supplier;
+                    $pembelian->supplier_id         = $supplier;
+                    $pembelian->id_gudang         = $gudang;
                     $pembelian->no_faktur         = $nofaktur;
                     $pembelian->tgl_faktur        = $tgl_faktur;
                     $pembelian->tgl_transaksi     = $tgl_transaksi;
@@ -723,11 +729,14 @@ class PembelianController extends Controller
 
         if(isset($pembelian)){
             $pembelian_detail = PembelianDetail::where('pembelian_id',$pembelian->id)->where('notransaction',$pembelian->no_faktur)->with(['getproduct'])->get();
+            // return response()->json($pembelian_detail);
             $supplier = Supplier::all();
+            $gudang = Gudang::all();
             $selectedProduct = "";
             $selectedsupplier ="";
+            $selectedgudang ="";
 
-            return view('backend/pembelian/form',compact('enc_id','pembelian','pembelian_detail','supplier','selectedsupplier'));
+            return view('backend/pembelian/form',compact('enc_id','pembelian','pembelian_detail','supplier','selectedsupplier','gudang','selectedgudang'));
         }else{
             return view('errors/noaccess');
         }

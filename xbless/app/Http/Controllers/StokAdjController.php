@@ -104,23 +104,69 @@ class StokAdjController extends Controller
         return json_encode($json_data);
     }
 
-    // public function getDataSupplier(Request $request)
-    // {
-    //     $limit = $request->length;
-    //     $start = $request->start;
-    //     $page  = $start + 1;
-    //     $search = $request->search['value'];
+    public function getDataSupplier(Request $request)
+    {
+        $limit = $request->length;
+        $start = $request->start;
+        $page  = $start + 1;
+        $search = $request->search['value'];
 
-    //     $request->session()->put('filter_supplier_admin', $request->filter_supplier_admin);
-    //     $request->session()->put('filter_gudang_admin', $request->filter_gudang_admin);
+        $querydb = StockAdj::select('tbl_stock.*','tbl_product.nama','tbl_product.kode_product','tbl_satuan.nama as nama_satuan');
+        $querydb->join('tbl_product','tbl_product.id','tbl_stock.id_product');
+        $querydb->join('tbl_satuan','tbl_satuan.id','tbl_product.id_satuan');
+        $querydb->whereHas('getproduct');
+        // $cek = $querydb->get();
+        // return response()->json($cek);
 
-    //     $querydb = Product::select('product.*', 'satuan.name as satuan_name');
-    //     $querydb->join('product_perusahaan_gudang', 'product_perusahaan_gudang.product_id', 'product.id');
-    //     $querydb->join('satuan', 'product.satuan_id', 'satuan.id');
-    //     $querydb->join('category_product', 'category_product.id', 'product.category_id');
-    //     $querydb->where('product_perusahaan_gudang.perusahaan_gudang_id', $perusahaan_gudang_id);
+        if (array_key_exists($request->order[0]['column'], $this->original_column)) {
+        $querydb->orderByRaw($this->original_column[$request->order[0]['column']] . ' ' . $request->order[0]['dir']);
+        } else {
+        $querydb->orderBy('id', 'DESC');
+        }
+        if ($search) {
+        $querydb->where(function ($query) use ($search) {
+            $query->orWhere('nama', 'LIKE', "%{$search}%");
+        });
+        }
+        $totalData = $querydb->get()->count();
 
-    // }
+        $totalFiltered = $querydb->get()->count();
+
+        $querydb->limit($limit);
+        $querydb->offset($start);
+        $data = $querydb->get();
+
+        foreach ($data as $key => $value) {
+            $enc_id = $this->safe_encode(Crypt::encryptString($value->id));
+            $action = "";
+            $value->no                  = $key + $page;
+            // $value->id             = $value->id;
+            $value->nama_product             = $value->getproduct->nama;
+            $value->satuan  = $value->nama_satuan;
+            $value->stock_penjualan     = $value->stock_penjualan;
+            $value->stock_pembelian     = $value->stock_pembelian;
+            $value->stock_opname        = $value->stock_approve;
+            $value->stock_bs            = $value->stock_bs;
+            $value->action = '<a href="#" onclick="showproduct(\''. $enc_id. '\')" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip"><i class="fa fa-file"></i> Detail</a> ';
+        }
+        if ($request->user()->can('adjstok.index')) {
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data
+        );
+        } else {
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => 0,
+            "recordsFiltered" => 0,
+            "data"            => []
+        );
+        }
+        return json_encode($json_data);
+
+    }
 
     public function getData_(Request $request)
     {

@@ -21,9 +21,9 @@
                         <label class="font-normal">Range select</label>
                         <div class="input-daterange input-group" id="datepicker">
                             <span class="input-group-addon px-3 bg-white border"><i class="fa fa-calendar"></i></span>
-                            <input type="text" class="form-control-sm form-control" name="start" value="05/14/2014">
+                            <input type="text" class="form-control-sm form-control" name="start" id="start" value="{{ $periode_start }}">
                             <span class="input-group-addon px-3 bg-primary">to</span>
-                            <input type="text" class="form-control-sm form-control" name="end" value="05/22/2014">
+                            <input type="text" class="form-control-sm form-control" name="end" id="end" value="{{ $periode_end }}">
                             <span class="input-group-addon px-3 bg-white  border"><i class="fa fa-calendar"></i></span>
                         </div>
                     </div>
@@ -32,12 +32,13 @@
                     <div class="form-group">
                         <label class="font-normal">Salesman</label>
                         <div>
-                            <select class="select2_salesman form-control">
-                                <option></option>
-                                <option value="Sales1">Sales 1</option>
-                                <option value="Sales2">Sales 2</option>
-                                <option value="Sales3">Sales 3</option>
-                                <option value="Sales4">Sales 4</option>
+                            <select class="select2_salesman form-control" id="sales">
+                                <option value="">Select Sales</option>
+                                @if(isset($sales))
+                                    @foreach($sales as $key => $value)
+                                        <option value="{{ $value->id }}">{{ $value->nama }}</option>
+                                    @endforeach
+                                @endif
                             </select>
                         </div>
                     </div>
@@ -51,7 +52,7 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>P embayaran</h5>
+                    <h5>Pembayaran</h5>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -98,33 +99,52 @@
 @endsection
 @push('scripts')
 <script>
+    var table;
     $(document).ready(function () {
-            $(".select2_salesman").select2();
-            $('#table_pembayaran').DataTable({
-                pageLength: 10,
-                responsive: true,
-                dom: '<"html5buttons"B>lTfgitp',
-                buttons: [
-                    {
-                        extend: 'copy',
-                        exportOptions: {
-                            orthogonal: 'export'
-                        },
-                        header: true,
-                        footer: true,
-                        className: 'btn btn-outline btn-default btn-lg',
-                    },
-                    {
-                        extend: 'excel',
-                        exportOptions: {
-                            orthogonal: 'export'
-                        },
-                        header: true,
-                        footer: true,
-                        className: 'btn btn-block bg-primary text-white',
+        $(".select2_salesman").select2();
+        table = $('#table_pembayaran').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "pageLength": 25,
+            "select" : true,
+            "responsive": true,
+            "stateSave"  : true,
+            "dom": '<"html5">lftip',
+            "ajax":{
+                    "url": "{{ route("transaksi.pembayaran.getdata") }}",
+                    "dataType": "json",
+                    "type": "POST",
+                    data: function ( d ) {
+                        d._token= "{{csrf_token()}}";
+                        d.periode_start = $('#start').val()
+                        d.periode_end = $('#end').val()
+                        d.sales = $('#sales option:selected').val()
                     }
-                ]
-            });
+                },
+            pageLength: 10,
+            responsive: true,
+            dom: '<"html5buttons"B>lTfgitp',
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        orthogonal: 'export'
+                    },
+                    header: true,
+                    footer: true,
+                    className: 'btn btn-outline btn-default btn-lg',
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        orthogonal: 'export'
+                    },
+                    header: true,
+                    footer: true,
+                    className: 'btn btn-block bg-primary text-white',
+                }
+            ]
         });
+    });
 </script>
 @endpush

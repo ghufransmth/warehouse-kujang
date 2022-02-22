@@ -60,7 +60,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group row"><label class="col-sm-4 col-form-label">Tgl Transaksi</label>
                                     <div class="col-sm-8">
@@ -70,7 +70,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Keterangan</label>
                             <div class="col-sm-10">
@@ -86,7 +86,7 @@
                                     <tr>
                                         <th>Name</th>
                                         <th>Nominal</th>
-                                        <!-- <th>Jenis Transaksi</th> -->
+                                        <th>Tgl Transaksi</th>
                                         <th>Keterangan</th>
                                         <th>Action</th>
                                     </tr>
@@ -101,6 +101,11 @@
                                                 <td><div class='input-group'>
                                                     <span class='input-group-addon'>Rp.</span><input type='text' class='form-control nominal_akun' id='nominal' name='nominal[]' value="{{ $value->nominal }}" autocomplete='off'>
                                                 </div></td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span><input type="text" class="form-control" id="tgl_transaksi" name="tgl_transaksi[]" value="{{ isset($finance) ? $finance->tgl_transaksi :''}}" autocomplete="off">
+                                                    </div>
+                                                </td>
                                                 <td><input type='text' class='form-control' id='note' value="{{$value->keterangan}}" name='note[]'></td>
                                                 <td class='text-center'><a href='#!' onclick='javascript:deleteProduk({{$value->id}})' class='btn btn-danger btn-sm icon-btn sm-btn-flat product-tooltip' title='Hapus'><i class='fa fa-trash'></i></a></td>
                                             </tr>

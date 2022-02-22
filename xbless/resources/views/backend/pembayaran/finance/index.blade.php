@@ -33,7 +33,6 @@
                                 <tr class=" text-white text-center bg-primary">
                                     <th width="5%">No</th>
                                     <th>Komponen</th>
-                                    <th>Tanggal Transaksi</th>
                                     <th>Kategori</th>
                                     <th>Total</th>
                                     <th class="text-center">Aksi</th>
@@ -46,7 +45,6 @@
                                 <tr class=" text-white text-center bg-primary">
                                     <th width="5%">No</th>
                                     <th>Komponen</th>
-                                    <th>Tanggal Transaksi</th>
                                     <th>Kategori</th>
                                     <th>Total</th>
                                     <th class="text-center">Aksi</th>
@@ -88,7 +86,6 @@
             "columns": [
                 {"data":"no"},
                 {"data":"name"},
-                {"data":"tgl_transaksi"},
                 {"data":"kategori"},
                 {"data":"total",
                     "className" : "text-right"
