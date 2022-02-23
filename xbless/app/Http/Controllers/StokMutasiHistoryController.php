@@ -17,6 +17,7 @@ use App\Models\StockMutasi;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use App\Exports\HistoryMutasiStockExports;
+use App\Models\StockMutasiDetail;
 use Auth;
 use PDF;
 use Excel;
@@ -29,7 +30,7 @@ class StokMutasiHistoryController extends Controller
     );
     public function index()
     {
-        // $gudang     = Gudang::all();
+        $gudang     = Gudang::all();
         // $perusahaan = Perusahaan::all();
 
         if(session('filter_perusahaan')==""){
@@ -64,7 +65,7 @@ class StokMutasiHistoryController extends Controller
         }
 
 
-        return view('backend/stok/stokmutasihistory/index',compact('selectedgudang','selectedgudangtujuan','selectedperusahaan','tgl_start','tgl_end'));
+        return view('backend/stok/stokmutasihistory/index',compact('selectedgudang','selectedgudangtujuan','selectedperusahaan','tgl_start','tgl_end', 'gudang'));
     }
     public function getData(Request $request)
     {
@@ -79,7 +80,9 @@ class StokMutasiHistoryController extends Controller
         $request->session()->put('filter_tgl_start', $request->filter_tgl_start);
         $request->session()->put('filter_tgl_end', $request->filter_tgl_end);
 
-        $querydb = StockMutasi::select('*');
+
+        $querydb = StockMutasi::select('*')->whereHas('getdetail');
+        // return $querydb->get();
 
         if(array_key_exists($request->order[0]['column'], $this->original_column)){
             $querydb->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
@@ -107,7 +110,7 @@ class StokMutasiHistoryController extends Controller
             $querydb->whereDate('tgl_mutasi','<=',date('Y-m-d',strtotime($request->filter_tgl_end)));
 
         }
-
+        // return $querydb->get();
        if($search) {
             $querydb->whereHas('product', function($query) use ($search){
                 $query->orwhere('nama','LIKE',"%{$search}%");
@@ -120,32 +123,45 @@ class StokMutasiHistoryController extends Controller
 
       $querydb->limit($limit);
       $querydb->offset($start);
-      $data = $querydb->get();
+      $dataa = $querydb->get();
     //   return $data;
-      foreach($data as $key=> $value)
-      {
-        $enc_id = $this->safe_encode(Crypt::encryptString($value->id));
-        $action = "";
+    $no = 1;
+    $array = array();
+    foreach($dataa as $result){
+        $data = $result->getdetail;
+        foreach($data as $key=> $value)
+        {
+          $enc_id = $this->safe_encode(Crypt::encryptString($value->id));
+          $action = "";
 
 
-        $value->no                = $key+$page;
-        $value->id                = $value->id;
-        $value->nama_produk       = $value->product->nama;
-        $value->nama_gudang_awal  = $value->gudang_tujuan == 1?'Gudang BS':'Gudang Penjualan';
-        $value->nama_gudang_tujuan= $value->gudang_tujuan == 1?'Gudang Penjualan':'Gudang BS';
-        $value->dari_stock        = $value->stock_awal.' '.$value->satuan->nama;
-        $value->ke_stock          = $value->qty_mutasi.' '.$value->satuan->nama;
-        $value->new_stock         = ($value->from_stock - $value->to_stock).' '.$value->satuan->nama;
-        $value->note              = 'Mutasi dari Gudang <b>'.(($value->gudang_tujuan == 1)?"Gudang BS":"Gudang Penjualan").' (Qty : '.$value->dari_stock.')</b> Ke Gudang <b>'.$value->nama_gudang_tujuan.' (Qty : '.$value->ke_stock.')</b></b>';
-        $value->tgl_mutasi        = date('d-m-Y H:i',strtotime($value->tgl_mutasi));
-        $value->created_by        = $value->created_by;
-      }
-      if ($request->user()->can('historymutasistok.index')) {
+          $value->no                = $no++;
+          $value->id                = $value->id;
+          $value->nama_produk       = $value->product->nama;
+          $value->nama_gudang_awal  = $value->getstockmutasi->getgudangawal->name;
+          $value->nama_gudang_tujuan= $value->getstockmutasi->getgudangtujuan->name;
+          $value->dari_stock        = $value->stock_awal.' '.$value->satuan->nama;
+          $value->ke_stock          = $value->qty_mutasi.' '.$value->satuan->nama;
+          $value->new_stock         = ($value->stock_awal - $value->qty_mutasi).' '.$value->satuan->nama;
+          $value->note              = 'Mutasi dari <b>'.$value->getstockmutasi->getgudangawal->name.' (Qty : '.$value->dari_stock.')</b> Ke Gudang <b>'.$value->getstockmutasi->getgudangtujuan->name.' (Qty : '.$value->ke_stock.')</b></b>';
+          $value->tgl_mutasi        = date('d-m-Y H:i',strtotime($value->getstockmutasi->tgl_mutasi));
+          $value->created_by        = $value->getstockmutasi->created_by;
+        }
+        if($array == []){
+            $array = array_merge($array, $data->toArray());
+        }else{
+            $array = array_merge($array, $data->toArray());
+        }
+        // $array->push($data);
+
+    }
+    // return $array;
+    if ($request->user()->can('historymutasistok.index')) {
         $json_data = array(
                   "draw"            => intval($request->input('draw')),
                   "recordsTotal"    => intval($totalData),
                   "recordsFiltered" => intval($totalFiltered),
-                  "data"            => $data
+                  "data"            => $array
                   );
       }else{
          $json_data = array(

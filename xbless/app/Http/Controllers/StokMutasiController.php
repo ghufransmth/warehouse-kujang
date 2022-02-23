@@ -15,6 +15,7 @@ use App\Models\StockOpname;
 use App\Models\StockOpnameDetail;
 use App\Models\StockMutasi;
 use App\Models\StockAdj;
+use App\Models\StockMutasiDetail;
 use App\Models\Supplier;
 use App\Models\TransaksiStock;
 use Illuminate\Support\Facades\Crypt;
@@ -40,9 +41,11 @@ class StokMutasiController extends Controller
         // $perusahaan = Perusahaan::all();
         // $selectedperusahaan = '';
         $suplier = Supplier::all();
-        return view('backend/stok/stokmutasi/form', ['suplier' => $suplier]);
+        $gudang = Gudang::all();
+        return view('backend/stok/stokmutasi/form', ['suplier' => $suplier, 'gudang' => $gudang]);
     }
     public function simpan(Request $req){
+        // return $req->all();
         // return Auth::user()->username;
         // VALIDASI
             $cek_notrans = StockMutasi::where('no_transaksi', $req->no_transaksi)->first();
@@ -59,27 +62,50 @@ class StokMutasiController extends Controller
         $transaksi_stock->flag_transaksi = 1;
         $transaksi_stock->created_by = Auth::user()->username;
         if($transaksi_stock->save()){
+            $transaksi_mutasi = new StockMutasi;
+            $transaksi_mutasi->id_supplier      = $req->supplier;
+            $transaksi_mutasi->gudang_dari      = $req->gudang_from;
+            $transaksi_mutasi->gudang_tujuan    = $req->gudang_to;
+            $transaksi_mutasi->no_transaksi     = $req->no_transaksi;
+            $transaksi_mutasi->tgl_mutasi       = date('Y-m-d', strtotime($req->tgl_mutasi));
+            $transaksi_mutasi->created_by       = Auth::user()->username;
+            if(!$transaksi_mutasi->save()){
+                return response()->json([
+                    'success' => FALSE,
+                    'message' => 'Gagal membuat transaksi mutasi'
+                ]);
+            }
             for($i = 0; $i < $req->jumlahdata; $i++){
-                $transaksi_mutasi = new StockMutasi;
-                $transaksi_mutasi->gudang_tujuan    = $req->gudang_to;
-                $transaksi_mutasi->no_transaksi     = $req->no_transaksi;
-                $transaksi_mutasi->id_product       = $req->product[$i];
-                $transaksi_mutasi->qty_mutasi       = $req->qty_mutasi[$i];
-                $transaksi_mutasi->id_satuan_mutasi = $req->satuan[$i];
-                $transaksi_mutasi->stock_awal       = $req->stok[$i];
-                $transaksi_mutasi->stock_akhir      = $transaksi_mutasi->stock_awal - $transaksi_mutasi->qty_mutasi;
-                $transaksi_mutasi->tgl_mutasi       = date('Y-m-d', strtotime($req->tgl_mutasi));
-                $transaksi_mutasi->created_by       = Auth::user()->username;
-                if($transaksi_mutasi->save()){
-                    $stock = StockAdj::where('id_product', $transaksi_mutasi->id_product)->first();
-                    if($transaksi_mutasi->gudang_tujuan == 1){
-                        $stock->stock_penjualan += ($transaksi_mutasi->satuan->qty * $transaksi_mutasi->qty_mutasi);
-                        $stock->stock_bs        -= ($transaksi_mutasi->satuan->qty * $transaksi_mutasi->qty_mutasi);
-                    }else if($transaksi_mutasi->gudang_tujuan == 2){
-                        $stock->stock_penjualan -= ($transaksi_mutasi->satuan->qty * $transaksi_mutasi->qty_mutasi);
-                        $stock->stock_bs        += ($transaksi_mutasi->satuan->qty * $transaksi_mutasi->qty_mutasi);
+                $detail_mutasi          = new StockMutasiDetail;
+                $satuan = Satuan::find($req->satuan[$i]);
+                $detail_mutasi->id_mutasi               = $transaksi_mutasi->id;
+                $detail_mutasi->id_product       = $req->product[$i];
+                $detail_mutasi->qty_mutasi       = $req->qty_mutasi[$i];
+                $detail_mutasi->id_satuan_mutasi = $req->satuan[$i];
+                $detail_mutasi->stock_awal       = $req->stok[$i];
+                $detail_mutasi->stock_akhir      = $detail_mutasi->stock_awal - ($detail_mutasi->qty_mutasi * $satuan->qty );
+                if($detail_mutasi->save()){
+                    $stock_gudang_from = StockAdj::where('id_product', $detail_mutasi->id_product)->where('id_gudang', $transaksi_mutasi->gudang_from)->where('id_supplier', $transaksi_mutasi->id_supplier)->first();
+                    $stock_gudang_to = StockAdj::where('id_product', $detail_mutasi->id_product)->where('id_gudang', $transaksi_mutasi->gudang_to)->where('id_supplier', $transaksi_mutasi->id_supplier)->first();
+                    if(!isset($stock_gudang_to)){
+                        $new_stok = new StockAdj;
+                        $new_stok->id_product = $detail_mutasi->id_product;
+                        $new_stok->id_gudang = $transaksi_mutasi->gudang_tujuan;
+                        $new_stok->id_supplier = $transaksi_mutasi->id_supplier;
+                        $new_stok->id_supplier = $transaksi_mutasi->id_supplier;
+                        if(!$new_stok->save()){
+                            return response()->json([
+                                'success' => FALSE,
+                                'message' => 'Gagal membuat stok baru'
+                            ]);
+                            break;
+                        }
+                        $stock_gudang_to = StockAdj::where('id_product', $detail_mutasi->id_product)->where('id_gudang', $transaksi_mutasi->gudang_to)->where('id_supplier', $transaksi_mutasi->id_supplier)->first();
+
                     }
-                    if($stock->save()){
+                    $stock_gudang_from->gudang_baik  -= ($satuan->qty * $detail_mutasi->qty_mutasi);
+                    $stock_gudang_to->gudang_baik    += ($satuan->qty * $detail_mutasi->qty_mutasi);
+                    if($stock_gudang_from->save() && $stock_gudang_to->save()){
                         continue;
                     }else{
                         return response()->json([
@@ -217,17 +243,15 @@ class StokMutasiController extends Controller
     public function getProduk(Request $request)
     {
         // return $request->all();
-        if($request->gudang_id == 1){
-            $gudang_id = 'stock_bs';
-        }else if($request->gudang_id == 2){
-            $gudang_id = 'stock_penjualan';
-        }
+        $suplier = $request->supplier;
+        $gudang_id = 'gudang_baik';
+        $gudang_from = $request->gudang_from;
         // $gudang_id     = $request->gudang_id;
         $term          = $request->term;
         // $cekperusahaangudang = PerusahaanGudang::where('perusahaan_id', $perusahaan_id)->where('gudang_id', $gudang_id)->first();
 
         // $query = Product::select('product.id', 'product.product_code', 'product.product_name')->join('product_perusahaan_gudang', 'product.id', 'product_perusahaan_gudang.product_id')->where('product_perusahaan_gudang.perusahaan_gudang_id', $cekperusahaangudang->id)->take(20);
-        $query = StockAdj::where($gudang_id, '>', 0)->with(['getproduct'])->whereHas('getproduct');
+        $query = StockAdj::where($gudang_id, '>', 0)->where('id_supplier', $suplier)->where('id_gudang', $gudang_from)->with(['getproduct'])->whereHas('getproduct');
         if ($term) {
             $query->where('getproduct.nama', 'LIKE', "%{$term}%");
             $query->orWhere('getproduct.kode_product', 'LIKE', "%{$term}%");
@@ -431,7 +455,9 @@ class StokMutasiController extends Controller
     public function tambahProduk(Request $request)
     {
         $id            = $request->id_product;
-        $gudang_id     = $request->gudang_id;
+        $gudang_from     = $request->gudang_from;
+        $gudang_to     = $request->gudang_to;
+        $suplier     = $request->supplier;
         // $cekperusahaangudang = PerusahaanGudang::where('perusahaan_id', $perusahaan_id)->where('gudang_id', $gudang_id)->first();
         // $cek = ProductPerusahaanGudang::select('stok')->where('product_id', $id)->where('perusahaan_gudang_id', $cekperusahaangudang->id)->first();
         // if ($cek) {
@@ -440,13 +466,13 @@ class StokMutasiController extends Controller
         //     $stok = '-';
         // }
         // $stok   = $this->cekStokAkhir($id, $perusahaan_id, $gudang_id);
-        $stok = StockAdj::where('id_product', $id)->first();
+        $stok = StockAdj::where('id_product', $id)->where('id_supplier', $suplier)->where('id_gudang', $gudang_from)->first()->gudang_baik;
         // return $id;
-        if($gudang_id == 1){
-            $stok = $stok->stock_bs;
-        }else if($gudang_id == 2){
-            $stok = $stok->stock_penjualan;
-        }
+        // if($gudang_from == 1){
+        //     $stok = $stok->stock_bs;
+        // }else if($gudang_id == 2){
+        //     $stok = $stok->stock_penjualan;
+        // }
         $product = Product::find($id);
 
         // $satuan = $product->getsatuan ? $product->getsatuan : '-';
