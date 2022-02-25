@@ -136,6 +136,7 @@ class ReturPembelianController extends Controller
 
     public function simpan(Request $req)
     {
+        // return $req->all();
         // return $req->produk;
         $nofaktur = $req->nofaktur;
         $tgl_faktur = date('Y-m-d',strtotime($req->faktur_date));
@@ -158,7 +159,7 @@ class ReturPembelianController extends Controller
             $retur->catatan = $keterangan;
             $retur->jenis_transaksi = 1;
             $retur->total_harga = $total_harga_pembelian;
-            $retur->tgl_transaksi = $tgl_transaksi;
+            $retur->tgl_retur = $tgl_transaksi;
             $retur->created_user = auth()->user()->username;
             if($retur->save()){
                 for($i = 0; $i < $total_product; $i++){

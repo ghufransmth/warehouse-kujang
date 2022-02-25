@@ -47,8 +47,11 @@
                 <div class="col-sm-10 error-text">
                     <select class="form-control select2" id="gudang" name="gudang">
                         <option value="">Pilih Gudang Tujuan</option>
-                        <option value="1">Gudang Penjualan</option>
-                        <option value="2">Gudang BS</option>
+                        @foreach($gudang as $key => $value)
+                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+
+                        @endforeach
+                        {{-- <option value="2">Gudang BS</option> --}}
                         {{-- @foreach($gudang as $key => $row)
                                         <option value="{{$row->id}}"{{ $selectedgudang == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}
                         </option>
@@ -88,7 +91,7 @@
         </div>
         <div class="hr-line-dashed"></div>
         <div class="form-group row">
-            @can('historymutasistok.excel')
+            {{-- @can('historymutasistok.excel')
             <div class="col-xs-3">
                 &nbsp;&nbsp;&nbsp;<button class="btn btn-primary" type="button" id="ExportExcel"><span
                         class="fa fa-file-excel-o"></span> Export Excel </button>&nbsp;
@@ -105,11 +108,11 @@
                 <button class="btn btn-danger" type="button" id="ExportPdf"><span class="fa fa-file-pdf-o"></span>
                     Export PDF</button>&nbsp;
             </div>
-            @endcan
+            @endcan --}}
         </div>
         </form>
 
-        <div class="hr-line-dashed"></div>
+        {{-- <div class="hr-line-dashed"></div> --}}
 
         <div class="table-responsive">
             <table id="table1" class="table display p-0 table-hover table-striped" style="overflow-x: auto;">

@@ -49,7 +49,7 @@ class ReportTransaksiController extends Controller
             $periode_end = date('Y-m-d');
         }
         
-        $query = Penjualan::select('tbl_penjualan.id','tbl_penjualan.no_faktur','tbl_penjualan.tgl_jatuh_tempo','tbl_penjualan.tgl_faktur','tbl_penjualan.status_lunas','tbl_sales.nama as sales_name','toko.name as toko_name');
+        $query = Penjualan::select('tbl_penjualan.id','tbl_penjualan.no_faktur','tbl_penjualan.tgl_jatuh_tempo','tbl_penjualan.tgl_faktur','tbl_penjualan.jenis_pembayaran','tbl_penjualan.status_lunas','tbl_sales.nama as sales_name','toko.name as toko_name');
         $query->leftJoin('tbl_sales','tbl_sales.id','tbl_penjualan.id_sales');
         $query->leftJoin('toko','toko.id','tbl_penjualan.id_toko');
         if(array_key_exists($request->order[0]['column'], $this->original_column)){
@@ -96,12 +96,22 @@ class ReportTransaksiController extends Controller
                 $status = '<span class="label label-primary">Lunas</span>';
             }
 
+            if($result->jenis_pembayaran == 1){
+                $bayar = '<span class="label label-success">Cash</span>';
+            }else if($result->jenis_pembayaran == 2){
+                $bayar = '<span class="label label-success">Ceck / Giro</span>';
+            }else if($result->jenis_pembayaran == 3){
+                $bayar = '<span class="label label-success">Transfer</span>';
+            }else{
+                $bayar = '<span class="label label-danger">Pending</span>';
+            }
+
             $result->no             = $key+$page;
             $result->tanggal_faktur = date('d F Y', strtotime($result->tgl_faktur));
             $result->tanggal_tempo  = date('d F Y', strtotime($result->tgl_jatuh_tempo));
             $result->tanggal_kirim  = date('d F Y');
             $result->status         = $status;
-            $result->cara_bayar     = 'Cash';
+            $result->cara_bayar     = $bayar;
             $result->action         = $action;
         }
   

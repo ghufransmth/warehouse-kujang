@@ -81,8 +81,8 @@ class KomponenController extends Controller
 
             if($result->kategori == 0){
                 $kategori = 'DEBIT';
-            }else{
-                $aktegori = 'KREDIT';
+            }else if($result->kategori == 1){
+                $kategori = 'KREDIT';
             }
 
             $result->no             = $key+$page;

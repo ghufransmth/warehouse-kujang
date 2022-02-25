@@ -16,6 +16,15 @@ class StockMutasi extends Model
     public function product(){
         return $this->hasOne(Product::class, 'id', 'id_product');
     }
+    public function getdetail(){
+        return $this->hasMany(StockMutasiDetail::class, 'id_mutasi', 'id');
+    }
+    public function getgudangawal(){
+        return $this->hasOne(Gudang::class, 'id', 'gudang_dari');
+    }
+    public function getgudangtujuan(){
+        return $this->hasOne(Gudang::class, 'id', 'gudang_tujuan');
+    }
 
 
 

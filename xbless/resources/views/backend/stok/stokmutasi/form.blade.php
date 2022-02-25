@@ -73,19 +73,29 @@
                                 </div> --}}
                 <label class="col-sm-2 col-form-label">Suplier * </label>
                 <div class="col-sm-10 error-text">
-                    <select class="form-control select2" id="gudang_to" name="gudang_to">
+                    <select class="form-control select2" id="supplier" name="supplier">
                         <option value="0">Pilih Suplier</option>
                         @foreach($suplier as $key => $value)
                             <option value="{{ $value->id }}">{{ $value->nama }}</option>
                         @endforeach
                     </select>
                 </div>
+                <label class="col-sm-2 col-form-label">Dari Gudang * </label>
+                <div class="col-sm-4 error-text">
+                    <select class="form-control select2" id="gudang_from" name="gudang_from">
+                        <option value="0">Pilih Gudang</option>
+                        @foreach($gudang as $key => $value)
+                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <label class="col-sm-2 col-form-label">Tujuan Gudang * </label>
-                <div class="col-sm-10 error-text">
+                <div class="col-sm-4 error-text">
                     <select class="form-control select2" id="gudang_to" name="gudang_to">
                         <option value="0">Pilih Gudang</option>
-                        <option value="1">Gudang Penjualan</option>
-                        <option value="2">Gudang BS</option>
+                        @foreach($gudang as $key => $value)
+                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>
@@ -198,7 +208,7 @@
                 $('#table1 tbody > tr').remove();
             }
             loadProduct();
-            loadGudangTujuan();
+            // loadGudangTujuan();
         });
         $('#simpan').on('click', function() {
             if($("#submitData").valid()){
@@ -342,7 +352,9 @@
     function loadProduct(){
         // var perusahaan_id = $('#perusahaan').val();
         // console.log('tes');
-        var gudang_id = $('#gudang_to').val();
+        var gudang_from = $('#gudang_from').val();
+        var gudang_to = $('#gudang_to').val();
+        var supplier = $('#supplier').val();
         $('.selectProduct').select2({
         ajax: {
             url: '{{route('stokmutasi.getproduct')}}',
@@ -350,7 +362,9 @@
             data: function (params) {
                 var query = {
                     term: params.term,
-                    gudang_id : gudang_id,
+                    gudang_from : gudang_from,
+                    gudang_to : gudang_to,
+                    supplier : supplier,
                 }
                 return query;
             }
@@ -362,13 +376,22 @@
 
 <script>
     $( "#pilihProduct" ).change(function() {
-        var gudang_id = $('#gudang_to').val();
+        var gudang_to = $('#gudang_to').val();
+        var gudang_from = $('#gudang_from').val();
+        var supplier = $('#supplier').val();
         var val = [];
 
         $("input[name='product[]']").each(function(i){
             val[i] = $(this).val();
         });
-        if(gudang_id==''){
+        if(supplier == '0'){
+            Swal.fire('Ups','Silahkan Pilih Supplier terlebih dahulu','info');
+            return false;
+
+        }else if(gudang_from==''){
+            Swal.fire('Ups','Silahkan Pilih Gudang terlebih dahulu','info');
+            return false;
+        }else if(gudang_to==''){
             Swal.fire('Ups','Silahkan Pilih Gudang terlebih dahulu','info');
             return false;
         }else{
@@ -383,7 +406,9 @@
                     data: {
                         _token  : '{{csrf_token()}}',
                         id_product    : $(this).val(),
-                        gudang_id: gudang_id,
+                        gudang_from: gudang_from,
+                        gudang_to: gudang_to,
+                        supplier: supplier,
                     },
                     dataType: 'json',
                     success: function(result){
