@@ -289,24 +289,11 @@ class SalesController extends Controller
     {
     $dec_id   = $this->safe_decode(Crypt::decryptString($enc_id));
     $sales    = Sales::find($dec_id);
-    $cekexistpo     = PurchaseOrder::where('sales_id',$dec_id)->where('flag_status',0)->first();
-    $cekexistrpo    = PurchaseOrder::where('sales_id',$dec_id)->where('flag_status',1)->first();
-    $cekexistbo     = PurchaseOrder::where('sales_id',$dec_id)->where('flag_status',2)->first();
-    $cekexistinvoice= Invoice::where('sales_id',$dec_id)->first();
     if($sales) {
-      if($cekexistpo) {
-        return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Sales sudah direlasikan dengan Transkasi PO, Silahkan hapus dahulu PO yang terkait dengan Sales ini.']);
-      }else if($cekexistrpo) {
-        return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Sales sudah direlasikan dengan Transkasi RPO, Silahkan hapus dahulu RPO yang terkait dengan Sales ini.']);
-      }else if($cekexistbo) {
-        return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Sales sudah direlasikan dengan Transkasi BO, Silahkan hapus dahulu BO yang terkait dengan Sales ini.']);
-      }else if($cekexistinvoice) {
-        return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Sales sudah direlasikan dengan Invoice, Silahkan hapus dahulu Invoice yang terkait dengan Sales ini.']);
-      }else{
-            $hapusmembersales = MemberSales::where('sales_id',$sales->id)->delete();
-            $sales->delete();
-            return response()->json(['status'=>"success",'message'=>'Data Berhasil dihapus.']);
-      }
+        $userdelete = User::find($sales->user_id);
+        $userdelete->delete();
+        $sales->delete();
+        return response()->json(['status'=>"success",'message'=>'Data Berhasil dihapus.']);
     }else {
         return response()->json(['status'=>"failed",'message'=>'Gagal menghapus data. Silahkan ulangi kembali.']);
     }
