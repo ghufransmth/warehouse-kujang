@@ -25,6 +25,9 @@ class StockAdj extends Model
         // return $this->belongsTo('App\Models\Product','product_id');
         return $this->hasOne(Product::class, 'id', 'id_product');
     }
+    public function getsupplier(){
+        return $this->hasOne(Supplier::class, 'id', 'id_supplier');
+    }
 
 
 }

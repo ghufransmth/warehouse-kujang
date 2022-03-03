@@ -44,12 +44,12 @@
 
                                 <label class="col-sm-2 col-form-label">Kode Produk *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="kode_produk" name="kode_produk" value="{{isset($produk)? $produk->product_code : ''}}">
+                                    <input type="text" class="form-control" id="kode_produk" name="kode_produk" value="{{isset($produk)? $produk->kode_product : ''}}">
                                 </div>
                             </div>
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Nama Produk *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($produk)? $produk->product_name : ''}}">
+                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($produk)? $produk->nama : ''}}">
                                 </div>
                             </div>
 

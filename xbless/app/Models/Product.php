@@ -20,5 +20,8 @@ class Product extends Model
     public function getstock(){
         return $this->hasOne(StockAdj::class, 'id_product', 'id');
     }
+    public function getdetailproduct(){
+        return $this->hasMany(ProductDetail::class, 'id_product', 'id');
+    }
 
 }

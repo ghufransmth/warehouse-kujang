@@ -110,6 +110,10 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/getdatatertagih', [BerandaController::class, 'getDataTertagih'])->name('getdata');
             Route::get('/getdata/{id}', [BerandaController::class, 'detailTertagih'])->name('detail');
         });
+        Route::group(['prefix' => 'retur', 'as' => 'retur.'], function () {
+            Route::post('/getdataretur', [BerandaController::class, 'getDataRetur'])->name('getdata');
+            Route::get('/getdata/{id}', [BerandaController::class, 'detailRetur'])->name('detail');
+        });
     });
 
     Route::get('/manage/logout', [LoginController::class, 'logout'])->name('manage.logout');
@@ -589,8 +593,12 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             // Route::get('/tambah', [ProdukController::class, 'tambah'])->name('tambah');
             Route::get('/detail/{id}', [ProdukController::class, 'detail'])->name('detail');
             Route::get('/ubah/{id}', [ProdukController::class, 'ubah'])->name('ubah');
+            Route::get('/detail_ubah/{id}', [ProdukController::class, 'detail_ubah'])->name('detail_ubah');
             Route::post('/simpan', [ProdukController::class, 'simpan'])->name('simpan');
             Route::post('/getData', [ProdukController::class, 'getdata'])->name('getdata');
+            Route::get('/searchsupplier', [ProdukController::class, 'supplier'])->name('supplier');
+            Route::post('/addsupplier', [ProdukController::class, 'addsupplier'])->name('addsupplier');
+            Route::post('/detail_simpan', [ProdukController::class, 'detail_simpan'])->name('detail_simpan');
             Route::post('/produk_image', [ProdukController::class, 'ProdukImage'])->name('image');
             Route::post('/delete_qrcode', [ProdukController::class, 'delete_qrcode'])->name('delete_qrcode');
             Route::delete('/hapus/{id?}', [ProdukController::class, 'delete'])->name('delete');
@@ -616,10 +624,14 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/expedisi', [PurchaseController::class, 'expedisi'])->name('expedisi');
             Route::post('/simpanexpedisi', [PurchaseController::class, 'simpan_expedisi'])->name('simpanexpedisi');
             Route::post('/simpan', [PurchaseController::class, 'simpan'])->name('simpan');
+            Route::get('/proses/{id?}', [PurchaseController::class, 'proses'])->name('proses');
+            Route::post('/getsupplier', [PurchaseController::class, 'getsupplier'])->name('getsupplier');
             Route::post('/addproduk', [PurchaseController::class, 'addproduk'])->name('addproduk');
             Route::post('/updatepo', [PurchaseController::class, 'updatepo'])->name('updatepo');
             Route::post('/updatepokrnditolak', [PurchaseController::class, 'updatepokrnditolak'])->name('updatepokrnditolak');
             Route::get('/edit/{id?}', [PurchaseController::class, 'edit'])->name('edit');
+
+
 
             //IMPORT PENJUALAN
             Route::get('/import', [PenjualanImportController::class, 'index'])->name('import');

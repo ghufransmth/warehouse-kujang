@@ -154,7 +154,7 @@ class PurchaseController extends Controller
     public function edit($enc_id){
         // return $enc_id;
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
-        // return $dec_id;
+        return $dec_id;
         $penjualan = Penjualan::find($dec_id);
         // return $penjualan;
         if(isset($penjualan)){
@@ -257,6 +257,10 @@ class PurchaseController extends Controller
                 $result->status_pembayaran = '<span class="badge badge-danger">Ditolak</span>';
             }else{
                 $result->status_pembayaran = '<span class="badge badge-primary">Lunas</span>';
+            }
+
+            if($result->flag_proses != '1' && $result->status_lunas != 2){
+                $aksi .= '<a href="'.route('purchaseorder.proses', $enc_id).'" class ="btn btn-info btn-xs icon-btn md-btn-flat product-tooltip" style="margin-top:5px; min-width:100px">Proses</a>';
             }
             $result->created_by = $result->created_by;
             $result->aksi = $aksi;
@@ -718,92 +722,29 @@ class PurchaseController extends Controller
                 }
             }
         }
-
-
-
     }
-    public function simpan_(Request $req){
+    public function proses($enc_id){
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        $penjualan = Penjualan::find($dec_id);
+        $gudang = Gudang::all();
+        // return $penjualan;
+        return view('backend/purchase/proses', ['penjualan' => $penjualan, 'gudang' => $gudang, 'enc_id' => $enc_id]);
+    }
+    public function getsupplier(Request $req){
+        // return $req->all();
+        $id_gudang = $req->id_gudang;
+        $enc_id = $req->enc_id;
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        $penjualan = Penjualan::find($dec_id);
+        $detail_penjualan = DetailPenjualan::where('id_penjualan', $penjualan->id)->pluck('id_product');
+        $stockadj = StockAdj::where('id_gudang', $id_gudang)->pluck('id_supplier');
 
-        try {
-            $dt = new Carbon();
-            $total = 0;
-            foreach ($req->produk as $x => $value) {
-                $total               += str_replace(".", "",$req->total[$x]);
-            }
+        $cek_stok = StockAdj::with(['getsupplier'])->whereIn('id_product', $detail_penjualan)->where('id_gudang', $id_gudang)->whereIn('id_supplier', $stockadj)->distinct('id_supplier')->get();
+        return response()->json([
+            'success' => true,
+            'data' => $cek_stok
+        ]);
 
-            $purchaseOrder                  = new PurchaseOrder();
-            $purchaseOrder->kode_rpo        = $req->draft==1?null:$this->genRPO($req->sales);
-            $purchaseOrder->dataorder       = $dt->toDateTimeString();
-            $purchaseOrder->member_id       = $req->member;
-            $purchaseOrder->sales_id        = $req->sales;
-            $purchaseOrder->note            = $req->note;
-            $purchaseOrder->duedate         = $dt->toDateTimeString();
-            $purchaseOrder->access          = 1;
-            $purchaseOrder->flag_status     = 1;
-            $purchaseOrder->sub_total       = (string) $total;
-            $purchaseOrder->total           = (string) $total;
-            $purchaseOrder->createdby       = auth()->user()->fullname;
-            $purchaseOrder->createdon       = auth()->user()->username;
-            $purchaseOrder->expedisi        = $req->expedisi;
-            $purchaseOrder->expedisi_via    = $req->expedisi_via;
-            $purchaseOrder->draft           = $req->draft==0?0:1;
-            $purchaseOrder->save();
-            if($purchaseOrder){
-                foreach ($req->produk as $key => $value) {
-                    if($value != null){
-                        $podetail                          = new PurchaseOrderDetail();
-                        $satuan                            = Product::select('product.id','satuan.*','product.is_liner', 'product.product_code_shadow')
-                                                                    ->join('satuan','product.satuan_id','satuan.id')
-                                                                    ->where('product.id', $value)
-                                                                    ->first();
-                        $checkproduct                      = Product::find($value);
-                        $podetail->transaction_purchase_id = $purchaseOrder->id;
-                        $podetail->product_id              = $value;
-                        if($satuan->is_liner == 'Y'){
-                            $checkproductshadow = Product::where('product_code', 'LIKE', "%{$satuan->product_code_shadow}%")->first();
-                            $podetail->product_id_shadow   = $checkproductshadow->id;
-                        }
-                        $podetail->discount                = 0;
-                        $podetail->type                    = $req->tipeharga[$key];
-                        $podetail->qty                     = $req->qty[$key];
-                        $podetail->price                   = str_replace(".","",$req->hargasatuan[$key]);
-                        $podetail->ttl_price               = str_replace(".", "",$req->total[$key]);
-                        $podetail->satuan                  = $satuan->name;
-                        $podetail->save();
-                    }
-                }
-
-                $purchaselog = new PurchaseOrderLog;
-                $purchaselog->user_id       = auth()->user()->id;
-                $purchaselog->purchase_id   = $purchaseOrder->id;
-                $purchaselog->keterangan    = $req->draft==0? auth()->user()->username." telah melakukan menambah PO data untuk DIPROSES ke RPO" : auth()->user()->username." telah melakukan menambah Draft PO" ;
-                $purchaselog->create_date   = $dt->toDateTimeString();
-                $purchaselog->create_user   = auth()->user()->username;
-                $purchaselog->save();
-
-                if($purchaselog) {
-                    $json_data = array(
-                        "success"         => TRUE,
-                        "draft"           => $req->draft==0?0:1,
-                        "message"         => 'Data berhasil ditambahkan.'
-                    );
-                }else{
-                    $json_data = array(
-                        "success"         => FALSE,
-                        "message"         => 'Data gagal ditambahkan.'
-                    );
-                }
-            }
-        } catch (\Throwable $th) {
-            $json_data = array(
-                'code' => 500,
-                'success' => false,
-                'msg' => $th->getMessage(),
-                'message' => 'silahkan check kembali form anda'
-            );
-        }
-
-        return json_encode($json_data);
     }
 
     // To Be Continue
