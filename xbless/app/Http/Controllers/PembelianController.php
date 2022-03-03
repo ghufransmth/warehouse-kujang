@@ -80,7 +80,7 @@ class PembelianController extends Controller
             if($result->flag_proses == 0){
                 $action.='<div>';
                 $action.='<a href="'.route('pembelian.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
-                // $action.='<a href="#" onclick="deleteData(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-trash"></i> Hapus</a>&nbsp;';
+                $action.='<a href="'.route('pembelian.detail',$enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-eye"></i> Detail</a>&nbsp;';
                 $action.="</div>";
             }else if($result->flag_proses == 1){
                 // $action.= '<span class="label label-danger">Data tidak bisa diedit kembali</span>&nbsp;';
@@ -741,6 +741,15 @@ class PembelianController extends Controller
             return view('errors/noaccess');
         }
         return $pembelian;
+    }
+
+    public function detail($enc_id)
+    {
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        $pembelian = Pembelian::where('id', $dec_id)->with(['getdetailpembelian'])->first();
+        $detail_pembelian = $pembelian->getdetailpembelian;
+
+        return view('backend/pembelian/detail',compact('enc_id','pembelian','detail_pembelian'));
     }
 
     public function hapus($enc_id){}
