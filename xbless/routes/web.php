@@ -798,6 +798,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::get('/tambah', [PembelianController::class, 'tambah'])->name('tambah');
         Route::get('/get_satuan', [PembelianController::class, 'get_satuan'])->name('get_satuan');
         Route::get('/ubah/{id}', [PembelianController::class, 'ubah'])->name('ubah');
+        Route::get('/detail/{id}', [PembelianController::class, 'detail'])->name('detail');
         // Route::post('/simpan', [PembelianController::class, 'simpan'])->name('simpan');
         Route::post('/simpan', [PembelianController::class, 'coba_simpan'])->name('simpan');
         Route::post('/tambah_product', [PembelianController::class, 'tambah_product'])->name('tambah_detail');

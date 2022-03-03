@@ -17,4 +17,11 @@ class Pembelian extends Model
     public function gettransaksi(){
         return $this->hasOne(TransaksiStock::class, 'no_transaksi', 'no_faktur');
     }
+    public function getsupplier(){
+        return $this->hasOne(Supplier::class, 'id', 'supplier_id');
+    }
+
+    public function getgudang(){
+        return $this->hasOne(Gudang::class, 'id', 'id_gudang');
+    }
 }
