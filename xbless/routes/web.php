@@ -7,6 +7,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\DriverController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\EngineController;
 use App\Http\Controllers\GudangController;
@@ -168,6 +169,14 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::delete('manage/sales/hapus/{id?}', [SalesController::class, 'hapus'])->name('sales.hapus');
     Route::post('manage/sales/simpan', [SalesController::class, 'simpan'])->name('sales.simpan');
     Route::post('manage/sales/resetapp', [SalesController::class, 'resetAPP'])->name('sales.resetapp');
+
+    Route::get('manage/driver', [DriverController::class, 'index'])->name('driver.index');
+    Route::post('manage/driver/getdata', [DriverController::class, 'getData'])->name('driver.getdata');
+    Route::post('manage/driver/simpan', [DriverController::class, 'simpan'])->name('driver.simpan');
+    Route::get('manage/driver/tambah', [DriverController::class, 'tambah'])->name('driver.tambah');
+    Route::get('manage/driver/getdriver', [DriverController::class, 'getSales'])->name('driver.getDriver');
+    Route::get('manage/driver/ubah/{id}', [DriverController::class, 'ubah'])->name('driver.ubah');
+    Route::delete('manage/driver/hapus/{id?}', [DriverController::class, 'hapus'])->name('driver.hapus');
 
     // MEMBER
     Route::get('manage/member', [MemberController::class, 'index'])->name('member.index');
