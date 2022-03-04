@@ -7,6 +7,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\DriverController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\EngineController;
 use App\Http\Controllers\GudangController;
@@ -173,6 +174,14 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::post('manage/sales/simpan', [SalesController::class, 'simpan'])->name('sales.simpan');
     Route::post('manage/sales/resetapp', [SalesController::class, 'resetAPP'])->name('sales.resetapp');
 
+    Route::get('manage/driver', [DriverController::class, 'index'])->name('driver.index');
+    Route::post('manage/driver/getdata', [DriverController::class, 'getData'])->name('driver.getdata');
+    Route::post('manage/driver/simpan', [DriverController::class, 'simpan'])->name('driver.simpan');
+    Route::get('manage/driver/tambah', [DriverController::class, 'tambah'])->name('driver.tambah');
+    Route::get('manage/driver/getdriver', [DriverController::class, 'getSales'])->name('driver.getDriver');
+    Route::get('manage/driver/ubah/{id}', [DriverController::class, 'ubah'])->name('driver.ubah');
+    Route::delete('manage/driver/hapus/{id?}', [DriverController::class, 'hapus'])->name('driver.hapus');
+
     // MEMBER
     Route::get('manage/member', [MemberController::class, 'index'])->name('member.index');
     Route::post('manage/member/getdata', [MemberController::class, 'getData'])->name('member.getdata');
@@ -296,6 +305,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('manage/stokopname/getproduk', [StokOpnameController::class, 'getProduk'])->name('stokopname.getproduct');
     Route::post('manage/stokopname/tambahproduk', [StokOpnameController::class, 'tambahProduk'])->name('stokopname.tambahproduk');
     Route::post('manage/stokopname/tambahprodukbarcode', [StokOpnameController::class, 'tambahProdukBarcode'])->name('stokopname.tambahprodukbarcode');
+    Route::post('manage/stokopname/showallproduct', [StokOpnameController::class, 'showallproduct'])->name('stokopname.showallproduct');
 
     //REPORT
     //REPORT SO
@@ -616,6 +626,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/simpanexpedisi', [PurchaseController::class, 'simpan_expedisi'])->name('simpanexpedisi');
             Route::post('/simpan', [PurchaseController::class, 'simpan'])->name('simpan');
             Route::get('/proses/{id?}', [PurchaseController::class, 'proses'])->name('proses');
+            Route::post('/simpanproses', [PurchaseController::class, 'simpan_proses'])->name('simpan_proses');
             Route::post('/getsupplier', [PurchaseController::class, 'getsupplier'])->name('getsupplier');
             Route::post('/addproduk', [PurchaseController::class, 'addproduk'])->name('addproduk');
             Route::post('/updatepo', [PurchaseController::class, 'updatepo'])->name('updatepo');

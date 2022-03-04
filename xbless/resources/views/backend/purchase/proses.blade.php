@@ -123,45 +123,58 @@
                                     <th>No Faktur</th>
                                     <th>Sales</th>
                                     <th>Toko</th>
-                                    <th>Tgl Transaksi</th>
+                                    {{-- <th>Tgl Transaksi</th> --}}
                                     {{-- <th>Tgl Jatuh Tempo</th> --}}
-                                    <th width="40px">Status Pembayaran</th>
+                                    <th width="30%">Produk</th>
+                                    <th>Qty</th>
+
                                     <th>Total Harga</th>
-                                    <th>Total Diskon</th>
+                                    {{-- <th>Total Diskon</th> --}}
                                     <th>Gudang</th>
-                                    <th>Supplier</th>
-                                    <th>Created By</th>
-                                    <th class="text-center" width="11%">Aksi</th>
+                                    {{-- <th>Supplier</th> --}}
+                                    {{-- <th>Created By</th> --}}
+                                    {{-- <th class="text-center" width="11%">Aksi</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
+                                <form action="#" method="POST" id="submitForm">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="enc_id" value="{{ $enc_id }}">
+                                @foreach($penjualan->getdetailpenjualan as $key => $value)
                                 <tr>
-                                    <td width="10px;">No</td>
+                                    <td width="10px;">{{ $key+1 }}</td>
                                     <td>{{ $penjualan->no_faktur }}</td>
                                     <td>{{ $penjualan->getsales->nama }}</td>
-                                    <td>{{ $penjualan->gettoko->nama }}</td>
-                                    <td>{{ date('d-m-Y', strtotime($penjualan->tgl_faktur)) }}</td>
+                                    <td>{{ $penjualan->gettoko->name }}</td>
+                                    {{-- <td>{{ date('d-m-Y', strtotime($penjualan->tgl_faktur)) }}</td> --}}
                                     {{-- <td>{{ date('d-m-Y', strtotime($penjualan->tgl_jatuh_tempo)) }}</td> --}}
-                                    <td>{{ ($penjualan->status_lunas == 0)? 'Belum lunas' : 'Lunas' }}</td>
-                                    <td>{{ format_uang($penjualan->total_harga) }}</td>
-                                    <td>{{ format_uang($penjualan->total_diskon) }}</td>
-                                    <td><select name="gudang" class="form-control" id="gudang">
+                                    <td>{{ $value->getproduct->kode_product }} - {{ $value->getproduct->nama }}</td>
+                                    <td>{{ $value->qty }} PCS</td>
+
+                                    <td>{{ format_uang($value->total_harga) }}</td>
+                                    <td><select name="gudang[]" class="form-control" id="gudang" required>
                                         <option value="">Pilih Gudang</option>
-                                        @foreach($gudang as $key => $value)
+                                        @foreach($gudang[$key] as $idx => $value)
                                             <option value="{{ $value->id }}">{{ $value->name }}</option>
                                         @endforeach
                                     </select></td>
-                                    <td>
+                                    {{-- <td>
                                         <select name="gudang" class="form-control" id="supplier">
                                         </select>
-                                    </td>
-                                    <td>{{ $penjualan->created_by }}</td>
-                                    <td class="text-center" width="11%"><a href="" class="btn btn-primary"> Proses</a></td>
+                                    </td> --}}
+                                    {{-- <td>{{ $penjualan->created_by }}</td> --}}
+                                    {{-- <td class="text-center" width="11%"><a href="" class="btn btn-primary"> Proses</a></td> --}}
                                 </tr>
+                                @endforeach
+
                             </tbody>
                             <tfoot>
+
                             </tfoot>
                         </table>
+                        {{-- <a href="" class="btn btn-primary"> Proses</a> --}}
+                        <button type="button" class="btn btn-primary" id="proses"> Proses </button>
+                    </form>
                     </div>
                 </div>
             </div>
@@ -210,5 +223,54 @@
             });
         });
     });
+    $('#proses').on('click', function(){
+        var form = $('#submitForm');
+        console.log(form.serialize());
+        // var token = '{{ csrf_field() }}';
+        var token = $('[name="_token"]').val();
+        // console.log($('[name="_token"]').val());
+        $.ajax({
+                type: 'POST',
+                data: form.serialize(),
+                url: '{{route("purchaseorder.simpan_proses")}}',
+                dataType: "json",
+                headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+                beforeSend: function(){
+                    Swal.showLoading();
+                },
+                success: function(data) {
+                    // console.log(response);
+                    Swal.hideLoading();
+                    if(data.success == true){
+                        Swal.fire('Yes', data.message, 'success');
+                        window.location.replace('{{route("purchaseorder.index")}}');
+                    }else{
+                        Swal.fire('Ups', data.message, 'info');
+                    }
+                    // console.log(response.data[0].getsupplier)
+                    // if(response.success){
+
+                    //     for(var i=0;i<response.data.length; i++){
+                    //         html += `<option value="${response.data[i].getsupplier.id}">${response.data[i].getsupplier.nama}</option>`
+                    //     }
+
+                    //     $('#supplier').html(html);
+
+                    // }else{
+                    //     Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
+                    // }
+                },
+                complete: function(){
+                    Swal.hideLoading();
+                    // Swal.close();
+                },
+                error: function(data){
+                    // $('#simpan').removeClass("disabled");
+                    Swal.hideLoading();
+                    Swal.fire('Maaf','silahkan check kembali form anda' ,'info');
+                }
+        });
+    })
+
 </script>
 @endpush

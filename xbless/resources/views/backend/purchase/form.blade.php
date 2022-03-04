@@ -653,7 +653,7 @@ function select_satuan(num){
                 console.log(response)
                 if(response.success){
                     $('#harga_product_'+num).val(response.data.harga_jual);
-                    $('#stock_product_'+num).val(response.data.getstock.stock_penjualan);
+                    $('#stock_product_'+num).val(response.data.getstock.gudang_baik);
                 }else{
                     Swal.fire('Ups', 'Product Tidak ditemukan', 'info');
                 }

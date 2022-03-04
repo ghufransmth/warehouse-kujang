@@ -374,7 +374,9 @@ class ProdukController extends Controller
         $product->kode_product = $kode_product;
         if($product->save()){
             $product_detail = ProductDetail::where('id_product', $product->id);
-            if($product_detail->delete()){
+            $data_product = $product_detail->get();
+            if($product_detail->delete() || count($data_product) == 0 ){
+                // return $req->all();
                 for($i= 0 ; $i<$jumlah_detail; $i++){
                     if(isset($array_supplier[$i])){
                         $detail = new ProductDetail;
@@ -382,12 +384,14 @@ class ProdukController extends Controller
                         $detail->id_supplier = $array_supplier[$i];
                         $detail->harga_pembelian = $array_harga_pembelian[$i];
                         if(!$detail->save()){
+
                             return response()->json([
                                 'success' => false,
                                 'message' => 'Gagal menyimpan detail produk'
                             ]);
                             break;
                         }
+                        // return $detail;
                     }
                 }
                 return response()->json([

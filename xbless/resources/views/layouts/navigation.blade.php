@@ -30,6 +30,7 @@
                 <ul class="nav nav-second-level collapse">
                     <li class=""><a href="{{route('staff.index')}}">Master User</a></li>
                     <li class=""><a href="{{ route('sales.index') }}">Master Sales</a></li>
+                    <li class=""><a href="{{ route('driver.index') }}">Master Driver</a></li>
                     <li class=""><a href="{{route('expedisi.index')}}">Master Expedisi</a></li>
                     <li class=""><a href="{{route('type_channel.index')}}">Master Tipe Channel</a></li>
                     <li class=""><a href="{{ route('gudang.index') }}">Master Gudang</a></li>
@@ -83,11 +84,11 @@
                     {{-- <li><a href="{{route('stokadmin.index')}}">Informasi Stok</a>
             </li> --}}
             @endcan
-            @can('adjstok.index')
+            {{-- @can('adjstok.index')
             <li><a href="{{route('adjstok.index')}}">Info Stok</a></li>
-            @endcan
+            @endcan --}}
             @can('adjstok.index')
-            <li><a href="{{route('adjstok.index_supplier')}}">Stok Supplier</a></li>
+            <li><a href="{{route('adjstok.index_supplier')}}">Info Stok</a></li>
             @endcan
             @can('stokmutasi.tambah')
             <li><a href="{{route('stokmutasi.tambah')}}">Mutasi Stok</a></li>

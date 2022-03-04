@@ -8,10 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class StockOpnameDetail extends Model
 {
     use HasFactory;
-    protected $table    = 'stock_opname_detail';
+    protected $table    = 'tbl_stockopname_detail';
 
-    public function product()
-    {
-        return $this->belongsTo('App\Models\Product','produk_id');
+    public function getproduct(){
+        return $this->hasOne(Product::class, 'id', 'id_product');
     }
 }

@@ -204,7 +204,7 @@ class PurchaseController extends Controller
         $penjualan->whereHas('gettransaksi');
         // return $penjualan->get();
 
-        $penjualan->orderBy('id', 'ASC');
+        $penjualan->orderBy('tgl_faktur', 'DESC');
         if($filter_toko != null || $filter_toko != ""){
             $penjualan->where('id_toko', $filter_toko);
         }
@@ -247,10 +247,13 @@ class PurchaseController extends Controller
             $result->total_harga = format_uang($result->total_harga);
             $result->total_diskon = format_uang($result->total_diskon);
             $result->tgl_lunas = $result->tgl_lunas;
-            $aksi .= '<a href="'.route('purchaseorder.detail', $enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail </a>';
-            $aksi .= '<a href="'.route('purchaseorder.edit', $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a> <br>';
+            $aksi .= '<a href="'.route('purchaseorder.detail', $enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail </a> <br>';
 
-            if($result->status_lunas == 0){
+            if($result->flag_proses != '1'){
+                $aksi .= '<a href="'.route('purchaseorder.edit', $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px; margin-top:5px">Edit </a> <br>';
+            }
+
+            if($result->status_lunas == 0 && $result->flag_proses == '1'){
                 $result->status_pembayaran = '<span class="badge badge-success">Belum Lunas</span>';
                 $aksi .= '<a href="#" onclick="approve(\''.$enc_id.'\')" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip" style="margin-top:5px">Aprrove</a> <a href="#" onclick="reject(\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" style="margin-top:5px">Reject</a>';
             }else if($result->status_lunas == 2){
@@ -398,12 +401,20 @@ class PurchaseController extends Controller
     }
 
     public function search_produk(Request $request){
-        $product = Product::select('*')
-                    ->orWhere('kode_product', 'LIKE', "%{$request->search}%")
-                    ->orWhere('nama', 'LIKE', "%{$request->search}%")
-                    ->orderBy('id', 'DESC')
-                    ->limit(10)
-                    ->get();
+
+        // return "tes";
+        $search = $request->search;
+        $stockadj = StockAdj::where('gudang_baik', '>', 0)->pluck('id_product');
+        $query = Product::select('*')
+                    ->whereIn('id', $stockadj)
+                    ->orderBy('id', 'DESC');
+        if($search){
+            $query->where(function($q) use ($search){
+                $q->orwhere('kode_product', 'LIKE', "%{$search}%");
+                $q->orwhere('nama', 'LIKE', "%{$search}%");
+            });
+        }
+        $product = $query->limit(10)->get();
         return json_encode($product);
     }
     public function search_satuan(Request $request){
@@ -521,9 +532,10 @@ class PurchaseController extends Controller
             for($i=0;$i<$total_product;$i++){
                 if(isset($array_id_satuan[$i])){
                     $satuan = Satuan::find($array_id_satuan[$i]);
-                    $stockadj = StockAdj::where('id_product', $array_product[$i])->first();
+                    $stockadj = StockAdj::where('id_product', $array_product[$i])->orderBy('gudang_baik', 'DESC')->first();
+                    // return $stockadj;
                     $total_qty = $array_qty[$i] * $satuan->qty;
-                    if($stockadj->stock_penjualan < $total_qty){
+                    if($stockadj->gudang_baik < $total_qty){
                         return response()->json([
                             'success' => FALSE,
                             'message' => 'Stock penjualan tidak cukup'
@@ -649,6 +661,7 @@ class PurchaseController extends Controller
                 $penjualan->status_lunas = $status_pembayaran;
                 $penjualan->total_diskon = $diskon_penjualan;
                 $penjualan->jenis_pembayaran = $jenis_pembayaran;
+                $penjualan->flag_proses = 0;
                 $penjualan->created_by  = auth()->user()->username;
                 // return $penjualan;
                 if($penjualan->save()){
@@ -674,21 +687,22 @@ class PurchaseController extends Controller
                         $detail_penjualan->harga_product = $array_harga_product[$i];
                         $detail_penjualan->total_harga = $array_total_harga[$i];
                         if($detail_penjualan->save()){
-                            if($penjualan->status_lunas == 0){
-                                $stockadj = StockAdj::where('id_product', $array_product[$i])->first();
-                                $stockadj->stock_penjualan  -= $detail_penjualan->qty;
-                                $stockadj->stock_approve    += $detail_penjualan->qty;
-                            }else{
-                                $stockadj = StockAdj::where('id_product', $array_product[$i])->first();
-                                $stockadj->stock_penjualan  -= $detail_penjualan->qty;
-                            }
-                            if(!$stockadj->save()){
-                                return response()->json([
-                                    'success' => FALSE,
-                                    'message' => 'Gagal mengupdate stock product'
-                                ]);
-                                break;
-                            }
+                            continue;
+                            // if($penjualan->status_lunas == 0){
+                            //     $stockadj = StockAdj::where('id_product', $array_product[$i])->first();
+                            //     $stockadj->stock_penjualan  -= $detail_penjualan->qty;
+                            //     $stockadj->stock_approve    += $detail_penjualan->qty;
+                            // }else{
+                            //     $stockadj = StockAdj::where('id_product', $array_product[$i])->first();
+                            //     $stockadj->stock_penjualan  -= $detail_penjualan->qty;
+                            // }
+                            // if(!$stockadj->save()){
+                            //     return response()->json([
+                            //         'success' => FALSE,
+                            //         'message' => 'Gagal mengupdate stock product'
+                            //     ]);
+                            //     break;
+                            // }
                         }else{
                             return response()->json([
                                 'success' => FALSE,
@@ -727,8 +741,53 @@ class PurchaseController extends Controller
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         $penjualan = Penjualan::find($dec_id);
         $gudang = Gudang::all();
-        // return $penjualan;
-        return view('backend/purchase/proses', ['penjualan' => $penjualan, 'gudang' => $gudang, 'enc_id' => $enc_id]);
+        $all_gudang = array();
+        foreach($penjualan->getdetailpenjualan as $detail){
+            $all = StockAdj::where('id_product', $detail->id_product)->where('gudang_baik', '>=', $detail->qty)->pluck('id_gudang');
+            $all_gudang[] = Gudang::whereIn('id', $all)->get();
+            // return $all;
+        }
+        // return $all_gudang[0];
+        // return $penjualan->getdetailpenjualan;
+        return view('backend/purchase/proses', ['penjualan' => $penjualan, 'gudang' => $all_gudang, 'enc_id' => $enc_id]);
+    }
+    public function simpan_proses(Request $req){
+        $enc_id = $req->enc_id;
+        $gudang = $req->gudang;
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        $penjualan = Penjualan::find($dec_id);
+        // return $req->all();
+        foreach($penjualan->getdetailpenjualan as $key => $detail){
+            $stockadj = StockAdj::where('id_product', $detail->id_product)->where('id_gudang', $gudang[$key])->first();
+            if($penjualan->status_lunas == 0){
+                $stockadj->gudang_baik  -= $detail->qty;
+                $stockadj->stock_approve    += $detail->qty;
+            }else{
+                $stockadj->gudang_baik  -= $detail->qty;
+            }
+
+            if(!$stockadj->save()){
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal mengupdate stock!'
+                ]);
+                break;
+            }
+        }
+        $penjualan->flag_proses = 1;
+        if($penjualan->save()){
+            return response()->json([
+                'success' => TRUE,
+                'message' => 'Penjualan berhasil diproses'
+            ]);
+        }else{
+            return response()->json([
+                'success' => FALSE,
+                'message' => 'Penjualan gagal diproses'
+            ]);
+
+        }
+
     }
     public function getsupplier(Request $req){
         // return $req->all();
@@ -753,6 +812,7 @@ class PurchaseController extends Controller
         // $memberplus      = Member::select('member.id','type_price.name')->join('type_price','type_price.id','member.operation_price')->where('member.id',$request->member)->first();
         // $tambahan = $memberplus?$memberplus->name:0;
         $product = Product::where('id', $request->produk_id)->with(['getstock'])->first();
+        // return $product;
         // $diskon  = DiskonDetail::where('produk', $product->id)->where('flag_diskon', 0)->first();
         return response()->json([
             'success' => TRUE,
