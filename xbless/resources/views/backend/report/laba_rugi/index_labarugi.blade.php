@@ -230,103 +230,27 @@
                                     <td></td>
                                     <td>Rp. -</td>
                                 </tr>
-                                <tr>
-                                    <td class="pt-5" style="text-decoration: underline;"><strong> Beban Biaya</strong>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>01</span> Biaya ProgramL Comp Baru </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>02</span> Operasional Kantor </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>03</span> Pembelian Head Printer + Rak Arsip </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>04</span> Pemeliharaan Armada </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>05</span> Uang Makan </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>06</span>Pajak Oktober'21+Denda 2017 </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>07</span> Listrik, Telp, Speedy. PDAM </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>08</span> Gaji dan Tunjangan </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>09</span> Kredit Investasi </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>10</span> Kredit Modal Kerja </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>11 </span> Lain-lain + Pelunasan Program </td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>12 </span> Cicilan Armada Sukabumi PELUNASAN</td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>13 </span> BPJS KESEHATAN</td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>14 </span> BPJS KETENAGAKERJAAN</td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class=""><span>15 </span>Pajak kendaraan AVANZA F 1057 SW</td>
-                                    <td>Rp. -</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
+                                @if(isset($result))
+                                    @foreach($result as $key => $value)
+                                        <tr>
+                                            <td class="pt-5" style="text-decoration: underline;"><strong> {{$value->name}}</strong>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        @if(isset($value->detail))
+                                            @foreach($value->detail as $key => $detail)
+                                                <tr>
+                                                    <td class=""><span>01</span> {{$detail->name}}</td>
+                                                    <td>Rp. -</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                    @endforeach
+                                @endif
                                 <tr>
                                     <td></td>
                                     <td></td>

@@ -30,6 +30,7 @@
                 <ul class="nav nav-second-level collapse">
                     <li class=""><a href="{{route('staff.index')}}">Master User</a></li>
                     <li class=""><a href="{{ route('sales.index') }}">Master Sales</a></li>
+                    <li class=""><a href="{{ route('driver.index') }}">Master Driver</a></li>
                     <li class=""><a href="{{route('expedisi.index')}}">Master Expedisi</a></li>
                     <li class=""><a href="{{route('type_channel.index')}}">Master Tipe Channel</a></li>
                     <li class=""><a href="{{ route('gudang.index') }}">Master Gudang</a></li>

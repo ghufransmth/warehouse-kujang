@@ -398,9 +398,9 @@ $("#simpan").on('click',function(){
         $('.total_harga').each(function(){
             sum += parseFloat($(this).val());  // Or this.innerHTML, this.innerText
         });
-        $('#harga_pembelian').text(sum);
+        $('#harga_pembelian').text(formatRupiah(sum));
         $('#total_harga_pembelian').val(sum);
-        $('#nominal').val(sum);
+        $('#nominal').val(formatRupiah(sum));
     }
     function select_product(num){
     $('.select2_produk_'+num).select2({allowClear: false, width: '200px',

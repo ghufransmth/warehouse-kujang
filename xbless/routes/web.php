@@ -7,6 +7,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\DriverController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\EngineController;
 use App\Http\Controllers\GudangController;
@@ -172,6 +173,14 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::delete('manage/sales/hapus/{id?}', [SalesController::class, 'hapus'])->name('sales.hapus');
     Route::post('manage/sales/simpan', [SalesController::class, 'simpan'])->name('sales.simpan');
     Route::post('manage/sales/resetapp', [SalesController::class, 'resetAPP'])->name('sales.resetapp');
+
+    Route::get('manage/driver', [DriverController::class, 'index'])->name('driver.index');
+    Route::post('manage/driver/getdata', [DriverController::class, 'getData'])->name('driver.getdata');
+    Route::post('manage/driver/simpan', [DriverController::class, 'simpan'])->name('driver.simpan');
+    Route::get('manage/driver/tambah', [DriverController::class, 'tambah'])->name('driver.tambah');
+    Route::get('manage/driver/getdriver', [DriverController::class, 'getSales'])->name('driver.getDriver');
+    Route::get('manage/driver/ubah/{id}', [DriverController::class, 'ubah'])->name('driver.ubah');
+    Route::delete('manage/driver/hapus/{id?}', [DriverController::class, 'hapus'])->name('driver.hapus');
 
     // MEMBER
     Route::get('manage/member', [MemberController::class, 'index'])->name('member.index');
@@ -800,6 +809,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::get('/tambah', [PembelianController::class, 'tambah'])->name('tambah');
         Route::get('/get_satuan', [PembelianController::class, 'get_satuan'])->name('get_satuan');
         Route::get('/ubah/{id}', [PembelianController::class, 'ubah'])->name('ubah');
+        Route::get('/detail/{id}', [PembelianController::class, 'detail'])->name('detail');
         // Route::post('/simpan', [PembelianController::class, 'simpan'])->name('simpan');
         Route::post('/simpan', [PembelianController::class, 'coba_simpan'])->name('simpan');
         Route::post('/tambah_product', [PembelianController::class, 'tambah_product'])->name('tambah_detail');
