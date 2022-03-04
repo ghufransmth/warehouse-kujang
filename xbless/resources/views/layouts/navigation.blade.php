@@ -83,11 +83,11 @@
                     {{-- <li><a href="{{route('stokadmin.index')}}">Informasi Stok</a>
             </li> --}}
             @endcan
-            @can('adjstok.index')
+            {{-- @can('adjstok.index')
             <li><a href="{{route('adjstok.index')}}">Info Stok</a></li>
-            @endcan
+            @endcan --}}
             @can('adjstok.index')
-            <li><a href="{{route('adjstok.index_supplier')}}">Stok Supplier</a></li>
+            <li><a href="{{route('adjstok.index_supplier')}}">Info Stok</a></li>
             @endcan
             @can('stokmutasi.tambah')
             <li><a href="{{route('stokmutasi.tambah')}}">Mutasi Stok</a></li>

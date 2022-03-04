@@ -38,7 +38,7 @@
                                     <th>No Transaksi</th>
                                     {{-- <th>Perusahaan</th> --}}
                                     <th>Gudang Dari</th>
-                                    <th>Gudang Tujuan</th>
+                                    {{-- <th>Gudang Tujuan</th> --}}
                                     <th>Tanggal Transaksi</th>
 
                                     <th>Dibuat Oleh</th>
@@ -49,17 +49,7 @@
                             <tbody>
 
                             </tbody>
-                            <tfoot>
-                                <tr class="text-white text-center bg-primary">
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                            </tfoot>
+
                         </table>
                     </div>
 
@@ -83,7 +73,7 @@
                             <th>No</th>
                             <th>Product</th>
                             <th>Gudang Dari</th>
-                            <th>Gudang Tujuan</th>
+
                             <th>Satuan</th>
                             <th>QTY</th>
                             <th>Stock Awal</th>
@@ -93,7 +83,7 @@
                         <tbody id="body_product">
                             <td>1</td>
                             <td>1</td>
-                            <td>1</td>
+
                             <td>1</td>
                             <td>1</td>
                             <td>1</td>
@@ -150,7 +140,6 @@
 
                { "data": "no_transaksi"},
                { "data": "gudang_dari" },
-               { "data": "gudang_tujuan" },
                { "data": "tgl_transaksi" },
                { "data": "created_by" },
                { "data" : "action",

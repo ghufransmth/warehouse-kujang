@@ -101,8 +101,8 @@
                         </tr>
                     </thead>
                     <tbody id="ajax_produk" class="bg-white">
-                        @if(count($produk->getdetailproduct) > 0)
                         <input type="hidden" name="jumlahdetail" value="{{ (count($produk->getdetailproduct) > 0)? count($produk->getdetailproduct) : '0'  }}" id="jumlahdetail">
+                        @if(count($produk->getdetailproduct) > 0)
                             @foreach($produk->getdetailproduct as $key => $detail)
                             <tr class="bg-white" id='dataajaxproduk_{{ $key+1 }}'>
                                 <td>

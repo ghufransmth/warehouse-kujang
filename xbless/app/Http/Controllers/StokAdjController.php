@@ -37,7 +37,12 @@ class StokAdjController extends Controller
 
     public function index_supplier()
     {
-        return view('backend/stok/stokadj/index_supplier');
+        $gudang = Gudang::all();
+        $selectedgudang = '';
+        return view('backend/stok/stokadj/index_supplier',[
+            'gudang' => $gudang,
+            'selectedgudang' => $selectedgudang
+        ]);
     }
 
     public function satuan($id_satuan){
@@ -110,10 +115,12 @@ class StokAdjController extends Controller
         $start = $request->start;
         $page  = $start + 1;
         $search = $request->search['value'];
+        $filter_gudang = $request->filter_gudang_admin;
 
         $querydb = StockAdj::select('tbl_stock.*','tbl_product.nama','tbl_product.kode_product','tbl_satuan.nama as nama_satuan');
         $querydb->join('tbl_product','tbl_product.id','tbl_stock.id_product');
         $querydb->join('tbl_satuan','tbl_satuan.id','tbl_product.id_satuan');
+        $querydb->where('id_gudang', $filter_gudang);
         $querydb->whereHas('getproduct');
         // $cek = $querydb->get();
         // return response()->json($cek);
@@ -125,7 +132,7 @@ class StokAdjController extends Controller
         }
         if ($search) {
         $querydb->where(function ($query) use ($search) {
-            $query->orWhere('nama', 'LIKE', "%{$search}%");
+            $query->orWhere('tbl_product.nama', 'LIKE', "%{$search}%");
         });
         }
         $totalData = $querydb->get()->count();
@@ -143,10 +150,8 @@ class StokAdjController extends Controller
             // $value->id             = $value->id;
             $value->nama_product             = $value->getproduct->nama;
             $value->satuan  = $value->nama_satuan;
-            $value->stock_penjualan     = $value->stock_penjualan;
-            $value->stock_pembelian     = $value->stock_pembelian;
-            $value->stock_opname        = $value->stock_approve;
-            $value->stock_bs            = $value->stock_bs;
+            $value->stock_baik     = $value->gudang_baik;
+            $value->stock_bs            = $value->gudang_bs;
             $value->action = '<a href="#" onclick="showproduct(\''. $enc_id. '\')" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip"><i class="fa fa-file"></i> Detail</a> ';
         }
         if ($request->user()->can('adjstok.index')) {

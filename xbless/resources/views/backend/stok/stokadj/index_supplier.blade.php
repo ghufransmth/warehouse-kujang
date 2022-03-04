@@ -27,22 +27,22 @@
                     <form id="submitData" name="submitData">
                         <div class="hr-line-dashed"></div>
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Supplier : </label>
+                            {{-- <label class="col-sm-2 col-form-label">Supplier : </label>
                             <div class="col-sm-3 error-text">
                                 <select class="form-control select2" id="supplier" name="supplier">
-                                    {{-- <option value="">Pilih Supplier</option>
+                                    <option value="">Pilih Supplier</option>
                                     @foreach($perusahaan as $key => $row)
                                     <option value="{{$row->id}}"{{ $selectedperusahaan == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}</option>
-                                    @endforeach --}}
+                                    @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
                             <label class="col-sm-1 col-form-label">Gudang :</label>
                             <div class="col-sm-3 error-text">
                                 <select class="form-control select2" id="gudang" name="gudang">
                                     <option value="">Pilih Gudang</option>
-                                    {{-- @foreach($gudang as $key => $row)
+                                    @foreach($gudang as $key => $row)
                                     <option value="{{$row->id}}"{{ $selectedgudang == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}</option>
-                                    @endforeach --}}
+                                    @endforeach
                                 </select>
                                 </select>
                             </div>
@@ -62,12 +62,11 @@
                                     <th rowspan='2'>Kode</th>
                                     <th rowspan='2'>Nama</th>
                                     <th rowspan='2'>Satuan</th>
-                                    <th colspan='5' class="text-center">Stok</th>
+                                    <th colspan='5' class="text-center">Gudang Stok</th>
                                 </tr>
                                 <tr>
-                                    <th>Stock Opname</th>
-                                    <th>Stock Pembelian</th>
-                                    <th>Stock Penjualan</th>
+                                    <th>Gudang Baik</th>
+                                    <th>Gudang BS</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -102,7 +101,7 @@
             "type": "POST",
             data: function(d){
                 d._token= "{{csrf_token()}}";
-                d.filter_supplier_admin         = $('#supplier').val();
+                // d.filter_supplier_admin         = $('#supplier').val();
                 d.filter_gudang_admin           = $('#gudang').val();
             }
            },
@@ -116,9 +115,8 @@
                 },
                 {"data": "nama_product"},
                 {"data": "satuan"},
-                { "data": "stock_opname"},
-                { "data": "stock_pembelian"},
-                { "data": "stock_penjualan"},
+                { "data": "stock_baik"},
+                { "data": "stock_bs"},
            ],
            responsive: true,
            language: {

@@ -14,7 +14,7 @@ class TransaksiStock extends Model
         return $this->hasMany(StockMutasi::class, 'no_transaksi', 'no_transaksi');
     }
     public function detail_stockopname(){
-        return $this->hasMany(StockOpname::class, 'no_transaksi', 'no_transaksi');
+        return $this->hasOne(StockOpname::class, 'no_transaksi', 'no_transaksi');
     }
     public function penjualan(){
         return $this->hasOne(Penjualan::class, 'no_faktur', 'no_transaksi')->withDefault([

@@ -54,29 +54,30 @@
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Dari Gudang * : </label>
-                                <div class="col-sm-4 error-text">
+                                <div class="col-sm-10 error-text">
                                     <select class="form-control select2" id="gudang_dari" name="gudang_dari" {{isset($stokopname)? ($stokopname->flag_proses=='1'?'disabled':'') : ''}}>
                                         <option value="">Pilih Gudang</option>
-                                        <option value="0">Gudang Pembelian</option>
-                                        <option value="1">Gudang Penjualan</option>
-                                        <option value="2">Gudang BS</option>
+                                        @foreach($gudang as $key => $value)
+                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+
+                                        @endforeach
                                     </select>
                                 </div>
-                                <label class="col-sm-2 col-form-label">Gudang Tujuan * </label>
+                                {{-- <label class="col-sm-2 col-form-label">Gudang Tujuan * </label>
                                 <div class="col-sm-3 error-text">
                                     <select class="form-control select2" id="gudang" name="gudang">
                                         <option value="">Pilih Gudang Tujuan</option>
                                         <option value="1">Gudang Penjualan</option>
                                         <option value="2">Gudang BS</option>
                                     </select>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">PIC * : </label>
-                                <div class="col-sm-4 error-text">
+                                <div class="col-sm-10 error-text">
                                     <input type="text" class="form-control" value="{{isset($stokopname)? $stokopname->pic : auth()->user()->username}}" id="pic" name="pic" {{isset($stokopname)? ($stokopname->flag_proses=='1'?'readonly':'') : ''}}>
                                 </div>
-                                <label class="col-sm-2 col-form-label">Suplier * : </label>
+                                {{-- <label class="col-sm-2 col-form-label">Suplier * : </label>
                                 <div class="col-sm-4 error-text">
                                     <select class="form-control select2" id="gudang_to" name="gudang_to">
                                         <option value="0">Pilih Suplier</option>
@@ -84,7 +85,7 @@
                                             <option value="{{ $value->id }}">{{ $value->nama }}</option>
                                         @endforeach
                                     </select>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Catatan : </label>
@@ -96,10 +97,13 @@
                             <div class="hr-line-dashed"></div>
                             <div class="form-group row" style="{{isset($stokopname)? ($stokopname->flag_proses=='1'?'display:none':'') : ''}}">
                                 <label class="col-sm-2 col-form-label">Pilih Produk </label>
-                                <div class="col-sm-10 error-text">
+                                <div class="col-sm-9 error-text">
                                     <select class="form-control selectProduct" id="pilihProduct" name="pilihProduct">
                                     </select>
                                 </div>
+                                <label class="col-sm-1">
+                                <a class="btn btn-primary btn-sm" style="color: white" id="clearproduct">Clear</a>
+                                </label>
                             </div>
                             <div class="form-group row" style="margin-top:-30px;margin-bottom:-10px">
                                 <label class="col-sm-2 col-form-label" style="{{isset($stokopname)? ($stokopname->flag_proses=='1'?'display:none':'') : ''}}">Atau </label>
@@ -367,8 +371,13 @@
             // }
             loadProduct();
             deleterow();
+            showallproduct();
         });
         $('#simpan').on('click', function() {
+            if($('#pilihProduct').val() != null){
+                Swal.fire('Ups','Silahkan tekan tombol clear produk terlebih dahulu','info');
+                return false;
+            }
             if($("#submitData").valid()){
                 Swal.showLoading();
                 var jumlah=$('#table1 >tbody >tr').length;
@@ -490,6 +499,7 @@
     $("#table1").on('click', '.remove', function() {
          $(this).closest('tr').remove();
     });
+
     function loadProduct(){
         $('.selectProduct').select2({
         ajax: {
@@ -498,6 +508,7 @@
             data: function (params) {
                 return {
                     term: params.term,
+                    gudang: $('#gudang_dari').val(),
                 }
             }
         }
@@ -559,45 +570,264 @@
 </script>
 
 <script>
+var allproduct = [];
+var allnamaproduct = [];
+var allstok = [];
+var allsatuan = [];
+var allqty = [];
+var satuan = [];
+function showallproduct(){
+        $.ajax({
+            type: 'POST',
+            url: '{{route('stokopname.showallproduct')}}',
+            data: {
+                _token  : '{{csrf_token()}}',
+                gudang_dari: $('#gudang_dari').val(),
+            },
+            beforeSend: function(){
+                Swal.showLoading();
+            },
+            success: function(result){
+                html   = '';
+                for(let i=0; i<result.data.length; i++){
 
-
-    $( "#pilihProduct" ).change(function() {
-
-        var val = [];
-        var id_product    = $(this).val();
-        var gudang        = $('#gudang_dari').val();
-        $("input[name='product[]']").each(function(i){
-            val[i] = $(this).val();
-        });
-            if(jQuery.inArray(id_product, val) != -1) {
-
-                Swal.fire('Ups','Produk sudah ada di data keranjang','info');
-                $('#pilihProduct').val('');
-            }else {
-                $.ajax({
-                    type: 'POST',
-                    url: '{{route('stokopname.tambahproduk')}}',
-                    // dataType: 'json',
-                    data: {
-                        _token        : '{{csrf_token()}}',
-                        id_product    : $(this).val(),
-                        gudang_dari   : gudang,
-                    },
-                    success: function(result){
-                        $('#detailData').append(result.html);
-                        $('.satuan_select'+id_product).select2();
-                        $(".qty").TouchSpin({
-                            min : 0,
+                    html += '<tr>';
+                    html += '<td>';
+                    html += '<span class="product">' + result.data[i].getproduct.nama + '</span>';
+                    html += '<input type="hidden" class="product_value" id="product" name="product[]" value="'+result.data[i].getproduct.id+'">';
+                    html += '</td>';
+                    html += '<td>';
+                    html += '<span class="price">' + result.data[i].gudang_baik + '</span>';
+                    html += '<input type="hidden" class="stok_value" min=0 id="stok" name="stok[]" value="'+result.data[i].gudang_baik+'">';
+                    html += '</td>';
+                    html += '<td>';
+                    html += '<select class="satuan_select'+i+'" name="satuan[]" style="min-width:100px">';
+                    for(let x = 0; x<result.satuan.length; x++){
+                        html += '<option value="'+result.satuan[x].id+'">'+result.satuan[x].nama+'</option>';
+                    }
+                    html += '</select>';
+                    html += '</td>';
+                    html += '<td width="15%">';
+                    html += '<input type="text" class="form-control qty" min=0 id="qty_so'+i+'" name="qty_so[]" value="'+result.data[i].gudang_baik+'">';
+                    html += '</td>';
+                    html += '<td class="text-right">';
+                    html += '<button class="btn btn-danger remove"><i class="fa fa-trash"></i> </button>';
+                    html += '</td>';
+                    html += '</tr>';
+                    $('#detailData').append(html);
+                    html = '';
+                    $(".qty").TouchSpin({
+                            min :0,
                             max : 1000000,
                             buttondown_class: 'btn btn-white',
                             buttonup_class: 'btn btn-white'
-                        });
-                    }
+                    });
+                    $('#qty_so'+i).on('change', function(){
+                        allqty[i] = $(this).val();
+                    });
+                    $('.satuan_select'+i).select2();
+                    $('.satuan_select'+i).on('change', function(){
+                        allsatuan[i] = $(this).val();
+                    });
+                }
+                $("input[name='product[]']").each(function(i){
+                    allproduct[i] = $(this).val();
+                    // allproduct[i]['name'] = $(this).text();
                 });
-                $('#pilihProduct').val('');
+                $(".product").each(function(i){
+                    allnamaproduct[i] = $(this).text();
+                    // allproduct[i]['name'] = $(this).text();
+                });
+                $("input[name='stok[]']").each(function(i){
+                    allstok[i] = $(this).val();
+                });
+                $("input[name='satuan[]']").each(function(i){
+                    allsatuan[i] = $(this).val();
+                });
+                $("input[name='qty_so[]']").each(function(i){
+                    allqty[i] = $(this).val();
+                });
+                $(result.satuan).each(function(i){
+                    satuan[i] = this;
+                });
+
+                //     $.each(result.data, function(key, value) {
+                //         $html='';
+                //         $html+='<tr>';
+                //         $html+='<td>';
+                //             $html+='<span class="product">'+ value['namaproduk'] +'</span>';
+                //             $html+='<input type="hidden" class="product_value" id="product" name="product[]" value="'+ value['produk_id'] +'">';
+                //         $html+='</td>';
+                //         $html+='<td>';
+                //             $html+='<span class="price">'+ value['qtyproduk'] +'</span>';
+                //             $html+='<input type="hidden" class="stok_value" min=0 id="stok" name="stok[]" value="'+ value['qtyproduk'] +'">';
+                //         $html+='</td>';
+                //         $html+='<td>';
+                //             $html+='<span class="choose">'+ value['satuan'] +'</span>';
+                //             $html+='<input type="hidden" class="satuan_value" min=0 id="satuan" name="satuan[]" value="'+value['satuan']+'">';
+                //         $html+='</td>';
+                //             $html+='<td width="20%">';
+                //             $html+='<input type="text" class="form-control qty" min=-'+ value['qtyproduk'] +' id="qty_so" name="qty_so[]" value="'+ value['qtySO'] +'" '+ value['readonly'] +'>';
+                //         $html+='</td>';
+                //         if(result.flag_process !='1'){
+                //             $html+='<td class="text-right">';
+                //             $html+='<button class="btn btn-danger remove"><i class="fa fa-trash"></i> </button>';
+                //             $html+='</td>';
+                //         }
+                //         $html+='</tr>';
+                //         $('#detailData').append($html);
+                    //     $(".qty").TouchSpin({
+                    //         min :value['qtyproduk_min'],
+                    //         max : 1000000,
+                    //         buttondown_class: 'btn btn-white',
+                    //         buttonup_class: 'btn btn-white'
+                    // });
+                // });
+                console.log(result);
+
+            },
+            complete: function(){
+                Swal.hideLoading();
+                Swal.close();
             }
+        });
+    }
+    $( "#pilihProduct" ).change(function() {
+        $('#table1 tbody > tr').remove();
+
+        // console.log(satuan[0].nama);
+        if($(this).val() != null){
+            console.log($(this).val());
+            var id_product    = $(this).val();
+            var gudang        = $('#gudang_dari').val();
+            var index = jQuery.inArray(id_product, allproduct);
+            console.log(allnamaproduct[index]);
+            let html = '';
+            html += '<tr>';
+            html += '<td>';
+            html += '<span class="product">' + allnamaproduct[index] + '</span>';
+            html += '<input type="hidden" class="product_value" id="product" name="product[]" value="'+allproduct[index]+'">';
+            html += '</td>';
+            html += '<td>';
+            html += '<span class="price">' + allstok[index] + '</span>';
+            html += '<input type="hidden" class="stok_value" min=0 id="stok" name="stok[]" value="'+allstok[index]+'">';
+            html += '</td>';
+            html += '<td>';
+            html += '<select class="satuan_select" name="satuan[]" style="min-width:100px">';
+            for(let x = 0; x<satuan.length; x++){
+                if(satuan[x].id == allsatuan[index]){
+                    html += '<option value="'+satuan[x].id+'" selected>'+satuan[x].nama+'</option>';
+                }else{
+                    html += '<option value="'+satuan[x].id+'">'+satuan[x].nama+'</option>';
+                }
+            }
+            html += '</select>';
+            html += '</td>';
+            html += '<td width="15%">';
+            html += '<input type="text" class="form-control qty" min=0 id="qty_so" name="qty_so[]" value="'+allqty[index]+'">';
+            html += '</td>';
+            html += '<td class="text-right">';
+            html += '<button class="btn btn-danger remove"><i class="fa fa-trash"></i> </button>';
+            html += '</td>';
+            html += '</tr>';
+            $('#detailData').append(html);
+            html = '';
+            $(".qty").TouchSpin({
+                    min :0,
+                    max : 1000000,
+                    buttondown_class: 'btn btn-white',
+                    buttonup_class: 'btn btn-white'
+            });
+            $('#qty_so').on('change', function(){
+                allqty[index] = $(this).val();
+            });
+            $('.satuan_select').select2();
+            $('.satuan_select').on('change', function(){
+                allsatuan[index] = $(this).val();
+            });
+        }
+
+
+        // console.log(val[jQuery.inArray(id_product, val)]);
+            // if(jQuery.inArray(id_product, val) != -1) {
+
+            //     Swal.fire('Ups','Produk sudah ada di data keranjang','info');
+            //     $('#pilihProduct').val('');
+            // }else {
+            //     $.ajax({
+            //         type: 'POST',
+            //         url: '{{route('stokopname.tambahproduk')}}',
+            //         // dataType: 'json',
+            //         data: {
+            //             _token        : '{{csrf_token()}}',
+            //             id_product    : $(this).val(),
+            //             gudang_dari   : gudang,
+            //         },
+            //         success: function(result){
+            //             $('#detailData').append(result.html);
+            //             $('.satuan_select'+id_product).select2();
+            //             $(".qty").TouchSpin({
+            //                 min : 0,
+            //                 max : 1000000,
+            //                 buttondown_class: 'btn btn-white',
+            //                 buttonup_class: 'btn btn-white'
+            //             });
+            //         }
+            //     });
+            //     // $('#pilihProduct').val('');
+            // }
     });
 
-
+$('#clearproduct').on('click', function(){
+    // $('#pilihProduct').val('');
+    $('#table1 tbody > tr').remove();
+    $("#pilihProduct").select2("val", "");
+    console.log(allnamaproduct);
+    let html = '';
+    for(let index=0; index<allproduct.length;index++){
+        html += '<tr>';
+        html += '<td>';
+        html += '<span class="product">' + allnamaproduct[index] + '</span>';
+        html += '<input type="hidden" class="product_value" id="product" name="product[]" value="'+allproduct[index]+'">';
+        html += '</td>';
+        html += '<td>';
+        html += '<span class="price">' + allstok[index] + '</span>';
+        html += '<input type="hidden" class="stok_value" min=0 id="stok" name="stok[]" value="'+allstok[index]+'">';
+        html += '</td>';
+        html += '<td>';
+        html += '<select class="satuan_select'+index+'" name="satuan[]" style="min-width:100px">';
+        for(let x = 0; x<satuan.length; x++){
+            if(satuan[x].id == allsatuan[index]){
+                html += '<option value="'+satuan[x].id+'" selected>'+satuan[x].nama+'</option>';
+            }else{
+                html += '<option value="'+satuan[x].id+'">'+satuan[x].nama+'</option>';
+            }
+        }
+        html += '</select>';
+        html += '</td>';
+        html += '<td width="15%">';
+        html += '<input type="text" class="form-control qty" min=0 id="qty_so'+index+'" name="qty_so[]" value="'+allqty[index]+'">';
+        html += '</td>';
+        html += '<td class="text-right">';
+        html += '<button class="btn btn-danger remove"><i class="fa fa-trash"></i> </button>';
+        html += '</td>';
+        html += '</tr>';
+        $('#detailData').append(html);
+        html = '';
+        $(".qty").TouchSpin({
+                min :0,
+                max : 1000000,
+                buttondown_class: 'btn btn-white',
+                buttonup_class: 'btn btn-white'
+        });
+        $('#qty_so'+index).on('change', function(){
+            allqty[index] = $(this).val();
+        });
+        $('.satuan_select'+index).select2();
+        $('.satuan_select'+index).on('change', function(){
+            allsatuan[i] = $(this).val();
+        });
+    }
+})
 </script>
 @endpush

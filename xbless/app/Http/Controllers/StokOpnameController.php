@@ -78,21 +78,22 @@ class StokOpnameController extends Controller
         $data = $querydb->get();
         // return $data;
         foreach($data as $key => $value){
-            $gudang_dari = $value->detail_stockopname[0]->gudang_dari;
-            $gudang_tujuan = $value->detail_stockopname[0]->gudang_tujuan;
-            if($gudang_dari == 0){
-                $gudang_dari = "Gudang Pembelian";
-            }else if($gudang_dari == 1){
-                $gudang_dari = "Gudang Penjualan";
-            }else if($gudang_dari == 2){
-                $gudang_dari = "Gudang BS";
-            }
+            $gudang_dari = $value->detail_stockopname->getgudang->name;
+            // return $value;
+            // $gudang_tujuan = $value->detail_stockopname[0]->gudang_tujuan;
+            // if($gudang_dari == 0){
+            //     $gudang_dari = "Gudang Pembelian";
+            // }else if($gudang_dari == 1){
+            //     $gudang_dari = "Gudang Penjualan";
+            // }else if($gudang_dari == 2){
+            //     $gudang_dari = "Gudang BS";
+            // }
 
-            if($gudang_tujuan == 1){
-                $gudang_tujuan = "Gudang Penjualan";
-            }else if($gudang_tujuan == 2){
-                $gudang_tujuan = "Gudang BS";
-            }
+            // if($gudang_tujuan == 1){
+            //     $gudang_tujuan = "Gudang Penjualan";
+            // }else if($gudang_tujuan == 2){
+            //     $gudang_tujuan = "Gudang BS";
+            // }
             $enc_id = $this->safe_encode(Crypt::encryptString($value->id));
             $action = "";
             $action .= '<a href="#" onclick="showdetail(\''. $enc_id. '\')" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Detail" data-original-title="Show"><i class="fa fa-eye"></i> Detail Data</a>&nbsp';
@@ -100,7 +101,7 @@ class StokOpnameController extends Controller
             $value->id = $value->id;
             $value->no_transaksi = $value->no_transaksi;
             $value->gudang_dari = $gudang_dari;
-            $value->gudang_tujuan = $gudang_tujuan;
+            // $value->gudang_tujuan = $gudang_tujuan;
             $value->created_by = $value->created_by;
             $value->tgl_transaksi = date('Y-m-d', strtotime($value->tgl_transaksi));
             $value->action = $action;
@@ -243,7 +244,8 @@ class StokOpnameController extends Controller
         // $perusahaan = Perusahaan::all();
         $selectedperusahaan = '';
         $suplier = Supplier::all();
-        return view('backend/stok/stokopname/form', compact( 'selectedgudang', 'selectedperusahaan', 'suplier'));
+        $gudang = Gudang::all();
+        return view('backend/stok/stokopname/form', compact( 'selectedgudang', 'selectedperusahaan', 'suplier', 'gudang'));
     }
     public function detail($enc_id)
     {
@@ -504,13 +506,13 @@ class StokOpnameController extends Controller
         return $akhir;
     }
     public function simpan(Request $req){
-
+        // return $req->all();
         $from_gudang    = $req->gudang_dari;
-        $to_gudang      = $req->gudang;
-        $jumlah_data    = $req->jumlahdata;
+        // $to_gudang      = $req->gudang;
         $no_transaksi   = $req->no_transaksi;
         $note           = $req->note;
         $product        = $req->product;
+        $jumlah_data    = count($product);
         $qty            = $req->qty_so;
         $satuan         = $req->satuan;
         $stok           = $req->stok;
@@ -518,12 +520,7 @@ class StokOpnameController extends Controller
         $created_by     = $req->pic;
 
         // VALIDASI
-            if($from_gudang == $to_gudang){
-                return response()->json([
-                    'success' => FALSE,
-                    'message' => 'Gudang asal dan gudang tujuan tidak boleh sama'
-                ]);
-            }else if($jumlah_data < 1){
+           if($jumlah_data < 1){
                 return response()->json([
                     'success' => FALSE,
                     'message' => 'Data yang diinputkan kosong'
@@ -537,86 +534,51 @@ class StokOpnameController extends Controller
                 ]);
             }
         //END VALIDASI
+            $stockop = new StockOpname;
+            $stockop->gudang = $from_gudang;
+            $stockop->no_transaksi = $no_transaksi;
+            $stockop->tgl_transaksi = date('Y-m-d', strtotime($tgl_transaksi));
+            if($stockop->save()){
+                for($i=0 ; $i<$jumlah_data ; $i++){
+                    $qty_pcs[$i] = Satuan::find($satuan[$i])->qty * $qty[$i];
 
-        for($i=0 ; $i<$jumlah_data ; $i++){
-            $qty_pcs[$i] = Satuan::find($satuan[$i])->qty * $qty[$i];
-            //VALIDASI
-                if($stok[$i] < $qty_pcs[$i]){
-                    return response()->json([
-                        'success' => FALSE,
-                        'message' => 'Stock gudang tidak mencukupi'
-                    ]);
+                    $stockopname = new StockOpnameDetail;
+                    $stockopname->id_stockopname = $stockop->id;
+                    $stockopname->gudang   = $from_gudang;
+                    $stockopname->no_transaksi  = $no_transaksi;
+                    $stockopname->id_product    = $product[$i];
+                    $stockopname->qty_so        = $qty_pcs[$i];
+                    $stockopname->id_satuan_so  = $satuan[$i];
+                    $stockopname->stock_awal    = $stok[$i];
+                    $stockopname->stock_akhir   = $qty_pcs[$i];
+                    $stockopname->tgl_transaksi = date('Y-m-d', strtotime($tgl_transaksi));
+                    if(!$stockopname->save()){
+                        return response()->json([
+                            'success' => FALSE,
+                            'message' => 'Gagal menyimpan data detail stockopname'
+                        ]);
+                        break;
+                    }else{
+                        $stock = StockAdj::where('id_product', $product[$i])->where('id_gudang', $from_gudang)->first();
+                        $stock->gudang_baik = $qty_pcs[$i];
+                        if($stock->save()){
+                            continue;
+                        }else{
+                            return response()->json([
+                                'success' => FALSE,
+                                'message' => 'Gagal menyimpan data stock'
+                            ]);
+                            break;
+                        }
+                    }
                 }
-            //END VALIDASI
-            $stockopname = new StockOpname;
-            $stockopname->gudang_dari   = $from_gudang;
-            $stockopname->gudang_tujuan = $to_gudang;
-            $stockopname->no_transaksi  = $no_transaksi;
-            $stockopname->id_product    = $product[$i];
-            $stockopname->qty_so        = $qty_pcs[$i];
-            $stockopname->id_satuan_so  = $satuan[$i];
-            $stockopname->stock_awal    = $stok[$i];
-            $stockopname->stock_akhir   = $stok[$i] - $qty_pcs[$i];
-            $stockopname->tgl_transaksi = date('Y-m-d', strtotime($tgl_transaksi));
-            if(!$stockopname->save()){
+
+            }else{
                 return response()->json([
                     'success' => FALSE,
                     'message' => 'Gagal menyimpan data stockopname'
                 ]);
-                break;
-            }else{
-                $stock = StockAdj::where('id_product', $product[$i])->first();
-                if($from_gudang == 0){
-                    if($to_gudang == 1){
-                        $stock->stock_pembelian -= $qty_pcs[$i];
-                        $stock->stock_penjualan += $qty_pcs[$i];
-                    }else if($to_gudang == 2){
-                        $stock->stock_pembelian -= $qty_pcs[$i];
-                        $stock->stock_bs        += $qty_pcs[$i];
-                    }else{
-                        return response()->json([
-                            'success' => FALSE,
-                            'message' => 'Asal atau tujuan gudang salah'
-                        ]);
-                    }
-                }else if($from_gudang == 1){
-                    if($to_gudang == 2){
-                        $stock->stock_penjualan -= $qty_pcs[$i];
-                        $stock->stock_bs        += $qty_pcs[$i];
-                    }else{
-                        return response()->json([
-                            'success' => FALSE,
-                            'message' => 'Asal atau tujuan gudang salah'
-                        ]);
-                    }
-                }else if($from_gudang == 2){
-                    if($to_gudang == 1){
-                        $stock->stock_bs        -= $qty_pcs[$i];
-                        $stock->stock_penjualan += $qty_pcs[$i];
-                    }else{
-                        return response()->json([
-                            'success' => FALSE,
-                            'message' => 'Asal atau tujuan gudang salah'
-                        ]);
-                    }
-                }else{
-                    return response()->json([
-                        'success' => FALSE,
-                        'message' => 'Asal atau tujuan gudang salah'
-                    ]);
-                }
-
-                if($stock->save()){
-                    continue;
-                }else{
-                    return response()->json([
-                        'success' => FALSE,
-                        'message' => 'Gagal menyimpan data stockopname'
-                    ]);
-                    break;
-                }
             }
-        }
         $transaksi_stock = new TransaksiStock;
         $transaksi_stock->no_transaksi      = $no_transaksi;
         $transaksi_stock->tgl_transaksi     = date('Y-m-d', strtotime($tgl_transaksi));
@@ -811,8 +773,10 @@ class StokOpnameController extends Controller
 
     public function getProduk(Request $request)
     {
+        $gudang = $request->gudang;
         $term = $request->term;
-        $query = Product::take(20);
+        $stokadj = StockAdj::where('id_gudang', $gudang)->pluck('id_product');
+        $query = Product::whereIn('id', $stokadj)->limit(20);
         if ($term) {
             $query->where('nama', 'LIKE', "%{$term}%");
             $query->orWhere('kode_product', 'LIKE', "%{$term}%");
@@ -831,6 +795,17 @@ class StokOpnameController extends Controller
             ]);
         }
         return response()->json($out, 200);
+    }
+    public function showallproduct(Request $request){
+        $id_gudang = $request->gudang_dari;
+        $gudang = Gudang::find($id_gudang);
+        $stokadj = StockAdj::where('id_gudang', $id_gudang)->with(['getproduct'])->whereHas('getproduct')->get();
+        $satuan = Satuan::all();
+        return response()->json([
+            'data' => $stokadj,
+            'satuan' => $satuan
+        ]);
+        // return $stokadj;
     }
 
     public function tambahProduk(Request $request)

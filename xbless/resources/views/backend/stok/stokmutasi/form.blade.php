@@ -71,7 +71,7 @@
 
                                     </select>
                                 </div> --}}
-                <label class="col-sm-2 col-form-label">Suplier * </label>
+                {{-- <label class="col-sm-2 col-form-label">Suplier * </label>
                 <div class="col-sm-10 error-text">
                     <select class="form-control select2" id="supplier" name="supplier">
                         <option value="0">Pilih Suplier</option>
@@ -79,7 +79,7 @@
                             <option value="{{ $value->id }}">{{ $value->nama }}</option>
                         @endforeach
                     </select>
-                </div>
+                </div> --}}
                 <label class="col-sm-2 col-form-label">Dari Gudang * </label>
                 <div class="col-sm-4 error-text">
                     <select class="form-control select2" id="gudang_from" name="gudang_from">

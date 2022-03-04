@@ -19,6 +19,9 @@ class StockOpname extends Model
     public function getsatuan(){
         return $this->hasOne(Satuan::class, 'id', 'id_satuan_so');
     }
+    public function getgudang(){
+        return $this->hasOne(Gudang::class, 'id', 'gudang');
+    }
 
 
 }

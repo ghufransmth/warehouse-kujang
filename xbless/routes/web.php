@@ -296,6 +296,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     Route::get('manage/stokopname/getproduk', [StokOpnameController::class, 'getProduk'])->name('stokopname.getproduct');
     Route::post('manage/stokopname/tambahproduk', [StokOpnameController::class, 'tambahProduk'])->name('stokopname.tambahproduk');
     Route::post('manage/stokopname/tambahprodukbarcode', [StokOpnameController::class, 'tambahProdukBarcode'])->name('stokopname.tambahprodukbarcode');
+    Route::post('manage/stokopname/showallproduct', [StokOpnameController::class, 'showallproduct'])->name('stokopname.showallproduct');
 
     //REPORT
     //REPORT SO
@@ -616,6 +617,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/simpanexpedisi', [PurchaseController::class, 'simpan_expedisi'])->name('simpanexpedisi');
             Route::post('/simpan', [PurchaseController::class, 'simpan'])->name('simpan');
             Route::get('/proses/{id?}', [PurchaseController::class, 'proses'])->name('proses');
+            Route::post('/simpanproses', [PurchaseController::class, 'simpan_proses'])->name('simpan_proses');
             Route::post('/getsupplier', [PurchaseController::class, 'getsupplier'])->name('getsupplier');
             Route::post('/addproduk', [PurchaseController::class, 'addproduk'])->name('addproduk');
             Route::post('/updatepo', [PurchaseController::class, 'updatepo'])->name('updatepo');

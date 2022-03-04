@@ -1,4 +1,7 @@
 <?php
+
+use App\Models\Satuan;
+
 function terbilang($angka) {
    $angka=abs($angka);
    $baca =array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
@@ -39,3 +42,4 @@ function format_uang($angka){
     $hasil=number_format($angka,0,',','.');
 return 'Rp. '.$hasil;
 }
+
