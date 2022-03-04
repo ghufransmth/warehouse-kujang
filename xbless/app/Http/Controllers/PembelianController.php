@@ -616,10 +616,13 @@ class PembelianController extends Controller
                                         $stockadj = StockAdj::where('id_product',$array_product[$i])->first();
                                         if(isset($stockadj)){
                                             $stockadj->gudang_baik += $detail_pembelian->qty;
+                                            $stockadj->id_gudang = $gudang;
+                                            $stockadj->id_supplier = $supplier;
                                             $stockadj->save();
                                         }else{
                                             $stockbaru = new StockAdj;
                                             $stockbaru->id_product = $detail_pembelian->product_id;
+                                            $stockadj->id_supplier = $pembelian->supplier_id;
                                             $stockbaru->gudang_baik += $detail_pembelian->qty;
                                             $stockbaru->gudang_bs = 0;
                                             $stockbaru->stock_approve = 0;
@@ -627,6 +630,8 @@ class PembelianController extends Controller
                                             if($stockbaru){
                                                 $stockadj = StockAdj::where('id_product',$array_product[$i])->first();
                                                 $stockadj->gudang_baik += $detail_pembelian->qty;
+                                                $stockadj->id_gudang = $gudang;
+                                                $stockadj->id_supplier = $supplier;
                                                 $detail_pembelian->save();
                                                 $json_data = array(
                                                     "success"         => TRUE,
@@ -646,6 +651,8 @@ class PembelianController extends Controller
                                         $stockbaru = new StockAdj;
                                         $stockbaru->id_product = $detail_pembelian->product_id;
                                         $stockbaru->gudang_baik += $detail_pembelian->qty;
+                                        $stockbaru->id_gudang = $gudang;
+                                        $stockbaru->id_supplier = $supplier;
                                         $stockbaru->gudang_bs = 0;
                                         $stockbaru->stock_approve = 0;
                                         $stockbaru->save();
