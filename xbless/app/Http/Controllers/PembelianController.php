@@ -152,7 +152,7 @@ class PembelianController extends Controller
         <td>
             <input type='text' class='form-control' id='harga_product_".$total."' name='harga_product[]'>
         </td>
-            <td><input type='text' class='form-control touchspin".$total."' id='qty_".$total."' name='qty[]' value='1' onkeyup='hitung_qty(".$total.")' onchange='hitung_qty(".$total.")'>
+            <td><input type='text' class='form-control touchspin".$total."' id='qty_".$total."' name='qty[]' value='1' onkeyup='hitung_qty(".$total.")' onchange='hitung_qty(".$total.",".$total.")'>
             </td>
 
              <td><input type='text' class='form-control total_harga' id='total_".$total."' name='total[]' readonly></td>
@@ -703,11 +703,7 @@ class PembelianController extends Controller
                     ->orWhere('tbl_product.kode_product', 'LIKE', "%{$request->search}%")
                     ->limit(10)
                     ->get();
-        // $product = Product::select('*')
-        //             ->orWhere('tbl_product.nama','LIKE',"%{$request->search}%")
-        //             ->limit(10)
-        //             ->get();
-        // return $product;
+
         return json_encode($product);
     }
 
