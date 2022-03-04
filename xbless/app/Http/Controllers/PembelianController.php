@@ -518,7 +518,7 @@ class PembelianController extends Controller
                     if($pembelian->status_pembelian == 1){
                         $stockadj = StockAdj::where('id_product',$detail->product_id)->first();
                         // return response()->json($detail);
-                        $stockadj->stock_pembelian += $detail->qty;
+                        $stockadj->gudang_baik += $detail->qty;
                         if(!$stockadj->save()){
                             return response()->json([
                                 'success' => FALSE,
@@ -543,7 +543,7 @@ class PembelianController extends Controller
                                 if($pembelian_detail->save()){
                                     if($pembelian->status_pembelian == 0){
                                         $stockadj = StockAdj::where('id_product',$detail->id_product)->first();
-                                        $stockadj->stock_pembelian += $pembelian_detail->qty;
+                                        $stockadj->gudang_baik += $pembelian_detail->qty;
                                     }
                                     if(!$stockadj->save()){
                                         return response()->json([
@@ -615,19 +615,18 @@ class PembelianController extends Controller
                                 if($pembelian->status_pembelian == 1){
                                         $stockadj = StockAdj::where('id_product',$array_product[$i])->first();
                                         if(isset($stockadj)){
-                                            $stockadj->stock_pembelian += $detail_pembelian->qty;
+                                            $stockadj->gudang_baik += $detail_pembelian->qty;
                                             $stockadj->save();
                                         }else{
                                             $stockbaru = new StockAdj;
                                             $stockbaru->id_product = $detail_pembelian->product_id;
-                                            $stockbaru->stock_pembelian += $detail_pembelian->qty;
-                                            $stockbaru->stock_penjualan = 0;
-                                            $stockbaru->stock_bs = 0;
+                                            $stockbaru->gudang_baik += $detail_pembelian->qty;
+                                            $stockbaru->gudang_bs = 0;
                                             $stockbaru->stock_approve = 0;
                                             $stockbaru->save();
                                             if($stockbaru){
                                                 $stockadj = StockAdj::where('id_product',$array_product[$i])->first();
-                                                $stockadj->stock_pembelian += $detail_pembelian->qty;
+                                                $stockadj->gudang_baik += $detail_pembelian->qty;
                                                 $detail_pembelian->save();
                                                 $json_data = array(
                                                     "success"         => TRUE,
@@ -646,9 +645,8 @@ class PembelianController extends Controller
                                     }else{
                                         $stockbaru = new StockAdj;
                                         $stockbaru->id_product = $detail_pembelian->product_id;
-                                        $stockbaru->stock_pembelian += $detail_pembelian->qty;
-                                        $stockbaru->stock_penjualan = 0;
-                                        $stockbaru->stock_bs = 0;
+                                        $stockbaru->gudang_baik += $detail_pembelian->qty;
+                                        $stockbaru->gudang_bs = 0;
                                         $stockbaru->stock_approve = 0;
                                         $stockbaru->save();
                                         if($stockbaru){
