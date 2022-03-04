@@ -212,7 +212,7 @@
                                             </td>
                                             <td width="15%">
                                                 <input type="text" class="form-control touchspin" id="qty_1" name="qty[]"
-                                                    value="1" onkeyup="hitung_qty(1)" onchange="hitung_qty(1)">
+                                                    value="1" onkeyup="hitung_qty(1)" onchange="hitung_qty(1,1)">
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control total_harga" id="total_1"
@@ -688,6 +688,7 @@ $('.jatuh_tempo').datepicker({
 
     function hitung_qty(num, numSatuan){
         console.log(num);
+        console.log(numSatuan);
         console.log($('#product_'+num).val());
         // console.log($('#product_'+num+' option:selected').val());
         if($('#product_'+num).val() == 0){
@@ -701,16 +702,19 @@ $('.jatuh_tempo').datepicker({
                 type: 'POST',
                 data: {
                     'satuan_id': $('#tipe_satuan_'+numSatuan).val(),
+                    'qty': $('#qty_'+numSatuan).val(),
+                    'harga_product': $('#harga_product_'+numSatuan).val(),
+                    'harga_pembelian': $('#total_harga_pembelian').val(),
                     'urut' : num
                 },
-                url: '{{route("purchaseorder.total_harga")}}',
+                url: '{{route("pembelian.total_harga")}}',
                 headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
                 success: function(response) {
                     console.log(response)
 
                     if(response.success){
                         var total_qty = response.data.qty * $('#qty_'+num).val();
-                        // console.log(total_qty);
+                        console.log(total_qty);
                         if($('#stock_product_'+num).val() < total_qty){
                             Swal.fire('Ups', 'Stock product tidak cukup', 'info');
                             return false;
