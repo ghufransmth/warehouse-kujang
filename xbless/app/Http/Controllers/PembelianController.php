@@ -495,6 +495,11 @@ class PembelianController extends Controller
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
 
         $pembelian = Pembelian::find($dec_id);
+        // $pembelian = Pembelian::select('*','gudang.name','supplier.nama');
+        // $pembelian->join('gudang','pembelian.id_gudang','gudang.id');
+        // $pembelian->join('supplier','pembelian.supplier_id','supplier.id');
+        // $data = $pembelian->get();
+        // return response()->json($data);
 
         if(isset($pembelian)){
             $pembelian_detail = PembelianDetail::where('pembelian_id',$pembelian->id)->where('notransaction',$pembelian->no_faktur)->with(['getproduct'])->get();

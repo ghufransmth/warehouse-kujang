@@ -132,8 +132,7 @@
                         <div class="hr-line-dashed"></div>
                         <div class="col-lg-2">
                             <input type="hidden" id="total_produk" class="mb-1 form-control" value="1">
-                            <a id="tambah_detail_product" onclick="tambahProduk()"
-                                class="text-white btn btn-success"><span class="fa fa-pencil-square-o"></span>Tambah</a>
+                            <a id="tambah_detail_product" onclick="tambahProduk()" class="text-white btn btn-success btn-sm"><span class="fa fa-pencil-square-o"></span> Tambah Product</a>
                         </div>
 
                         <div class="hr-line-dashed"></div>
