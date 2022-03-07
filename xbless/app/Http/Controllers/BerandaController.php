@@ -127,7 +127,7 @@ class BerandaController extends Controller
 
             $action .= '';
             $action .= '<div class="btn-group">';
-            $action .= '<a href="' . route('beranda.unilever.detail', $enc_id) . '" class="btn btn-sm btn-primary rounded"><i class="fa fa-eye"></i>&nbsp; Detail</a>';
+            $action .= '<a href="#" onclick="modal()" class="btn btn-sm btn-primary rounded"><i class="fa fa-eye"></i>&nbsp; Detail</a>';
             $action .= '</div>';
 
             if ($result->status_pembelian == 0) {
@@ -218,6 +218,10 @@ class BerandaController extends Controller
             "data"            => $data
         );
         return json_encode($json_data);
+    }
+
+    public function detailUnilever(Request $request){
+        
     }
 
     public function getDataRetur(Request $request)

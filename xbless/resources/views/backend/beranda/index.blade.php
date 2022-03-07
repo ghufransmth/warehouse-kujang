@@ -141,7 +141,7 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h4>FAKTUR UNILEVER</h4>
+                    <h4>FAKTUR PEMBELIAN</h4>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -159,6 +159,7 @@
                                 <tr class="text-white text-center bg-primary">
                                     <th>Tanggal Faktur</th>
                                     <th>Nomor Faktur</th>
+                                    <!-- <th>Supplier</th> -->
                                     <th>Total Pembelian</th>
                                     <th>Status</th>
                                     <th>Detail</th>
@@ -171,6 +172,7 @@
                                 <tr class="text-white text-center bg-primary">
                                     <th>Tanggal Faktur</th>
                                     <th>Nomor Faktur</th>
+                                    <!-- <th>Supplier</th> -->
                                     <th>Total Pembelian</th>
                                     <th>Status</th>
                                     <th>Detail</th>
@@ -181,6 +183,7 @@
                 </div>
             </div>
         </div>
+        
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
@@ -392,7 +395,76 @@
 
     </div>
 </div>
-
+<div class="modal fade" id="process_modal" tabindex="-1" role="dialog" aria-labelledby="process_modal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Detail Pembelian</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="nodal-content">
+                <div class="card p-5" style="font-family: 'Cutive Mono', monospace;" id="section-to-print">
+                    <p class="font-weight-bold" style="font-size: medium;">CV Kujang Marinas Utama</p>
+                    <div>
+                        <p>KP. CIKAROYA RT 010 RW 003 KECAMATAN CISAAT SUKABUMI DC. GUNUNG JAYA, KEC
+                            CISAAT, KAB SUKABUMI <br> No. Telepon : &nbsp; &nbsp;&nbsp; 0266216166</P>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 m-auto">
+                            <p> Supplier : <br>
+                                Gudang : 
+                            </p>
+                        </div>
+                        <div class="col-sm-4 m-auto">
+                            <p> No. Faktur  : <br>
+                                Tgl. Faktur : <br>
+                                Tgl. JTempo : <br>
+                            </p>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead class="thead-white border">
+                            <tr class="text-center">
+                                <th class="border">Kode</th>
+                                <th class="border">Nama Barang</th>
+                                <th class="border">Harga Barang</th>
+                                <th class="border">Qty (PCS)</th>
+                                <th class="border">Jumlah Rp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                        <tfoot>
+                            <tr class="m-auto">
+                                <td colspan="3" class="py-3">Total Barang : </td>
+                                <td class="text-right py-3">Jumlah </td>
+                                <td class="text-right py-3"></td>
+                                <td></td>
+                            </tr>
+                            <tr class="m-auto">
+                                <td colspan="3"></td>
+                                <td class="text-right"> Nilai Faktur Rp</td>
+                                <td class="text-right"></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <p class="" style="font-size: medium;">TERBILANG : </p>
+                    <div>
+                        <p>* Ket satu dua tiga <br>
+                            Aut adipisci, saepe alias sequi consequunturdolores, <br>
+                            tempora doloribus molestiae sumque, error id aliquam harum sunt option
+                            officiis nobis quaerat asperiores possimus corrupti. Repellat.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @push('scripts')
 <script>
@@ -717,6 +789,9 @@
                 }
             }
         })
+    }
+    function modal(){
+        $('#process_modal').modal('show')
     }
 </script>
 @endpush
