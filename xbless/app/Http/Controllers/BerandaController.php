@@ -13,6 +13,43 @@ use Auth;
 
 class BerandaController extends Controller
 {
+    private function terbilang($angka) {
+        $angka=abs($angka);
+        $baca =array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
+     
+        $terbilang="";
+         if ($angka < 12){
+             $terbilang= " " . $baca[$angka];
+         }
+         else if ($angka < 20){
+             $terbilang= $this->terbilang($angka - 10) . " belas";
+         }
+         else if ($angka < 100){
+             $terbilang= $this->terbilang($angka / 10) . " puluh" . $this->terbilang($angka % 10);
+         }
+         else if ($angka < 200){
+             $terbilang= " seratus" . $this->terbilang($angka - 100);
+         }
+         else if ($angka < 1000){
+             $terbilang= $this->terbilang($angka / 100) . " ratus" . $this->terbilang($angka % 100);
+         }
+         else if ($angka < 2000){
+             $terbilang= " seribu" . $this->terbilang($angka - 1000);
+         }
+         else if ($angka < 1000000){
+             $terbilang= $this->terbilang($angka / 1000) . " ribu" . $this->terbilang($angka % 1000);
+         }
+         else if ($angka < 1000000000){
+            $terbilang= $this->terbilang($angka / 1000000) . " juta" . $this->terbilang($angka % 1000000);
+         }
+         else if ($angka < 1000000000000){
+             $terbilang= $this->terbilang($angka / 1000000000) . " miliyar" . $this->terbilang($angka % 1000000000);
+         }else if ($angka < 1000000000000000){
+             $terbilang= $this->terbilang($angka / 1000000000000) . " triliun" . $this->terbilang($angka % 1000000000000);
+         }
+            return $terbilang;
+    }
+
     public function index()
     {
         $periode_start = date('d-m-Y', strtotime("-1 Month"));
@@ -127,7 +164,7 @@ class BerandaController extends Controller
 
             $action .= '';
             $action .= '<div class="btn-group">';
-            $action .= '<a href="#" onclick="modal()" class="btn btn-sm btn-primary rounded"><i class="fa fa-eye"></i>&nbsp; Detail</a>';
+            $action .= '<a href="#" onclick="modal('.$result->id.')" class="btn btn-sm btn-primary rounded"><i class="fa fa-eye"></i>&nbsp; Detail</a>';
             $action .= '</div>';
 
             if ($result->status_pembelian == 0) {
@@ -138,6 +175,7 @@ class BerandaController extends Controller
 
             $result->no             = $key + $page;
 
+            $result->nominal        = "Rp. " . number_format($result->nominal, 0, '', '.');
             $result->status         = $status;
             $result->faktur         = date('d F Y', strtotime($result->tgl_faktur));
             $result->action         = $action;
@@ -149,6 +187,33 @@ class BerandaController extends Controller
             "data"            => $data
         );
         return json_encode($json_data);
+    }
+
+    public function detailUnilever(Request $request){
+        $query = DB::table('pembelian')->select('pembelian.*','supplier.nama as supplier')->leftJoin('supplier','supplier.id','supplier_id');
+        $query->where('pembelian.id', $request->id);
+        $result = $query->first();
+        $result->total_barang = $query->get()->count();
+        $result->terbilang = strtoupper($this->terbilang($result->nominal))." RUPIAH";
+
+        $queryDetail = DB::table('pembelian_detail')->select('pembelian_detail.*', 'tbl_product.nama as product')->leftJoin('tbl_product','tbl_product.id','pembelian_detail.product_id')->where('pembelian_id', $result->id);
+        $resultDetail = $queryDetail->get();
+
+        $detail = '';
+        foreach ($resultDetail as $key => $value) {
+            $detail.='<tr>';
+                $detail.='<td>'.$value->notransaction.'</td>';
+                $detail.='<td>'.$value->product.'</td>';
+                $detail.='<td class="text-right">RP '. number_format($value->product_price, 0, '', '.').'</td>';
+                $detail.='<td class="text-center">'.$value->qty.'Pcs </td>';
+                $detail.='<td class="text-right">RP '. number_format($value->total, 0, '', '.').'</td>';
+            $detail.='</tr>';
+        }
+
+        return response()->json([
+            'data' => $result,
+            'detail'    => $detail
+        ]);
     }
 
     public function getDataPenjualan(Request $request)
@@ -218,10 +283,6 @@ class BerandaController extends Controller
             "data"            => $data
         );
         return json_encode($json_data);
-    }
-
-    public function detailUnilever(Request $request){
-        
     }
 
     public function getDataRetur(Request $request)

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Satuan;
+namespace App\Http\Helpers;
 
 function terbilang($angka) {
    $angka=abs($angka);

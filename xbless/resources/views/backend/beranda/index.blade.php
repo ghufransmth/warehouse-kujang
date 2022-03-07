@@ -396,7 +396,7 @@
     </div>
 </div>
 <div class="modal fade" id="process_modal" tabindex="-1" role="dialog" aria-labelledby="process_modal" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg" style="max-width:90%; max-height:75%;"> role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Detail Pembelian</h5>
@@ -412,15 +412,14 @@
                             CISAAT, KAB SUKABUMI <br> No. Telepon : &nbsp; &nbsp;&nbsp; 0266216166</P>
                     </div>
                     <div class="row">
-                        <div class="col-sm-4 m-auto">
-                            <p> Supplier : <br>
-                                Gudang : 
+                        <div class="col-sm m-auto">
+                            <p> Supplier : <span id="supplier"></span>
                             </p>
                         </div>
-                        <div class="col-sm-4 m-auto">
-                            <p> No. Faktur  : <br>
-                                Tgl. Faktur : <br>
-                                Tgl. JTempo : <br>
+                        <div class="col-sm m-auto">
+                            <p> No. Faktur  : <span id="no_faktur"></span> <br>
+                                Tgl. Faktur : <span id="no_tgl"></span> <br>
+                                Tgl. JTempo : <span id="tgl_tempo"></span> <br>
                             </p>
                         </div>
                     </div>
@@ -434,25 +433,23 @@
                                 <th class="border">Jumlah Rp</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="data_detail">
                             
                         </tbody>
                         <tfoot>
                             <tr class="m-auto">
-                                <td colspan="3" class="py-3">Total Barang : </td>
-                                <td class="text-right py-3">Jumlah </td>
+                                <td colspan="3" class="py-3">Total Barang : <span id="total_barang"></span></td>
+                                <td class="text-right py-3">Jumlah : <span id="total"></span></td>
                                 <td class="text-right py-3"></td>
-                                <td></td>
                             </tr>
                             <tr class="m-auto">
                                 <td colspan="3"></td>
-                                <td class="text-right"> Nilai Faktur Rp</td>
+                                <td class="text-right"> Nilai Faktur Rp <span id="total_data"></span></td>
                                 <td class="text-right"></td>
-                                <td></td>
                             </tr>
                         </tfoot>
                     </table>
-                    <p class="" style="font-size: medium;">TERBILANG : </p>
+                    <p class="" style="font-size: medium;">TERBILANG : <span id="terbilang"></span></p>
                     <div>
                         <p>* Ket satu dua tiga <br>
                             Aut adipisci, saepe alias sequi consequunturdolores, <br>
@@ -790,8 +787,29 @@
             }
         })
     }
-    function modal(){
+    function modal(id){
         $('#process_modal').modal('show')
+        $('#data_detail').find('tr').remove()
+        var token = '{{ csrf_token() }}';
+        $.ajax({
+            type: 'POST',
+            headers: {'X-CSRF-TOKEN': token},
+            data:{
+                id: id
+            },
+            url: '{{ route("beranda.unilever.detail") }}',
+            success: function(response){
+                $('#supplier').html(response.data.supplier)
+                $('#no_faktur').html(response.data.no_faktur)
+                $('#no_tgl').html(response.data.tgl_faktur)
+                $('#tgl_tempo').html(response.data.tgl_jatuh_tempo)
+                $('#total').html(response.data.nominal)
+                $('#total_data').html(response.data.nominal)
+                $('#total_barang').html(response.data.total_barang)
+                $('#terbilang').html(response.data.terbilang)
+                $('#data_detail').append(response.detail)
+            }
+        })
     }
 </script>
 @endpush
