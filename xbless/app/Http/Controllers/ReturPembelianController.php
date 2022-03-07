@@ -174,7 +174,7 @@ class ReturPembelianController extends Controller
                     if($detail_retur->save()){
                         $stockadj = StockAdj::where('id_product',$array_product[$i])->first();
                         if(isset($stockadj)){
-                            $stockadj->stock_pembelian -= $detail_retur->qty;
+                            $stockadj->gudang_baik -= $detail_retur->qty;
                             $stockadj->stock_retur_pembelian += $detail_retur->qty;
                             if($stockadj->save()){
                                 $json_data = array(

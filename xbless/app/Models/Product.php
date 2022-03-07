@@ -18,7 +18,7 @@ class Product extends Model
         return $this->hasOne(Kategori::class, 'id', 'id_kategori');
     }
     public function getstock(){
-        return $this->hasOne(StockAdj::class, 'id_product', 'id')->ofMany('gudang_baik', 'max');;
+        return $this->hasOne(StockAdj::class, 'id_product', 'id')->ofMany('gudang_baik','max');
     }
     public function getdetailproduct(){
         return $this->hasMany(ProductDetail::class, 'id_product', 'id');
