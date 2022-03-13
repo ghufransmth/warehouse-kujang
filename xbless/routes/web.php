@@ -815,7 +815,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::post('/tambah_product', [PembelianController::class, 'tambah_product'])->name('tambah_detail');
         Route::get('/search_product', [PembelianController::class, 'search_product'])->name('search_product');
         Route::get('/search_satuan', [PembelianController::class, 'search_satuan'])->name('search_satuan');
-        Route::delete('/delete/{id?}', [PembelianController::class, 'hapus'])->name('hapus');
+        Route::get('/delete/{id?}', [PembelianController::class, 'hapus'])->name('hapus');
         Route::post('/harga_product', [PembelianController::class, 'harga_product'])->name('harga_product');
         Route::post('/total_harga', [PembelianController::class, 'total_harga'])->name('total_harga');
     });

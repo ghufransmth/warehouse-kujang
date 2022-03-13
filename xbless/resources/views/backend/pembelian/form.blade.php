@@ -95,15 +95,16 @@
                             <label class="col-sm-2 col-form-label">Supplier </label>
                             <div class="col-sm-4 error-text">
                                 <select class="form-control select2" id="supplier" name="supplier">
-                                    <option value="0">Pilih Supplier</option>
+                                    <option disabled selected value="">Pilih Supplier</option>
                                     @foreach($supplier as $key => $value)
-                                    <option value="{{ $value->id }}"
+                                    {{-- <option value="{{ $value->id }}"
                                         @if(isset($selectedsupplier))
                                             @if($value->id == $selectedsupplier)
                                                 selected
                                             @endif
                                         @endif
-                                    >{{ $value->nama }}</option>
+                                    >{{ $value->nama }}</option> --}}
+                                        <option value="{{ $value->id }}" {{ $selectedsupplier==$value->id?'selected':'' }}>{{ $value->nama }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -113,15 +114,16 @@
                             <label class="col-sm-2 col-form-label">Gudang </label>
                             <div class="col-sm-4 error-text">
                                 <select class="form-control select2" id="gudang" name="gudang">
-                                    <option value="0">Pilih Gudang</option>
+                                    <option disabled selected value="">Pilih Gudang</option>
                                     @foreach($gudang as $key => $value)
-                                    <option value="{{ $value->id }}"
+                                    {{-- <option value="{{ $value->id }}"
                                         @if(isset($selectegudang))
                                             @if($value->id == $selectedgudang)
                                                 selected
                                             @endif
                                         @endif
-                                    >{{ $value->name }}</option>
+                                    >{{ $value->name }}</option> --}}
+                                    <option value="{{ $value->id }}" {{ $selectedgudang==$value->id?'selected':'' }}>{{ $value->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
