@@ -96,7 +96,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::post('/getdata', [BerandaController::class, 'getData'])->name('getdata');
         Route::group(['prefix' => 'unilever', 'as' => 'unilever.'], function () {
             Route::post('/getdataunlever', [BerandaController::class, 'getDataUnilever'])->name('getdata');
-            Route::get('/getdata/{id}', [BerandaController::class, 'detailUnilever'])->name('detail');
+            Route::post('/getdata', [BerandaController::class, 'detailUnilever'])->name('detail');
         });
         Route::group(['prefix' => 'penjualan', 'as' => 'penjualan.'], function () {
             Route::post('/getdatapenjualan', [BerandaController::class, 'getDataPenjualan'])->name('getdata');
