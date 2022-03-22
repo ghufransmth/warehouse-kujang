@@ -79,9 +79,9 @@
                                     <tr>
                                         <td>{{ $item->getproduct->kode_product }}</td>
                                         <td>{{ $item->getproduct->nama }}</td>
-                                        <td class="text-right">{{ format_uang($item->product_price) }}</td>
+                                        <td class="text-right">{{ $item->product_price }}</td>
                                         <td class="text-right">{{ $item->qty }}</td>
-                                        <td class="text-right">{{ format_uang($item->total) }}</td>
+                                        <td class="text-right">{{ $item->total }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -89,18 +89,18 @@
                                 <tr class="m-auto">
                                     <td colspan="3" class="py-3">Total Barang : {{ count($detail_pembelian) }}</td>
                                     <td class="text-right py-3">Jumlah </td>
-                                    <td class="text-right py-3">{{ format_uang($pembelian->nominal) }}</td>
+                                    <td class="text-right py-3">{{ $pembelian->nominal }}</td>
                                     <td></td>
                                 </tr>
                                 <tr class="m-auto">
                                     <td colspan="3"></td>
                                     <td class="text-right"> Nilai Faktur Rp</td>
-                                    <td class="text-right">{{ format_uang($pembelian->nominal) }}</td>
+                                    <td class="text-right">{{ $pembelian->nominal }}</td>
                                     <td></td>
                                 </tr>
                             </tfoot>
                         </table>
-                        <p class="" style="font-size: medium;">TERBILANG : {{ strtoupper(terbilang($pembelian->nominal)) }}</p>
+                        <p class="" style="font-size: medium;">TERBILANG : {{ strtoupper($pembelian->nominal) }}</p>
                         <div>
                             <p>* Ket satu dua tiga <br>
                                 Aut adipisci, saepe alias sequi consequunturdolores, <br>
