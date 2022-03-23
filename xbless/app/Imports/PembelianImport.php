@@ -13,14 +13,14 @@ class PembelianImport implements ToModel,WithHeadingRow
 {
    public function model(array $row)
    {
-    $harga_product = Product::where('kode_product', $row["kode_product"])->first()->harga_beli;
-    $total_harga = $harga_product * $row['quantity'];
+    $harga_product = Product::where('kode_product', $row["kode_product"])->first();
+    $total_harga = $harga_product->harga_beli * $row['quantity'];
     return new ImportPembelian([
         'no_faktur' => $row['inv_number'],
         'kode_product' => $row['kode_product'],
         'satuan_id' => $row['satuan'],
         'qty' => $row['quantity'],
-        'harga_product' => $harga_product,
+        'harga_product' => $row['harga_product'],
         'total_harga' => $total_harga,
     ]);
    }

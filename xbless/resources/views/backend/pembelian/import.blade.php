@@ -56,6 +56,21 @@
                             {{ csrf_field() }}
                             <label for="">Tanggal Transaksi</label>
                             <input type="text" name="tgl_transaksi" class="formatTgl transaksi" id="" autocomplete="off" value="{{ date('d-m-Y') }}">
+                            &nbsp;
+                            <select name="supplier" id="supplier" class="select2 col-sm-2" required>
+                                <option disabled selected value="">Pilih Supplier</option>
+                                @foreach($supplier as $key => $value)
+                                    <option value="{{ $value->id }}" {{ $selectedsupplier==$value->id?'selected':'' }}>{{ $value->nama }}</option>
+                                @endforeach
+                            </select>
+
+                            &nbsp;
+                            <select name="gudang" id="gudang" class="select2 col-sm-2" required>
+                                <option disabled selected value="">Pilih Gudang</option>
+                                @foreach($gudang as $key => $value)
+                                    <option value="{{ $value->id }}" {{ $selectedgudang==$value->id?'selected':'' }}>{{ $value->name }}</option>
+                                @endforeach
+                            </select>
 
                             <br>
                             <div class="text-right">
@@ -74,6 +89,7 @@
                                         <th>Kode Product</th>
                                         <th>Satuan</th>
                                         <th>QTY</th>
+                                        <th>Harga Beli</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -85,6 +101,7 @@
                                             <td>{{ $value->kode_product }}</td>
                                             <td>{{ $value->satuan_id }}</td>
                                             <td>{{ $value->qty }}</td>
+                                            <td>{{ $value->harga_product }}</td>
                                             <td>{!! $value->aksi !!}</td>
                                         </tr>
                                     @endforeach

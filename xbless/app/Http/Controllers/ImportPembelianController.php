@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Imports\PembelianImport;
+use App\Models\Gudang;
 use Illuminate\Http\Request;
 use App\Models\PembelianDetail;
 use App\Models\ImportPembelian;
@@ -11,6 +12,7 @@ use App\Models\Penjualan;
 use App\Models\Product;
 use App\Models\Satuan;
 use App\Models\StockAdj;
+use App\Models\Supplier;
 use App\Models\TransaksiStock;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -29,17 +31,23 @@ class ImportPembelianController extends Controller
             $datas = array();
         }
 
+        $supplier = Supplier::all();
+        $gudang = Gudang::all();
+        $selectedsupplier ="";
+        $selectedgudang ="";
 
-        return view('backend/pembelian/import', ['data' => $datas]);
+        return view('backend/pembelian/import', ['data' => $datas,],compact('supplier','gudang','selectedsupplier','selectedgudang'));
     }
 
     public function import(Request $request){
         $request->session()->forget('status','desc');
         $file = $request->file('file_pembelian');
 
+
         Excel::import(new PembelianImport, $file);
 
         return redirect()->route('pembelian_import.import');
+        // return view('backend/pembelian/import',compact('supplier','gudang','selectedsupplier','selectedgudang'));
     }
 
     public function importbatal(){
@@ -63,7 +71,10 @@ class ImportPembelianController extends Controller
     }
 
     public function importsimpan(Request $req){
+        // return $req->all();
         $tgl_transaksi = $req->tgl_transaksi;
+        $supplier = $req->supplier;
+        $gudang = $req->gudang;
         $data_import = ImportPembelian::all();
         if(count($data_import) > 0){
             foreach($data_import as $data){
@@ -74,19 +85,26 @@ class ImportPembelianController extends Controller
         }else{
             $data_import = array();
         }
-
+        // return response()->json($data_import);
         // VALIDASI
         foreach($data_import as $key => $data){
             $satuan = Satuan::find($data->satuan_id);
             $product = Product::where('kode_product', $data->kode_product)->first();
+            // return $product;
             $stockadj = StockAdj::where('id_product', $product->id)->first();
+            // return response()->json($stockadj);
+            $supplier = Supplier::all();
+            $gudang = Gudang::all();
+            $selectedsupplier ="";
+            $selectedgudang ="";
+
             if(!isset($product)){
                 $message = array(
                     'status' =>  'danger',
                     'desc'   =>  'Kode Product tidak ditemukan'
                 );
                 session(['status' => $message['status'], 'desc' => $message['desc']]);
-                return view('backend/pembelian/import', ['data' => $data_import]);
+                return view('backend/pembelian/import', ['data' => $data_import],compact('supplier','gudang','selectedsupplier','selectedgudang'));
             }
             if(!isset($stockadj)){
                 $message = array(
@@ -94,7 +112,7 @@ class ImportPembelianController extends Controller
                     'desc'   =>  'Stock Product Belum Terdaftar'
                 );
                 session(['status' => $message['status'], 'desc' => $message['desc']]);
-                return view('backend/pembelian/import', ['data' => $data_import]);
+                return view('backend/pembelian/import', ['data' => $data_import],compact('supplier','gudang','selectedsupplier','selectedgudang'));
             }
             $cekfaktur = Pembelian::where('no_faktur', $data->no_faktur)->first();
             if(isset($cekfaktur)){
@@ -103,7 +121,7 @@ class ImportPembelianController extends Controller
                     'desc'   =>  'Nomor Faktur Sudah Pernah Digunakan.'
                 );
                 session(['status' => $message['status'], 'desc' => $message['desc']]);
-                return view('backend/pembelian/import', ['data' => $data_import]);
+                return view('backend/pembelian/import', ['data' => $data_import],compact('supplier','gudang','selectedsupplier','selectedgudang'));
             }
         }
 
@@ -114,6 +132,8 @@ class ImportPembelianController extends Controller
             $total_per_faktur = ImportPembelian::where('no_faktur', $import->no_faktur)->sum('total_harga');
             if(!isset($cek_pembelian)){
                 $pembelian = new Pembelian;
+                $pembelian->supplier_id = $supplier;
+                $pembelian->id_gudang = $gudang;
                 $pembelian->no_faktur = $import->no_faktur;
                 $pembelian->tgl_transaksi = date('Y-m-d',strtotime($tgl_transaksi));
                 $pembelian->tgl_faktur = date('Y-m-d',strtotime($tgl_transaksi));
@@ -156,9 +176,12 @@ class ImportPembelianController extends Controller
             $detail_pembelian->created_user     = auth()->user()->username;
             // return response()->json($detail_pembelian->qty);
             if($detail_pembelian->save()){
+                // return "hello";
                 $stockadjust = StockAdj::where('id_product', $detail_pembelian->product_id)->first();
                 // return response()->json($stockadjust);
-                $stockadjust->stock_pembelian += $detail_pembelian->qty;
+                $stockadj->id_supplier = $gudang;
+                $stockadj->id_gudang = $supplier;
+                $stockadjust->gudang_baik += $detail_pembelian->qty;
                 if(!$stockadjust->save()){
                     $message = array(
                         'status' => 'danger',
@@ -183,6 +206,7 @@ class ImportPembelianController extends Controller
             );
         }
         $alldata = ImportPembelian::all();
+        // return "world";
         session(['status' => $message['status'], 'desc' => $message['desc']]);
         return view('backend/pembelian/import', ['data' => $alldata]);
     }
