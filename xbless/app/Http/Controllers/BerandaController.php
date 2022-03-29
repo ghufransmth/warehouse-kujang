@@ -193,27 +193,45 @@ class BerandaController extends Controller
         $query = DB::table('pembelian')->select('pembelian.*','supplier.nama as supplier')->leftJoin('supplier','supplier.id','supplier_id');
         $query->where('pembelian.id', $request->id);
         $result = $query->first();
-        $result->total_barang = $query->get()->count();
-        $result->terbilang = strtoupper($this->terbilang($result->nominal))." RUPIAH";
+        
+        if($result){
+            $result->total_barang = $query->get()->count();
+            $result->terbilang = strtoupper($this->terbilang($result->nominal))." RUPIAH";
+    
+            $queryDetail = DB::table('pembelian_detail')->select('pembelian_detail.*', 'tbl_product.nama as product')->leftJoin('tbl_product','tbl_product.id','pembelian_detail.product_id')->where('pembelian_id', $result->id);
+            $resultDetail = $queryDetail->get();
+    
+            if($resultDetail){
+                $detail = '';
+                foreach ($resultDetail as $key => $value) {
+                    $detail.='<tr>';
+                        $detail.='<td>'.$value->notransaction.'</td>';
+                        $detail.='<td>'.$value->product.'</td>';
+                        $detail.='<td class="text-right">RP '. number_format($value->product_price, 0, '', '.').'</td>';
+                        $detail.='<td class="text-center">'.$value->qty.'Pcs </td>';
+                        $detail.='<td class="text-right">RP '. number_format($value->total, 0, '', '.').'</td>';
+                    $detail.='</tr>';
+                }
 
-        $queryDetail = DB::table('pembelian_detail')->select('pembelian_detail.*', 'tbl_product.nama as product')->leftJoin('tbl_product','tbl_product.id','pembelian_detail.product_id')->where('pembelian_id', $result->id);
-        $resultDetail = $queryDetail->get();
-
-        $detail = '';
-        foreach ($resultDetail as $key => $value) {
-            $detail.='<tr>';
-                $detail.='<td>'.$value->notransaction.'</td>';
-                $detail.='<td>'.$value->product.'</td>';
-                $detail.='<td class="text-right">RP '. number_format($value->product_price, 0, '', '.').'</td>';
-                $detail.='<td class="text-center">'.$value->qty.'Pcs </td>';
-                $detail.='<td class="text-right">RP '. number_format($value->total, 0, '', '.').'</td>';
-            $detail.='</tr>';
+                return response()->json([
+                    'data' => $result,
+                    'detail'    => $detail
+                ]);
+            }else{
+                return response()->json([
+                    'code'  => 200,
+                    'message' => 'Maaf nomor faktur tersebut tidak mempunyai detail',
+                    'data'  => $result,
+                    'detail'    => '-'
+                ]);
+            }
+    
+        }else{
+            return response()->json([
+                'code' => 404,
+                'message' => 'Maaf Data tersebut tidak ada'
+            ]);
         }
-
-        return response()->json([
-            'data' => $result,
-            'detail'    => $detail
-        ]);
     }
 
     public function getDataPenjualan(Request $request)
