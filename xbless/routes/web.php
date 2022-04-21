@@ -366,7 +366,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
     //REPORT KEUANGAN
     Route::get('manage/reportkeuangan', [ReportKeuanganController::class, 'index'])->name('reportkeuangan.index');
     Route::post('manage/reportkeuangan/getdata', [ReportKeuanganController::class, 'getData'])->name('reportkeuangan.getdata');
-    Route::get('manage/reportkeuangan/print', [ReportKeuanganController::class, 'print'])->name('reportkeuangan.print');
+    Route::get('manage/reportkeuangan/print/{strat?}/{end?}', [ReportKeuanganController::class, 'print'])->name('reportkeuangan.print');
     Route::get('manage/reportkeuangan/pdf', [ReportKeuanganController::class, 'pdf'])->name('reportkeuangan.pdf');
     Route::get('manage/reportkeuangan/excel', [ReportKeuanganController::class, 'excel'])->name('reportkeuangan.excel');
 

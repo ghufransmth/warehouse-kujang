@@ -97,7 +97,7 @@ class PembayaranController extends Controller
             if($result->status_do == 0){
                 $status = '<span class="label label-danger">Belum Terkirim</span>';
             }else if($result->status_do == 1){
-                $status = '<span class="label label-danger">Terkirim</span>';
+                $status = '<span class="label label-primary">Terkirim</span>';
             }
 
             // if($result->status_do == 0 )
