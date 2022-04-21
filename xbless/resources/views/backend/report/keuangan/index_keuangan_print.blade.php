@@ -53,7 +53,6 @@
                 <div class="col-md-12">
                     <table class="table table-print" style="font-size: 15px !important" width="100%" cellspacing='0'
                         border="1">
-                        {{-- <table border='1' width='100%' cellspacing='0'> --}}
                         <thead>
                             <tr class="two-strips-top">
                                 <th style="text-align : center; display: table-cell; vertical-align: middle;">No</th>

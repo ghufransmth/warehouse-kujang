@@ -38,7 +38,7 @@
                     <div class="ibox-content">
                         <form id="submitData">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <input type="hidden" name="enc_id" id="enc_id" value="{{isset($diskon)? $enc_id : ''}}">
+                            <input type="hidden" name="enc_id" id="enc_id" value="{{isset($enc_id)? $enc_id : ''}}">
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Diskon Dari *</label>
                                 <div class="col-sm-10 error-text">
                                     <select name="parent" class="form-control select2" id="parent">

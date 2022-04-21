@@ -240,8 +240,8 @@ class DriverController extends Controller
 
     public function ubah($enc_id){
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
-        if($dec_id) {
-            $driver= Driver::select('tbl_driver.*','users.*')->leftJoin('users','users.id','tbl_driver.user_id')->where('tbl_driver.    id',$dec_id)->first();
+        $driver= Driver::select('tbl_driver.*','users.*')->leftJoin('users','users.id','tbl_driver.user_id')->where('tbl_driver.id',$dec_id)->first();
+        if($driver) {
             $status= $this->status();
             $selectedstatus   = $driver->status;
             $roles = Role::orWhere('name','LIKE',"driver")->first();
