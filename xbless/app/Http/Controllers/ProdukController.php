@@ -9,10 +9,7 @@ use App\Models\ProductBarcode;
 use App\Models\ProductImg;
 use App\Models\Kategori;
 use App\Models\Product;
-use App\Models\Engine;
 use App\Models\Satuan;
-use App\Models\Brand;
-use App\Models\InvoiceDetail;
 use App\Models\Pembelian;
 use App\Models\PembelianDetail;
 use App\Models\ProductDetail;
@@ -129,9 +126,7 @@ class ProdukController extends Controller
 
             $action .= "";
             $action .= "<div class='btn-group'>";
-            // if ($request->user()->can('produk.detail')) {
-            //     $action .= '<a href="' . route('produk.detail', $enc_id) . '" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Detail"><i class="fa fa-eye"></i></a>&nbsp;';
-            // }
+
             $action .= '<a href="' . route('produk.detail_ubah', $enc_id) . '" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip" title="Detail"><i class="fa fa-eye"></i> Ubah Detail Product</a>&nbsp;';
             if ($request->user()->can('produk.ubah')) {
                 $action .= '<a href="' . route('produk.ubah', $enc_id) . '" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
@@ -140,17 +135,7 @@ class ProdukController extends Controller
                 $action .= '<a href="#" onclick="deleteProduct(this,\'' . $enc_id . '\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i></a>&nbsp;';
             }
             $action.="</div>";
-            // $qrcode = ProductBarcode::where('product_id', $products->id)->get();
-            // if(count($qrcode) > 0){
-            //     $qr1 ='<p>'.QrCode::size(50)->generate($qrcode[0]->barcode).'</p>';
-            // }else{
-            //     $qr1 ='-';
-            // }
-            // if(count($qrcode) == 2){
-            //     $qr2 ='<p>'.QrCode::size(50)->generate($qrcode[1]->barcode).'</p>';
-            // }else{
-            //     $qr2 ='-';
-            // }
+
             $products->no             = $key+$page;
             $products->id             = $products->id;
             $products->code           = $products->kode_product;
@@ -183,27 +168,26 @@ class ProdukController extends Controller
     public function detail_ubah($enc_id){
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         $produk = Product::find($dec_id);
-        // return $product->getdetailproduct;
-       // $member = Member::all();
+
        $member = array();
        $selectedmember ="";
        $sales = Sales::all();
-       // $sales = array();
+
        $selectedsales ="";
-       // $expedisi = Expedisi::all();
+
        $expedisi = array();
        $selectedexpedisi ="";
-       // $expedisivia = ExpedisiVia::all();
+
        $expedisivia = array();
        $selectedexpedisivia ="";
        $selectedproduct ="";
-       // $tipeharga = $this->jenisharga();
+
        $tipeharga = array();
        $selectedtipeharga ="";
        $toko = Toko::all();
        $kategori = Kategori::all();
        $selectedkategori = $produk->id_kategori;
-       // return 'tes';
+
        return view('backend/menuproduk/produk/form_detail',compact('tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia',
                    'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko', 'kategori', 'selectedkategori', 'produk','enc_id'));
 
@@ -425,29 +409,6 @@ class ProdukController extends Controller
         }
     }
 
-    // public function ProdukImage(Request $request)
-    // {
-    //     $dec_id = $this->safe_decode(Crypt::decryptString($request->enc_id));
-    //     $product = Product::where('id', $dec_id)->first();
-    //     $image = ProductImg::where('id_product', $dec_id)->get();
-
-    //     if ($image) {
-    //         foreach ($image as $key => $img) {
-    //             $image_data = '';
-    //             $image_data .= '<div class="col-3" id="detail-image">';
-    //             $image_data .= '<img class="img-fluid" src="' . url($img->product_img) . '" style="width: 150px;">';
-    //             $image_data .= '</div>';
-
-    //             $img->aksi = $image_data;
-    //         }
-    //     } else {
-    //         $image_data = '';
-    //         $image_data .= '<h2>Produk Tidak Mempunyai Image</h2>';
-    //         $img->aksi = $image_data;
-    //     }
-
-    //     return response()->json(['image_list' => $image, 'name' => $product->product_name]);
-    // }
 
 
     public function delete_qrcode(Request $request)

@@ -82,11 +82,9 @@ class HistoryDeliveryOrderController extends Controller
         $deliveryorder = DeliveryOrder::select('tbl_penjualan.*','tbl_delivery_order.driver_id','tbl_delivery_order.no_do','tbl_delivery_order.status_do','tbl_delivery_order.created_at as tgl_do','tbl_delivery_order.id as do_id','tbl_delivery_order.type_payment','tbl_delivery_order.titip_bayar','tbl_delivery_order.tgl_warkat','tbl_delivery_order.note')
                     ->join('tbl_penjualan','tbl_penjualan.id','tbl_delivery_order.faktur_id');
 
-        // if(array_key_exists($request->order[0]['column'], $this->original_column)){
-        //    $deliveryorder->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
-        // }else{
+
             $deliveryorder->orderBy('updated_at','DESC');
-        // }
+
         if($search) {
           $deliveryorder->where(function ($query) use ($search) {
                   $query->orWhere('no_do','LIKE',"%{$search}%");
@@ -110,9 +108,8 @@ class HistoryDeliveryOrderController extends Controller
             $action     = "";
             $action.="";
             $action.="<div class='btn-group'>";
-            if($request->user()->can('requestpurchaseorder.cancel')){
+            if($request->user()->can('historydeliveryorder.detail')){
                 $action.='<a href="#" onclick="detailHistory(this,'.$key.')"  class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip" title="Detail History"><i class="fa fa-eye"></i></a>&nbsp;';
-                // $action.='<a href="'.route('reportdeliveryorder.print',$enc_id).'" target="_blank" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip" title="Preview"><i class="fa fa-print"></i> Print</a>&nbsp;';
             }
             $action.="</div>";
 
@@ -145,7 +142,7 @@ class HistoryDeliveryOrderController extends Controller
             $result->action         = $action;
         }
 
-        if ($request->user()->can('draftpurchaseorder.index')) {
+        if ($request->user()->can('historydeliveryorder.index')) {
             $json_data = array(
                 "draw"            => intval($request->input('draw')),
                 "recordsTotal"    => intval($totalData),
@@ -247,7 +244,5 @@ class HistoryDeliveryOrderController extends Controller
             Abort('404');
         }
     }
-
-
 
 }

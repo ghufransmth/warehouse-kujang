@@ -28,19 +28,45 @@
                 <a href="#"><i class="fa fa-cog"></i> <span class="nav-label">Master</span><span
                         class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse">
-                    <li class=""><a href="{{route('staff.index')}}">Master User</a></li>
-                    <li class=""><a href="{{ route('sales.index') }}">Master Sales</a></li>
-                    <li class=""><a href="{{ route('driver.index') }}">Master Driver</a></li>
-                    <li class=""><a href="{{route('expedisi.index')}}">Master Expedisi</a></li>
-                    <li class=""><a href="{{route('type_channel.index')}}">Master Tipe Channel</a></li>
-                    <li class=""><a href="{{ route('gudang.index') }}">Master Gudang</a></li>
-                    <li class=""><a href="{{ route('supplier.index') }}">Master Supplier</a></li>
-                    <li class=""><a href="{{ route('diskon.index') }}">Master Diskon</a></li>
-                    <li class=""><a href="{{ route('distrik.index') }}">Master Distrik</a></li>
-                    <li class=""><a href="{{ route('payment.index') }}">Master Jenis Bayar</a></li>
-                    <li class=""><a href="{{ route('toko.jenis.index') }}">Master Jenis Toko</a></li>
-                    <li class=""><a href="{{ route('toko.kategori.index') }}">Master Kategori Toko</a></li>
-                    <li class=""><a href="{{ route('komponen.index') }}">Komponen</a></li>
+                    @can('staff.index')
+                        <li class=""><a href="{{route('staff.index')}}">Master User</a></li>
+                    @endcan
+                    @can('sales.index')
+                        <li class=""><a href="{{ route('sales.index') }}">Master Sales</a></li>
+                    @endcan
+                    @can('driver.index')
+                        <li class=""><a href="{{ route('driver.index') }}">Master Driver</a></li>
+                    @endcan
+                    @can('expedisi.index')
+                        <li class=""><a href="{{route('expedisi.index')}}">Master Expedisi</a></li>
+                    @endcan
+                    @can('type_channel.index')
+                        <li class=""><a href="{{route('type_channel.index')}}">Master Tipe Channel</a></li>
+                    @endcan
+                    @can('gudang.index')
+                        <li class=""><a href="{{ route('gudang.index') }}">Master Gudang</a></li>
+                    @endcan
+                    @can('supplier.index')
+                        <li class=""><a href="{{ route('supplier.index') }}">Master Supplier</a></li>
+                    @endcan
+                    @can('diskon.index')
+                        <li class=""><a href="{{ route('diskon.index') }}">Master Diskon</a></li>
+                    @endcan
+                    @can('distrik.index')
+                        <li class=""><a href="{{ route('distrik.index') }}">Master Distrik</a></li>
+                    @endcan
+                    @can('payment.index')
+                        <li class=""><a href="{{ route('payment.index') }}">Master Jenis Bayar</a></li>
+                    @endcan
+                    @can('toko.jenis.index')
+                        <li class=""><a href="{{ route('toko.jenis.index') }}">Master Jenis Toko</a></li>
+                    @endcan
+                    @can('toko.kategori.index')
+                        <li class=""><a href="{{ route('toko.kategori.index') }}">Master Kategori Toko</a></li>
+                    @endcan
+                    @can('komponen.index')
+                        <li class=""><a href="{{ route('komponen.index') }}">Komponen</a></li>
+                    @endcan
                 </ul>
             </li>
             @endcan
@@ -55,7 +81,7 @@
                     @can('produk.tambah')
                     <li class=""><a href="{{ route('produk.tambah') }}">Tambah Produk</a></li>
                     @endcan
-                    @can('produk.tambah')
+                    @can('produk.import')
                     <li class=""><a href="{{ route('produk.import') }}">Upload Produk</a></li>
                     @endcan
                     @can('kategori.index')
@@ -64,251 +90,182 @@
                     @can('satuan.index')
                     <li class=""><a href="{{ route('satuan.index') }}">List Satuan</a></li>
                     @endcan
-                    <!-- @can('jenisharga.index')
-                    <li class=""><a href="{{ route('jenisharga.index') }}">List Jenis Harga</a></li>
-                    @endcan
-                    @can('brand.index')
-                    <li class=""><a href="{{ route('brand.index') }}">List Brand</a></li>
-                    @endcan
-                    @can('engine.index')
-                    <li class=""><a href="{{ route('engine.index') }}">List Engine Model</a></li>
-                    @endcan -->
+
                 </ul>
             </li>
             @endcan
+
+            @can('menustok.index')
             <li>
                 <a href="#"><i class="fa fa-database"></i> <span class="nav-label">Master Stok</span><span
                         class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse">
-                    @can('stokadmin.index')
-                    {{-- <li><a href="{{route('stokadmin.index')}}">Informasi Stok</a>
-            </li> --}}
+                    @can('adjstok.index')
+                    <li><a href="{{route('adjstok.index_supplier')}}">Info Stok</a></li>
+                    @endcan
+                    @can('stokmutasi.tambah')
+                    <li><a href="{{route('stokmutasi.tambah')}}">Mutasi Stok</a></li>
+                    @endcan
+                    @can('historymutasistok.index')
+                    <li><a href="{{route('historymutasistok.index')}}">History Mutasi Stok</a></li>
+                    @endcan
+                    @can('stokopname.index')
+                    <li><a href="{{route('stokopname.index')}}">Opname Stok</a></li>
+                    @endcan
+                </ul>
+            </li>
             @endcan
-            {{-- @can('adjstok.index')
-            <li><a href="{{route('adjstok.index')}}">Info Stok</a></li>
-            @endcan --}}
-            @can('adjstok.index')
-            <li><a href="{{route('adjstok.index_supplier')}}">Info Stok</a></li>
-            @endcan
-            @can('stokmutasi.tambah')
-            <li><a href="{{route('stokmutasi.tambah')}}">Mutasi Stok</a></li>
-            @endcan
-            @can('historymutasistok.index')
-            <li><a href="{{route('historymutasistok.index')}}">History Mutasi Stok</a></li>
-            @endcan
-            @can('stokopname.index')
-            <li><a href="{{route('stokopname.index')}}">Opname Stok</a></li>
-            @endcan
-        </ul>
-        </li>
-        <li>
-            <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">Master Toko</span><span
-                    class="fa arrow"></span></a>
-            <ul class="nav nav-second-level collapse">
-                <li class=""><a href="{{ route('toko.index') }}">List Toko</a></li>
-                <li class=""><a href="{{ route('toko.tambah') }}">Tambah Toko</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#"><i class="fa fa-dollar"></i> <span class="nav-label"> Keuangan</span><span
-                    class="fa arrow"></span></a>
-            <ul class="nav nav-second-level collapse">
-                <li><a href="{{ route('transaksi.finance.index') }}">List Biaya</a></li>
-                <li><a href="{{ route('transaksi.pembayaran.index') }}">Transaksi Pembayaran</a></li>
-                <li><a href="{{ route('transaksi.keuangan.index') }}">Transaksi Keuangan</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#"><i class="fa fa-exchange"></i> <span class="nav-label">Retur Produk</span><span
-                    class="fa arrow"></span></a>
-            <ul class="nav nav-second-level collapse">
-                <li><a href="{{ route('retur.index') }}">List Retur Produk</a></li>
-                @can('purchaseorder.tambah')
-                <li class=""><a href="{{ route('retur.index_retur') }}">Form Retur Produk</a></li>
-                @endcan
-                {{-- @can('purchaseorder.tambah')
-                <li class=""><a href="{{ route('purchaseorder.import') }}">Retur Pembelian Produk</a>
-        </li>
-        @endcan --}}
-        </ul>
-        </li>
-        <li>
-            <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Kunjungan Sales</span><span
-                    class="fa arrow"></span></a>
-            <ul class="nav nav-second-level collapse">
-                <li class=""><a href="{{  route('kunjungan.index') }}">List Kunjungan Sales</a></li>
-                <li class=""><a href="{{  route('kunjungan.tambah') }}">Tambah Daftar Kunjungan</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#"><i class="fa fa-list-alt"></i> <span class="nav-label">Penjualan Produk</span><span
-                    class="fa arrow"></span></a>
-            <ul class="nav nav-second-level collapse">
-                <li><a href="{{ route('purchaseorder.index') }}">List Penjualan Produk</a></li>
-                @can('purchaseorder.tambah')
-                <li class=""><a href="{{ route('purchaseorder.tambah') }}">Tambah Penjualan Produk</a></li>
-                @endcan
-                @can('purchaseorder.tambah')
-                <li class=""><a href="{{ route('purchaseorder.import') }}">Upload Penjualan</a></li>
-                @endcan
-            </ul>
-        </li>
-
-        {{-- @can('menuorder.index') --}}
-        <li>
-            <a href="#"><i class="fa fa-cart-plus"></i> <span class="nav-label">Pembelian Produk</span><span
-                    class="fa arrow"></span></a>
-            <ul class="nav nav-second-level collapse">
-                {{-- @can('order.index') --}}
-                <li class=""><a href="{{ route('pembelian.index') }}">List Pembelian Produk</a></li>
-                {{-- @endcan --}}
-                @can('purchaseorder.tambah')
-                <li class=""><a href="{{ route('pembelian.tambah') }}">Tambah Pembelian Produk</a></li>
-                @endcan
-                @can('purchaseorder.tambah')
-                <li class=""><a href="{{ route('pembelian_import.import') }}">Upload Pembelian Produk</a></li>
-                @endcan
-
-            </ul>
-        </li>
-        {{-- @endcan --}}
-        {{-- @can('security.index') --}}
-        <li>
-            <a href="#"><i class="fa fa-car"></i> <span class="nav-label">Pengiriman</span><span
-                    class="fa arrow"></span></a>
-            <ul class="nav nav-second-level collapse">
-                {{-- @can('permission.index') --}}
-                <li class=""><a href="{{route('deliveryorder.index')}}">Delivery Order</a></li>
-                {{-- @endcan --}}
-                {{-- @can('role.index') --}}
-                <li class=""><a href="{{route('historydeliveryorder.index')}}">History DO</a></li>
-                {{-- @endcan --}}
-            </ul>
-        </li>
-        {{-- @endcan --}}
-        {{-- <li>
-            <a href="{{ route('retur_pembelian.index') }}"><i class="fa fa-cart-plus"></i><span class="nav-label">Retur
-            Pembelian</span><span class="fa arrow"></span></a>
-        </li> --}}
-
-        {{-- @can('menuorder.index')
+            @can('menutoko.index')
             <li>
-                <a href="#"><i class="fa fa-cart-plus"></i> <span class="nav-label">Pembelian Produk</span><span class="fa arrow"></span></a>
+                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">Master Toko</span><span
+                        class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse">
-                    @can('order.index')
-                    <li class=""><a href="{{ route('order.index') }}">List Pembelian Produk</a></li>
-        @endcan
-        @can('purchaseorder.tambah')
-        <li class=""><a href="{{ route('purchaseorder.tambah') }}">Tambah Pembelian Produk</a></li>
-        @endcan
+                    @can('toko.index')
+                        <li class=""><a href="{{ route('toko.index') }}">List Toko</a></li>
+                    @endcan
+                    @can('toko.tambah')
+                        <li class=""><a href="{{ route('toko.tambah') }}">Tambah Toko</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+            @can('menukeuangan.index')
+            <li>
+                <a href="#"><i class="fa fa-dollar"></i> <span class="nav-label"> Keuangan</span><span
+                        class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    @can('transaksi.finance.index')
+                        <li><a href="{{ route('transaksi.finance.index') }}">List Biaya</a></li>
+                    @endcan
+                    @can('transaksi.pembayaran.index')
+                        <li><a href="{{ route('transaksi.pembayaran.index') }}">Transaksi Pembayaran</a></li>
+                    @endcan
+                    @can('transaksi.keuangan.index')
+                        <li><a href="{{ route('transaksi.keuangan.index') }}">Transaksi Keuangan</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+            @can('menuretur.index')
+            <li>
+                <a href="#"><i class="fa fa-exchange"></i> <span class="nav-label">Retur Produk</span><span
+                        class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    @can('retur.index')
+                        <li><a href="{{ route('retur.index') }}">List Retur Produk</a></li>
+                    @endcan
+                    @can('retur.index_retur')
+                        <li class=""><a href="{{ route('retur.index_retur') }}">Form Retur Produk</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+            @can('menukunjungan.index')
+            <li>
+                <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Kunjungan Sales</span><span
+                        class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    @can('kunjungan.index')
+                        <li class=""><a href="{{  route('kunjungan.index') }}">List Kunjungan Sales</a></li>
+                    @endcan
+                    @can('kunjungan.tambah')
+                        <li class=""><a href="{{  route('kunjungan.tambah') }}">Tambah Daftar Kunjungan</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+            @can('menupurchaserder.index')
+            <li>
+                <a href="#"><i class="fa fa-list-alt"></i> <span class="nav-label">Penjualan Produk</span><span
+                        class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    @can('purchaseorder.tambah')
+                        <li><a href="{{ route('purchaseorder.index') }}">List Penjualan Produk</a></li>
+                    @endcan
+                    @can('purchaseorder.tambah')
+                        <li class=""><a href="{{ route('purchaseorder.tambah') }}">Tambah Penjualan Produk</a></li>
+                    @endcan
+                    @can('purchaseorder.import')
+                        <li class=""><a href="{{ route('purchaseorder.import') }}">Upload Penjualan</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+
+            @can('menupembelian.index')
+            <li>
+                <a href="#"><i class="fa fa-cart-plus"></i> <span class="nav-label">Pembelian Produk</span><span
+                        class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    @can('pembelian.index')
+                        <li class=""><a href="{{ route('pembelian.index') }}">List Pembelian Produk</a></li>
+                    @endcan
+                    @can('pembelian.tambah')
+                        <li class=""><a href="{{ route('pembelian.tambah') }}">Tambah Pembelian Produk</a></li>
+                    @endcan
+                    @can('pembelian_import.import')
+                        <li class=""><a href="{{ route('pembelian_import.import') }}">Upload Pembelian Produk</a></li>
+                    @endcan
+
+                </ul>
+            </li>
+            @endcan
+            @can('menupengiriman.index')
+            <li>
+                <a href="#"><i class="fa fa-car"></i> <span class="nav-label">Pengiriman</span><span
+                        class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    @can('deliveryorder.index')
+                        <li class=""><a href="{{route('deliveryorder.index')}}">Delivery Order</a></li>
+                    @endcan
+                    @can('historydeliveryorder.index')
+                        <li class=""><a href="{{route('historydeliveryorder.index')}}">History DO</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+
+            @can('menureport.index')
+            <li>
+                <a href="#"><i class="fa fa-paste"></i> <span class="nav-label">Report</span><span
+                        class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    @can('reportbarangmasuk.index')
+                        <li><a href="{{route('reportbarangmasuk.index')}}">Report Barang Masuk</a></li>
+                    @endcan
+                    @can('reportkeuangan.index')
+                        <li><a href="{{route('reportkeuangan.index')}}">Report Keuangan</a></li>
+                    @endcan
+                    @can('reportlabarugi.index')
+                        <li><a href="{{route('reportlabarugi.index')}}">Report Laba Rugi</a></li>
+                    @endcan
+                    @can('reportbarangkeluar.index')
+                        <li><a href="{{route('reportbarangkeluar.index')}}">Report Barang Keluar</a></li>
+                    @endcan
+                    @can('reportpenjualan.index')
+                        <li><a href="{{route('reportpenjualan.index')}}">Report Penjualan</a></li>
+                    @endcan
+                    @can('reportdeliveryorder.index')
+                        <li><a href="{{route('reportdeliveryorder.index')}}">Report Delivery Order</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+            @can('security.index')
+            <li>
+                <a href="#"><i class="fa fa-key"></i> <span class="nav-label">Keamanan</span><span
+                        class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    @can('permission.index')
+                    <li class=""><a href="{{route('permission.index')}}">Manajemen Modul</a></li>
+                    @endcan
+                    @can('role.index')
+                    <li class=""><a href="{{route('role.index')}}">Manajemen Akses</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
         </ul>
-        </li>
-        @endcan --}}
-        @can('menureport.index')
-        <li>
-            <a href="#"><i class="fa fa-paste"></i> <span class="nav-label">Report</span><span
-                    class="fa arrow"></span></a>
-            <ul class="nav nav-second-level collapse">
-                <!-- @can('reportso.index')
-                <li><a href="{{route('reportso.index')}}">Report SO</a></li>
-                @endcan -->
-                <!-- @can('reportpo.index')
-                <li><a href="{{route('reportpo.index')}}">Report PO</a></li>
-                @endcan -->
-                <!-- @can('reportreturrevisi.index')
-                <li><a href="{{route('reportreturrevisi.index')}}">Report Retur Revisi</a></li>
-                @endcan -->
-                <!-- @can('reportinvoice.index')
-                <li><a href="{{route('reportinvoice.index')}}">Report Rekap Invoice</a></li>
-                @endcan -->
-                <!-- @can('reporttandaterima.index')
-                <li><a href="{{route('reporttandaterima.index')}}">Report Tanda Terima</a></li>
-                @endcan -->
-                @can('reportbarangmasuk.index')
-                <li><a href="{{route('reportbarangmasuk.index')}}">Report Barang Masuk</a></li>
-                @endcan
-                {{-- @can('reportkeuangan.index') --}}
-                <li><a href="{{route('reportkeuangan.index')}}">Report Keuangan</a></li>
-                {{-- @endcan --}}
-                {{-- @can('reportlabarugi.index') --}}
-                <li><a href="{{route('reportlabarugi.index')}}">Report Laba Rugi</a></li>
-                {{-- @endcan --}}
-                @can('reportbarangkeluar.index')
-                <li><a href="{{route('reportbarangkeluar.index')}}">Report Barang Keluar</a></li>
-                @endcan
-                <!-- @can('reportsisahutang.index')
-                <li><a href="{{route('reportsisahutang.index')}}">Report Sisa Hutang</a></li>
-                @endcan -->
-                <!-- @can('reportbo.index')
-                <li><a href="{{route('reportbo.index')}}">Report Back Order</a></li>
-                @endcan -->
-                <!-- @can('reportboqty.index')
-                <li><a href="{{route('reportboqty.index')}}">Report Qty Back Order</a></li>
-                @endcan -->
-                @can('reportpenjualan.index')
-                <li><a href="{{route('reportpenjualan.index')}}">Report Penjualan</a></li>
-                @endcan
-                {{-- @can('reportpembelian.index') --}}
-                {{-- <li><a href="{{route('reportpembelian.index')}}">Report Pembelian</a></li> --}}
-                {{-- @endcan --}}
-                <!-- @can('reportstok.index')
-                <li><a href="{{route('reportstok.index')}}">Report Stok</a></li>
-                @endcan -->
-                <li><a href="{{route('reportdeliveryorder.index')}}">Report Delivery Order</a></li>
-
-            </ul>
-        </li>
-        @endcan
-        @can('security.index')
-        <li>
-            <a href="#"><i class="fa fa-key"></i> <span class="nav-label">Keamanan</span><span
-                    class="fa arrow"></span></a>
-            <ul class="nav nav-second-level collapse">
-                @can('permission.index')
-                <li class=""><a href="{{route('permission.index')}}">Manajemen Modul</a></li>
-                @endcan
-                @can('role.index')
-                <li class=""><a href="{{route('role.index')}}">Manajemen Akses</a></li>
-                @endcan
-            </ul>
-        </li>
-        @endcan
-
-        </ul>
-
     </div>
 </nav>
 <script src="{{ asset('assets/js/jquery-3.1.1.min.js')}}"></script>
-{{-- <script language="javascript" type="text/javascript">
-    $(document).ready(function () {
-        setInterval(function(){
-            getData();
-        }, 150000);
-        getData();
-    });
-    function getData(){
-        $.ajax({
-            type: 'POST',
-            url: '{{route("getdata.show_count")}}',
-data:{
-_token :"{{csrf_token()}}"
-},
-dataType: "json",
-success: function(data){
-if (data.success) {
-$('#req_po_count').html(data.rpo);
-$('#po_batal_count').html(data.pobatal);
-$('#back_order_count').html(data.backorder);
-}else{
-$('#req_po_count').html('0');
-$('#po_batal_count').html('0');
-$('#back_order_count').html('0');
-}
-},
-error: function(data){
-console.log(data);
-}
-});
-}
-
-</script> --}}

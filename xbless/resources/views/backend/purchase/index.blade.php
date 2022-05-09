@@ -45,11 +45,6 @@
                                     @foreach($toko as $key => $tko)
                                     <option value="{{ $tko->id }}">{{ $tko->name }}</option>
                                     @endforeach
-                                    {{-- @foreach($perusahaan as $key => $row)
-                                    <option value="{{$row->id}}"
-                                    {{ $selectedperusahaan == $row->id ? 'selected=""' : '' }}>{{ucfirst($row->name)}}
-                                    </option>
-                                    @endforeach --}}
                                 </select>
                             </div>
                             <label class="col-sm-2 col-form-label">Sales : </label>
@@ -60,10 +55,7 @@
                                     <option value="{{ $sles->id }}">{{ $sles->nama }}</option>
 
                                     @endforeach
-                                    {{-- @foreach($member as $key => $row)
-                                    <option value="{{$row->id}}" {{ $selectedmember == $row->id ? 'selected=""' : '' }}
-                                    >{{ucfirst($row->name)}}-{{ucfirst($row->city)}}</option>
-                                    @endforeach --}}
+
                                 </select>
                             </div>
                         </div>
@@ -75,45 +67,10 @@
                         </div>
                         <div class="hr-line-dashed"></div>
                     </form>
-                    {{-- <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        @if(Gate::check('purchaseorder.liststatuspo') ||
-                        Gate::check('purchaseorder.liststatusinvoiceawal') ||
-                        Gate::check('purchaseorder.liststatusinvoice'))
-                        <li class="nav-item">
-                            <a class="nav-link {{session('type')==0?'active':(session('type')==""?'active':'')}}"
-                                id="listpo-tab" value="0" onclick="change_type(0)" data-toggle="tab" href="#listpo"
-                                role="tab" aria-controls="listpo" aria-selected="true">LIST PENJUALAN</a>
-                        </li>
-                        @endif
-                        @can('purchaseorder.liststatuspolisttolak')
-                        <li class="nav-item">
-                            <a class="nav-link {{session('type')==1?'active':''}}" id="listpotolak-tab" value="1"
-                                onclick="change_type(1)" data-toggle="tab" href="#listpotolak" role="tab"
-                                aria-controls="listpotolak" aria-selected="false">LIST PENJUALAN BELUM LUNAS</a>
-                        </li>
-                        @endcan
-                        @can('purchaseorder.liststatusinvoiceawal')
-                        <li class="nav-item">
-                            <a class="nav-link {{session('type')==2?'active':''}}" id="listpovalidasi-tab" value="1"
-                                onclick="change_type(2)" data-toggle="tab" href="#listpovalidasi" role="tab"
-                                aria-controls="listpovalidasi" aria-selected="false">LIST PENJUALAN LUNAS</a>
-                        </li>
-                        @endcan --}}
-                        {{-- @can('purchaseorder.liststatusgudang')
-                        @foreach ($gudang as $k=>$itemgudang)
-                            <li class="nav-item">
-                                <a class="nav-link {{session('type_gudang')==$itemgudang->id?'active':''}}"
-                        id="listgudang_{{$itemgudang->id}}-tab" value="1"
-                        onclick="change_type_gudang(3,{{$itemgudang->id}})" data-toggle="tab" href="#listpovalidasi"
-                        role="tab" aria-controls="listpovalidasi"
-                        aria-selected="false">{{strtoupper($itemgudang->name)}}</a>
-                        </li>
-                        @endforeach
-                        @endcan --}}
-                    {{-- </ul> --}}
+
                     <input type="hidden" class="form-control" id="type" value="{{session('type')}}" />
                     <input type="hidden" class="form-control" id="type_gudang" value="{{session('type_gudang')}}" />
-                    {{-- <div class="hr-line-dashed"></div> --}}
+
                     <div class="table-responsive">
                         <table id="table1" class="table display table p-0 table-hover table-striped"
                             style="overflow-x: auto;">
@@ -144,12 +101,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal Detail PO -->
-    {{-- @include('backend.purchase.detail') --}}
-
-
-
 
 </div>
 @endsection
@@ -267,7 +218,6 @@
         table.ajax.reload(null, false);
     }
 function approve(id){
-    // console.log(id);
     $.ajax({
         type: 'GET',
         url : "{{route('purchaseorder.approve', [null])}}/"+id,

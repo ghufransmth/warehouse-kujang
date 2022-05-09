@@ -67,7 +67,7 @@ class ReportKeuanganController extends Controller
             $periode_start = date('Y-m-d', strtotime("-1 Month"));
             $periode_end = date('Y-m-d');
         }
-        
+
         $query = Penjualan::select('tbl_penjualan.id','tbl_penjualan.no_faktur','tbl_penjualan.tgl_jatuh_tempo','tbl_penjualan.tgl_faktur','tbl_penjualan.jenis_pembayaran','tbl_penjualan.status_lunas','tbl_penjualan.total_harga','tbl_penjualan.total_diskon','tbl_sales.nama as sales_name','toko.name as toko_name');
         $query->leftJoin('tbl_sales','tbl_sales.id','tbl_penjualan.id_sales');
         $query->leftJoin('toko','toko.id','tbl_penjualan.id_toko');
@@ -92,9 +92,9 @@ class ReportKeuanganController extends Controller
         $query->whereDate('tgl_faktur', '<=', date('Y-m-d', strtotime($periode_end)));
 
         $totalData = $query->get()->count();
-  
+
         $totalFiltered = $query->get()->count();
-  
+
         $query->limit($limit);
         $query->offset($start);
         $data = $query->get();
@@ -102,11 +102,10 @@ class ReportKeuanganController extends Controller
         {
             $enc_id = $this->safe_encode(Crypt::encryptString($result->id));
             $action = "";
-            
+
             $action.="";
             $action.="<div class='btn-group'>";
-            // $action.='<a href="'.route('diskon.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
-            // $action.='<a href="#" onclick="deleteNegara(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
+
             $action.="</div>";
 
             if($result->status_lunas == 0){
@@ -145,29 +144,24 @@ class ReportKeuanganController extends Controller
             $result->note           = $note;
             $result->action         = $action;
         }
-  
-        $json_data = array(
-          "draw"            => intval($request->input('draw')),  
-          "recordsTotal"    => intval($totalData),
-          "recordsFiltered" => intval($totalFiltered),
-          "data"            => $data
-        );
-        // if($request->user()->can('negara.index')) {
-        //   $json_data = array(
-        //     "draw"            => intval($request->input('draw')),  
-        //     "recordsTotal"    => intval($totalData),
-        //     "recordsFiltered" => intval($totalFiltered),
-        //     "data"            => $data
-        //   );
-        // }else{
-        //   $json_data = array(
-        //     "draw"            => intval($request->input('draw')),  
-        //     "recordsTotal"    => 0,
-        //     "recordsFiltered" => 0,
-        //     "data"            => []
-        //   );
-        // }    
-        return json_encode($json_data); 
+
+
+        if($request->user()->can('reportkeuangan.index')) {
+            $json_data = array(
+                "draw"            => intval($request->input('draw')),
+                "recordsTotal"    => intval($totalData),
+                "recordsFiltered" => intval($totalFiltered),
+                "data"            => $data
+            );
+        }else{
+            $json_data = array(
+                "draw"            => intval($request->input('draw')),
+                "recordsTotal"    => 0,
+                "recordsFiltered" => 0,
+                "data"            => []
+            );
+        }
+        return json_encode($json_data);
     }
 
     private function check_retur($no_faktur){
@@ -313,6 +307,6 @@ class ReportKeuanganController extends Controller
         //     $data[$key]['total']    = number_format($value->total_harga,2,',','.');
         // }
 
-        
+
     }
 }

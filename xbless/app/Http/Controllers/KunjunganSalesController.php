@@ -13,6 +13,7 @@ use Auth;
 
 class KunjunganSalesController extends Controller
 {
+
     protected $original_column = array(
         1 => "name",
         2 => "username",
@@ -48,7 +49,7 @@ class KunjunganSalesController extends Controller
 	    $data = str_replace(array('_'),array('/'),$string);
         return $data;
     }
-    
+
     public function tambah(){
         $hari = Hari::all();
         $skala = $this->skala();
@@ -64,7 +65,7 @@ class KunjunganSalesController extends Controller
         $start = $request->start;
         $page  = $start +1;
         $search = $request->search['value'];
-        
+
         $query = KunjunganSales::select('kunjungan_sales.id','kunjungan_sales.skala','kunjungan_sales.faktur_piutang', 'toko.name as toko','tbl_sales.nama as sales','hari.name as hari');
         $query->leftJoin('tbl_sales','tbl_sales.id','kunjungan_sales.sales_id');
         $query->leftJoin('toko','toko.id','kunjungan_sales.toko_id');
@@ -84,9 +85,9 @@ class KunjunganSalesController extends Controller
           });
         }
         $totalData = $query->get()->count();
-  
+
         $totalFiltered = $query->get()->count();
-  
+
         $query->limit($limit);
         $query->offset($start);
         $data = $query->get();
@@ -94,11 +95,15 @@ class KunjunganSalesController extends Controller
         {
             $enc_id = $this->safe_encode(Crypt::encryptString($result->id));
             $action = "";
-            
+
             $action.="";
             $action.="<div class='btn-group'>";
-            $action.='<a href="'.route('kunjungan.edit',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
-            $action.='<a href="#" onclick="deleteData(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
+            if($request->user()->can('kunjungan.ubah')) {
+                $action.='<a href="'.route('kunjungan.edit',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
+            }
+            if($request->user()->can('kunjungan.delete')) {
+                $action.='<a href="#" onclick="deleteData(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
+            }
             $action.="</div>";
 
             if($result->skala == 0){
@@ -112,21 +117,32 @@ class KunjunganSalesController extends Controller
             $result->hari           = ucfirst($result->hari);
             $result->action         = $action;
         }
-  
-        $json_data = array(
-          "draw"            => intval($request->input('draw')),  
-          "recordsTotal"    => intval($totalData),
-          "recordsFiltered" => intval($totalFiltered),
-          "data"            => $data
-        );
-        return json_encode($json_data); 
+
+
+        if($request->user()->can('kunjungan.index')) {
+            $json_data = array(
+              "draw"            => intval($request->input('draw')),
+              "recordsTotal"    => intval($totalData),
+              "recordsFiltered" => intval($totalFiltered),
+              "data"            => $data
+            );
+          }else{
+            $json_data = array(
+              "draw"            => intval($request->input('draw')),
+              "recordsTotal"    => 0,
+              "recordsFiltered" => 0,
+              "data"            => []
+            );
+
+          }
+        return json_encode($json_data);
     }
 
     public function list_data(Request $request){
         $hari = Hari::all();
         $skala = $this->skala();
         $total = $request->total;
-        
+
         echo "
             <tr id='dataajaxproduk_".$total."'>
                 <td>
@@ -219,7 +235,6 @@ class KunjunganSalesController extends Controller
     }
 
     public function simpan(Request $request){
-        // return response()->json(['data' => $request->all()]);
         $enc_id = $request->enc_id;
         if ($enc_id != null) {
             $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
@@ -267,7 +282,7 @@ class KunjunganSalesController extends Controller
 
         }else{
             try {
-                for ($i=0; $i < $request->total_data ; $i++) { 
+                for ($i=0; $i < $request->total_data ; $i++) {
                     $check_data = KunjunganSales::where('sales_id', $request->sales[$i])->where('toko_id', $request->toko[$i])->where('hari_id', $request->hari[$i])->where('faktur_piutang', $request->faktur[$i])->first();
                     if(!$check_data){
                         $result = new KunjunganSales;
@@ -279,7 +294,7 @@ class KunjunganSalesController extends Controller
                         $result->save();
                     }
                 }
-    
+
                 return response()->json([
                     'code' => 201,
                     'data' => [

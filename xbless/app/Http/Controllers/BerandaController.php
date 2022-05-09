@@ -16,7 +16,7 @@ class BerandaController extends Controller
     private function terbilang($angka) {
         $angka=abs($angka);
         $baca =array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
-     
+
         $terbilang="";
          if ($angka < 12){
              $terbilang= " " . $baca[$angka];
@@ -193,14 +193,14 @@ class BerandaController extends Controller
         $query = DB::table('pembelian')->select('pembelian.*','supplier.nama as supplier')->leftJoin('supplier','supplier.id','supplier_id');
         $query->where('pembelian.id', $request->id);
         $result = $query->first();
-        
+
         if($result){
             $result->total_barang = $query->get()->count();
             $result->terbilang = strtoupper($this->terbilang($result->nominal))." RUPIAH";
-    
+
             $queryDetail = DB::table('pembelian_detail')->select('pembelian_detail.*', 'tbl_product.nama as product')->leftJoin('tbl_product','tbl_product.id','pembelian_detail.product_id')->where('pembelian_id', $result->id);
             $resultDetail = $queryDetail->get();
-    
+
             if($resultDetail){
                 $detail = '';
                 foreach ($resultDetail as $key => $value) {
@@ -225,7 +225,7 @@ class BerandaController extends Controller
                     'detail'    => '-'
                 ]);
             }
-    
+
         }else{
             return response()->json([
                 'code' => 404,

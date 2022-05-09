@@ -12,6 +12,7 @@ use Auth;
 
 class KategoriController extends Controller
 {
+
     protected $original_column = array(
         1 => "parent_id",
         2 => "cat_code",
@@ -125,23 +126,11 @@ class KategoriController extends Controller
 
     public function simpan(Request $req){
         $enc_id     = $req->enc_id;
-        // $dir = 'web/images/category/';
         if ($enc_id != null) {
           $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         }else{
           $dec_id = null;
         }
-
-        // if (!file_exists($dir)) {
-        //     mkdir($dir, 0777, true);
-        //     chmod($dir, 0777);
-        // }
-
-        // if($req->file('photo') != null){
-        //   $fileName = date('Ymd').'_'.$req->file('photo')->getClientOriginalName();
-        //   $pathName = $dir.$fileName;
-        // }
-
         $cek_cat_code = $this->cekExist('kode_kategori',$req->cat_code,$dec_id);
         $cek_kategori = $this->cekExist('nama',$req->cat_name,$dec_id);
         if(!$cek_cat_code){

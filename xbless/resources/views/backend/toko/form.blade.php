@@ -10,7 +10,7 @@
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{route('toko.index')}}">Master Brand</a>
+                <a href="{{route('toko.index')}}">Toko</a>
             </li>
             <li class="breadcrumb-item active">
                 <strong>{{isset($toko) ? 'Edit' : 'Tambah'}}</strong>

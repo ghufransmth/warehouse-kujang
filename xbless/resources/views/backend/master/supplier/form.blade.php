@@ -10,7 +10,7 @@
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{route('supplier.index')}}">Master Gudang</a>
+                <a href="{{route('supplier.index')}}">Master Supplier</a>
             </li>
             <li class="breadcrumb-item active">
                 <strong>{{isset($supplier) ? 'Edit' : 'Tambah'}}</strong>

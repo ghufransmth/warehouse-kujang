@@ -9,7 +9,7 @@
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item active">
-                <a>Keuangan</a>
+                <a>Pembayaran</a>
             </li>
         </ol>
     </div>

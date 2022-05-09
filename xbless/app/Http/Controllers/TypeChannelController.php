@@ -44,7 +44,7 @@ class TypeChannelController extends Controller
           $search = $request->search['value'];
 
           $dataquery = TypeChannel::select('*');
-         
+
           if(array_key_exists($request->order[0]['column'], $this->original_column)){
              $dataquery->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
           }
@@ -59,9 +59,9 @@ class TypeChannelController extends Controller
             });
           }
           $totalData = $dataquery->get()->count();
-      
+
           $totalFiltered = $dataquery->get()->count();
-      
+
           $dataquery->limit($limit);
           $dataquery->offset($start);
           $data = $dataquery->get();
@@ -69,11 +69,15 @@ class TypeChannelController extends Controller
           {
             $enc_id = $this->safe_encode(Crypt::encryptString($result->id));
             $action = "";
-           
+
             $action.="";
             $action.="<div class='btn-group'>";
-            $action.='<a href="'.route('type_channel.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
-            $action.='<a href="#" onclick="deleteNegara(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
+            if($request->user()->can('type_channel.ubah')){
+                $action.='<a href="'.route('type_channel.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
+            }
+            if($request->user()->can('type_channel.delete')){
+                $action.='<a href="#" onclick="deleteNegara(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
+            }
             $action.="</div>";
             if ($result->status=='1') {
                $status = '<span class="label label-primary">Aktif</span>';
@@ -82,58 +86,53 @@ class TypeChannelController extends Controller
             }
 
             $result->no             = $key+$page;
-           
+
             $result->id             = $result->id;
             $result->name           = $result->name;
             $result->action         = $action;
           }
-          $json_data = array(
-            "draw"            => intval($request->input('draw')),  
-            "recordsTotal"    => intval($totalData),
-            "recordsFiltered" => intval($totalFiltered),
-            "data"            => $data
-          );
-          // if($request->user()->can('negara.index')) {
-          //   $json_data = array(
-          //     "draw"            => intval($request->input('draw')),  
-          //     "recordsTotal"    => intval($totalData),
-          //     "recordsFiltered" => intval($totalFiltered),
-          //     "data"            => $data
-          //   );
-          // }else{
-          //   $json_data = array(
-          //     "draw"            => intval($request->input('draw')),  
-          //     "recordsTotal"    => 0,
-          //     "recordsFiltered" => 0,
-          //     "data"            => []
-          //   );
-          // }   
-          return json_encode($json_data); 
+
+          if($request->user()->can('type_channel.index')) {
+                $json_data = array(
+                "draw"            => intval($request->input('draw')),
+                "recordsTotal"    => intval($totalData),
+                "recordsFiltered" => intval($totalFiltered),
+                "data"            => $data
+                );
+          }else{
+                $json_data = array(
+                "draw"            => intval($request->input('draw')),
+                "recordsTotal"    => 0,
+                "recordsFiltered" => 0,
+                "data"            => []
+                );
+          }
+          return json_encode($json_data);
       }
-    
+
       function safe_encode($string) {
-	
+
         $data = str_replace(array('/'),array('_'),$string);
         return $data;
       }
- 
+
 	    function safe_decode($string,$mode=null) {
-		
+
 		   $data = str_replace(array('_'),array('/'),$string);
         return $data;
       }
-      
+
       public function tambah()
       {
         return view('backend/master/type_channel/form');
       }
-     
+
       public function ubah($enc_id)
       {
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         if ($dec_id) {
           $typeChannel = TypeChannel::find($dec_id);
-          
+
           return view('backend/master/type_channel/form',compact('typeChannel','enc_id'));
         } else {
         	return view('errors/noaccess');
@@ -141,7 +140,7 @@ class TypeChannelController extends Controller
       }
 
       public function simpan(Request $req)
-      {     
+      {
           $enc_id     = $req->enc_id;
           if ($enc_id != null) {
             $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
@@ -152,7 +151,7 @@ class TypeChannelController extends Controller
           if(!$cek_name){
               $json_data = array(
                   "success"         => FALSE,
-                  "message"         => 'Mohon maaf. Expedisi yang Anda masukan sudah terdaftar pada sistem.'
+                  "message"         => 'Mohon maaf. Type Channel yang Anda masukan sudah terdaftar pada sistem.'
               );
           }else{
             if($enc_id){
@@ -187,7 +186,7 @@ class TypeChannelController extends Controller
               }
             }
           }
-        return json_encode($json_data); 
+        return json_encode($json_data);
       }
       public function hapus(Request $req,$enc_id)
       {

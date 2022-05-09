@@ -9,7 +9,7 @@
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="">Pembelian Produk</a>
+                <a href="{{route('pembelian.index')}}">Pembelian Produk</a>
             </li>
             <li class="breadcrumb-item active">
                 <strong>{{isset($produk) ? 'Edit' : 'Tambah'}}</strong>
@@ -18,7 +18,7 @@
     </div>
     <div class="col-lg-2">
         <br />
-        <a class="btn btn-white btn-sm" href="pembelian.index">Kembali</a>
+        <a class="btn btn-white btn-sm" href="{{route('pembelian.index')}}">Kembali</a>
     </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInRight">
@@ -83,15 +83,7 @@
                                 <textarea type="text" class="form-control" id="ket" name="ket">{{ isset($pembelian)? $pembelian->keterangan: '' }}</textarea>
                             </div>
 
-                            {{-- <div class="form-group row"> --}}
-                            {{-- <label class="col-sm-2 col-form-label">Tanggal Transaksi *</label>
-                            <div class="col-sm-3 error-text">
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control jatuh_tempo" id="tgl_transaksi"
-                                        name="tgl_transaksi" placeholder="dd-mm-yyyy" value="{{ isset($pembelian)? date('d-m-Y', strtotime($pembelian->tgl_transaksi)) : date('d-m-Y') }}" autocomplete="off">
-                                </div>
-                            </div> --}}
+
                             <label class="col-sm-2 col-form-label">Supplier </label>
                             <div class="col-sm-4 error-text">
                                 <select class="form-control select2" id="supplier" name="supplier">
@@ -241,13 +233,7 @@
                                 <td width="5%"></td>
                             </tr>
                         </table>
-                        <!--<div class="form-group row">
-                            <div class="col-sm-4 col-sm-offset-2 float-right">
-                                <a class="btn btn-white btn-sm" href="{{route('pembelian.index')}}">Batal</a>
-                                <button class="btn btn-primary btn-sm" type="submit" id="simpan">Simpan</button>
-                                {{-- <button class="btn btn-success btn-sm" type="submit" id="simpanselesai">Selesai & Simpan</button> --}}
-                            </div>
-                        </div>-->
+
 
                         <div class="form-group row">
                             <div class="col-sm-6 col-sm-offset-2">

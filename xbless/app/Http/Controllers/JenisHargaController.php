@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use App\Models\JenisHarga;
-use App\Models\Member;
+
 
 use DB;
 use Auth;
@@ -17,6 +17,7 @@ class JenisHargaController extends Controller
         1 => "name",
         2 => "operation",
     );
+
     public function index(){
         return view('backend/menuproduk/jenisharga/index');
     }

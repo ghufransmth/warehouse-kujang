@@ -10,7 +10,7 @@
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{route('distrik.index')}}">Master Jenis Toko</a>
+                <a href="{{route('toko.jenis.index')}}">Master Jenis Toko</a>
             </li>
             <li class="breadcrumb-item active">
                 <strong>{{isset($toko) ? 'Edit' : 'Tambah'}}</strong>
@@ -33,7 +33,7 @@
                             {{ session('message')['desc'] }}
                             </div>
                         @endif
-                        
+
                     </div>
                     <div class="ibox-content">
                         <form id="submitData">
@@ -41,7 +41,7 @@
                             <input type="hidden" name="enc_id" id="enc_id" value="{{isset($toko)? $enc_id : ''}}">
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Jenis Toko *</label>
                                 <div class="col-sm-10 error-text">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($toko)? $toko->name : ''}}"> 
+                                    <input type="text" class="form-control" id="name" name="name" value="{{isset($toko)? $toko->name : ''}}">
                                 </div>
                             </div>
                             <div class="hr-line-dashed"></div>
@@ -52,13 +52,13 @@
                                 </div>
                             </div>
                         </form>
-                        
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
-            
+
 @endsection
 @push('scripts')
 <script>
@@ -71,15 +71,15 @@
             },
             messages: {
                 name: {
-                    required: "Nama District tidak boleh kosong"
+                    required: "Jenis Toko tidak boleh kosong"
                 },
             },
             errorElement: 'span',
             errorPlacement: function (error, element) {
             error.addClass('invalid-feedback');
-           
+
             element.closest('.error-text').append(error);
-            
+
             },
             highlight: function (element, errorClass, validClass) {
             $(element).addClass('is-invalid');
@@ -92,7 +92,7 @@
             SimpanData();
             }
         });
-        function SimpanData(){    
+        function SimpanData(){
             $('#simpan').addClass("disabled");
                 var form = $('#submitData').serializeArray()
                 var dataFile = new FormData()
@@ -115,11 +115,11 @@
                         Swal.fire('Yes',data.message,'info');
                         window.location.replace('{{route("toko.jenis.index")}}');
                     } else {
-                        Swal.fire('Ups',data.message,'info'); 
+                        Swal.fire('Ups',data.message,'info');
                     }
                     Swal.hideLoading();
                 },
-                complete: function () { 
+                complete: function () {
                     Swal.hideLoading();
                     $('#simpan').removeClass("disabled");
                 },

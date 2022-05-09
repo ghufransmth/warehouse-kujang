@@ -11,6 +11,7 @@ use Auth;
 
 class KomponenController extends Controller
 {
+
     protected $original_column = array(
         1 => "name",
     );
@@ -48,7 +49,7 @@ class KomponenController extends Controller
         $start = $request->start;
         $page  = $start +1;
         $search = $request->search['value'];
-        
+
         $country = KomponenBiaya::select('*');
         if(array_key_exists($request->order[0]['column'], $this->original_column)){
             $country->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
@@ -72,11 +73,15 @@ class KomponenController extends Controller
         {
             $enc_id = $this->safe_encode(Crypt::encryptString($result->id));
             $action = "";
-        
+
             $action.="";
             $action.="<div class='btn-group'>";
-            $action.='<a href="'.route('komponen.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
-            $action.='<a href="#" onclick="deleteNegara(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
+            if($request->user()->can('komponen.ubah')) {
+                $action.='<a href="'.route('komponen.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
+            }
+            if($request->user()->can('komponen.delete')) {
+                $action.='<a href="#" onclick="deleteNegara(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
+            }
             $action.="</div>";
 
             if($result->kategori == 0){
@@ -90,29 +95,24 @@ class KomponenController extends Controller
             $result->action         = $action;
         }
 
-        $json_data = array(
-            "draw"            => intval($request->input('draw')),  
+
+        if($request->user()->can('komponen.index')) {
+          $json_data = array(
+            "draw"            => intval($request->input('draw')),
             "recordsTotal"    => intval($totalData),
             "recordsFiltered" => intval($totalFiltered),
             "data"            => $data
-        );
-        // if($request->user()->can('negara.index')) {
-        //   $json_data = array(
-        //     "draw"            => intval($request->input('draw')),  
-        //     "recordsTotal"    => intval($totalData),
-        //     "recordsFiltered" => intval($totalFiltered),
-        //     "data"            => $data
-        //   );
-        // }else{
-        //   $json_data = array(
-        //     "draw"            => intval($request->input('draw')),  
-        //     "recordsTotal"    => 0,
-        //     "recordsFiltered" => 0,
-        //     "data"            => []
-        //   );
-            
-        // }    
-        return json_encode($json_data); 
+          );
+        }else{
+          $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => 0,
+            "recordsFiltered" => 0,
+            "data"            => []
+          );
+
+        }
+        return json_encode($json_data);
     }
 
     public function tambah(){
@@ -124,7 +124,7 @@ class KomponenController extends Controller
 
     public function simpan(Request $request){
         $enc_id     = $request->enc_id;
-        
+
         if ($enc_id != null) {
           $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         }else{
@@ -149,7 +149,7 @@ class KomponenController extends Controller
                 $result->save();
 
                 $data = 'Terupdate';
-                
+
             }else{
                 $result = new KomponenBiaya;
                 $result->name   = $request->name;

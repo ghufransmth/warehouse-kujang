@@ -8,21 +8,14 @@ use App\Models\DiskonPenjualan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
-use App\Models\ProductPerusahaanGudang;
 use App\Models\PurchaseOrderDetail;
-use App\Models\PerusahaanGudang;
-use App\Models\PurchaseOrderLog;
-use App\Models\InvoiceDetail;
 use App\Models\PurchaseOrder;
-use App\Models\ExpedisiVia;
 use App\Models\ReportStock;
-use App\Models\Perusahaan;
 use App\Models\TipeHarga;
 use App\Models\Invoice;
 use App\Models\Satuan;
 use App\Models\Expedisi;
 use App\Models\Product;
-use App\Models\Member;
 use App\Models\Gudang;
 use App\Models\Penjualan;
 use App\Models\Sales;
@@ -74,10 +67,6 @@ class PurchaseController extends Controller
     }
 
     public function index(){
-        // return "tes";
-        // $member     = Member::all();
-        // $perusahaan = Perusahaan::all();
-        // $gudang     = Gudang::all();
 
         if(session('filter_perusahaan')==""){
             $selectedperusahaan = "";
@@ -95,7 +84,6 @@ class PurchaseController extends Controller
         $gudang = array();
         $toko = Toko::all();
         $sales = Sales::all();
-        // return "tes";
         return view('backend/purchase/index',compact('member','perusahaan','gudang','selectedmember','selectedperusahaan', 'sales', 'toko'));
     }
 
@@ -151,18 +139,19 @@ class PurchaseController extends Controller
 
             return $next_no.'/'.$kode_perusahaan.'/'.date('m').'/'.date('y');
     }
+
     public function edit($enc_id){
-        // return $enc_id;
+
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         return $dec_id;
         $penjualan = Penjualan::find($dec_id);
-        // return $penjualan;
+
         if(isset($penjualan)){
             $detail_penjualan = DetailPenjualan::where('id_penjualan', $penjualan->id)->where('no_faktur', $penjualan->no_faktur)->with(['getproduct'])->get();
             $member = array();
             $selectedmember ="";
             $sales = Sales::all();
-            // $sales = array();
+
             $selectedsales = $penjualan->id_sales;
             // $expedisi = Expedisi::all();
             $expedisi = array();
@@ -181,11 +170,7 @@ class PurchaseController extends Controller
 
             return view('backend/purchase/form',compact('enc_id','tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia', 'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko', 'selectedtoko', 'selectedstatuslunas', 'penjualan', 'detail_penjualan', 'selectedjenispembayaran'));
         }else{
-            // return response()->json([
-            //     'success' => false,
-            //     'code' => 201,
-            //     'message' => 'No faktur tidak ditemukan'
-            // ]);
+
         }
         return $penjualan;
     }

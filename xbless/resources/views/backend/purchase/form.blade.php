@@ -304,15 +304,9 @@
             </table>
             <div class="form-group row">
                 <div class="col-sm-6 col-sm-offset-2">
-                    <a class="btn btn-white btn-sm" href="{{route('provinsi.index')}}">Batal</a>
+                    <a class="btn btn-white btn-sm" href="{{route('purchaseorder.index')}}">Batal</a>
                     <button class="btn btn-primary btn-sm" type="button" id="simpan">Selesai</button>
                 </div>
-                @can('draftpurchaseorder.tambah')
-                <div class="col-sm-6 text-right">
-
-                    {{-- <button class="btn btn-info btn-sm" type="button" id="draft">Simpan Draft</button> --}}
-                </div>
-                @endcan
             </div>
             </form>
         </div>
@@ -422,13 +416,7 @@
                 success: function(data){
                     if (data.success) {
                         Swal.fire('Yes',data.message,'info');
-                        if(data.draft=='0'){
-                            window.location.replace('{{route("requestpurchaseorder.index")}}');
-                        }else{
-                            //ke draft
-                            window.location.replace('{{route("purchaseorder.index")}}');
-                        }
-
+                        window.location.replace('{{route("purchaseorder.index")}}');
                     } else {
                         Swal.fire('Ups',data.message,'info');
                     }

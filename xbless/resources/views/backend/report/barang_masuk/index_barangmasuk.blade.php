@@ -1,5 +1,5 @@
 @extends('layouts.layout')
-@section('title', 'LAPORAN BARANG MASUK')
+@section('title', 'Laporan Barang Masuk')
 @section('content')
 <style>
     .swal2-container {
@@ -8,13 +8,13 @@
 </style>
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>LAPORAN BARANG MASUK</h2>
+        <h2>Laporan Barang Masuk</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item active">
-                <a>LAPORAN BARANG MASUK</a>
+                <a>Laporan Barang Masuk</a>
             </li>
         </ol>
     </div>

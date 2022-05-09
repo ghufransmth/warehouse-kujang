@@ -3,36 +3,12 @@
 @section('title', 'Beranda')
 
 @section('content')
-{{-- <div class="wrapper wrapper-content animated fadeInRight">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="text-center m-t-lg">
-                @if(session('message'))
-                <div class="alert alert-{{session('message')['status']}}">
-<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-        aria-hidden="true">&times;</span></button>
-{{ session('message')['desc'] }}
-</div>
-@endif
-<h1>
-    Welcome in Bensco Project
-</h1>
-<small>
-    (Version 2.0)
-</small>
-</div>
-</div>
-</div>
-</div> --}}
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-8">
-        <h2>Dashboard</h2>
+        <h2>Beranda</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
-            </li>
-            <li class="breadcrumb-item active">
-                <strong>Dashboard</strong>
             </li>
         </ol>
     </div>
@@ -183,7 +159,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
@@ -434,7 +410,7 @@
                             </tr>
                         </thead>
                         <tbody id="data_detail">
-                            
+
                         </tbody>
                         <tfoot>
                             <tr class="m-auto">
@@ -603,7 +579,7 @@
                 {"data": "catatan"},
                 {"data": "product"},
                 {"data": "jumlah"},
-            ],            
+            ],
             pageLength: 10,
             responsive: true,
             dom: '<"html5buttons"B>lTfgitp',
