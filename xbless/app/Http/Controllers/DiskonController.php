@@ -214,6 +214,8 @@ class DiskonController extends Controller
             $detail->bonus_produk   = isset($req->bonus_produk)? $req->bonus_produk : null;
             $detail->jml_bonus  = isset($req->jml_bonus)? $req->jml_bonus : null;
             $detail->satuan_bonus = isset($req->satuan_bonus)? $req->satuan_bonus : null;
+            $detail->tgl_dari = isset($req->tgl_dari)? date('Y-m-d',strtotime($req->tgl_dari)) : null;
+            $detail->tgl_sampai = isset($req->tgl_sampai)? date('Y-m-d',strtotime($req->tgl_sampai)) : null;
             $detail->save();
             if($detail){
 
@@ -243,6 +245,8 @@ class DiskonController extends Controller
             $detail->bonus_produk   = isset($req->bonus_produk)? $req->bonus_produk : null;
             $detail->jml_bonus  = isset($req->jml_bonus)? $req->jml_bonus : null;
             $detail->satuan_bonus = isset($req->satuan_bonus)? $req->satuan_bonus : null;
+            $detail->tgl_dari = isset($req->tgl_dari)? date('Y-m-d',strtotime($req->tgl_dari)) : null;
+            $detail->tgl_sampai = isset($req->tgl_sampai)? date('Y-m-d',strtotime($req->tgl_sampai)) : null;
             $detail->save();
 
             if($detail){
