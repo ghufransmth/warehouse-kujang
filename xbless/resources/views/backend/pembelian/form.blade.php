@@ -211,7 +211,7 @@
                                                     name="total[]" readonly>
                                             </td>
                                             <td>
-                                                <a href="#"  onclick='deleteProduk({{ $key }})' class="text-white btn btn-danger btn-hemisperich btn-xs"
+                                                <a href="#"  onclick='deleteProduk({{ isset($key)? $key : '' }})' class="text-white btn btn-danger btn-hemisperich btn-xs"
                                                     data-original-title='Hapus Data' id='deleteModal'><i
                                                         class='fa fa-trash'></i></a>
                                             </td>
