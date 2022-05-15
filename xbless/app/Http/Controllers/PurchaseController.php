@@ -315,7 +315,7 @@ class PurchaseController extends Controller
         $selectedmember ="";
         $sales = Sales::all();
         // $sales = array();
-        $selectedsales ="";
+        $selectedsales = session('idsales') != '' ?  session('idsales') : '';
         // $expedisi = Expedisi::all();
         $expedisi = array();
         $selectedexpedisi ="";
@@ -327,9 +327,12 @@ class PurchaseController extends Controller
         $tipeharga = array();
         $selectedtipeharga ="";
         $toko = Toko::all();
+
+        $selectednotransaksi = $this->generateKode();
+
         // return 'tes';
         return view('backend/purchase/form',compact('tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia',
-                    'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko'));
+                    'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko','selectednotransaksi'));
     }
 
     public function cekInvoiceBelumLunas(Request $req){
@@ -468,7 +471,7 @@ class PurchaseController extends Controller
         $array_stock_product    = $req->stock_product;
         $array_qty              = $req->qty;
         $id_sales               = $req->sales;
-        $status_pembayaran      = $req->status_pembayaran; // 1 = lunas, 0 = belum lunas;
+        $status_pembayaran      = 0; // 1 = lunas, 0 = belum lunas;
         $tgl_jatuh_tempo        = date('Y-m-d',strtotime($req->tgl_jatuh_tempo));
         $tgl_transaksi          = date('Y-m-d', strtotime($req->tgl_transaksi));
         $array_id_satuan        = $req->tipesatuan;
@@ -2367,6 +2370,35 @@ class PurchaseController extends Controller
             $purchaselog->save();
         }
         return view('backend/purchase/print', compact('idpo','purchase','purchasedetail','printoleh', 'gudang','userakses'));
+    }
+
+    public function generateKode()
+    {
+          $next_no = '';
+          $kodesales = '';
+          if(strlen(session('idsales'))>1){
+              $kodesales = session('idsales');
+          }else{
+              $kodesales = '0'.session('idsales');
+          }
+          $tahun = date('y');
+          $bulan = date('m');
+          $format = $kodesales.$tahun;
+          $max_value = Penjualan::whereYear('tgl_faktur', date('yyyy'))->max('id');
+          if ($max_value) {
+              $data  = Penjualan::find($max_value);
+              $ambil = substr($data->no_faktur, -6);
+          }
+          if ($max_value==null) {
+              $next_no = '000001';
+          }elseif (strlen($ambil)<6) {
+              $next_no = '000001';
+          }elseif ($ambil == '999999') {
+              $next_no = '000001';
+          }else {
+              $next_no = substr('000000', 0, 6-strlen($ambil+1)).($ambil+1);
+          }
+          return $format.''.$next_no;
     }
 
 }

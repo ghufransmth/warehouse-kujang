@@ -714,6 +714,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::get('/', [TokoController::class, 'index'])->name('index');
             Route::get('/gettoko', [TokoController::class, 'getToko'])->name('gettoko');
             Route::post('/getdata', [TokoController::class, 'getData'])->name('getdata');
+            Route::post('/getdetail', [TokoController::class, 'getDetail'])->name('getdetail');
             Route::post('/simpan', [TokoController::class, 'simpan'])->name('simpan');
             Route::get('/tambah', [TokoController::class, 'tambah'])->name('tambah');
             Route::get('/edit/{id}', [TokoController::class, 'ubah'])->name('edit');

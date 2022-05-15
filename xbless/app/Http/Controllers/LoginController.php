@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Sales;
 use Illuminate\Support\Facades\Hash;
 use Auth;
 
@@ -28,6 +29,18 @@ class LoginController extends Controller
                   $akun->save();
                   session(['profile' => $this->defaultProfilePhotoUrl($akun->fullname)]);
                   session(['namaakses' => $akun->namaAkses?$akun->namaAkses->name:'']);
+                  if($akun->flag_user==11){
+                    $datasales  = Sales::where('user_id',$akun->id)->first();
+                    if(!$datasales){
+                      Auth::logout();
+                      $desc = 'Login gagal. Akun Anda belum direlasikan dengan Sales.';
+                      app('App\Http\Controllers\LogActivityController')->create_log(1,null,'gagal',$desc,$akun);
+                      return redirect()->route('manage.login')->with('message', ['status'=>'danger','desc'=>$desc]);
+                    }
+                  }else{
+                    $datasales = "";
+                  }
+                  session(['idsales' => $datasales?$datasales->id:'']);
                   Auth::login($akun);
                   return redirect()->route('manage.beranda');
               } else {

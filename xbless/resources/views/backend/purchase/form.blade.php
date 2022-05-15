@@ -46,7 +46,7 @@
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">No Transaksi </label>
                             <div class="col-sm-4 error-text">
-                                <input type="text" name="no_transaksi" value="{{ isset($penjualan)? $penjualan->no_faktur : '' }}" class="form-control" id="no_transaksi">
+                                <input type="text" name="no_transaksi" value="{{ isset($penjualan)? $penjualan->no_faktur : $selectednotransaksi }}" class="form-control" id="no_transaksi" disabled>
                             </div>
                             <label class="col-sm-2 col-form-label">Tgl Transaksi </label>
                             <div class="col-sm-4 error-text">
@@ -70,9 +70,12 @@
                                     >{{ $value->name }}</option>
                                     @endforeach
                                 </select>
+                                <br/>
+                                <label class="col-form-label" id="alamat"></label>
                             </div>
                             <label class="col-sm-2 col-form-label">Sales </label>
                             <div class="col-sm-4 error-text">
+
                                 <select class="form-control select2" id="sales" name="sales">
                                     <option value="0">Pilih Sales</option>
                                     @foreach($sales as $key => $value)
@@ -84,14 +87,11 @@
                                         @endif
                                     >{{ $value->nama }}</option>
                                     @endforeach
-
-
-
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Status Pembayaran </label>
+                            <!-- <label class="col-sm-2 col-form-label">Status Pembayaran </label>
                             <div class="col-sm-4 error-text">
                                 <select class="form-control select2" id="status_pembayaran" name="status_pembayaran">
                                     <option value="">Pilih Status Pembayaran</option>
@@ -110,7 +110,7 @@
                                     @endif
                                     >Belum Lunas</option>
                                 </select>
-                            </div>
+                            </div> -->
                             <label class="col-sm-2 col-form-label">Tgl Jatuh Tempo </label>
                             <div class="col-sm-4 error-text">
                                 <input type="text" name="tgl_jatuh_tempo" class="form-control formatTgl"
@@ -119,31 +119,6 @@
                                 <input type="hidden" name="total_diskon" id="diskon_penjualan" value="0">
                                 <input type="hidden" name="jumlah_penjualan" id="jumlah_penjualan" value="0">
                                 <input type="hidden" name="nilai_diskon" id="nilai_diskon" value="0">
-                            </div>
-
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label"><a href="#!" onclick="tambahProduk()"
-                                class="btn btn-success btn-sm icon-btn sm-btn-flat product-tooltip" title="Tambah Produk">Tambah
-                                Produk</a></label>
-                            <div class="col-sm-4 error-text">
-                                {{-- <select class="form-control select2" id="status_pembayaran" name="status_pembayaran">
-                                    <option value="">Pilih Status Pembayaran</option>
-                                    <option value="1"
-                                        @if(isset($selectedstatuslunas))
-                                            @if($selectedstatuslunas == '1')
-                                                selected
-                                            @endif
-                                        @endif
-                                    >Lunas</option>
-                                    <option value="0"
-                                    @if(isset($selectedstatuslunas))
-                                        @if($selectedstatuslunas == 0)
-                                            selected
-                                        @endif
-                                    @endif
-                                    >Belum Lunas</option>
-                                </select> --}}
                             </div>
                             <label class="col-sm-2 col-form-label">Jenis Pembayaran</label>
                             <div class="col-sm-4 error-text">
@@ -172,6 +147,32 @@
                                     >Transfer</option>
                                 </select>
                             </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label"><a href="#!" onclick="tambahProduk()"
+                                class="btn btn-success btn-sm icon-btn sm-btn-flat product-tooltip" title="Tambah Produk">Tambah
+                                Produk</a></label>
+                            <div class="col-sm-4 error-text">
+                                {{-- <select class="form-control select2" id="status_pembayaran" name="status_pembayaran">
+                                    <option value="">Pilih Status Pembayaran</option>
+                                    <option value="1"
+                                        @if(isset($selectedstatuslunas))
+                                            @if($selectedstatuslunas == '1')
+                                                selected
+                                            @endif
+                                        @endif
+                                    >Lunas</option>
+                                    <option value="0"
+                                    @if(isset($selectedstatuslunas))
+                                        @if($selectedstatuslunas == 0)
+                                            selected
+                                        @endif
+                                    @endif
+                                    >Belum Lunas</option>
+                                </select> --}}
+                            </div>
+
 
                         </div>
 
@@ -343,6 +344,23 @@
                 Swal.showLoading();
                 SimpanData(1);
             }
+        });
+        $('#toko').on('change', function() {
+            var id = this.value;
+            $.ajax({
+              type: 'POST',
+              url : "{{route('toko.getdetail')}}",
+              headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+              data:{'value':id},
+              dataType: "json",
+              success: function(data){
+                  $('#alamat').html(data.results[0].text);
+              },
+              error: function(data){
+                  console.log(data);
+              }
+            });
+
         });
         $('#submitData').validate({
             rules: {
