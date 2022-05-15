@@ -229,8 +229,8 @@ class PurchaseController extends Controller
             $result->toko = $result->gettoko->name;
             $result->tgl_jatuh_tempo = $result->tgl_jatuh_tempo;
             $result->tgl_transaksi = $result->tgl_faktur;
-            $result->total_harga = format_uang($result->total_harga);
-            $result->total_diskon = format_uang($result->total_diskon);
+            $result->total_harga = $this->format_uang($result->total_harga);
+            $result->total_diskon = $this->format_uang($result->total_diskon);
             $result->tgl_lunas = $result->tgl_lunas;
             $aksi .= '<a href="'.route('purchaseorder.detail', $enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail </a> <br>';
 
@@ -273,6 +273,14 @@ class PurchaseController extends Controller
 
 
     }
+
+    public function format_uang($angka){
+
+    	$hasil_rupiah = "Rp " . number_format($angka,2,',','.');
+    	return $hasil_rupiah;
+
+    }
+
     public function approve($enc_id){
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         $penjualan = Penjualan::find($dec_id);
@@ -496,12 +504,6 @@ class PurchaseController extends Controller
                 return response()->json([
                     'success' => FALSE,
                     'message' => 'Jenis pembayaran harus diisi'
-                ]);
-            }
-            if($status_pembayaran == null){
-                return response()->json([
-                    'success' => FALSE,
-                    'message' => 'Status pembayaran harus diisi'
                 ]);
             }
             if(count($array_total_harga) < 1){

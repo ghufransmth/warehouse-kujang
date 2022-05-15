@@ -50,7 +50,7 @@ class StokOpnameController extends Controller
 
         $querydb = TransaksiStock::select('*')->with(['detail_stockopname']);
         $querydb->where('flag_transaksi', 2);
-
+        $querydb->whereHas('detail_stockopname');
 
         if (array_key_exists($request->order[0]['column'], $this->original_column)) {
             $querydb->orderByRaw($this->original_column[$request->order[0]['column']] . ' ' . $request->order[0]['dir']);

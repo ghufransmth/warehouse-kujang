@@ -46,7 +46,7 @@
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">No Transaksi </label>
                             <div class="col-sm-4 error-text">
-                                <input type="text" name="no_transaksi" value="{{ isset($penjualan)? $penjualan->no_faktur : $selectednotransaksi }}" class="form-control" id="no_transaksi" disabled>
+                                <input type="text" name="no_transaksi" value="{{ isset($penjualan)? $penjualan->no_faktur : $selectednotransaksi }}" class="form-control" id="no_transaksi" readonly>
                             </div>
                             <label class="col-sm-2 col-form-label">Tgl Transaksi </label>
                             <div class="col-sm-4 error-text">
