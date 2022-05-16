@@ -2391,8 +2391,7 @@ class PurchaseController extends Controller
           $tahun = date('y');
           $bulan = date('m');
           $format = $kodesales.$tahun;
-          $last_row = Penjualan::whereYear('tgl_faktur','=',date('Y'))->orderBy('no_faktur','DESC')->first();
-          $max_value = ($last_row != null) ? $last_row->id : null;
+          $max_value = Penjualan::whereYear('tgl_faktur','=',date('Y'))->max('id');
           if ($max_value) {
               $data  = Penjualan::find($max_value);
               $ambil = substr($data->no_faktur, -6);
