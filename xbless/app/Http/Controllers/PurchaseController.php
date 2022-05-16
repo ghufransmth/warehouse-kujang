@@ -473,7 +473,7 @@ class PurchaseController extends Controller
             $dec_id                 = $this->safe_decode(Crypt::decryptString($enc_id));
 
         }
-        $no_transaksi           = $req->no_transaksi;
+        $no_transaksi           = $this->generateKode();
         $array_harga_product    = $req->harga_product;
         $array_product          = $req->produk;
         $array_stock_product    = $req->stock_product;
@@ -2377,17 +2377,22 @@ class PurchaseController extends Controller
     public function generateKode()
     {
           $next_no = '';
-          $kodesales = '';
-          if(strlen(session('idsales'))>1){
-              $kodesales = session('idsales');
+          if(session('idsales')){
+            $kodesales = '';
+            if(strlen(session('idsales'))>1){
+                $kodesales = session('idsales');
+            }else{
+                $kodesales = '0'.session('idsales');
+            }
           }else{
-              $kodesales = '0'.session('idsales');
+            $kodesales = '00';
           }
+
           $tahun = date('y');
           $bulan = date('m');
           $format = $kodesales.$tahun;
           $last_row = Penjualan::whereYear('tgl_faktur','=',date('Y'))->orderBy('no_faktur','DESC')->first();
-          $max_value = $last_row->id;
+          $max_value = ($last_row != null) ? $last_row->id : null;
           if ($max_value) {
               $data  = Penjualan::find($max_value);
               $ambil = substr($data->no_faktur, -6);
