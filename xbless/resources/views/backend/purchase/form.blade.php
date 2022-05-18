@@ -75,9 +75,11 @@
                             </div>
                             <label class="col-sm-2 col-form-label">Sales </label>
                             <div class="col-sm-4 error-text">
-
-                                <select class="form-control select2" id="sales" name="sales">
-                                    <option value="0">Pilih Sales</option>
+                              <select class="form-control select2" id="sales" name="sales">
+                                  <option value="0">Pilih Sales</option>
+                                  @if(isset($selectedsales))
+                                  <option value="{{ $selectedsales }}" selected>{{ $namesales }}</option>
+                                  @else
                                     @foreach($sales as $key => $value)
                                     <option value="{{ $value->id }}"
                                         @if(isset($selectedsales))
@@ -87,7 +89,9 @@
                                         @endif
                                     >{{ $value->nama }}</option>
                                     @endforeach
-                                </select>
+                                  @endif
+                              </select>
+
                             </div>
                         </div>
                         <div class="form-group row">

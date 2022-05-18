@@ -324,6 +324,11 @@ class PurchaseController extends Controller
         $sales = Sales::all();
         // $sales = array();
         $selectedsales = session('idsales') != '' ?  session('idsales') : '';
+        if($selectedsales){
+          $namesales = Sales::find($selectedsales)->nama;
+        }else{
+          $namesales = "";
+        }
         // $expedisi = Expedisi::all();
         $expedisi = array();
         $selectedexpedisi ="";
@@ -337,10 +342,9 @@ class PurchaseController extends Controller
         $toko = Toko::all();
 
         $selectednotransaksi = $this->generateKode();
-
         // return 'tes';
         return view('backend/purchase/form',compact('tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia',
-                    'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko','selectednotransaksi'));
+                    'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko','selectednotransaksi','namesales'));
     }
 
     public function cekInvoiceBelumLunas(Request $req){
