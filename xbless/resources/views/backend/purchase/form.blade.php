@@ -366,6 +366,23 @@
             });
 
         });
+        $('#sales').on('change', function() {
+            var id = this.value;
+            $.ajax({
+              type: 'POST',
+              url : "{{route('purchaseorder.getkode')}}",
+              headers: {'X-CSRF-TOKEN': $('[name="_token"]').val()},
+              data:{'value':id},
+              dataType: "json",
+              success: function(data){
+                  $('#no_transaksi').val(data.results[0].id);
+              },
+              error: function(data){
+                  console.log(data);
+              }
+            });
+
+        });
         $('#submitData').validate({
             rules: {
                 member:{

@@ -535,6 +535,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
         Route::get('/penjualan/tambah', [PurchaseController::class, 'tambah'])->name('purchaseorder.tambah');
         Route::group(['prefix' => 'penjualan', 'as' => 'purchaseorder.'], function () {
             Route::get('/', [PurchaseController::class, 'index'])->name('index');
+            Route::post('/getkode', [PurchaseController::class, 'getGenerateKode'])->name('getkode');
             Route::get('/print/{id?}', [PurchaseController::class, 'print'])->name('print');
             Route::get('/showpo/{id?}', [PurchaseController::class, 'showpo'])->name('showpo');
             Route::get('/check_gudang/{id?}', [PurchaseController::class, 'check_gudang'])->name('check_gudang');

@@ -25,7 +25,8 @@ class KunjunganSalesController extends Controller
     private function skala(){
         $result = array(
             0 => 'Weekly',
-            1 => 'Biweekly'
+            1 => 'Biweekly',
+            2 => 'Monthly'
         );
 
         return $result;
@@ -110,6 +111,8 @@ class KunjunganSalesController extends Controller
                 $skala = 'Weekly';
             }else if($result->skala == 1){
                 $skala = 'Biweekly';
+            }else if($result->skala == 2){
+                $skala = 'Monthly';
             }
 
             $result->no             = $key+$page;

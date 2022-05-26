@@ -41,7 +41,7 @@
                             <th>Kode</th>
                             <th>Nama</th>
                             <th>Kategori</th>
-                            <th>Satuan</th>
+                            <th>Isi Per Karton</th>
                             <th>Harga Beli</th>
                             <th>Harga Jual</th>
                             {{-- <th>Cover</th> --}}

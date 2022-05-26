@@ -22,6 +22,7 @@ use App\Models\Sales;
 use App\Models\StockAdj;
 use App\Models\Toko;
 use App\Models\TransaksiStock;
+use App\Models\KunjunganSales;
 use Illuminate\Support\Facades\Gate;
 
 use Carbon\Carbon;
@@ -339,12 +340,36 @@ class PurchaseController extends Controller
         // $tipeharga = $this->jenisharga();
         $tipeharga = array();
         $selectedtipeharga ="";
-        $toko = Toko::all();
+        if(session('idsales')){
+          $toko_id = KunjunganSales::select('toko_id')->where('sales_id',session('idsales'))->get();
+          $toko = Toko::whereIn('id',$toko_id)->get();
+        }else{
+          $toko = Toko::all();
+        }
 
-        $selectednotransaksi = $this->generateKode();
-        // return 'tes';
+
+        $selectednotransaksi = (session('idsales') != '') ? $this->generateKode() : '';
+        //return $toko;
         return view('backend/purchase/form',compact('tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia',
                     'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko','selectednotransaksi','namesales'));
+    }
+
+    public function getGenerateKode(Request $request){
+        $term = $request->value;
+        $query = $this->generateKode($term);
+
+        $out = [
+            'results' => [],
+            'pagination' => [
+                'more' => false
+            ]
+        ];
+
+        array_push($out['results'], [
+            'id'   => $query
+        ]);
+
+        return response()->json($out, 200);
     }
 
     public function cekInvoiceBelumLunas(Request $req){
@@ -477,7 +502,7 @@ class PurchaseController extends Controller
             $dec_id                 = $this->safe_decode(Crypt::decryptString($enc_id));
 
         }
-        $no_transaksi           = $this->generateKode();
+        $no_transaksi           = (session('idsales') != '') ? $this->generateKode() : $req->no_transaksi;
         $array_harga_product    = $req->harga_product;
         $array_product          = $req->produk;
         $array_stock_product    = $req->stock_product;
@@ -2378,24 +2403,35 @@ class PurchaseController extends Controller
         return view('backend/purchase/print', compact('idpo','purchase','purchasedetail','printoleh', 'gudang','userakses'));
     }
 
-    public function generateKode()
+    public function generateKode($id = '')
     {
           $next_no = '';
+          $kodesales = '';
+          $idsales = 0;
           if(session('idsales')){
-            $kodesales = '';
             if(strlen(session('idsales'))>1){
                 $kodesales = session('idsales');
             }else{
                 $kodesales = '0'.session('idsales');
             }
           }else{
-            $kodesales = '00';
+            if(strlen($id)>1){
+                $kodesales = $id;
+            }else{
+                $kodesales = '0'.$id;
+            }
+          }
+
+          if($id){
+             $idsales = $id;
+          }else{
+             $idsales = session('idsales');
           }
 
           $tahun = date('y');
           $bulan = date('m');
           $format = $kodesales.$tahun;
-          $max_value = Penjualan::whereYear('tgl_faktur','=',date('Y'))->max('id');
+          $max_value = Penjualan::whereYear('tgl_faktur','=',date('Y'))->with('getsales')->where('id_sales',$idsales)->max('id');
           if ($max_value) {
               $data  = Penjualan::find($max_value);
               $ambil = substr($data->no_faktur, -6);
