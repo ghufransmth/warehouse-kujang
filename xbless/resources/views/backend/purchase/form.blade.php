@@ -77,7 +77,7 @@
                             <div class="col-sm-4 error-text">
                               <select class="form-control select2" id="sales" name="sales">
                                   <option value="0">Pilih Sales</option>
-                                  @if(isset($selectedsales))
+                                  @if($selectedsales)
                                   <option value="{{ $selectedsales }}" selected>{{ $namesales }}</option>
                                   @else
                                     @foreach($sales as $key => $value)
