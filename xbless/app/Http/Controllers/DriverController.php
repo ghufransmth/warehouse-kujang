@@ -84,9 +84,12 @@ class DriverController extends Controller
 
             $action.="";
             $action.="<div class='btn-group'>";
-
-            $action.='<a href="'.route('driver.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
-            $action.='<a href="#" onclick="deleteData(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
+            if($request->user()->can('driver.ubah')){
+                $action.='<a href="'.route('driver.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
+            }
+            if($request->user()->can('driver.delete')){
+                $action.='<a href="#" onclick="deleteData(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
+            }
             $action.="</div>";
 
             $sales->no             = $key+$page;
@@ -96,12 +99,22 @@ class DriverController extends Controller
             $sales->action         = $action;
         }
 
-        $json_data = array(
-            "draw"            => intval($request->input('draw')),
-            "recordsTotal"    => intval($totalData),
-            "recordsFiltered" => intval($totalFiltered),
-            "data"            => $data
-        );
+        if ($request->user()->can('driver.index')) {
+            $json_data = array(
+                "draw"            => intval($request->input('draw')),
+                "recordsTotal"    => intval($totalData),
+                "recordsFiltered" => intval($totalFiltered),
+                "data"            => $data
+              );
+        }else{
+            $json_data = array(
+                "draw"            => intval($request->input('draw')),
+                "recordsTotal"    => 0,
+                "recordsFiltered" => 0,
+                "data"            => []
+              );
+
+        }
 
         return json_encode($json_data);
     }
@@ -182,7 +195,7 @@ class DriverController extends Controller
                     $staff->status      = $req->status;
                     $staff->save();
                 }
-                
+
                 if($staff){
                     $driver->user_id     = $staff->id;
                     $driver->nama        = $req->name;
@@ -219,7 +232,7 @@ class DriverController extends Controller
                     $driver->user_id     = $staff->id;
                     $driver->nama        = $req->name;
                     $driver->save();
-                    
+
                     DB::commit();
                     $json_data = array(
                         "success"         => TRUE,
@@ -240,14 +253,12 @@ class DriverController extends Controller
 
     public function ubah($enc_id){
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
-        if($dec_id) {
-            $driver= Driver::select('tbl_driver.*','users.*')->leftJoin('users','users.id','tbl_driver.user_id')->where('tbl_driver.    id',$dec_id)->first();
+        $driver= Driver::select('tbl_driver.*','users.*')->leftJoin('users','users.id','tbl_driver.user_id')->where('tbl_driver.id',$dec_id)->first();
+        if($driver) {
             $status= $this->status();
             $selectedstatus   = $driver->status;
             $roles = Role::orWhere('name','LIKE',"driver")->first();
             $roleselected = $driver->flag_user;
-            
-            // return response()->json(['data' => $roles]);
             return view('backend/master/driver/form',compact('enc_id','driver','roles','roleselected','status','selectedstatus'));
         } else {
             return view('errors/noaccess');

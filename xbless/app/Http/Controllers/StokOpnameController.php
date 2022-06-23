@@ -3,15 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Perusahaan;
 use App\Models\Gudang;
-use App\Models\PerusahaanGudang;
 use App\Models\Product;
-use App\Models\ProductPerusahaanGudang;
 use App\Models\ProductBarcode;
 use App\Models\StockOpname;
 use App\Models\StockOpnameDetail;
-use App\Models\ReportStock;
 use App\Models\Satuan;
 use App\Models\StockAdj;
 use App\Models\StockMutasi;
@@ -54,7 +50,7 @@ class StokOpnameController extends Controller
 
         $querydb = TransaksiStock::select('*')->with(['detail_stockopname']);
         $querydb->where('flag_transaksi', 2);
-
+        $querydb->whereHas('detail_stockopname');
 
         if (array_key_exists($request->order[0]['column'], $this->original_column)) {
             $querydb->orderByRaw($this->original_column[$request->order[0]['column']] . ' ' . $request->order[0]['dir']);

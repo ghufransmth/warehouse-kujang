@@ -65,9 +65,12 @@ class SupplierController extends Controller
 
             $action.="";
             $action.="<div class='btn-group'>";
-            $action.='<a href="'.route('supplier.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
-
-           $action.='<a href="#" onclick="deleteData(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i>Hapus</a>&nbsp;';
+            if($req->user()->can('supplier.ubah')){
+                $action.='<a href="'.route('supplier.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
+            }
+            if($req->user()->can('supplier.hapus')){
+                $action.='<a href="#" onclick="deleteData(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i>Hapus</a>&nbsp;';
+            }
             $action.="</div>";
 
             $value->no = $key+$page;
@@ -75,25 +78,24 @@ class SupplierController extends Controller
             $value->nama = $value->nama;
             $value->action = $action;
          }
-        //  if ($req->user()->can('supplier.index')) {
-        //     if($data){
+         if ($req->user()->can('supplier.index')) {
             $json_data = array(
                       "draw"            => intval($req->input('draw')),
                       "recordsTotal"    => intval($totalData),
                       "recordsFiltered" => intval($totalFiltered),
                       "data"            => $data
                     );
-        // //   }else{
-        // }else{
-        //      $json_data = array(
-        //               "draw"            => intval($req->input('draw')),
-        //               "recordsTotal"    => 0,
-        //               "recordsFiltered" => 0,
-        //               "data"            => []
-        //             );
-        // //   }
-        //         }
-          return json_encode($json_data);
+
+        }else{
+             $json_data = array(
+                      "draw"            => intval($req->input('draw')),
+                      "recordsTotal"    => 0,
+                      "recordsFiltered" => 0,
+                      "data"            => []
+                    );
+
+        }
+        return json_encode($json_data);
       }
 
       public function tambah(){

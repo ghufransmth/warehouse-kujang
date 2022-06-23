@@ -121,11 +121,7 @@ class DeliveryOrderController extends Controller
         $deliveryorder = DeliveryOrder::select('tbl_penjualan.*','tbl_delivery_order.driver_id','tbl_delivery_order.no_do','tbl_delivery_order.status_do','tbl_delivery_order.created_at as tgl_do','tbl_delivery_order.id as do_id','tbl_delivery_order.type_payment','tbl_delivery_order.titip_bayar','tbl_delivery_order.tgl_warkat')
                     ->join('tbl_penjualan','tbl_penjualan.id','tbl_delivery_order.faktur_id');
 
-        // if(array_key_exists($request->order[0]['column'], $this->original_column)){
-        //    $deliveryorder->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
-        // }else{
-        //     $deliveryorder->orderBy('updated_at','DESC');
-        // }
+
         $deliveryorder->orderBy('updated_at','DESC');
         if($search) {
           $deliveryorder->where(function ($query) use ($search) {
@@ -153,11 +149,10 @@ class DeliveryOrderController extends Controller
             $action     = "";
             $action.="";
             $action.="<div class='btn-group'>";
-                if($request->user()->can('requestpurchaseorder.cancel')){
-
+                if($request->user()->can('deliveryorder.changedriver')){
                     $action.='<a href="#" onclick="changeDriver(this,'.$key.')"  class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip '.$disabled.'" title="Ganti Driver"><i class="fa fa-car"></i> Driver</a>&nbsp;';
                 }
-                if($request->user()->can('requestpurchaseorder.cancel')){
+                if($request->user()->can('deliveryorder.pengiriman')){
                     $action.='<a href="#" onclick="pengiriman(this,'.$key.')" class="btn btn-secondary btn-xs icon-btn md-btn-flat product-tooltip" title="Pengiriman"><i class="fa fa-send"></i> Pengiriman</a>&nbsp;';
                 }
             $action.="</div>";
@@ -189,7 +184,7 @@ class DeliveryOrderController extends Controller
             $result->action         = $action;
         }
 
-        if ($request->user()->can('draftpurchaseorder.index')) {
+        if ($request->user()->can('deliveryorder.index')) {
             $json_data = array(
                 "draw"            => intval($request->input('draw')),
                 "recordsTotal"    => intval($totalData),
@@ -207,7 +202,6 @@ class DeliveryOrderController extends Controller
 
         return json_encode($json_data);
     }
-
 
     public function getDetailPenjualan($id){
         $detail   = DetailPenjualan::select('tbl_detail_penjualan.id','tbl_detail_penjualan.qty','tbl_detail_penjualan.harga_product','tbl_detail_penjualan.diskon','tbl_detail_penjualan.total_harga','kode_product','nama','id_satuan')->join('tbl_product','tbl_product.id','tbl_detail_penjualan.id_product')->where('id_penjualan',$id)->get();
@@ -235,6 +229,7 @@ class DeliveryOrderController extends Controller
         );
         return $detaildata;
     }
+
     public function tambah(Request $request){
         // Penjualan
         $sales          = Sales::all();
@@ -498,6 +493,5 @@ class DeliveryOrderController extends Controller
         }
         return json_encode($json_data);
     }
-
 
 }

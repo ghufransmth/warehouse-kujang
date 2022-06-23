@@ -9,7 +9,7 @@
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item active">
-                <a>Keuangan</a>
+                <a>Pembayaran</a>
             </li>
         </ol>
     </div>
@@ -70,6 +70,7 @@
                                 <tr class="text-white text-center bg-primary">
                                     <th>#</th>
                                     <th>Nomor Faktur</th>
+                                    <th>Tanggal Faktur</th>
                                     <th>Outlet</th>
                                     <th>Sales</th>
                                     <th>Status</th>
@@ -82,6 +83,7 @@
                                 <tr class="text-white text-center bg-primary">
                                     <th>#</th>
                                     <th>Nomor Faktur</th>
+                                    <th>Tanggal Faktur</th>
                                     <th>Outlet</th>
                                     <th>Sales</th>
                                     <th>Status</th>
@@ -100,7 +102,7 @@
 @push('scripts')
 <script>
     var table;
-    $(document).ready(function () {
+    table = $(document).ready(function () {
         $(".select2_salesman").select2();
         table = $('#table_pembayaran').DataTable({
             "processing": true,
@@ -121,6 +123,14 @@
                         d.sales = $('#sales option:selected').val()
                     }
                 },
+            "columns": [
+                {"data": "no"},
+                {"data": "no_faktur"},
+                {"data": "tgl_faktur"},
+                {"data": "toko_name"},
+                {"data": "sales_name"},
+                {"data": "status"},
+            ],
             pageLength: 10,
             responsive: true,
             dom: '<"html5buttons"B>lTfgitp',
@@ -145,6 +155,33 @@
                 }
             ]
         });
+    });
+
+    $(document).on('change', '#sales', function(){
+        table.ajax.reload(null, false);
+    })
+
+    $(document).on('change', '#start', function(){
+        var end = $('#end').val()
+        if(end != ''){
+            table.ajax.reload(null, false);
+        }
+    })
+
+    $(document).on('change', '#end', function(){
+        var end = $('#start').val()
+        if(end != ''){
+            table.ajax.reload(null, false);
+        }
+    })
+
+    $('.formatTgl').datepicker({
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        calendarWeeks: true,
+        autoclose: true,
+        format: "dd-mm-yyyy"
     });
 </script>
 @endpush

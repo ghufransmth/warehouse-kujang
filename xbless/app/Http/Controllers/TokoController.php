@@ -109,6 +109,30 @@ class TokoController extends Controller
         return json_encode($json_data);
     }
 
+    public function getDetail(Request $request)
+    {
+          $term = $request->value;
+          $query = Toko::select('*');
+
+          if($term){
+              $query->where('id',$term);
+          }
+          $toko = $query->get();
+          $out = [
+              'results' => [],
+              'pagination' => [
+                  'more' => false
+              ]
+          ];
+          foreach($toko as $value){
+              array_push($out['results'], [
+                  'id'   =>$value->id,
+                  'text' =>$value->alamat
+              ]);
+          }
+          return response()->json($out, 200);
+    }
+
     public function tambah(){
 
         $distrik = Distrik::all();

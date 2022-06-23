@@ -3,13 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Perusahaan;
 use App\Models\Gudang;
-use App\Models\PerusahaanGudang;
 use App\Models\Product;
-use App\Models\ProductPerusahaanGudang;
 use App\Models\ProductBarcode;
-use App\Models\ReportStock;
 use App\Models\Satuan;
 use App\Models\StockOpname;
 use App\Models\StockOpnameDetail;

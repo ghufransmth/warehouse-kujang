@@ -11,6 +11,7 @@ use Auth;
 
 class KategoriTokoController extends Controller
 {
+
     protected $original_column = array(
         1 => "name",
     );
@@ -39,7 +40,7 @@ class KategoriTokoController extends Controller
       $start = $request->start;
       $page  = $start +1;
       $search = $request->search['value'];
-      
+
       $country = KategoriToko::select('*');
       if(array_key_exists($request->order[0]['column'], $this->original_column)){
          $country->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
@@ -63,11 +64,15 @@ class KategoriTokoController extends Controller
       {
         $enc_id = $this->safe_encode(Crypt::encryptString($negara->id));
         $action = "";
-       
+
         $action.="";
         $action.="<div class='btn-group'>";
-        $action.='<a href="'.route('toko.kategori.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
-        $action.='<a href="#" onclick="deleteNegara(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
+        if($request->user()->can('toko.kategori.ubah')) {
+            $action.='<a href="'.route('toko.kategori.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
+        }
+        if($request->user()->can('toko.kategori.delete')) {
+            $action.='<a href="#" onclick="deleteNegara(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-times"></i> Hapus</a>&nbsp;';
+        }
         $action.="</div>";
 
         $negara->no             = $key+$page;
@@ -76,29 +81,24 @@ class KategoriTokoController extends Controller
         $negara->action         = $action;
       }
 
-      $json_data = array(
-        "draw"            => intval($request->input('draw')),  
-        "recordsTotal"    => intval($totalData),
-        "recordsFiltered" => intval($totalFiltered),
-        "data"            => $data
-      );
-      // if($request->user()->can('negara.index')) {
-      //   $json_data = array(
-      //     "draw"            => intval($request->input('draw')),  
-      //     "recordsTotal"    => intval($totalData),
-      //     "recordsFiltered" => intval($totalFiltered),
-      //     "data"            => $data
-      //   );
-      // }else{
-      //   $json_data = array(
-      //     "draw"            => intval($request->input('draw')),  
-      //     "recordsTotal"    => 0,
-      //     "recordsFiltered" => 0,
-      //     "data"            => []
-      //   );
-         
-      // }    
-      return json_encode($json_data); 
+
+      if($request->user()->can('toko.kategori.index')) {
+        $json_data = array(
+          "draw"            => intval($request->input('draw')),
+          "recordsTotal"    => intval($totalData),
+          "recordsFiltered" => intval($totalFiltered),
+          "data"            => $data
+        );
+      }else{
+        $json_data = array(
+          "draw"            => intval($request->input('draw')),
+          "recordsTotal"    => 0,
+          "recordsFiltered" => 0,
+          "data"            => []
+        );
+
+      }
+      return json_encode($json_data);
     }
 
     public function tambah(){
@@ -112,7 +112,7 @@ class KategoriTokoController extends Controller
           $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         }else{
           $dec_id = null;
-        }   
+        }
         $cek_negara = $this->cekExist('name',$req->name,$dec_id);
         if(!$cek_negara){
             $json_data = array(
@@ -149,11 +149,11 @@ class KategoriTokoController extends Controller
                     "success"         => FALSE,
                     "message"         => 'Data gagal ditambahkan.'
               );
-            }   
+            }
           }
         }
 
-        return json_encode($json_data); 
+        return json_encode($json_data);
     }
 
     public function ubah($enc_id){

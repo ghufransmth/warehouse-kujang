@@ -1,15 +1,15 @@
 @extends('layouts.layout')
-@section('title', 'Beranda')
+@section('title', 'Distrik')
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Master District</h2>
+        <h2>Master Distrik</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item active">
-                <a>Master District</a>
+                <a>Master Distrik</a>
             </li>
         </ol>
     </div>
@@ -17,8 +17,10 @@
         <br />
         <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
             title="Refresh Data"><span class="fa fa-refresh"></span></button>
+        @can('distrik.tambah')
         <a href="{{ route('distrik.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top"
             title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
+        @endcan
     </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">

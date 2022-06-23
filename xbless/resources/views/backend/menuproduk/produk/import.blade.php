@@ -9,7 +9,7 @@
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{route('purchaseorder.index')}}">Produk</a>
+                <a href="{{route('produk.index')}}">Produk</a>
             </li>
             <li class="breadcrumb-item active">
                 <strong>Upload</strong>
@@ -18,7 +18,6 @@
     </div>
     <div class="col-lg-2">
         <br/>
-        {{-- <a class="btn btn-danger btn-sm" href="{{route('purchaseorder.index')}}">Batal</a> --}}
         <a href="{{ asset('/assets/excel/Import_Produk.xlsx') }}" class="btn btn-primary" style="margin-left: 10px"><i class="fa fa-file-excel-o"></i>  Download Template</a>
     </div>
 </div>

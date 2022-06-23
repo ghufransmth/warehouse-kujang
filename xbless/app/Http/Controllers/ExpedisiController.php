@@ -8,7 +8,6 @@ use App\Models\RoleUser;
 use App\Models\Role;
 use App\Models\Expedisi;
 use App\Models\PurchaseOrder;
-use App\Models\Invoice;
 use DB;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -25,20 +24,24 @@ class ExpedisiController extends Controller
         4 => "created_at",
         5 => "status",
       );
+
       public function status()
       {
         $value = array('1'=>'Aktif' ,'0'=>'Tidak Aktif');
         return $value;
       }
+
       public function index()
       {
           return view('backend/master/expedisi/index');
       }
+
       private function cekExist($column,$var,$id)
       {
        $cek = Expedisi::where('id','!=',$id)->where($column,'=',$var)->first();
        return (!empty($cek) ? false : true);
       }
+
       public function getData(Request $request)
       {
           $limit = $request->length;
@@ -46,10 +49,10 @@ class ExpedisiController extends Controller
           $page  = $start +1;
           $search = $request->search['value'];
 
-          
+
 
           $dataquery = Expedisi::select('*');
-         
+
           if(array_key_exists($request->order[0]['column'], $this->original_column)){
              $dataquery->orderByRaw($this->original_column[$request->order[0]['column']].' '.$request->order[0]['dir']);
           }
@@ -64,9 +67,9 @@ class ExpedisiController extends Controller
             });
           }
           $totalData = $dataquery->get()->count();
-      
+
           $totalFiltered = $dataquery->get()->count();
-      
+
           $dataquery->limit($limit);
           $dataquery->offset($start);
           $data = $dataquery->get();
@@ -74,11 +77,11 @@ class ExpedisiController extends Controller
           {
             $enc_id = $this->safe_encode(Crypt::encryptString($result->id));
             $action = "";
-           
+
             $action.="";
             $action.="<div class='btn-group'>";
-           
-        
+
+
             if($request->user()->can('expedisi.detail')){
               $action.='<a href="'.route('expedisi.detail',$enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Detail" data-original-title="Show"><i class="fa fa-eye"></i> View</a>&nbsp';
             }
@@ -96,10 +99,10 @@ class ExpedisiController extends Controller
                $status = '<span class="label label-warning">Tidak Aktif</span>';
             }
 
-            
+
 
             $result->no             = $key+$page;
-           
+
             $result->id             = $result->id;
             $result->name           = $result->name;
             $result->no_hp          = $result->telp_no==null?'-':$result->telp_no;
@@ -110,41 +113,41 @@ class ExpedisiController extends Controller
           }
           if ($request->user()->can('expedisi.index')) {
             $json_data = array(
-                      "draw"            => intval($request->input('draw')),  
-                      "recordsTotal"    => intval($totalData),  
-                      "recordsFiltered" => intval($totalFiltered), 
+                      "draw"            => intval($request->input('draw')),
+                      "recordsTotal"    => intval($totalData),
+                      "recordsFiltered" => intval($totalFiltered),
                       "data"            => $data
                       );
           }else{
              $json_data = array(
-                      "draw"            => intval($request->input('draw')),  
-                      "recordsTotal"    => 0,  
-                      "recordsFiltered" => 0, 
-                      "data"            => []  
+                      "draw"            => intval($request->input('draw')),
+                      "recordsTotal"    => 0,
+                      "recordsFiltered" => 0,
+                      "data"            => []
                       );
-          }    
-          return json_encode($json_data); 
+          }
+          return json_encode($json_data);
       }
-    
+
       function safe_encode($string) {
-	
+
         $data = str_replace(array('/'),array('_'),$string);
         return $data;
       }
- 
-	    function safe_decode($string,$mode=null) {
-		
+
+	  function safe_decode($string,$mode=null) {
+
 		   $data = str_replace(array('_'),array('/'),$string);
         return $data;
       }
-      
+
       public function tambah()
       {
         $status= $this->status();
         $selectedstatus   = '1';
         return view('backend/master/expedisi/form',compact('status','selectedstatus'));
       }
-     
+
       public function ubah($enc_id)
       {
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
@@ -152,7 +155,7 @@ class ExpedisiController extends Controller
           $status= $this->status();
           $expedisi= Expedisi::find($dec_id);
           $selectedstatus   =  $expedisi->status;
-          
+
           return view('backend/master/expedisi/form',compact('status','enc_id','selectedstatus','expedisi'));
         } else {
         	return view('errors/noaccess');
@@ -160,8 +163,8 @@ class ExpedisiController extends Controller
       }
 
       public function detail(Request $request,$enc_id)
-      {  
-        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));  
+      {
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         if($dec_id) {
             $status   = $this->status();
             $expedisi = Expedisi::find($dec_id);
@@ -178,8 +181,9 @@ class ExpedisiController extends Controller
         	return view('errors/noaccess');
         }
       }
+
       public function simpan(Request $req)
-      {     
+      {
           $enc_id     = $req->enc_id;
           if ($enc_id != null) {
             $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
@@ -232,9 +236,10 @@ class ExpedisiController extends Controller
              }
             }
           }
-          
-        return json_encode($json_data); 
+
+        return json_encode($json_data);
       }
+
       public function hapus(Request $req,$enc_id)
       {
         $dec_id   = $this->safe_decode(Crypt::decryptString($enc_id));

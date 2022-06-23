@@ -26,10 +26,10 @@
         <br />
         <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
             title="Refresh Data"><span class="fa fa-refresh"></span></button>
-        {{-- @can('expedisi.tambah') --}}
+        @can('deliveryorder.tambah')
             <a href="{{ route('deliveryorder.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top"
                 title="Tambah Data"><span class="fa fa-pencil-square-o"></span>&nbsp; Tambah</a>
-        {{-- @endcan --}}
+        @endcan
     </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInRight">

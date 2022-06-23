@@ -3,14 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Perusahaan;
 use App\Models\Gudang;
-use App\Models\PerusahaanGudang;
 use App\Models\Product;
-use App\Models\ProductPerusahaanGudang;
 use App\Models\ProductBarcode;
 use App\Models\StockAdj;
-use App\Models\ReportStock;
 use App\Models\StockOpname;
 use App\Models\StockOpnameDetail;
 use Illuminate\Support\Facades\Crypt;
@@ -91,7 +87,7 @@ class StokAdjController extends Controller
             $value->stock_bs            = $value->stock_bs;
             $value->action = '<a href="#" onclick="showproduct(\''. $enc_id. '\')" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip"><i class="fa fa-file"></i> Detail</a> ';
         }
-        if ($request->user()->can('adjstok.index')) {
+        if ($request->user()->can('adjstok.index_supplier')) {
         $json_data = array(
             "draw"            => intval($request->input('draw')),
             "recordsTotal"    => intval($totalData),
@@ -154,7 +150,7 @@ class StokAdjController extends Controller
             $value->stock_bs            = $value->gudang_bs;
             $value->action = '<a href="#" onclick="showproduct(\''. $enc_id. '\')" class="btn btn-primary btn-xs icon-btn md-btn-flat product-tooltip"><i class="fa fa-file"></i> Detail</a> ';
         }
-        if ($request->user()->can('adjstok.index')) {
+        if ($request->user()->can('adjstok.index_supplier')) {
         $json_data = array(
             "draw"            => intval($request->input('draw')),
             "recordsTotal"    => intval($totalData),

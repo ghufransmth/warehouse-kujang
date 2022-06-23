@@ -1,17 +1,17 @@
 @extends('layouts.layout')
 
-@section('title', 'Manajemen Sales ')
+@section('title', 'Manajemen Kunjungan Sales ')
 
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>{{isset($sales) ? 'Edit' : 'Tambah'}} Sales</h2>
+        <h2>{{isset($sales) ? 'Edit' : 'Tambah'}} Kunjungan Sales</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{route('sales.index')}}">Master Sales</a>
+                <a href="{{route('kunjungan.index')}}">Kunjungan Sales</a>
             </li>
             <li class="breadcrumb-item active">
                 <strong>{{isset($sales) ? 'Edit' : 'Tambah'}}</strong>
@@ -20,7 +20,7 @@
     </div>
     <div class="col-lg-2">
         <br/>
-        <a class="btn btn-white btn-sm" href="{{route('sales.index')}}">Batal</a>
+        <a class="btn btn-white btn-sm" href="{{route('kunjungan.index')}}">Batal</a>
     </div>
 </div>
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -30,7 +30,7 @@
                     <div class="ibox-title">
                         @if(session('message'))
                             <div class="alert alert-{{session('message')['status']}}">
-                            
+
                             {{ session('message')['desc'] }}
                             </div>
                         @endif

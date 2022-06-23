@@ -4,13 +4,13 @@
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>{{isset($komponen) ? 'Edit' : 'Tambah'}} Kopmponen</h2>
+        <h2>{{isset($komponen) ? 'Edit' : 'Tambah'}} Komponen</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{route('gudang.index')}}">Master Komponen</a>
+                <a href="{{route('komponen.index')}}">Master Komponen</a>
             </li>
             <li class="breadcrumb-item active">
                 <strong>{{isset($komponen) ? 'Edit' : 'Tambah'}}</strong>
@@ -19,7 +19,7 @@
     </div>
     <div class="col-lg-2">
         <br/>
-        <a class="btn btn-white btn-sm" href="{{route('gudang.index')}}">Kembali</a>
+        <a class="btn btn-white btn-sm" href="{{route('komponen.index')}}">Kembali</a>
     </div>
 </div>
     <div class="wrapper wrapper-content animated fadeInRight">

@@ -26,13 +26,4 @@ class TransaksiStock extends Model
             'nominal' => null,
         ]);
     }
-    // public function gettransaksi($id){
-    //     $data = self::find($id);
-    //     return $data->flag_transaksi;
-    //     if($data->flag_transaksi == 3){
-    //         return $this->penjualan();
-    //     }else{
-    //         return $this->pembelian();
-    //     }
-    // }
 }

@@ -9,23 +9,21 @@
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{route('produk.index')}}">Pembelian</a>
+                <a href="{{route('pembelian.index')}}">Pembelian</a>
             </li>
-            <li class="breadcrumb-item active">
-                <a>Pembelian</a>
-            </li>
+
         </ol>
     </div>
     <div class="col-lg-3">
         <br />
         <button id="refresh" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
             title="Refresh Data"><span class="fa fa-refresh"></span></button>
-        @can('satuan.tambah')
+        @can('pembelian.tambah')
         <a href="{{ route('pembelian.tambah')}}" class="btn btn-success" data-toggle="tooltip" data-placement="top"
             title="Tambah Data"><span class="fa fa-pencil-square-o"></span> &nbsp; Tambah</a>
         @endcan
-        @can('produk.tambah')
-        <a href="{{ route('produk.tambah')}}" class="btn btn-warning" data-toggle="tooltip" data-placement="top"
+        @can('pembelian_import.import')
+        <a href="{{ route('pembelian_import.import')}}" class="btn btn-warning" data-toggle="tooltip" data-placement="top"
             title="Import Data">Import &nbsp; <span class="fa fa-file-excel-o"></span></a>
         @endcan
     </div>

@@ -38,7 +38,7 @@
                     <div class="ibox-content">
                         <form id="submitData">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <input type="hidden" name="enc_id" id="enc_id" value="{{isset($diskon)? $enc_id : ''}}">
+                            <input type="hidden" name="enc_id" id="enc_id" value="{{isset($enc_id)? $enc_id : ''}}">
                             <div class="form-group row"><label class="col-sm-2 col-form-label">Diskon Dari *</label>
                                 <div class="col-sm-10 error-text">
                                     <select name="parent" class="form-control select2" id="parent">
@@ -52,7 +52,7 @@
                             <div id="diskon_detail">
                                 <div class="form-group row"><label class="col-sm-2 col-form-label">Nama Diskon *</label>
                                     <div class="col-sm-10 error-text">
-                                        <input type="text" class="form-control" id="name" name="name" value="{{isset($data)? $data->name : ''}}"> 
+                                        <input type="text" class="form-control" id="name" name="name" value="{{isset($data)? $data->name : ''}}">
                                     </div>
                                 </div>
                                 <div id="diskon_distributor">
@@ -88,7 +88,7 @@
                                                         @foreach($jenis as $key => $value)
                                                             <option value="{{ $key }}" {{ $selectedJenis == $key? 'selected=""' : ''}}>{{ $value }}</option>
                                                         @endforeach
-                                                    </select> 
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -99,7 +99,7 @@
                                                         @foreach($kelipatan as $key => $value)
                                                             <option value="{{ $key }}" {{ $selectedKelipatan == $key? 'selected=""' : ''}}>{{ $value }}</option>
                                                         @endforeach
-                                                    </select> 
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -108,9 +108,9 @@
                                         <div class="col-sm-10 error-text">
                                             <select name="produk" class="form-control select2_product" id="produk">
                                                 @if(isset($data))
-                                                    <option value="{{ $data->produk }}">{{ $data->nama_product }}</option> 
+                                                    <option value="{{ $data->produk }}">{{ $data->nama_product }}</option>
                                                 @endif
-                                            </select> 
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -136,9 +136,9 @@
                                             <div class="col-sm-10 error-text">
                                                 <select name="bonus_produk" class="form-control select2_product" id="bonus_produk">
                                                 @if(isset($data))
-                                                    <option value="{{ $data->bonus_produk }}">{{ $data->produk_bonus }}</option> 
+                                                    <option value="{{ $data->bonus_produk }}">{{ $data->produk_bonus }}</option>
                                                 @endif
-                                                </select> 
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -173,6 +173,30 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label">Tgl Dari</label>
+                                            <div class="col-sm-8">
+                                                <div class="input-group">
+                                                  <input type="text" class="form-control formatTgl" id="tgl_dari"
+                                                      value="{{ isset($data)? date('d-m-Y', strtotime($data->tgl_dari)) : date('d-m-Y') }}" name="tgl_dari" autocomplete="off">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label">Tgl Sampai</label>
+                                            <div class="col-sm-8">
+                                                <div class="input-group">
+                                                  <input type="text" class="form-control formatTgl" id="tgl_sampai"
+                                                      value="{{ isset($data)? date('d-m-Y', strtotime($data->tgl_sampai)) : date('d-m-Y') }}" name="tgl_sampai" autocomplete="off">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="hr-line-dashed"></div>
                             <div class="form-group row">
@@ -182,7 +206,7 @@
                                 </div>
                             </div>
                         </form>
-                        
+
                     </div>
                 </div>
             </div>
@@ -193,7 +217,13 @@
 <script>
     $(document).ready(function () {
         head_diskon()
-
+        $('.formatTgl').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            calendarWeeks: true,
+            autoclose: true,
+            format: "dd-mm-yyyy"
+        });
         $('#submitData').validate({
             rules: {
                 name:{
@@ -208,9 +238,9 @@
             errorElement: 'span',
             errorPlacement: function (error, element) {
             error.addClass('invalid-feedback');
-           
+
             element.closest('.error-text').append(error);
-            
+
             },
             highlight: function (element, errorClass, validClass) {
             $(element).addClass('is-invalid');
@@ -223,7 +253,7 @@
             SimpanData();
             }
         });
-        function SimpanData(){    
+        function SimpanData(){
             $('#simpan').addClass("disabled");
                 var form = $('#submitData').serializeArray()
                 var dataFile = new FormData()
@@ -246,11 +276,11 @@
                         Swal.fire('Yes',data.message,'info');
                         window.location.replace('{{route("diskon.index")}}');
                     } else {
-                        Swal.fire('Ups',data.message,'info'); 
+                        Swal.fire('Ups',data.message,'info');
                     }
                     Swal.hideLoading();
                 },
-                complete: function () { 
+                complete: function () {
                     Swal.hideLoading();
                     $('#simpan').removeClass("disabled");
                 },
@@ -268,7 +298,7 @@
     $('.select2_satuan').select2({
         placeholder: 'Satuan ...'
     })
-    
+
     $('.select2_product').select2({
         placeholder: 'Pilih Product ...',
         ajax: {

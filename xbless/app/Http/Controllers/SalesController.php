@@ -7,10 +7,7 @@ use App\Models\User;
 use App\Models\RoleUser;
 use App\Models\Role;
 use App\Models\Sales;
-use App\Models\Member;
-use App\Models\MemberSales;
 use App\Models\PurchaseOrder;
-use App\Models\Invoice;
 use DB;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -132,7 +129,7 @@ class SalesController extends Controller
         return $value;
       }
 
-      
+
       public function tambah()
       {
         $status= $this->status();
@@ -152,7 +149,7 @@ class SalesController extends Controller
           $selectedstatus   = $sales->status;
           $roles = Role::orWhere('name','LIKE',"sales")->first();
           $roleselected = $sales->flag_user;
-          
+
           // return response()->json(['data' => $roles]);
           return view('backend/master/sales/form',compact('enc_id','sales','roles','roleselected','status','selectedstatus'));
         } else {
@@ -266,7 +263,7 @@ class SalesController extends Controller
                   $sales->code        = $req->code;
                   $sales->nama        = $req->name;
                   $sales->save();
-                  
+
                   DB::commit();
                   $json_data = array(
                       "success"         => TRUE,

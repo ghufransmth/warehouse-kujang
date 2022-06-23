@@ -10,7 +10,7 @@
                 <a href="{{route('manage.beranda')}}">Beranda</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{route('toko.index')}}">Master Brand</a>
+                <a href="{{route('toko.index')}}">Toko</a>
             </li>
             <li class="breadcrumb-item active">
                 <strong>{{isset($toko) ? 'Edit' : 'Tambah'}}</strong>
@@ -70,7 +70,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row"><label class="col-sm-2 col-form-label">Distrik *</label>
+                            <div class="form-group row" hidden><label class="col-sm-2 col-form-label">Distrik *</label>
                                 <div class="col-sm-10 error-text">
                                     <select name="distrik" id="distrik" class="form-control select2">
                                         <option value="">Pilih Distrik</option>
@@ -81,7 +81,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row"><label class="col-sm-2 col-form-label">Tipe Channel *</label>
+                            <div class="form-group row" hidden><label class="col-sm-2 col-form-label">Tipe Channel *</label>
                                 <div class="col-sm-10 error-text">
                                     <select name="tipe_chanel" id="tipe_chanel" class="form-control select2">
                                         <option value="">Pilih Tipe Channel</option>
@@ -115,7 +115,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row"><label class="col-sm-2 col-form-label">Kategori *</label>
+                            <div class="form-group row" hidden><label class="col-sm-2 col-form-label">Kategori *</label>
                                 <div class="col-sm-10 error-text">
                                     <select name="kategori" id="kategori" class="form-control select2">
                                         <option value="">Pilih Kategori Toko</option>

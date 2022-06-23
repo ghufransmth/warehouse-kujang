@@ -300,7 +300,7 @@ class PembelianController extends Controller
                     }
                     if($detail->delete()){
 
-                        for($i=0;$i<$total_product;$i++){
+                        for($i=0;$i<count($array_product);$i++){
                             if(isset($array_id_satuan[$i])){
                                 $satuan = Satuan::find($array_id_satuan[$i]);
                                 $pembelian_detail = new PembelianDetail;
@@ -376,7 +376,7 @@ class PembelianController extends Controller
                     $pembelian->approved_by       = auth()->user()->username;
                     $pembelian->created_user      = auth()->user()->username;
                     if($pembelian->save()){
-                        for($i=0; $i < $total_product; $i++){
+                        for($i=0; $i < count($array_product); $i++){
                             $satuan = Satuan::find($array_id_satuan[$i]);
                             $detail_pembelian                   = new PembelianDetail;
                             $detail_pembelian->pembelian_id     = $pembelian->id;
