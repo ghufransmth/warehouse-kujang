@@ -215,4 +215,98 @@ class ReturPembelianController extends Controller
         ]);
     }
     }
+
+    public function simpan_edit(Request $req){
+        // return $req->all();
+        // return $req->total;
+        $nofakturretur = $req->nofakturretur;
+        $tgl_faktur = date('Y-m-d',strtotime($req->faktur_date));
+        $tgl_jatuh_tempo = date('Y-m-d',strtotime($req->jatuh_tempo));
+        $tgl_transaksi = date('Y-m-d',strtotime($req->tgl_transaksi));
+        $nominal = $req->nominal;
+        $keterangan = $req->ket;
+        $array_harga_product = $req->harga_product;
+        $array_product = $req->produk;
+        $array_qty = $req->qty;
+        $array_id_satuan = $req->tipesatuan;
+        $array_total_harga = $req->total;
+        $total_product = $req->total_produk;
+        $total_harga_pembelian = $req->total_harga_pembelian;
+
+        $enc_id = $req->enc_id;
+
+        if(isset($enc_id)){
+            $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+
+        }
+
+        if($total_product > 0){
+            $retur = ReturTransaksi::find($dec_id);
+            // return $retur;
+            // $retur->no_faktur = $nofaktur;
+            $retur->no_retur_faktur = $nofakturretur;
+            $retur->catatan = $keterangan;
+            $retur->jenis_transaksi = 1;
+            $retur->total_harga = $nominal;
+            $retur->tgl_retur = $tgl_transaksi;
+            $retur->created_user = auth()->user()->username;
+            if($retur->save()){
+                for($i = 0; $i < $total_product; $i++){
+                    // return $array_product[$i];
+                    $satuan = Satuan::find($array_id_satuan[$i]);
+
+                    $detail_retur = ReturTransaksiDetail::where('retur_transaksi_id',$retur->id)->get();
+                    // return response()->json($detail_retur);
+                    foreach($detail_retur as $key=> $value){
+                        $value->retur_transaksi_id = $retur->id;
+                        $value->product_id         = $array_product[$i];
+                        $value->qty                = $array_qty[$i] * $satuan->qty;
+                        $value->price              = $array_harga_product[$i];
+                        $value->total              = $array_total_harga[$i];
+                        if($value->save()){
+                            $stockadj = StockAdj::where('id_product',$array_product[$i])->first();
+                            if(isset($stockadj)){
+                                $stockadj->gudang_baik += $stockadj->stock_retur_pembelian - $array_qty[$i];
+                                $stockadj->stock_retur_pembelian = $value->qty;
+                                if($stockadj->save()){
+                                    $json_data = array(
+                                        "success"         => TRUE,
+                                        "message"         => 'Data berhasil ditambahkan.'
+                                );
+                                }else{
+                                    $json_data = array(
+                                        "success"         => FALSE,
+                                        "message"         => 'Data gagal ditambahkan.'
+                                );
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        $transaksi_stock = new TransaksiStock;
+        $transaksi_stock->no_transaksi = $retur->no_retur_faktur;
+        $transaksi_stock->tgl_transaksi = $retur->tgl_faktur;
+        $transaksi_stock->flag_transaksi = 6;
+        $transaksi_stock->created_by = auth()->user()->username;
+        $transaksi_stock->note = 'retur pembelian';
+        if($transaksi_stock->save()){
+            return response()->json([
+                'success' => TRUE,
+                'message' => 'Retur Pembelian berhasil disimpan'
+            ]);
+        }else{
+            return response()->json([
+                'success' => FALSE,
+                'message' => 'Retur Pembelian gagal disimpan'
+            ]);
+        }
+    }else{
+        return response()->json([
+            'success' => FALSE,
+            'message' => 'Gagal menyimpan Retur Pembelian'
+        ]);
+    }
+    }
 }

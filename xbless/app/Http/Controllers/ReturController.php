@@ -14,6 +14,8 @@ use App\Models\TransaksiStock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 
+use function App\Http\Helpers\format_uang;
+
 class ReturController extends Controller
 {
     protected $original_column = array(
@@ -72,7 +74,9 @@ class ReturController extends Controller
         // return $enc_id;
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
         $penjualan = ReturTransaksi::select('*')->where('id',$dec_id)->with(['getdetailtransaksi', 'getdetailtransaksi.getproduct'])->first();
-        return $penjualan;
+        $pembelian = ReturTransaksi::select('*')->where('id',$dec_id)->with(['getdetailtransaksi','getdetailtransaksi.getproduct'])->first();
+        // return $penjualan;
+        // return $pembelian;
         //VALIDASI
             if(!isset($dec_id)){
                 return response()->json([
@@ -109,7 +113,9 @@ class ReturController extends Controller
 
                 return view('backend/retur/penjualan_edit_form',compact('enc_id','tipeharga','selectedtipeharga','sales','selectedsales','expedisi','expedisivia', 'selectedexpedisi','selectedexpedisivia','selectedproduct','member','selectedmember', 'toko', 'selectedtoko', 'selectedstatuslunas', 'penjualan', 'detail_penjualan'));
             }elseif($penjualan->jenis_transaksi == 1){
-
+                $detail_pembelian = $pembelian->getdetailtransaksi;
+                // return $detail_pembelian;
+                return view('backend/retur/pembelian_edit_form',compact('enc_id','pembelian','detail_pembelian'));
             }
 
     }
@@ -305,7 +311,11 @@ class ReturController extends Controller
             $result->jenis_transaksi = $jenis_transaksi;
 
             $aksi .= '<a href="#" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip">Detail </a>';
-            $aksi .= '<a href="'.route('retur.edit', $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a>';
+            if($result->jenis_transaksi == 0){
+                $aksi .= '<a href="'.route('retur.edit', $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a>';
+            }else if($result->jenis_transaksi == 1){
+                $aksi .= '<a href="'.route('retur.edit', $enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Edit </a>';
+            }
             $aksi .= '<a href="'.route('retur.delete', $enc_id).'" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" style="margin-left:4px">Hapus </a> <br>';
 
 

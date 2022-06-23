@@ -722,6 +722,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::delete('/delete/{id?}', [TokoController::class, 'hapus'])->name('delete');
         });
 
+
         Route::group(['prefix' => 'pembelian', 'as' => 'pembelian.'], function () {
 
             Route::get('/', [PembelianController::class, 'index'])->name('index');
@@ -739,7 +740,7 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/harga_product', [PembelianController::class, 'harga_product'])->name('harga_product');
             Route::post('/total_harga', [PembelianController::class, 'total_harga'])->name('total_harga');
         });
-
+      
         //IMPORT PEMBELIAN
         Route::group(['prefix' => 'pembelian_import', 'as' => 'pembelian_import.'], function () {
             Route::get('/import', [ImportPembelianController::class, 'index'])->name('import');
@@ -757,6 +758,13 @@ Route::group(['middleware' => ['auth', 'acl:web']], function () {
             Route::post('/simpan', [ReturPembelianController::class, 'simpan'])->name('simpan');
         });
 
+    Route::group(['prefix' => 'retur_pembelian', 'as' => 'retur_pembelian.'], function () {
+        Route::get('/', [ReturPembelianController::class, 'index'])->name('index');
+        Route::post('/getdata', [ReturPembelianController::class, 'getData'])->name('getdata');
+        Route::get('/form-retur/{id?}', [ReturPembelianController::class, 'tambah'])->name('form-retur');
+        // Route::get('/detail_retur/{id}', [ReturPembelianController::class, 'detail_retur'])->name('detail_retur');
+        Route::post('/simpan', [ReturPembelianController::class, 'simpan'])->name('simpan');
+        Route::post('/simpan-edit', [ReturPembelianController::class, 'simpan_edit'])->name('simpan_edit');
     });
 
 });

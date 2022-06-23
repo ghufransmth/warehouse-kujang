@@ -214,6 +214,45 @@
         });
       }
 
+      function hapus(e,enc_id){
+        var token = '{{ csrf_token() }}';
+        Swal.fire({
+            title: "Apakah Anda yakin?",
+            text: "Data akan terhapus!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Ya",
+            cancelButtonText:"Batal",
+            confirmButtonColor: "#ec6c62",
+            closeOnConfirm: false
+        }).then(function(result) {
+            console.log(result)
+            if (result.value) {
+                $.ajaxSetup({
+                    headers: { "X-CSRF-Token" : $("meta[name=csrf-token]").attr("content") }
+                });
+                $.ajax({
+                    type: 'get',
+                    url: '{{route("pembelian.hapus",[null])}}/' + enc_id,
+                    headers: {'X-CSRF-TOKEN': token},
+                    success: function(data){
+                    console.log(data)
+                    if (data.status == 'success') {
+                        Swal.fire('Yes',data.message,'success');
+                        table.ajax.reload(null, true);
+                     }else{
+                       Swal.fire('Ups',data.message,'info');
+                     }
+                },
+                error: function(data){
+                    console.log(data);
+                    Swal.fire("Ups!", "Terjadi kesalahan pada sistem.", "error");
+                }});
+            }
+        });
+      }
+
        $(document.body).on("keydown", function(e){
          ele = document.activeElement;
            if(e.keyCode==38){

@@ -80,7 +80,8 @@ class PembelianController extends Controller
             if($result->flag_proses == 0){
                 $action.='<div>';
                 $action.='<a href="'.route('pembelian.ubah',$enc_id).'" class="btn btn-warning btn-xs icon-btn md-btn-flat product-tooltip" title="Edit"><i class="fa fa-pencil"></i> Edit</a>&nbsp;';
-                $action.='<a href="'.route('pembelian.detail',$enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i class="fa fa-eye"></i> Detail</a>&nbsp;';
+                $action.='<a href="'.route('pembelian.detail',$enc_id).'" class="btn btn-success btn-xs icon-btn md-btn-flat product-tooltip" title="Detail"><i class="fa fa-eye"></i> Detail</a>&nbsp;';
+                $action.='<a href="#" onclick="hapus(this,\''.$enc_id.'\')" class="btn btn-danger btn-xs icon-btn md-btn-flat product-tooltip" title="Hapus"><i fa fa-trash-o></i>Hapus</a>&nbsp;';
                 $action.="</div>";
             }else if($result->flag_proses == 1){
                 // $action.= '<span class="label label-danger">Data tidak bisa diedit kembali</span>&nbsp;';
@@ -262,15 +263,17 @@ class PembelianController extends Controller
             ]);
         }
 
+
         if($enc_id != null || isset($enc_id)){
             $pembelian = Pembelian::find($dec_id);
-            $pembelian_detail = PembelianDetail::where('pembelian_id',$pembelian->id)->where('notransaction',$pembelian->no_faktur)->first();
+            $pembelian_detail = PembelianDetail::where('pembelian_id',$pembelian->id)->where('notransaction',$pembelian->no_faktur)->get();
+            // return $pembelian_detail;
             $pembelian->supplier_id       = $supplier;
             $pembelian->id_gudang         = $gudang;
             $pembelian->no_faktur         = $nofaktur;
             $pembelian->tgl_faktur        = $tgl_faktur;
             $pembelian->tgl_transaksi     = $tgl_transaksi;
-            $pembelian->nominal           = $nominal;
+            $pembelian->nominal           = str_replace('.','',$nominal);
             $pembelian->tgl_jatuh_tempo   = $tgl_jatuh_tempo;
             $pembelian->keterangan        = $keterangan;
             $pembelian->status_pembelian  = $status_pembelian;
@@ -278,21 +281,24 @@ class PembelianController extends Controller
             $pembelian->approved_by       = auth()->user()->username;
             $pembelian->created_user      = auth()->user()->username;
             if($pembelian->save()){
-                foreach($pembelian_detail->get() as $detail){
+                foreach($pembelian_detail as $detail){
                     if($pembelian->status_pembelian == 1){
-                        $stockadj = StockAdj::where('id_product',$detail->product_id)->where('id_gudang',$gudang)->first();
+                        // return $detail->qty;
+                        $stockadj = StockAdj::where('id_product',$detail->product_id)->first();
+                        // $stockadj = StockAdj::select('*')->where("id_product",$detail->product_id)->first();
+                        // return response()->json($stockadj);
                         $stockadj->id_gudang = $gudang;
                         $stockadj->id_supplier = $supplier;
-                        $stockadj->gudang_baik += $detail->qty;
+                        $stockadj->gudang_baik -= $detail->qty;
                         if(!$stockadj->save()){
                             return response()->json([
-                                'success' => FALSE,
+                                'success' => TRUE,
                                 'message' => 'Gagal mengupdate stock product'
                             ]);
                             break;
                         }
                     }
-                    if($pembelian_detail->delete()){
+                    if($detail->delete()){
 
                         for($i=0;$i<count($array_product);$i++){
                             if(isset($array_id_satuan[$i])){
@@ -306,11 +312,12 @@ class PembelianController extends Controller
                                 $pembelian_detail->total            = $array_total_harga[$i];
                                 $pembelian_detail->created_user     = auth()->user()->username;
                                 if($pembelian_detail->save()){
-                                    if($pembelian->status_pembelian == 0){
-                                        $stockadj = StockAdj::where('id_product',$detail->id_product)->where('id_gudang',$gudang)->first();
-                                        $stockadj->id_gudang = $gudang;
-                                        $stockadj->id_supplier = $supplier;
-                                        $stockadj->gudang_baik += $pembelian_detail->qty;
+                                    if($pembelian->status_pembelian == 1){
+                                        $stockadj = StockAdj::where('id_product',$detail->product_id)->where('id_gudang',$gudang)->first();
+                                        // return $stockadj;
+                                        // $stockadj->id_gudang = $gudang;
+                                        // $stockadj->id_supplier = $supplier;
+                                        $stockadj->gudang_baik += $req->qty[$i];
                                     }
                                     if(!$stockadj->save()){
                                         return response()->json([
@@ -330,7 +337,8 @@ class PembelianController extends Controller
                             }
                         }
                         $transaksi_stock = TransaksiStock::where('no_transaksi',$pembelian->no_faktur)->first();
-                        $transaksi_stock->total_harga = $pembelian->total_harga;
+                        $transaksi_stock->total_harga = $nominal;
+                        // $transaksi_stock->total_harga = str_replace('.','',$nominal);
                         if($transaksi_stock->save()){
                             return response()->json([
                                 'success' => TRUE,
@@ -342,6 +350,7 @@ class PembelianController extends Controller
                                 'message' => 'Gagal mengupdate total harga transaksi stock'
                             ]);
                         }
+
                     }else{
                         return response()->json([
                             'success' => FALSE,
@@ -359,7 +368,7 @@ class PembelianController extends Controller
                     $pembelian->no_faktur         = $nofaktur;
                     $pembelian->tgl_faktur        = $tgl_faktur;
                     $pembelian->tgl_transaksi     = $tgl_transaksi;
-                    $pembelian->nominal           = $nominal;
+                    $pembelian->nominal           = str_replace('.','',$nominal);
                     $pembelian->tgl_jatuh_tempo   = $tgl_jatuh_tempo;
                     $pembelian->keterangan        = $keterangan;
                     $pembelian->status_pembelian  = $status_pembelian;
@@ -495,6 +504,11 @@ class PembelianController extends Controller
         $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
 
         $pembelian = Pembelian::find($dec_id);
+        // $pembelian = Pembelian::select('*','gudang.name','supplier.nama');
+        // $pembelian->join('gudang','pembelian.id_gudang','gudang.id');
+        // $pembelian->join('supplier','pembelian.supplier_id','supplier.id');
+        // $data = $pembelian->get();
+        // return response()->json($data);
 
         if(isset($pembelian)){
             $pembelian_detail = PembelianDetail::where('pembelian_id',$pembelian->id)->where('notransaction',$pembelian->no_faktur)->with(['getproduct'])->get();
@@ -502,8 +516,8 @@ class PembelianController extends Controller
             $supplier = Supplier::all();
             $gudang = Gudang::all();
             $selectedProduct = "";
-            $selectedsupplier ="";
-            $selectedgudang ="";
+            $selectedsupplier = $pembelian->supplier_id;
+            $selectedgudang = $pembelian->id_gudang;
 
             return view('backend/pembelian/form',compact('enc_id','pembelian','pembelian_detail','supplier','selectedsupplier','gudang','selectedgudang'));
         }else{
@@ -521,7 +535,36 @@ class PembelianController extends Controller
         return view('backend/pembelian/detail',compact('enc_id','pembelian','detail_pembelian'));
     }
 
-    public function hapus($enc_id){}
+    public function hapus($enc_id)
+    {
+        // return "oke";
+        $dec_id = $this->safe_decode(Crypt::decryptString($enc_id));
+        // $dataretur = ReturTransaksi::where('jenis_transaksi',1)->first();
+        $returback = Pembelian::where('id',$dec_id)->first();
+        // return $returback;
+        $detail = PembelianDetail::where('pembelian_id',$returback->id)->get();
+        // return $detail;
+
+        foreach($detail as $key=> $value){
+            // return $value->qty;
+            $stockadj = StockAdj::where('id_product',$value->product_id)->first();
+            // return $stockadj;
+            if(isset($stockadj)){
+                $stockadj->gudang_baik -= $value->qty;
+                // $stockadj->stock_retur_pembelian = 0;
+                if($stockadj->save()){
+                    $value->delete();
+                }
+            }
+        }
+        $transaksi_stock = TransaksiStock::where('no_transaksi',$returback->no_faktur)->first();
+        // return $transaksi_stock;
+        $transaksi_stock->delete();
+        $returback->delete();
+
+        return response()->json(['status'=>"success",'message'=>'Data Berhasil dihapus.']);
+    }
+
     public function import(){
         return view('backend/pembelian/import');
     }
